@@ -1,0 +1,32 @@
+{
+  "id": "./?app=mlshs-theory",
+  "name": "Music Theory Blitz (Years 7–12)",
+  "short_name": "Theory Blitz",
+  "description": "Mount Lawley SHS Music: interactive theory practice mapped to the WA curriculum for Years 7–10 and the SCSA ATAR syllabus for Years 11–12. Pick your year; customise upward.",
+  "start_url": "./?app=mlshs-theory",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1b1a18",
+  "theme_color": "#1b1a18",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

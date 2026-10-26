@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aural Blitz · Mount Lawley SHS Music</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1b1a18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap">
+<style>
+  :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
+    --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+    --sans:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;}
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-text-size-adjust:100%}
+  header{padding:calc(10px + env(safe-area-inset-top,0)) 14px 4px;color:var(--cream)}
+  header .wrap{max-width:900px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid rgba(239,233,220,.18);padding-bottom:8px}
+  header .eye{font-size:10.5px;letter-spacing:2.4px;text-transform:uppercase;color:#b8b0a2;font-weight:600}
+  header h1{margin:0;font-family:var(--serif);font-size:34px;font-weight:600;letter-spacing:.2px;line-height:1;color:var(--cream)}
+  header h1 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ox);margin-left:6px;vertical-align:middle;transform:translateY(-4px)}
+  .hud{display:flex;align-items:center;gap:18px;color:var(--cream);font-size:12px}
+  .hud .stat{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:56px}
+  .hud .stat .lbl{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:#a79f91}
+  .hud .stat .val{font-family:var(--serif);font-size:24px;line-height:1;font-weight:600;color:var(--cream)}
+  .hud .stat .val.brass{color:var(--brass)}
+  .hud .rst{background:transparent;border:1px solid rgba(239,233,220,.3);color:#cfc8ba;border-radius:999px;font-size:11px;font-weight:600;padding:5px 11px;cursor:pointer;font-family:var(--sans)}
+  .hud .rst:hover{border-color:var(--cream);color:var(--cream)}
+  .xp{height:3px;width:56px;background:rgba(239,233,220,.15);overflow:hidden;margin-top:3px}
+  .xp i{display:block;height:100%;width:0;background:var(--brass);transition:width .4s}
+  main{max-width:900px;width:100%;margin:0 auto;padding:4px 14px 6px;flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:6px 0 2px;flex:none}
+  .modebar{display:flex;gap:2px;border:1px solid rgba(239,233,220,.25);border-radius:999px;padding:3px;width:max-content}
+  .modebar button{border:0;background:transparent;color:#cfc8ba;font-weight:600;font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer;font-family:var(--sans);letter-spacing:.3px}
+  .modebar button.on{background:var(--cream);color:var(--ink)}
+  .namebar{display:flex;align-items:center;gap:7px;color:#cfc8ba;font-size:12px}
+  .yearbar .ylab{color:#a79f91;font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;padding:0 6px 0 10px;align-self:center}
+  .yearbar button{padding:7px 11px}
+  .ytag{display:inline-block;margin-left:6px;font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:1px 5px;border-radius:4px;background:var(--brass);color:#fff;vertical-align:middle}
+  .chip.on .ytag{background:var(--cream);color:var(--ink)}
+  .namebar input{border:1px solid rgba(239,233,220,.3);background:transparent;color:var(--cream);border-radius:999px;padding:6px 13px;font-size:13px;font-family:var(--sans);width:180px;outline:none}
+  .namebar input::placeholder{color:#8f877a} .namebar input:focus{border-color:var(--cream)}
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 2px 6px;-webkit-overflow-scrolling:touch;flex:none;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:0 0 auto;border:1px solid rgba(239,233,220,.22);background:transparent;color:#d7d0c2;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;font-family:var(--sans)}
+  .tabs button:hover{border-color:rgba(239,233,220,.6)}
+  .tabs button.on{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+  .dots{display:flex;gap:6px;flex-wrap:wrap;padding:0 2px 8px;flex:none}
+  .dots .d{width:11px;height:11px;border-radius:50%;border:1px solid rgba(239,233,220,.45);background:transparent;cursor:pointer}
+  .dots .d.cur{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--brass)}
+  .dots .d.ok{background:#5d8a63;border-color:#5d8a63} .dots .d.no{background:#b4433a;border-color:#b4433a}
+  .card{background:var(--paper);border-radius:6px;padding:16px 18px 14px;border-top:4px solid var(--accent);flex:1;min-height:0;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .qnum{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .prompt{font-family:var(--serif);font-size:24px;font-weight:600;margin:3px 0 2px;line-height:1.15;letter-spacing:.1px}
+  .sub{font-size:13.5px;color:#4d463c;margin:0 0 8px}
+  .howbtn{display:inline-flex;align-items:center;gap:6px;margin:4px 6px 8px 0;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)}
+  .howbtn:hover{border-color:var(--ink)}
+  .playpanel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;background:var(--paper2);border:1px solid var(--rule);border-radius:6px;padding:12px;margin:4px 0 12px}
+  .playbtn{border:0;background:var(--ink);color:var(--cream);font-weight:600;font-size:16px;padding:12px 26px;border-radius:999px;cursor:pointer;font-family:var(--sans);letter-spacing:.3px}
+  .playbtn:hover:not(:disabled){background:#000} .playbtn:disabled{opacity:.55;cursor:default}
+  .playbtn.on{box-shadow:0 0 0 3px rgba(178,134,47,.45)}
+  .replaybtn{border:1px solid var(--ink);background:transparent;color:var(--ink);font-weight:600;font-size:13.5px;padding:11px 16px;border-radius:999px;cursor:pointer;font-family:var(--sans)}
+  .plabel{font-size:12.5px;color:#4d463c;width:100%;text-align:center}
+  .gback{position:fixed;inset:0;background:rgba(14,13,12,.6);z-index:69;display:none} .gback.open{display:block}
+  .guide{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,92vw);max-height:84vh;overflow:auto;background:var(--paper);border-radius:6px;border-top:4px solid var(--accent);padding:18px 22px;z-index:70;display:none;box-shadow:0 24px 70px rgba(0,0,0,.5);font-size:14px;line-height:1.55}
+  .guide.open{display:block}
+  .guide b{color:#222} .guide ol,.guide ul{margin:6px 0 0;padding-left:20px} .guide li{margin:5px 0}
+  .guide .gclose{position:absolute;top:10px;right:12px;border:0;background:var(--shade);border-radius:999px;width:30px;height:30px;font-size:15px;cursor:pointer}
+  .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .toolbar .lab{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .acc{display:flex;gap:5px}
+  .acc button{min-width:42px;height:38px;border:1px solid var(--rule);background:#fff;border-radius:6px;font-size:19px;cursor:pointer;line-height:1;font-family:Georgia,serif}
+  .acc button.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .staveWrap{width:100%;background:#fff;border-radius:6px;border:1px solid var(--rule);touch-action:manipulation}
+  svg.stave{display:block;width:auto;max-width:100%;max-height:178px;height:auto;margin:0 auto}
+  .hint{font-size:12px;color:var(--muted);margin:8px 2px 0}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:7px}
+  .opts button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--rule);background:#fff;color:var(--ink);border-radius:6px;padding:11px 13px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+  .opts button:hover:not(:disabled){border-color:var(--ink)}
+  .opts button .k{flex:0 0 auto;width:22px;height:22px;border-radius:4px;background:var(--shade);color:#5b554a;font-size:11.5px;font-weight:700;display:grid;place-items:center}
+  .opts button.ok{background:#e6efe5;border-color:var(--green);color:#1f4a27} .opts button.ok .k{background:var(--green);color:#fff}
+  .opts button.no{background:#f5e3e0;border-color:var(--red);color:#7a241d} .opts button.no .k{background:var(--red);color:#fff}
+  .opts button:disabled{cursor:default}
+  .modetoggle{display:inline-flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden;margin:0 0 8px 0;vertical-align:middle}
+  .modetoggle button{border:0;background:transparent;color:#4d463c;font-weight:600;font-size:12px;padding:7px 13px;cursor:pointer;font-family:var(--sans)}
+  .modetoggle button.on{background:var(--ink);color:var(--cream)}
+  .scoreWrap{width:100%;overflow-x:auto;background:#fff;border:1px solid var(--rule);border-radius:6px;padding:6px;touch-action:pan-x}
+  svg.score{display:block;width:100%;max-width:100%;height:auto;margin:0 auto}
+  .scalebadge{display:inline-block;background:var(--shade);border:1px solid var(--rule);color:#3b352c;font-weight:600;font-size:12.5px;border-radius:999px;padding:4px 12px;margin:0 0 9px}
+  .playparts{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+  .pp{border:0;background:var(--ink);color:var(--cream);font-weight:600;font-size:13.5px;padding:11px 17px;border-radius:999px;cursor:pointer;font-family:var(--sans)}
+  .pp:disabled{opacity:.55;cursor:default}
+  .pp.sub{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+  .tempotog,.difftog{display:flex;align-items:center;gap:8px;justify-content:center;width:100%;margin-top:8px}
+  .difftog{margin:0 0 10px}
+  .tlab{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .tgrp{display:inline-flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden;background:#fff}
+  .tgrp button{border:0;background:transparent;color:#4d463c;font-weight:600;font-size:12px;padding:6px 13px;cursor:pointer;font-family:var(--sans)}
+  .tgrp button.on{background:var(--ink);color:var(--cream)}
+  #score .sclr{cursor:pointer}
+  .setgrp{margin:12px 0}
+  .setlabel{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+  .setchips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:1px solid var(--rule);background:#fff;color:#4d463c;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans)}
+  .chip.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .mpal{display:flex;gap:5px;flex-wrap:wrap}
+  .mpal button{border:1px solid var(--rule);background:#fff;border-radius:6px;padding:7px 10px;font-weight:600;font-size:12.5px;cursor:pointer;line-height:1.1;font-family:var(--sans)}
+  .mpal button.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .mpal button.tool{border-style:dashed}
+  .mpal button.tool.on{border-style:solid;background:var(--ox);border-color:var(--ox)}
+  .names{margin-top:10px;font-size:15px;font-weight:600;color:var(--ox);letter-spacing:.3px;display:none}
+  .controls{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+  .controls button{flex:1 1 auto;min-width:110px;border-radius:6px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--ink);font-family:var(--sans)}
+  .btn-check{background:var(--ink);color:var(--cream)} .btn-ghost{background:transparent;color:var(--ink)} .btn-ans{background:transparent;color:var(--ox);border-color:var(--ox)!important}
+  .feedback{margin-top:14px;font-family:var(--serif);font-size:21px;font-weight:600;min-height:22px;line-height:1.2}
+  .feedback.ok{color:var(--green)} .feedback.no{color:var(--red)}
+  .why{font-family:var(--sans);font-size:13.5px;color:#4d463c;font-weight:400;margin-top:5px;line-height:1.5}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+  .nav button{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:9px 17px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--sans)}
+  .nav button:disabled{opacity:.35;cursor:default} .nav .pos{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:1px}
+  .reftable{overflow-x:auto;margin:8px 0} .reftable table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .reftable th{background:var(--ink);color:var(--cream);text-align:left;padding:7px 10px;font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;font-weight:600}
+  .reftable td{border-bottom:1px solid var(--rule);padding:7px 10px;vertical-align:top}
+  .refcard{background:var(--paper2);border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:4px;padding:10px 13px;margin:8px 0;font-size:13.5px;line-height:1.55}
+  .refhd{font-family:var(--serif);font-weight:600;font-size:19px;margin:14px 0 2px}
+  .refnote{font-size:12px;color:var(--muted);margin-top:12px}
+  .secgrid{border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin:6px 0 4px}
+  .secrow{display:flex;align-items:center;padding:8px 12px;font-size:14px;border-bottom:1px solid var(--rule)} .secrow:last-child{border-bottom:0}
+  .secrow.sechead{background:var(--ink);color:var(--cream);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+  .secname{flex:1;font-weight:500} .secprog{width:66px;text-align:center;color:#4d463c} .secpct{width:70px;text-align:center;font-weight:700} .secdone{width:30px;text-align:center;color:var(--green);font-weight:900}
+  .slots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 10px}
+  .slot{min-width:58px;height:52px;border:1px solid var(--rule);border-radius:6px;display:grid;place-items:center;font-family:var(--serif);font-size:21px;font-weight:600;background:#fff;cursor:pointer;position:relative;padding:0 10px}
+  .slot .n{position:absolute;top:3px;left:6px;font-family:var(--sans);font-size:9.5px;color:var(--muted);font-weight:700}
+  .slot.cur{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)} .slot.given{background:var(--shade);color:#4d463c;cursor:default}
+  .slot.ok{border-color:var(--green);background:#e6efe5} .slot.no{border-color:var(--red);background:#f5e3e0}
+  .rnpal{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .rnpal button{border:1px solid var(--rule);background:#fff;border-radius:6px;padding:8px 12px;font-family:var(--serif);font-size:18px;font-weight:600;cursor:pointer;min-width:52px}
+  .rnpal button:hover{border-color:var(--ink)}
+  .barchips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 2px}
+  .barchip{border:1px solid var(--rule);background:#fff;border-radius:6px;padding:9px 14px;font-weight:600;font-size:13px;cursor:pointer;min-width:86px;text-align:center;font-family:var(--sans)}
+  .barchip.pitch{background:#e9e2f3;border-color:#6b4a7a;color:#45305a} .barchip.rhythm{background:#fbe9d2;border-color:var(--brass);color:#6a4d12}
+  .barchip.ok{box-shadow:inset 0 0 0 2px var(--green)} .barchip.no{box-shadow:inset 0 0 0 2px var(--red)}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+  .step{border:1px solid var(--rule);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+  .step.on{background:var(--ink);color:var(--cream);border-color:var(--ink)} .step.done{color:var(--green);border-color:var(--green)}
+  .asplayed{margin-top:10px;font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700}
+  footer{flex:none;max-width:900px;margin:0 auto;padding:5px 16px 7px;color:#8f877a;font-size:11px;text-align:center}
+  #toast{position:fixed;left:50%;top:84px;transform:translateX(-50%) translateY(-10px);z-index:60;opacity:0;background:var(--cream);color:var(--ink);font-family:var(--serif);font-weight:600;font-size:20px;padding:10px 24px;border-radius:999px;box-shadow:0 12px 34px rgba(0,0,0,.45);transition:opacity .25s,transform .3s;pointer-events:none;border:1px solid var(--brass);white-space:nowrap}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+  .shake{animation:shake .4s}
+  @keyframes winglow{0%{box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 0 rgba(61,107,69,.6)}100%{box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 14px rgba(61,107,69,0)}}
+  .winglow{animation:winglow .6s}
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+  #musicfx{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  #musicfx span{position:absolute;will-change:transform,opacity;animation:floatUp linear infinite;font-family:Georgia,serif}
+  @keyframes floatUp{0%{transform:translateY(40px) rotate(-10deg);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-160px) rotate(25deg);opacity:0}}
+  @media (prefers-reduced-motion:reduce){#musicfx span{animation:none;opacity:.35}}
+  main,header,footer{position:relative;z-index:2}
+  header .wrap{border-bottom:1px solid transparent;border-image:linear-gradient(90deg,var(--ox),var(--brass),#2e86c1,#27ae60,var(--ox)) 1}
+  .card{border-top-width:5px}
+  .dots .d.ok{background:#2ecc71;border-color:#2ecc71} .dots .d.no{background:#e74c3c;border-color:#e74c3c}
+  .avbtn{display:flex;align-items:center;gap:8px;border:1px solid rgba(239,233,220,.3);background:transparent;border-radius:999px;padding:3px 12px 3px 3px;cursor:pointer;color:#cfc8ba;font-family:var(--sans);font-size:12px}
+  .avbtn:hover{border-color:var(--cream)} .avbtn svg{width:34px;height:34px;border-radius:50%;display:block}
+  .avgrid{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start}
+  .avgrid .prev svg{width:150px;height:150px;border-radius:20px;display:block;box-shadow:0 8px 22px rgba(0,0,0,.2)}
+  .avopt{margin:0 0 10px} .avopt .setlabel{margin-bottom:4px}
+  .sw{width:28px;height:28px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--rule);cursor:pointer;display:inline-block}
+  .sw.on{box-shadow:0 0 0 2.5px var(--ink)}
+  .avchip{border:1px solid var(--rule);background:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+  .avchip.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .logav svg{width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px}
+  .streakfire{color:#ff8a3d}
+  .tabs button .ring{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-left:6px}
+  .tabs button .ring circle{fill:none;stroke-width:3}
+  .tabs button .mast{margin-left:5px;color:var(--brass);font-weight:900}
+  .tabs button.special{border-style:dashed}
+  .sfxbtn{background:transparent;border:1px solid rgba(239,233,220,.3);color:#cfc8ba;border-radius:999px;font-size:13px;padding:4px 10px;cursor:pointer;font-family:var(--sans)}
+  .sfxbtn.off{opacity:.5;text-decoration:line-through}
+  .dots .right{margin-left:auto;display:flex;gap:6px}
+  .dots .sprintbtn,.dots .h2hbtn{border:1px solid rgba(239,233,220,.3);background:transparent;color:#cfc8ba;border-radius:999px;font-size:11px;font-weight:600;padding:5px 11px;cursor:pointer;font-family:var(--sans)}
+  .dots .sprintbtn:hover,.dots .h2hbtn:hover{border-color:var(--cream);color:var(--cream)}
+  .sprintbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:var(--cream);border-radius:6px;padding:8px 14px;margin:0 0 10px;font-family:var(--serif);font-size:20px;font-weight:600}
+  .sprintbar .clock{font-size:26px;color:var(--brass)} .sprintbar .sp{font-family:var(--sans);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#a79f91}
+  .h2hbar{display:flex;align-items:center;justify-content:center;gap:14px;background:var(--paper2);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;margin:0 0 10px;font-size:14px}
+  .h2hbar .pl{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid transparent} .h2hbar .pl.turn{border-color:var(--ink);background:#fff;font-weight:700}
+  .h2hbar .sc{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ox)}
+  .hearbtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)}
+  .hearbtn:disabled{opacity:.5}
+  .xpbonus{font-family:var(--sans);font-size:12px;color:var(--brass);font-weight:700;margin-left:8px}
+  .profgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:8px 0}
+  .profcell{background:var(--paper2);border:1px solid var(--rule);border-radius:6px;padding:10px 12px}
+  .profcell .l{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .profcell .v{font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.1}
+  .achgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0}
+  .ach{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--rule);border-radius:6px;padding:8px 10px;background:#fff}
+  .ach.locked{opacity:.45;filter:grayscale(1)} .ach .ic{font-size:22px;line-height:1} .ach .t{font-weight:700;font-size:13px} .ach .d{font-size:11.5px;color:#4d463c}
+  .masterbars{margin:8px 0} .mrow2{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13px} .mrow2 .nm{width:170px} .mrow2 .bar{flex:1;height:8px;background:var(--shade);border-radius:999px;overflow:hidden} .mrow2 .bar i{display:block;height:100%;background:var(--green)} .mrow2 .bar i.low{background:var(--red)} .mrow2 .bar i.mid{background:var(--brass)} .mrow2 .pc{width:60px;text-align:right;font-weight:700}
+  .avchip.locked{opacity:.5;border-style:dashed}
+  @keyframes rankpop{0%{transform:translate(-50%,-50%) scale(.7);opacity:0}60%{transform:translate(-50%,-50%) scale(1.06);opacity:1}100%{transform:translate(-50%,-50%) scale(1)}}
+  .guide.rank{animation:rankpop .5s;text-align:center}
+  .exambar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--ink);color:var(--cream);border-radius:6px;padding:8px 14px;margin:0 0 10px;font-size:13px}
+  .exambar b{font-family:var(--serif);font-size:19px;font-weight:600} .exambar .mk{color:var(--brass);font-weight:700} .exambar .tm{font-family:var(--serif);font-size:19px}
+  .examtable{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0} .examtable td,.examtable th{padding:7px 10px;border-bottom:1px solid var(--rule);text-align:left} .examtable th{background:var(--ink);color:var(--cream);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600} .examtable td.r{text-align:right;font-weight:700}
+  .examtotal{font-family:var(--serif);font-size:34px;font-weight:600;margin:6px 0}
+  .tabs button.exam{border-color:var(--brass);color:var(--brass)} .tabs button.exam.on{background:var(--brass);color:var(--ink)}
+  body.embed header,body.embed .topbar,body.embed .tabs,body.embed footer,body.embed #musicfx{display:none!important} body.embed main{padding-top:6px}
+  .embedframe{width:100%;height:min(78vh,820px);border:1px solid var(--rule);border-radius:6px;background:#1b1a18}
+  .dots .finishbtn{border:1px solid var(--brass);background:transparent;color:var(--brass);border-radius:999px;font-size:11px;font-weight:600;padding:5px 11px;cursor:pointer;font-family:var(--sans)}
+  @media (max-width:560px){.avgrid{grid-template-columns:1fr}.avgrid .prev svg{width:110px;height:110px;margin:0 auto}
+header h1{font-size:27px}header .eye{font-size:9.5px;letter-spacing:1.8px}.hud{gap:12px}.hud .stat{min-width:44px}.hud .stat .val{font-size:19px}
+    .card{padding:12px 12px 12px}.prompt{font-size:20px}.topbar{gap:8px}.namebar input{width:140px}.playbtn{font-size:15px;padding:11px 20px}.opts{grid-template-columns:1fr 1fr}.opts button{font-size:14px;padding:10px 10px}}
+  /* ---- Exam booklet skin: the WACE Question/Answer booklet layout, with MLSHS branding ---- */
+  body.paper{background:#4f4f4f;--ink:#000;--paper:#fff;--paper2:#f4f4f4;--line:#000;--muted:#555;--rule:#9a9a9a;--shade:#ebebeb;--accent:#000;--ox:#000;--brass:#000;--cream:#fff;--green:#1d6b2d;--red:#b3261e;--serif:Arial,Helvetica,sans-serif;--sans:Arial,Helvetica,sans-serif}
+  body.paper header,body.paper .topbar,body.paper .howbtn,body.paper .qnum,body.paper .difftog,body.paper .modetoggle,body.paper footer{display:none!important}
+  body.paper main{max-width:880px;padding:8px 10px 10px}
+  body.paper .tabs{padding:4px 2px 4px} body.paper .tabs button{border-radius:0;border-color:#8d8d8d;color:#e6e6e6;font-size:11.5px;padding:5px 10px;font-weight:600;font-family:Arial,Helvetica,sans-serif}
+  body.paper .tabs button.on,body.paper .tabs button.exam.on{background:#fff;color:#000;border-color:#fff} body.paper .tabs button .ring,body.paper .tabs button .mast,body.paper .tabs button .pc{display:none}
+  body.paper .dots{padding:0 2px 6px} body.paper .dots .d{border-radius:0;border-color:#c4c4c4} body.paper .dots .d.cur{box-shadow:0 0 0 2px #4f4f4f,0 0 0 3.5px #fff}
+  body.paper .dots .finishbtn{border-radius:0;border-color:#fff;color:#fff;font-family:Arial,Helvetica,sans-serif}
+  body.paper .card{border-radius:0;border-top:0;box-shadow:0 3px 18px rgba(0,0,0,.55);padding:24px 46px 30px;font-size:14px;line-height:1.45;color:#000;font-family:Arial,Helvetica,sans-serif}
+  body.paper.embed{background:#fff} body.paper.embed .card{box-shadow:none;padding:6px 22px 24px} body.paper.embed .rhead{display:none} body.paper.embed main{padding-top:0}
+  body.paper .rhead{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:700;letter-spacing:.6px;padding-bottom:4px;margin-bottom:14px;border-bottom:1.5px solid #000;text-transform:uppercase}
+  body.paper .rhead .tm{font-weight:400;letter-spacing:0;text-transform:none}
+  body.paper .secthead{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;font-weight:700;margin:2px 0 2px}
+  body.paper .parthead{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:700;margin:4px 0 4px}
+  body.paper .partnote{font-size:13.5px;margin:0 0 14px;line-height:1.45}
+  body.paper .qmain{font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline;margin:12px 0 2px}
+  body.paper .qhead{display:flex;justify-content:space-between;align-items:baseline;font-size:14.5px;font-weight:700;margin:10px 0 8px}
+  body.paper .qhead .mk,body.paper .qmain .mk{font-weight:700;white-space:nowrap;margin-left:12px}
+  body.paper .prompt{font-size:14px;font-weight:400;line-height:1.5;margin:0 0 8px;letter-spacing:0}
+  body.paper .sub{font-size:13.5px;color:#000}
+  body.paper .exambox{border:1px solid #000;padding:7px 12px;font-size:12px;margin:0 0 10px;line-height:1.45}
+  body.paper .playpanel{background:none;border:0;padding:2px 0 6px;justify-content:flex-start;margin:0 0 4px;gap:8px}
+  body.paper .playbtn,body.paper .pp{background:#e7e7e7;color:#000;border:1.5px solid #000;border-radius:999px;font-weight:700;font-size:14px;padding:8px 18px;font-family:Arial,Helvetica,sans-serif}
+  body.paper .playbtn.on,body.paper .pp.on{background:#000;color:#fff;box-shadow:none}
+  body.paper .replaybtn,body.paper .pp.sub{background:#fff;color:#000;border:1px solid #000;border-radius:999px;font-size:12.5px;padding:7px 14px;font-weight:600}
+  body.paper .plabel{text-align:left;width:auto;color:#000;font-size:12.5px}
+  body.paper .tempotog .tlab,body.paper .toolbar .lab{color:#000}
+  body.paper .scoreWrap,body.paper .staveWrap,body.paper .showbox{border:0;border-radius:0;padding:4px 0;background:#fff}
+  body.paper .scalebadge{border-radius:0;background:none;border:0;padding:0;margin:0 0 2px;font-weight:700;color:#000;font-size:13px}
+  body.paper .opts button{border-radius:0;border:1px solid #000;background:#fff;font-size:14px;font-family:Arial,Helvetica,sans-serif}
+  body.paper .opts button .k{border-radius:0}
+  body.paper .controls button,body.paper .nav button,body.paper .mpal button,body.paper .acc button,body.paper .tgrp button,body.paper .rnpal button,body.paper .tool,body.paper .slots .slot,body.paper .step,body.paper .barchips button{border-radius:0!important;font-family:Arial,Helvetica,sans-serif}
+  body.paper .controls button{border:1px solid #000} body.paper .btn-check{background:#000;color:#fff} body.paper .btn-ans{color:#000;border-color:#000!important}
+  body.paper .nav button{border:1px solid #000;background:#fff}
+  body.paper .pfoot{display:flex;justify-content:flex-end;font-size:12px;font-weight:700;letter-spacing:.6px;margin-top:22px;padding-top:6px;border-top:1.5px solid #000;text-transform:uppercase}
+  body.paper .embedframe{border:1px solid #000;border-radius:0;background:#fff}
+  body.paper .feedback{font-size:15px;font-weight:700}
+  body.paper .hint{color:#444;font-size:12px}
+  body.paper .examtable{font-size:13.5px;margin:10px 0} body.paper .examtable th{background:#fff;color:#000;border:1px solid #000} body.paper .examtable td{border:1px solid #000}
+  body.paper .examtotal{font-size:28px;font-weight:700}
+  .cover .ctop{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1.5px solid #000;padding-bottom:14px;margin-bottom:14px;flex-wrap:wrap}
+  .cover .crest{display:flex;align-items:center;gap:12px}
+  .cover .crestimg{height:64px;width:auto;display:block} .cover .crest.noimg .crestimg{display:none} .cover .crest:not(.noimg) .crestbox{display:none}
+  .cover .crestbox{width:64px;height:64px;border:2.5px solid #000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;letter-spacing:1px;flex:none}
+  .cover .cresttxt{font-size:13.5px;font-weight:700;line-height:1.25} .cover .cresttxt small{display:block;font-weight:400;font-size:11px;margin-top:3px}
+  .cover .cright{text-align:right;font-size:13px;line-height:1.4} .cover .cright b{font-size:15px;display:block}
+  .cover h2{font-size:36px;font-weight:700;margin:2px 0 12px;letter-spacing:1px;font-family:Arial,Helvetica,sans-serif}
+  .cover .idbox{border:1px solid #000;padding:10px 12px;font-size:13px;margin:0 0 14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .cover .idbox .line{flex:1;border-bottom:1px solid #000;min-width:160px;padding:0 6px;font-weight:700}
+  .cover h3{font-size:14.5px;font-weight:700;margin:14px 0 4px}
+  .cover p,.cover li{font-size:13.5px;line-height:1.45;margin:3px 0;color:#000}
+  .cover table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 2px}
+  .cover td,.cover th{border:1px solid #000;padding:6px 8px;text-align:center;vertical-align:middle} .cover th{font-weight:700;background:#fff} .cover td:first-child{text-align:left}
+  .cover .fn{font-size:11.5px;color:#333}
+  .cover ol{padding-left:22px;margin:4px 0}
+  .cover .controls{margin-top:18px}
+  @media (max-width:640px){body.paper .card{padding:16px 16px 20px}.cover h2{font-size:28px}.cover .cright{text-align:left}}
+  body.paper #musicfx{display:none!important} body.paper #toast{font-family:Arial,Helvetica,sans-serif;font-size:14px;border-radius:0;border:1px solid #000;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+  body.paper .tempotog{display:none} body.paper .controls button{flex:0 0 auto;padding:10px 22px}
+  body.paper.embed .dots .d{border-color:#000} body.paper.embed .dots .finishbtn{color:#000;border-color:#000} body.paper.embed .dots .d.cur{box-shadow:0 0 0 2px #fff,0 0 0 3.5px #000}
+  .solfarow{display:flex;flex-direction:column;gap:7px;margin:10px 0 4px;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--paper2)}
+  .solfarow .sfhd{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .solfarow .sfhd .sfres{font-weight:600;letter-spacing:0;text-transform:none;font-size:12.5px;color:var(--ink)}
+  .sfchips{display:flex;gap:5px;flex-wrap:wrap}
+  .sfc{min-width:40px;height:34px;border:1px solid var(--rule);background:#fff;border-radius:6px;font-family:var(--serif);font-size:17px;font-weight:600;cursor:pointer;color:var(--ink);padding:0 6px}
+  .sfc.cur{border-color:var(--ink);box-shadow:0 0 0 2px rgba(27,26,24,.18)} .sfc.given{background:var(--shade);color:var(--muted);cursor:default}
+  .sfc.ok{background:#e4efe5;border-color:#5d8a63;color:#2f5a35} .sfc.no{background:#f6e1df;border-color:#b4433a;color:#7d2a23}
+  .sfpal{display:flex;gap:5px;flex-wrap:wrap} .sfpal button{border:1px solid var(--rule);background:#fff;border-radius:999px;padding:7px 13px;font-family:var(--serif);font-size:17px;font-weight:600;cursor:pointer;color:var(--ink)}
+  .sfpal button:hover{border-color:var(--ink)}
+  body.paper .solfarow{display:none}
+  @media print{body{background:#fff;overflow:visible;height:auto}header,.topbar,.tabs,.dots,footer,.controls{display:none}.card{box-shadow:none;overflow:visible}}
+</style>
+</head>
+<body>
+<div id="musicfx"></div>
+<canvas id="fx"></canvas>
+<div id="toast"></div>
+<div class="gback" id="avback"></div>
+<div class="guide" id="avmodal"><button class="gclose" id="avclose">✕</button><div id="avbody"></div></div>
+<div class="gback" id="gback"></div>
+<div class="guide" id="guide"><button class="gclose" id="gclose">✕</button><div id="guidebody"></div></div>
+<div class="gback" id="setback"></div>
+<div class="guide" id="setmodal"><button class="gclose" id="setclose">✕</button><div id="setbody"></div></div>
+<header><div class="wrap">
+  <div><div class="eye">Mount Lawley SHS · Music · Years 7–12 · WA Curriculum &amp; WACE ATAR</div><h1>Aural Blitz<span class="dot"></span></h1></div>
+  <div class="hud">
+    <div class="stat"><span class="lbl">Score</span><span class="val" id="scv">0/0</span></div>
+    <div class="stat"><span class="lbl">Accuracy</span><span class="val" id="scp">—</span></div>
+    <div class="stat"><span class="lbl">Streak</span><span class="val brass" id="snum">0</span></div>
+    <div class="stat"><span class="lbl" id="lvl">Busker</span><span class="val" id="xptxt" style="font-size:15px;padding-top:4px">0 XP</span><div class="xp"><i id="xpbar"></i></div></div>
+    <div class="stat"><span class="lbl">Days</span><span class="val" id="daysv">0</span></div>
+    <button class="sfxbtn" id="sfxbtn" title="Sounds on correct / wrong">🔔</button>
+    <button class="rst" id="reset">Reset</button>
+  </div>
+</div></header>
+<main>
+  <div class="topbar">
+    <div class="modebar"><button id="mPr" class="on">Train</button><button id="mRe">Reference</button><button id="mRec">Record</button></div>
+    <div class="modebar yearbar" id="yearbar" title="Which year's content is the default"><span class="ylab">Year</span><button data-y="7">7</button><button data-y="8">8</button><button data-y="9">9</button><button data-y="10">10</button><button data-y="11">11</button><button data-y="12">12</button></div>
+    <div class="namebar"><button class="avbtn" id="avbtn" title="Customise your avatar"><span id="avmini"></span><span>Avatar</span></button><input id="nameinput" maxlength="28" placeholder="Your name" autocomplete="off"></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="dots" id="dots"></div>
+  <section class="card" id="card"></section>
+</main>
+<footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
+
+<script src="glyphs.js"></script>
+<script src="audio.js"></script>
+<script src="samples.js"></script>
+<script src="engrave.js"></script>
+<script src="content.js"></script>
+<script src="refs.js"></script>
+<script src="embed.js"></script>
+<script>
+const ACCSYM={'':'',s:'♯',f:'♭',n:'♮',ss:'𝄪',ff:'♭♭'};
+const UCOL=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#5b5fc7','#c2185b','#0e7c86','#b2862f','#2e7d32','#6a3df0','#d35400','#3f5f7a'];
+const RCOL='#2f6f6a';
+const WINMSG=['Correct! 🎯','Yes! ⭐','Good ear. 🎧','Right! 🎉','Well heard. 🔥'];
+const MISSMSG=['Not quite.','Not this time.','Listen again. 🎧'];
+const N=10; // questions per section run
+const T3=ENGRAVE.T3, eq=(a,b)=>Math.abs(a-b)<1e-6;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+function esc(s){return(''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+// state
+let mode='practise', ui=0, qi=0, order=[], accMode='';
+let slots=[],nchecked=false,answered=false;
+const results={},scored={},uStat={},unitDone={};
+let total=0,correct=0,streak=0,level=1,LOG=[],currentName='';
+let runQs={}, audioUnlocked=false, playing=false, playTimer=null;
+let forceMode=null;
+// ---- special sets: Today's Blitz (seeded by date) and Weak spots (lowest mastery) ----
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const REAL=()=>UNITS.filter(u=>!u.special);
+function withSeed(seed,fn){const save=Math.random;Math.random=mulberry(seed);try{return fn();}finally{Math.random=save;}}
+const TODAY={name:"Today's Blitz",key:'today',special:true,ask:'Listen.',guide:`<p class="prompt">Today's Blitz</p><ul><li>Ten questions drawn from every section, the same ten for everyone in your year today.</li><li>Answer at least five and today counts towards your <b>days in a row</b>.</li><li>Come back tomorrow for a new set.</li></ul>`,
+  gen(ctx){const real=REAL();const seed=hashStr(todayStr()+'|'+YEAR+'|'+ctx.pos);return withSeed(seed,()=>{const r=real[Math.floor(Math.random()*real.length)];const ri=UNITS.indexOf(r);const q=r.gen(Object.assign({},ctx,{mode:r.canNotate?'choice':undefined,cfg:(gk)=>cfgGet(ri,gk)}));q._from=ri;return q;});}};
+const WEAK={name:'Weak spots',key:'weak',special:true,ask:'Listen.',guide:`<p class="prompt">Weak spots</p><ul><li>Questions from the three sections where your recent accuracy is lowest.</li><li>Your mastery rings on the tabs show how each section is going (last 20 answers).</li></ul>`,
+  gen(ctx){const real=REAL();const scored=real.map(u=>({u,acc:mastery(u.key)})).filter(x=>x.acc.n>=3).sort((a,b)=>a.acc.acc-b.acc.acc).slice(0,3).map(x=>x.u);const pool=scored.length?scored:real;
+    const r=pool[Math.floor(Math.random()*pool.length)];const ri=UNITS.indexOf(r);const q=r.gen(Object.assign({},ctx,{mode:resolveMode(ri),cfg:(gk)=>cfgGet(ri,gk)}));q._from=ri;return q;}};
+// ---- Exam: Section One Part A in the WACE shape (seven aural question types, exam mark weights, one sitting) ----
+const EXAM={name:'Exam',key:'exam',special:true,exam:true,ask:'Listen.',guide:`<p class="prompt">Exam practice — Section One, Part A</p><ul><li>The same seven question types as the WACE paper, with the same mark weights: intervals (3), tonality and modulation (4), rhythmic dictation (11), discrepancies (7), chord progressions (10), melodic dictation (15), aural analysis (5 × 2).</li><li>Marks are awarded in proportion to what you get right, like the real marking key. Listen as often as you need, but the paper gives you each excerpt only a few times — practise working from three hearings.</li><li>Finish shows your marks per question and logs the total.</li></ul>`,
+  gen(ctx){const it=examPlan[ctx.pos];if(!it)return null;if(it.embed)return {kind:'embed',_exam:it,prompt:it.title,_from:UNITS.findIndex(u=>u.exam)};const r=UNITS.findIndex(u=>u.key===it.unit);const u=UNITS[r];
+    const cfg=(gk)=>(it.cfg&&gk in it.cfg)?it.cfg[gk]:cfgGet(r,gk);
+    let q=it.build?it.build(ctx,u,r,cfg):u.gen(Object.assign({},ctx,{diff:it.diff||ctx.diff,mode:it.mode||resolveMode(r),cfg}));
+    if(!q)return null;q._from=r;q._exam=it;q.prompt=q.examPrompt||(it.title+(it.sub?' — '+it.sub:''));return q;}};
+let examPlan=[],examOn=false,examStart=0,examTick=null;const embedRes={};
+const EMBED=(()=>{if(window.__EMBED)return window.__EMBED;try{return new URL(location.href).searchParams.get('embed')||'';}catch(e){return '';}})();
+const EMBED_YEAR=(()=>{if(window.__EMBED_YEAR)return window.__EMBED_YEAR;try{return parseInt(new URL(location.href).searchParams.get('year'),10)||0;}catch(e){return 0;}})();
+const THEORY_SRC=()=>(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partB)?null:'theory/index.html?embed=partB&year='+Math.max(11,YEAR);
+const HAS_THEORY=()=>(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partB)||(typeof HAS_THEORY_DIR!=='undefined'&&HAS_THEORY_DIR);
+addEventListener('message',e=>{const m=e.data;if(!m||m.type!=='blitz-exam-done')return;embedRes[m.part]=m;if(UNITS[ui]&&UNITS[ui].exam&&!examOn)finishExam();else if(UNITS[ui]&&UNITS[ui].exam){toast('Part '+m.part+' finished: '+m.tot+' / '+m.max);renderDots();}});
+const examDiff=()=>YEAR>=12?'hard':YEAR>=10?'med':'easy';
+function examIntervalsQ(ctx,u,r,cfg){ // a printed melody with three bracketed intervals to name (3 marks)
+  const dict=ENGRAVE.buildDictation({diff:'med',scaleNames:['major','natural minor','harmonic minor'],bars:4,clef:'treble',metre:A_pick(['4/4','3/4']),maxKs:4,rests:false,ties:false,anacrusis:false,triplets:false});
+  const snd=[];dict.notes.forEach((n,i)=>{if(!n.rest&&!(i>0&&dict.notes[i-1].tie))snd.push(i);});
+  const IV={1:'Minor 2nd',2:'Major 2nd',3:'Minor 3rd',4:'Major 3rd',5:'Perfect 4th',6:'Tritone',7:'Perfect 5th',8:'Minor 6th',9:'Major 6th',10:'Minor 7th',11:'Major 7th',12:'Octave'};
+  const pairs=[];for(let k=0;k+1<snd.length;k++){const a=dict.notes[snd[k]],b=dict.notes[snd[k+1]];const s=Math.abs(b.midi-a.midi);if(s>=1&&s<=12)pairs.push({i:snd[k],j:snd[k+1],s});}
+  const chosen=[];const want=[...pairs].sort(()=>Math.random()-0.5);for(const p of want){if(chosen.length>=3)break;if(chosen.some(c=>c.s===p.s||Math.abs(c.i-p.i)<2))continue;chosen.push(p);}
+  for(const p of want){if(chosen.length>=3)break;if(chosen.some(c=>c.i===p.i||Math.abs(c.i-p.i)<2))continue;chosen.push(p);} // fall back to repeating a size, never a pair
+  for(const p of want){if(chosen.length>=3)break;if(chosen.some(c=>c.i===p.i))continue;chosen.push(p);}
+  chosen.sort((a,b)=>a.i-b.i);ctx._ivTries=(ctx._ivTries||0)+1;if((chosen.length<3||new Set(chosen.map(c=>c.s)).size<3)&&ctx._ivTries<8)return examIntervalsQ(ctx,u,r,cfg);if(chosen.length<2)return examIntervalsQ(ctx,u,r,cfg);
+  const palette=Object.values(IV);const answer=chosen.map(c=>IV[c.s]);
+  return {kind:'numerals',fmt:x=>esc(x),palette,answer,given:0,dict,brackets:chosen,multiPlay:true,cue:false,rhythmOnly:false,scaleName:dict.scaleName,slotLabels:['(i)','(ii)','(iii)'],
+    play:()=>{const ev=soundingOf(dict.notes);return AUDIO.melody(ev.map(n=>n.midi),ev.map(n=>n.dur),0.5);},playLabel:'The melody is printed below with the second note of each bracket left blank; name the three bracketed intervals from what you hear',
+    why:chosen.map((c,k)=>'('+'i'.repeat(k+1)+') '+IV[c.s]).join(' · ')};}
+function examTonModQ(ctx,u,r,cfg){const q=u.gen(Object.assign({},ctx,{cfg:(gk)=>gk==='qtype'?['mod']:gk==='play'?'harm':gk==='dests'?['Relative','Dominant','Subdominant','None']:cfg(gk)}));
+  const dest=q.answer.startsWith('Relative')?'→ relative '+(q.startTonality==='Minor'?'major':'minor'):q.answer==='No modulation'?'→ no modulation':'→ '+q.answer.toLowerCase();
+  return {kind:'numerals',fmt:x=>esc(x),palette:['Major','Minor','→ relative major','→ relative minor','→ dominant','→ subdominant','→ no modulation'],answer:[q.startTonality,dest],given:0,slotLabels:['Tonality at the start','Modulation by the end'],play:q.play,playLabel:'Circle the tonality at the start, then where it has modulated to by the end',why:q.why};}
+// an excerpt in context: a phrase-shaped melody (the dictation builder) over an implied-harmony accompaniment, in a chosen texture, metre and tonality
+const CHORDS_FOR={major:{I:[0,''],IV:[5,''],V:[7,''],vi:[9,'mi'],ii:[2,'mi']},minor:{I:[0,'mi'],IV:[5,'mi'],V:[7,''],vi:[8,''],ii:[2,'dim']},natminor:{I:[0,'mi'],IV:[5,'mi'],V:[7,'mi'],vi:[8,''],ii:[2,'dim']},dorian:{I:[0,'mi'],IV:[5,''],V:[10,''],vi:[10,''],ii:[2,'mi']},mixolydian:{I:[0,''],IV:[5,''],V:[10,''],vi:[9,'mi'],ii:[5,'']}};
+function examExcerpt(o){o=o||{};const scale=o.scale||A_pick(['major','natural minor','harmonic minor']);const kind=/minor/.test(scale)?'minor':scale==='dorian'?'dorian':scale==='mixolydian'?'mixolydian':'major';
+  const metre=o.metre||A_pick(['4/4','3/4','6/8']);const dict=ENGRAVE.buildDictation({diff:'med',scaleNames:[scale],bars:4,clef:'treble',metre,maxKs:4,rests:false,ties:false,anacrusis:false,triplets:false});
+  const M=dict.metre,bpb=M.bpb;const C=CHORDS_FOR[scale==='natural minor'?'natminor':kind];const cad=o.cadence||'perfect';
+  // chord plan: half-bar chords in 4/4 and 6/8 (question I I | IV V, answer I I | cadence); one chord a bar in 3/4
+  const cb=(eq(bpb,3)&&!M.compound)?3:bpb/2;let plan;
+  if(cb===3){plan={perfect:['I','IV','V','I'],plagal:['I','V','IV','I'],imperfect:['I','IV','I','V'],interrupted:['I','IV','V','vi']}[cad];}
+  else{plan={perfect:['I','I','IV','V','I','I','V','I'],plagal:['I','I','IV','V','I','I','IV','I'],imperfect:['I','I','IV','I','I','IV','ii','V'],interrupted:['I','I','IV','V','I','I','V','vi']}[cad];}
+  const seq=plan.map(rn=>[rn].concat(C[rn]));const R=dict.tonicMidi>64?dict.tonicMidi-12:dict.tonicMidi;const prog=voiceProg(seq,R);
+  // keep the melody inside the harmony: strong beats of each half bar snap to that chord's tones; the final note fits the cadence
+  const pool=dict.pool.map(p=>p.midi);const snap=(n,semis)=>{const want=semis.map(x=>((R+x)%12+12)%12);let best=n.midi,bd=99;pool.forEach(m=>{if(!want.includes(((m%12)+12)%12))return;const dd=Math.abs(m-n.midi);if(dd<bd){bd=dd;best=m;}});if(best!==n.midi){n.midi=best;const pp=dict.pool.find(p=>p.midi===best);if(pp){n.d=pp.d;n.acc=pp.acc;n.letter=pp.letter;}}};
+  dict.notes.forEach((n,i)=>{if(n.rest)return;const seg=Math.min(seq.length-1,Math.floor(n.onset/cb+1e-6));const pos=n.onset-seg*cb;const e=seq[seg];const tones=(TY[e[2]]||[0,4,7]).map(iv=>e[1]+iv);
+    const strong=eq(pos,0)||(cb===3&&eq(pos,2));if(strong&&i!==dict.notes.length-1)snap(n,tones);if(i===dict.notes.length-1){snap(n,cad==='imperfect'?[7,11,2,10]:cad==='interrupted'?[0,3,8,9]:[0,4,7,3]);}});
+  const ev=soundingOf(dict.notes);const mel={mids:ev.map(n=>n.midi),durs:ev.map(n=>n.dur)};
+  const texture=o.texture||A_pick(['homophonic','homophonic','monophonic','polyphonic']);
+  let counter=null;if(texture==='polyphonic'){const d2=ENGRAVE.buildDictation({diff:'easy',scaleNames:[scale],bars:4,clef:'bass',metre,maxKs:4,rests:false,ties:false,anacrusis:false,triplets:false});const e2=soundingOf(d2.notes);let shift=dict.tonicMidi-d2.tonicMidi;shift=((shift%12)+18)%12-6;const melMean=ev.filter(n=>n.midi!=null).reduce((a,n)=>a+n.midi,0)/Math.max(1,ev.filter(n=>n.midi!=null).length);let mids=e2.map(n=>n.midi==null?null:n.midi+shift);const cm=mids.filter(x=>x!=null).reduce((a,b)=>a+b,0)/Math.max(1,mids.filter(x=>x!=null).length);while(cm-(melMean-10)>6&&mids.some(x=>x!=null&&x-12>=36)){mids=mids.map(x=>x==null?null:x-12);break;}counter={mids,durs:e2.map(n=>n.dur)};}
+  const spb=M.compound?0.42:0.5;
+  const play=()=>{const parts=[{mids:mel.mids,durs:mel.durs,offset:0,amp:1.05}];
+    if(texture==='homophonic'){const nv=Math.max(...prog.map(c=>c.length));for(let v=0;v<nv;v++)parts.push({mids:prog.map(c=>c[Math.min(v,c.length-1)]),durs:prog.map(()=>cb),offset:0,amp:v===0?0.7:0.45});}
+    if(texture==='polyphonic'&&counter)parts.push({mids:counter.mids,durs:counter.durs,offset:0,amp:0.85});
+    return AUDIO.lines(parts,spb);};
+  return {dict,scale,kind,metre,cadence:cad,texture,play,counter,prog,mel,label:'An excerpt — '+(texture==='homophonic'?'melody with accompaniment':texture==='polyphonic'?'two independent lines':'a single line')};}
+let examX={};
+function examAnalysisQ(part){return function(ctx){const X=part.x==='X2'?examX.X2:examX.X1;const q={kind:'choice',play:X.play,playLabel:X.label};
+  if(part.ask==='tonality'){const opts=UPTO()>=11?['Major','Minor','Modal']:['Major','Minor'];q.options=opts;q.answer=X.kind==='major'?'Major':X.kind==='minor'?'Minor':'Modal';q.examPrompt='Aural analysis — identify the tonality of the excerpt';q.why=X.kind==='major'?'Major: bright, with a leading note pulling home.':X.kind==='minor'?'Minor: the 3rd is lowered.':'Modal ('+X.scale+'): a clear centre but a modal colour.';}
+  else if(part.ask==='texture'){q.options=['Monophonic','Homophonic','Polyphonic'];q.answer=X.texture[0].toUpperCase()+X.texture.slice(1);q.examPrompt='Aural analysis — identify the texture';q.why=X.texture==='homophonic'?'Homophonic: a melody with chordal accompaniment.':X.texture==='polyphonic'?'Polyphonic: two independent melodic lines.':'Monophonic: a single unaccompanied line.';}
+  else if(part.ask==='metre'){q.options=['2/4','3/4','4/4','6/8'];q.answer=X.metre;q.examPrompt='Aural analysis — name the time signature';q.why=X.metre+': '+(X.metre==='6/8'?'compound duple, two dotted-crotchet beats.':X.metre==='3/4'?'simple triple.':'simple quadruple.');}
+  else if(part.ask==='cadence'){q.options=['Perfect','Plagal','Imperfect','Interrupted'];q.answer=X.cadence[0].toUpperCase()+X.cadence.slice(1);q.examPrompt='Aural analysis — name the cadence at the end of the excerpt';q.why={perfect:'Perfect: V–I, the bass falls a 5th to the tonic.',plagal:'Plagal: IV–I, the Amen.',imperfect:'Imperfect: the phrase ends on V, open.',interrupted:'Interrupted: V resolves to vi instead of I.'}[X.cadence];}
+  else {const names={'major':'Major','natural minor':'Natural minor','harmonic minor':'Harmonic minor','dorian':'Dorian','mixolydian':'Mixolydian'};const pool=['Major','Natural minor','Harmonic minor','Major pentatonic','Minor pentatonic'].concat(UPTO()>=11?['Mixolydian']:[],UPTO()>=12?['Dorian']:[]);const ans=names[X.scale];q.options=A_shuf([ans].concat(A_shuf(pool.filter(x=>x!==ans)).slice(0,3)));q.answer=ans;q.examPrompt='Aural analysis — name the scale the melody is built on';q.why=ans+'.';}
+  return q;};}
+const UPTO=()=>YEAR;
+function buildExamPlan(){const d=examDiff();
+  const scales1=['major','natural minor','harmonic minor'].concat(YEAR>=11?['mixolydian']:[],YEAR>=12?['dorian']:[]);
+  examX.X1=examExcerpt({scale:A_pick(scales1)});
+  examX.X2=examExcerpt({scale:A_pick(['major','natural minor','harmonic minor'].concat(YEAR>=11?['mixolydian']:[])),texture:'homophonic',metre:A_pick(['4/4','3/4']),cadence:A_pick(YEAR>=10?['perfect','plagal','imperfect','interrupted']:['perfect','plagal','imperfect'])});
+  const analysis=[{ask:'tonality',x:'X1'},{ask:'texture',x:'X1'},{ask:'metre',x:'X1'},{ask:'cadence',x:'X2'},{ask:'scale',x:'X2'}];
+  examPlan=[
+    {n:1,title:'Interval recognition',marks:3,unit:'ivl',build:examIntervalsQ,track:1,text:'Listen to the melody. Three intervals are bracketed on the score below; the second note of each bracket is not printed. Name each bracketed interval (i), (ii) and (iii).'},
+    {n:2,title:'Recognition of tonality and modulation',marks:4,unit:'ton',build:examTonModQ,track:2,text:'Listen to the excerpt. (a) Name the tonality at the beginning of the excerpt. (b) Name the key to which the excerpt has modulated by the end, or state that there is no modulation.'},
+    {n:3,title:'Rhythmic dictation',marks:11,unit:'rd',diff:d,cfg:{bars:'4',source:'melody'},track:3,text:'Listen to the melody and write its rhythm on the stave below. The time signature is given; pitches are not required.'},
+    {n:4,title:'Discrepancies',marks:7,unit:'dis',diff:d,cfg:{bars:'4',count:'3'},track:4,text:'The score below differs from what you hear in three places (pitch or rhythm). Locate each discrepancy, then correct the score to match the performance.'},
+    {n:5,title:'Chord progressions',marks:10,unit:'prog',cfg:{qtype:['write'],length:'8',labels:'names'},track:5,text:'Listen to the chord progression. The first chord is given. Identify the remaining chords in the spaces provided.'},
+    {n:6,title:'Melodic dictation',marks:15,unit:'pd',diff:d,cfg:{qtype:['melody'],bars:'4'},track:6,text:'Listen to the melody and write it on the stave below. The key signature and time signature are given.'},
+  ].concat(analysis.map((a,i)=>({n:7,sub:'Aural analysis ('+String.fromCharCode(97+i)+')'+(a.x==='X1'?' · excerpt 1':' · excerpt 2'),title:'Aural analysis',marks:2,unit:'ton',build:examAnalysisQ(a),track:a.x==='X1'?7:8,excerpt:a.x==='X1'?1:2,
+    text:'Listen to excerpt '+(a.x==='X1'?1:2)+'. '+({tonality:'Identify the tonality of the excerpt.',texture:'Identify the texture of the excerpt.',metre:'Name the time signature of the excerpt.',cadence:'Name the cadence at the end of the excerpt.',scale:'Name the scale on which the melody is based.'})[a.ask]})));
+  if(!EMBED&&HAS_THEORY())examPlan.push({n:'B',title:'Part B: Theory',marks:18,embed:'B',unit:'exam'});
+}
+function examMarks(){return examPlan.map((it,pos)=>{if(it.embed){const r=embedRes[it.embed];return {it,got:r?r.tot:0,max:r?r.max:it.marks,answered:!!r};}const q=runQs[ui]&&runQs[ui][pos];const f=q&&q._frac!==undefined?q._frac:0;return {it,got:Math.round(it.marks*f*2)/2,answered:!!(q&&(ui+'.'+pos) in scored)};});}
+function examStartCard(){const c=document.getElementById('card');document.getElementById('dots').innerHTML='';renderTabs();document.documentElement.style.setProperty('--accent','#b2862f');
+  c.innerHTML=examCover();c.scrollTop=0;
+  document.getElementById('examgo').onclick=startExam;
+  document.getElementById('examnew').onclick=()=>{buildExamPlan();runQs[ui]=[];examStartCard();};}
+function startExam(){examOn=true;examStart=Date.now();audioUnlocked=true;qi=0;load();clearInterval(examTick);examTick=setInterval(()=>{const t=document.getElementById('examclock');if(t)t.textContent=examClock();},1000);}
+function examClock(){const s=Math.floor((Date.now()-examStart)/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function examPartHead(it,pos){if(EMBED)return '';const first=examPlan.findIndex(x=>!!x.embed===!!it.embed)===pos;if(!first)return '';const full=HAS_THEORY()&&!EMBED;const totA=examPlan.filter(x=>!x.embed).reduce((a,b)=>a+b.marks,0);
+  return (pos===0?`<div class="secthead"><span>Section One: Music literacy</span><span>55% (${full?totA+18:totA} Marks)</span></div>`:'')+(it.embed?`<div class="parthead"><span>Part B: Theory</span><span>20% (18 Marks)</span></div><p class="partnote">This part has two (2) questions. Answer all questions in the spaces provided.</p>`:`<div class="parthead"><span>Part A: Aural</span><span>35% (${totA} Marks)</span></div><p class="partnote">This part has seven (7) questions. Answer all questions in the spaces provided. Each excerpt is on its own track; press the track to hear it. In the examination each track is played a set number of times with pauses between playings, so practise working from a few hearings.</p>`);}
+function examBar(){const it=curQ()._exam;const n=examPlan.indexOf(it);const sub=it.sub?it.sub.replace(/^Aural analysis /,'').replace(/ · excerpt \d/,''):'';const firstSub=it.n===7&&examPlan.findIndex(x=>x.n===7)===n;
+  return `<div class="rhead"><span>Music · ${EMBED?'Part A':'Section One'}</span><span>${n+1} of ${examPlan.length} · <span class="tm" id="examclock">${examClock()}</span></span></div>${examPartHead(it,n)}${firstSub?`<div class="qmain"><span>Question 7: Aural analysis</span><span class="mk">(${examPlan.filter(x=>x.n===7).reduce((a,b)=>a+b.marks,0)} marks)</span></div><p class="partnote" style="margin-bottom:4px">You will hear two excerpts. Answer parts (a) to (e) from them.</p>`:''}
+    <div class="qhead"><span>${it.embed?'Questions 8 and 9':it.n===7?'Question 7 '+sub:'Question '+it.n+': '+esc(it.title)}</span><span class="mk">(${it.marks} mark${it.marks===1?'':'s'})</span></div>`;}
+function examCover(){const full=HAS_THEORY()&&!EMBED;const totA=examPlan.filter(x=>!x.embed).reduce((a,b)=>a+b.marks,0);const yr=new Date().getFullYear();
+  return `<div class="cover"><div class="ctop"><div class="crest"><img class="crestimg" src="mlshs-logo.png" alt="" onerror="this.parentNode.classList.add('noimg')"><div class="crestbox">MLSHS</div><div class="cresttxt">Mount Lawley<br>Senior High School<small>Music · ATAR practice examination</small></div></div>
+    <div class="cright"><b>ATAR course examination practice, ${yr}</b>Question/Answer booklet<br>Section One: Music literacy</div></div>
+    <h2>MUSIC</h2>
+    <div class="idbox"><span>Student name:</span><span class="line">${esc(currentName||'')}</span><span>Year ${YEAR}</span></div>
+    <h3>Time allowed for this paper</h3><p>Reading time before commencing work: none in practice<br>Working time: ${full?'80 minutes for Section One (the clock runs from Start)':'60 minutes for Part A (the clock runs from Start)'}</p>
+    <h3>Materials required/recommended for this paper</h3><p><i>To be provided by the candidate</i><br>Standard items: this device, headphones or a quiet room, and manuscript paper if you like to sketch first.</p>
+    <h3>Structure of this paper</h3>
+    <table><tr><th>Section</th><th>Number of questions available</th><th>Number of questions to be answered</th><th>Suggested working time (minutes)</th><th>Marks available</th><th>Percentage of examination</th></tr>
+    <tr><td>Section One: Music literacy<br>Part A: Aural</td><td>7</td><td>7</td><td>60</td><td>${totA}</td><td>35</td></tr>
+    ${full?`<tr><td>Part B: Theory</td><td>2</td><td>2</td><td>20</td><td>18</td><td>20</td></tr><tr><td colspan="4" style="text-align:right;font-weight:700">Total</td><td>${totA+18}</td><td>55</td></tr>`:''}</table>
+    <p class="fn">Section Two (Cultural and contextual knowledge, 45%) is not part of this practice paper. Marks are awarded in proportion to what is correct, as in the marking key.</p>
+    <h3>Instructions to candidates</h3><ol><li>Answer all questions in the spaces provided on screen. Check each answer as you go, or move on and come back.</li><li>Press the track button to hear each excerpt. You may replay tracks as often as you like in practice.</li><li>Move between questions with Prev, Next or the markers above the page. Press <b>Finish exam</b> when you have answered every question; the paper is marked immediately and logged to the class record.</li><li>A new paper is generated every time, following the Year ${YEAR} syllabus (${({easy:'easier',med:'medium',hard:'harder'})[examDiff()]} dictations).</li></ol>
+    <div class="controls"><button class="btn-check" id="examgo">Start the examination</button><button class="btn-ghost" id="examnew">New paper</button></div></div>`;}
+function finishExam(){const wasOn=examOn;examOn=false;clearInterval(examTick);if(AUDIO)AUDIO.stop();const m=examMarks();const tot=m.reduce((a,x)=>a+x.got,0),max=m.reduce((a,x)=>a+(x.max||x.it.marks),0);const pct=Math.round(tot/max*100);
+  if(wasOn){logComplete(HAS_THEORY()&&!EMBED?'Exam · Section One':'Exam · Part A',pct);if(PROF){PROF.exams=PROF.exams||[];PROF.exams.push({at:Date.now(),tot,max,year:YEAR});saveProfiles();}}
+  const c=document.getElementById('card');document.getElementById('dots').innerHTML='';
+  const rows=[1,2,3,4,5,6,7,'B'].filter(n=>m.some(x=>x.it.n===n)).map(n=>{const its=m.filter(x=>x.it.n===n);const got=its.reduce((a,x)=>a+x.got,0),mx=its.reduce((a,x)=>a+(x.max||x.it.marks),0);const un=its.filter(x=>!x.answered).length;return `<tr><td>${n==='B'?'8–9':n}</td><td>${its[0].it.title}${un?' <span style="color:var(--muted);font-size:12px">· '+(n==='B'?'not finished':un+' part'+(un>1?'s':'')+' unanswered')+'</span>':''}</td><td class="r">${got} / ${mx}</td></tr>`;}).join('');
+  if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'A',tot,max},'*');}catch(e){}}
+  c.innerHTML=`<div class="qnum">Exam practice · Section One${HAS_THEORY()&&!EMBED?'':' · Part A'} · finished in ${examClock()}</div><div class="rhead"><span>Music · Section One${HAS_THEORY()&&!EMBED?'':' · Part A'}</span><span>Marks · finished in <span class="tm">${examClock()}</span></span></div><p class="prompt" style="font-weight:700;font-size:16px">${esc(currentName||'Your')} result</p><div class="examtotal">${tot} / ${max} <span style="font-size:18px;color:var(--muted)">(${pct}%)</span></div>
+    <table class="examtable"><tr><th>Q</th><th>Question</th><th style="text-align:right">Marks</th></tr>${rows}</table>
+    <p class="sub">Logged to the class record. Use Prev / the dots to review any question with its answer shown.</p>
+    <div class="controls"><button class="btn-ghost" id="examreview">Review answers</button><button class="btn-check" id="examagain">New paper</button></div>`;
+  if(pct>=70)burst('win',innerWidth/2,innerHeight/2,true);
+  document.getElementById('examreview').onclick=()=>{qi=0;load();};document.getElementById('examagain').onclick=()=>{buildExamPlan();runQs[ui]=[];Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});examStartCard();};}
+UNITS=[TODAY,WEAK].concat(UNITS,[EXAM]);
+const fromUnit=q=>(q&&q._from!==undefined)?UNITS[q._from]:UNITS[ui];
+// ---- profiles: progress that lasts, per student name ----
+const RANKS=[[0,'Busker'],[150,'Session Player'],[400,'Section Leader'],[800,'Principal'],[1400,'Soloist'],[2200,'Concertmaster'],[3500,'Maestro']];
+let PROFS={};try{PROFS=JSON.parse(localStorage.getItem('blitzAuralProfiles')||'{}');}catch(e){}
+let PROF=null;
+const profKey=()=>(currentName||'(no name)').trim().toLowerCase()||'(no name)';
+function loadProfile(){const k=profKey();PROF=PROFS[k]||(PROFS[k]={xp:0,correct:0,total:0,bestStreak:0,days:[],hist:{},ach:{},sprint:{},name:currentName});PROF.name=currentName||PROF.name;}
+function saveProfiles(){try{localStorage.setItem('blitzAuralProfiles',JSON.stringify(PROFS));}catch(e){}}
+function rankOf(xp){let r=RANKS[0],next=null;for(let i=0;i<RANKS.length;i++){if(xp>=RANKS[i][0]){r=RANKS[i];next=RANKS[i+1]||null;}}return {name:r[1],at:r[0],next};}
+function mastery(key){const h=(PROF&&PROF.hist&&PROF.hist[key])||[];const n=h.length;const acc=n?h.reduce((a,b)=>a+b,0)/n:0;return {n,acc,mastered:n>=20&&acc>=0.9};}
+function dayStreak(){const days=(PROF.days||[]).slice().sort();if(!days.length)return 0;const t=todayStr();const y=new Date();y.setDate(y.getDate()-1);const ys=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');
+  let last=days[days.length-1];if(last!==t&&last!==ys)return 0;let n=1;for(let i=days.length-2;i>=0;i--){const a=new Date(days[i+1]),b=new Date(days[i]);if(Math.round((a-b)/86400000)===1)n++;else break;}return n;}
+let dayAnswers=0;
+// ---- achievements (unlock avatar gear) ----
+const ACH=[
+  {id:'first',ic:'🎧',t:'First note',d:'Get your first answer right'},
+  {id:'perfect',ic:'💯',t:'Clean sheet',d:'A full set of 10 with none wrong',unlock:'bow'},
+  {id:'streak10',ic:'🔥',t:'On fire',d:'10 correct in a row'},
+  {id:'streak25',ic:'🌋',t:'Unstoppable',d:'25 correct in a row'},
+  {id:'hundred',ic:'💪',t:'Century',d:'100 correct answers',unlock:'headphones'},
+  {id:'days5',ic:'📅',t:'Habit',d:'Practise 5 days in a row',unlock:'beanie'},
+  {id:'oneListen',ic:'👂',t:'One listen',d:'10 questions right on the first hearing'},
+  {id:'master1',ic:'🏅',t:'Mastered',d:'90%+ over 20 answers in a section',unlock:'glasses'},
+  {id:'master5',ic:'🏆',t:'All-rounder',d:'Master five sections'},
+  {id:'sprint15',ic:'⚡',t:'Sprinter',d:'15 correct in a 60-second Sprint'},
+  {id:'concert',ic:'👑',t:'Concertmaster',d:'Reach the Concertmaster rank',unlock:'crown'},
+  {id:'today7',ic:'🗓️',t:'Regular',d:"Finish Today's Blitz 7 times"},
+];
+const ACC_LOCK={headphones:'hundred',glasses:'master1',beanie:'days5',bow:'perfect',crown:'concert'};
+function unlocked(acc){const need=ACC_LOCK[acc];return !need||(PROF&&PROF.ach&&PROF.ach[need])||(avatar.acc===AV.acc.indexOf(acc));}
+function badgesUnlocked(){const m=REAL().filter(u=>mastery(u.key).mastered).length;return m;}
+function grant(id){if(!PROF.ach[id]){PROF.ach[id]=Date.now();saveProfiles();const a=ACH.find(x=>x.id===id);setTimeout(()=>{toast(a.ic+' Achievement: '+a.t+(a.unlock?' — '+a.unlock+' unlocked for your avatar':''));burst('win',innerWidth/2,120,true);},700);}}
+function checkAch(ctx){if(!PROF)return;if(PROF.correct>=1)grant('first');if(streak>=10)grant('streak10');if(streak>=25)grant('streak25');if(PROF.correct>=100)grant('hundred');if(dayStreak()>=5)grant('days5');
+  if((PROF.oneListen||0)>=10)grant('oneListen');const m=REAL().filter(u=>mastery(u.key).mastered).length;if(m>=1)grant('master1');if(m>=5)grant('master5');if(rankOf(PROF.xp).at>=2200)grant('concert');if((PROF.todayDone||0)>=7)grant('today7');}
+let pd=[], me=[], meCursor=0, meSelDur=1, meRest=false, meTieNext=false, scoreMeta=null, pdDrag=null;
+let rn=[], rnCur=1, disMarks={}, disPhase='locate', disWork=[], disRewrite=null, disCursor=0, disLocOk=null;
+let dictSPB=0.55; try{const _t=parseFloat(localStorage.getItem('blitzAuralTempo'));if(_t>0)dictSPB=_t;}catch(e){}
+let dictDiff='easy'; try{const _d=localStorage.getItem('blitzAuralDiff');if(_d)dictDiff=_d;}catch(e){}
+let YEAR=0; try{const y=parseInt(localStorage.getItem('blitzAuralYear'),10);if(y>=7&&y<=12)YEAR=y;}catch(e){}
+if(!YEAR)YEAR=7;
+let CFG={}; try{CFG=JSON.parse(localStorage.getItem('blitzAuralCfg')||'{}');}catch(e){}
+const singleDef=g=>{if(g.def&&typeof g.def==='object'){let v=g.items[0].id;Object.keys(g.def).map(Number).sort((a,b)=>a-b).forEach(y=>{if(y<=YEAR)v=g.def[y];});return v;}return g.def!==undefined?g.def:(g.items&&g.items[0]&&g.items[0].id);};
+function cfgInit(reset){if(reset)CFG={};UNITS.forEach(u=>{if(!u.cfg)return;const uk=u.key;CFG[uk]=CFG[uk]||{};
+  u.cfg.forEach(g=>{ if(g.type==='multi'){CFG[uk][g.key]=CFG[uk][g.key]||{};g.items.forEach(it=>{if(!(it.id in CFG[uk][g.key]))CFG[uk][g.key][it.id]=((it.yr||7)<=YEAR&&!(it.junior&&YEAR>=9));});}
+    else { if(!(g.key in CFG[uk])||!g.items.some(it=>it.id===CFG[uk][g.key])) CFG[uk][g.key]=singleDef(g); } });});saveCfg();}
+function setYear(y){YEAR=y;try{localStorage.setItem('blitzAuralYear',y);}catch(e){}cfgInit(true);paintYear();runQs={};if(mode==='practise')openUnit();}
+function paintYear(){document.querySelectorAll('#yearbar button').forEach(b=>b.classList.toggle('on',+b.dataset.y===YEAR));}
+document.querySelectorAll('#yearbar button').forEach(b=>b.onclick=()=>{if(+b.dataset.y===YEAR)return;if(total>0&&!confirm('Switch to Year '+b.dataset.y+'? Every section goes back to that year\'s defaults.'))return;setYear(+b.dataset.y);});
+function askYear(){const g=document.getElementById('guide'),gb=document.getElementById('guidebody');
+  gb.innerHTML=`<p class="prompt">Which year are you in?</p><p class="sub">Each section starts with your year's syllabus content. You can open up later-year material in ⚙ any time, or change year up the top.</p>
+    <div class="opts" id="yearpick">${[7,8,9,10,11,12].map(y=>`<button data-y="${y}"><span class="k">${y}</span><span>Year ${y}${y>=11?' · ATAR':''}</span></button>`).join('')}</div>`;
+  gb.querySelectorAll('#yearpick button').forEach(b=>b.onclick=()=>{setYear(+b.dataset.y);closeGuide();});
+  g.classList.add('open');document.getElementById('gback').classList.add('open');}
+function saveCfg(){try{localStorage.setItem('blitzAuralCfg',JSON.stringify(CFG));}catch(e){}}
+function cfgGet(u,gk){const unit=UNITS[u],uk=unit.key,g=unit.cfg.find(x=>x.key===gk),v=CFG[uk][gk];
+  if(g.type==='multi'){const on=g.items.filter(it=>v[it.id]).map(it=>it.id);return on.length?on:g.items.map(it=>it.id);}
+  return v;}
+function resolveMode(u){if(!UNITS[u].canNotate)return undefined;if(sprintOn)return 'choice';return forceMode||'choice';}
+try{LOG=JSON.parse(localStorage.getItem('auralLogAll')||'[]');}catch(e){}
+try{currentName=localStorage.getItem('blitzName')||'';}catch(e){}
+function saveLog(){try{localStorage.setItem('auralLogAll',JSON.stringify(LOG));}catch(e){}}
+function logComplete(section,pct){const name=currentName||'(no name)',at=Date.now();
+  LOG=LOG.filter(e=>!(e.name===name&&e.section===section));LOG.push({name,section,pct,at,av:Object.assign({},avatar)});saveLog();}
+function finishSection(u){const us=uStat[u],pct=Math.round(us.cor/N*100);
+  logComplete(UNITS[u].name,pct);toast('🎉 '+UNITS[u].name+' complete — '+pct+'%');burst('win',innerWidth/2,140,true);
+  if(PROF){if(pct===100)grant('perfect');if(UNITS[u].key==='today'){PROF.todayDone=(PROF.todayDone||0)+1;saveProfiles();}checkAch();}}
+const qid=()=>ui+'.'+order[qi];
+function curQ(){const pos=order[qi];if(!runQs[ui])runQs[ui]=[];if(!runQs[ui][pos])runQs[ui][pos]=UNITS[ui].gen({level,diff:dictDiff,mode:resolveMode(ui),year:YEAR,pos,cfg:(gk)=>cfgGet(ui,gk)});return runQs[ui][pos];}
+
+// ---- fx: confetti + drifting notes ----
+const cvs=document.getElementById('fx'),fxctx=cvs.getContext('2d');
+function sizeFx(){cvs.width=innerWidth;cvs.height=innerHeight;}sizeFx();addEventListener('resize',sizeFx);
+let parts=[],raf=null;
+function burst(kind,x,y,big){const col=kind==='win'?['#2ecc71','#f1c40f','#3498db','#e74c3c','#9b59b6','#1abc9c','#ff8a3d','#ff6bd1']:['#c0392b','#8a8277'];
+  const Nn=(kind==='win'?90:30)*(big?2.2:1),up=kind==='win'?5:2.5;
+  for(let i=0;i<Nn;i++){const a=Math.random()*Math.PI*2,sp=(kind==='win'?7:4)*(0.35+Math.random())*(big?1.3:1);
+    parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-up,g:0.22,life:55+Math.random()*35,c:col[(Math.random()*col.length)|0],s:(kind==='win'?7:5)*(0.6+Math.random()),rot:Math.random()*6,vr:(Math.random()-0.5)*0.5,note:kind==='win'&&Math.random()<0.25});}
+  if(!raf)tickFx();}
+function tickFx(){raf=requestAnimationFrame(tickFx);fxctx.clearRect(0,0,cvs.width,cvs.height);parts=parts.filter(p=>p.life>0);
+  if(!parts.length){cancelAnimationFrame(raf);raf=null;return;}
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.life--;p.rot+=p.vr;fxctx.save();fxctx.translate(p.x,p.y);fxctx.rotate(p.rot);fxctx.globalAlpha=Math.max(0,Math.min(1,p.life/28));fxctx.fillStyle=p.c;
+    if(p.note){fxctx.font=(p.s*2.4)+'px Georgia';fxctx.fillText(['♪','♫','♩'][Math.floor(p.s)%3],0,0);}else fxctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.62);fxctx.restore();});}
+function burstAt(el,kind,big){const r=(el||document.getElementById('card')).getBoundingClientRect();burst(kind,r.left+r.width/2,Math.min(r.top+r.height/2,innerHeight*0.6),big);}
+(function(){const L=document.getElementById('musicfx'),gl=['♪','♫','♩','♬','♭','♯','𝄞'],cols=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22'];
+  for(let i=0;i<16;i++){const s=document.createElement('span');s.textContent=gl[(Math.random()*gl.length)|0];
+    const x=Math.random()<0.5?(1+Math.random()*12):(87+Math.random()*12);
+    s.style.left=x+'%';s.style.bottom=(Math.random()*100)+'%';s.style.fontSize=(18+Math.random()*26)+'px';s.style.color=cols[(Math.random()*cols.length)|0];s.style.opacity='0';
+    const dur=10+Math.random()*12;s.style.animationDuration=dur.toFixed(1)+'s';s.style.animationDelay=(-Math.random()*dur).toFixed(1)+'s';L.appendChild(s);}})();
+// ---- avatar ----
+const AV={skin:['#f6d5b8','#e8b894','#c68642','#8d5524','#5c3a1e','#ffdbac'],hair:['short','long','curly','bun','mohawk','none'],hairc:['#1b1a18','#4a2c17','#a0522d','#d4a017','#e74c3c','#2e86c1','#8e44ad','#f6f1e7'],
+  eyes:['round','happy','cool','wink'],mouth:['smile','grin','neutral','whistle'],acc:['none','headphones','glasses','beanie','bow','crown'],bg:['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#1b1a18'],badge:['','🎷','🎺','🎸','🎹','🎻','🥁','🎤','🎼','🎧']};
+let avatar={skin:0,hair:0,hairc:0,eyes:0,mouth:0,acc:0,bg:2,badge:0}; try{const a=JSON.parse(localStorage.getItem('blitzAvatar')||'null');if(a)avatar=Object.assign(avatar,a);}catch(e){}
+function avatarSVG(a,size){a=a||avatar;const sk=AV.skin[a.skin]||AV.skin[0],hc=AV.hairc[a.hairc]||AV.hairc[0],bg=AV.bg[a.bg]||AV.bg[0],hair=AV.hair[a.hair],eyes=AV.eyes[a.eyes],mouth=AV.mouth[a.mouth],acc=AV.acc[a.acc],badge=AV.badge[a.badge]||'';
+  let s=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"${size?` width="${size}" height="${size}"`:''}><rect width="100" height="100" fill="${bg}"/>`;
+  s+=`<path d="M22 100 C22 76 34 70 50 70 C66 70 78 76 78 100 Z" fill="${hc==='#f6f1e7'?'#d8d0c1':'#f6f1e7'}" opacity=".9"/>`;  // shoulders
+  if(hair==='long')s+=`<path d="M26 48 C24 24 36 16 50 16 C64 16 76 24 74 48 L76 78 L24 78 Z" fill="${hc}"/>`;
+  if(hair==='curly')s+=`<circle cx="30" cy="36" r="12" fill="${hc}"/><circle cx="50" cy="26" r="14" fill="${hc}"/><circle cx="70" cy="36" r="12" fill="${hc}"/><circle cx="38" cy="26" r="10" fill="${hc}"/><circle cx="62" cy="26" r="10" fill="${hc}"/>`;
+  s+=`<ellipse cx="50" cy="50" rx="22" ry="25" fill="${sk}"/>`;
+  if(hair==='short')s+=`<path d="M28 44 C28 26 38 20 50 20 C62 20 72 26 72 44 C66 36 58 32 50 32 C42 32 34 36 28 44 Z" fill="${hc}"/>`;
+  if(hair==='bun')s+=`<path d="M28 44 C28 26 38 20 50 20 C62 20 72 26 72 44 C66 36 58 32 50 32 C42 32 34 36 28 44 Z" fill="${hc}"/><circle cx="50" cy="18" r="8" fill="${hc}"/>`;
+  if(hair==='mohawk')s+=`<path d="M44 30 L50 8 L56 30 Z" fill="${hc}"/><path d="M36 40 C40 30 60 30 64 40 C58 36 42 36 36 40Z" fill="${hc}"/>`;
+  if(hair==='long')s+=`<path d="M28 46 C28 26 38 20 50 20 C62 20 72 26 72 46 C66 34 58 30 50 30 C42 30 34 34 28 46 Z" fill="${hc}"/>`;
+  if(hair==='curly')s+=`<path d="M28 44 C30 30 40 28 50 28 C60 28 70 30 72 44 C66 38 58 34 50 34 C42 34 34 38 28 44Z" fill="${hc}"/>`;
+  // eyes
+  if(eyes==='round')s+=`<circle cx="42" cy="48" r="3" fill="#1b1a18"/><circle cx="58" cy="48" r="3" fill="#1b1a18"/>`;
+  if(eyes==='happy')s+=`<path d="M38 49 Q42 44 46 49" stroke="#1b1a18" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M54 49 Q58 44 62 49" stroke="#1b1a18" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if(eyes==='wink')s+=`<circle cx="42" cy="48" r="3" fill="#1b1a18"/><path d="M54 48 L62 48" stroke="#1b1a18" stroke-width="2.4" stroke-linecap="round"/>`;
+  if(eyes==='cool')s+=`<rect x="34" y="43" width="14" height="9" rx="3" fill="#1b1a18"/><rect x="52" y="43" width="14" height="9" rx="3" fill="#1b1a18"/><path d="M48 46 L52 46" stroke="#1b1a18" stroke-width="2"/>`;
+  // mouth
+  if(mouth==='smile')s+=`<path d="M42 60 Q50 67 58 60" stroke="#8c2b22" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if(mouth==='grin')s+=`<path d="M40 59 Q50 70 60 59 Z" fill="#8c2b22"/><path d="M43 60 Q50 64 57 60" fill="#fff"/>`;
+  if(mouth==='neutral')s+=`<path d="M43 62 L57 62" stroke="#8c2b22" stroke-width="2.4" stroke-linecap="round"/>`;
+  if(mouth==='whistle')s+=`<circle cx="50" cy="62" r="3" fill="#8c2b22"/><text x="60" y="58" font-size="9" fill="#1b1a18" font-family="Georgia">♪</text>`;
+  // accessories
+  if(acc==='glasses')s+=`<circle cx="42" cy="48" r="6.5" stroke="#1b1a18" stroke-width="1.8" fill="none"/><circle cx="58" cy="48" r="6.5" stroke="#1b1a18" stroke-width="1.8" fill="none"/><path d="M48.5 48 L51.5 48" stroke="#1b1a18" stroke-width="1.8"/>`;
+  if(acc==='headphones')s+=`<path d="M27 50 C27 30 36 22 50 22 C64 22 73 30 73 50" stroke="#1b1a18" stroke-width="4" fill="none"/><rect x="22" y="44" width="9" height="16" rx="3" fill="#1b1a18"/><rect x="69" y="44" width="9" height="16" rx="3" fill="#1b1a18"/>`;
+  if(acc==='beanie')s+=`<path d="M26 44 C26 24 38 18 50 18 C62 18 74 24 74 44 Z" fill="#b2862f"/><rect x="26" y="40" width="48" height="7" rx="2" fill="#8c2b22"/><circle cx="50" cy="17" r="4" fill="#8c2b22"/>`;
+  if(acc==='bow')s+=`<path d="M62 26 L72 20 L72 32 Z M62 26 L52 20 L52 32 Z" fill="#c2185b"/><circle cx="62" cy="26" r="2.5" fill="#8c2b22"/>`;
+  if(acc==='crown')s+=`<path d="M34 28 L34 16 L42 23 L50 12 L58 23 L66 16 L66 28 Z" fill="#d4a017"/>`;
+  if(badge)s+=`<circle cx="82" cy="82" r="13" fill="#f6f1e7"/><text x="82" y="87" font-size="15" text-anchor="middle">${badge}</text>`;
+  return s+'</svg>';}
+function paintAvatar(){document.getElementById('avmini').innerHTML=avatarSVG(avatar,34);}
+function openAvatar(){const b=document.getElementById('avbody');const lockOf=(key,it,i)=>{if(key==='acc'&&!unlocked(it)){const a=ACH.find(x=>x.id===ACC_LOCK[it]);return a?a.d:'';}if(key==='badge'&&i>1&&i-1>badgesUnlocked()&&avatar.badge!==i)return 'master '+(i-1)+' section'+(i>2?'s':'');return '';};
+  const row=(key,label,items,swatch)=>`<div class="avopt"><div class="setlabel">${label}</div><div class="setchips">${items.map((it,i)=>{const lk=swatch?'':lockOf(key,it,i);return swatch?`<span class="sw ${avatar[key]===i?'on':''}" data-k="${key}" data-i="${i}" style="background:${it}"></span>`:`<button class="avchip ${avatar[key]===i?'on':''} ${lk?'locked':''}" data-k="${key}" data-i="${i}" ${lk?`data-lock="${esc(lk)}"`:''} title="${lk?'Locked: '+esc(lk):''}">${lk?'🔒 ':''}${it===''?'none':it}</button>`;}).join('')}</div></div>`;
+  b.innerHTML=`<p class="prompt">Your avatar</p><div class="avgrid"><div class="prev" id="avprev">${avatarSVG(avatar)}</div><div>
+    ${row('bg','Background',AV.bg,true)}${row('skin','Skin',AV.skin,true)}${row('hair','Hair',AV.hair)}${row('hairc','Hair colour',AV.hairc,true)}${row('eyes','Eyes',AV.eyes)}${row('mouth','Mouth',AV.mouth)}${row('acc','Accessory',AV.acc)}${row('badge','Instrument badge',AV.badge)}
+    <div class="controls"><button class="btn-ghost" id="avrandom">Surprise me</button><button class="btn-check" id="avdone">Done</button></div></div></div>`;
+  b.querySelectorAll('[data-k]').forEach(el=>el.onclick=()=>{if(el.dataset.lock){toast('🔒 '+el.dataset.lock);return;}avatar[el.dataset.k]=+el.dataset.i;saveAvatar();openAvatar();});
+  document.getElementById('avrandom').onclick=()=>{Object.keys(AV).forEach(k=>{if(k==='acc'||k==='badge')return;avatar[k]=(Math.random()*AV[k].length)|0;});saveAvatar();openAvatar();};
+  document.getElementById('avdone').onclick=closeAvatar;
+  document.getElementById('avmodal').classList.add('open');document.getElementById('avback').classList.add('open');}
+function closeAvatar(){document.getElementById('avmodal').classList.remove('open');document.getElementById('avback').classList.remove('open');}
+function saveAvatar(){try{localStorage.setItem('blitzAvatar',JSON.stringify(avatar));}catch(e){}paintAvatar();}
+document.getElementById('avbtn').onclick=openAvatar;document.getElementById('avclose').onclick=closeAvatar;document.getElementById('avback').onclick=closeAvatar;
+paintAvatar();
+// fx (restrained)
+function shakeCard(){const c=document.getElementById('card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');}
+function glowCard(){const c=document.getElementById('card');c.classList.remove('winglow');void c.offsetWidth;c.classList.add('winglow');}
+let toastT=null;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='';void t.offsetWidth;t.className='show';clearTimeout(toastT);toastT=setTimeout(()=>t.className='',1900);}
+
+// scoring
+function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;
+  const us=uStat[ui]||(uStat[ui]={ans:0,cor:0});us.ans++;if(ok)us.cor++;
+  const q=curQ();const plays=q._plays||1;let bonus=0;
+  if(ok){correct++;streak++;bonus=sprintOn?0:(plays<=1?10:plays===2?5:0);
+    const mile=[5,10,15,20,25,30,40,50].includes(streak);
+    if(mile){toast('🔥 '+streak+' in a row!');burst('win',innerWidth/2,120,true);}
+  } else streak=0;
+  lastBonus=bonus;
+  // profile: XP, history, days
+  if(h2h){const who=h2h.turn;if(ok)h2h.score[who]++;h2h.turn=1-who;setTimeout(h2hCheck,900);}
+  else if(PROF){const before=rankOf(PROF.xp).name;PROF.total++;if(ok){PROF.correct++;PROF.xp+=10+bonus;if(plays<=1)PROF.oneListen=(PROF.oneListen||0)+1;}
+    PROF.bestStreak=Math.max(PROF.bestStreak||0,streak);
+    const uk=fromUnit(q).key;const h=PROF.hist[uk]||(PROF.hist[uk]=[]);h.push(ok?1:0);if(h.length>20)h.splice(0,h.length-20);
+    dayAnswers++;const t=todayStr();if(dayAnswers>=5&&!PROF.days.includes(t))PROF.days.push(t);
+    saveProfiles();const after=rankOf(PROF.xp);if(after.name!==before)setTimeout(()=>rankUp(after.name),500);checkAch();}
+  if(ok)sfx(true);else sfx(false);
+  paintScore();
+  if(!sprintOn&&us.ans===N&&!unitDone[ui]){unitDone[ui]=true;finishSection(ui);}}
+let lastBonus=0;
+function rankUp(name){const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<div style="font-size:54px">${name==='Maestro'?'🎼':name==='Concertmaster'?'👑':name==='Soloist'?'🌟':'🎺'}</div><p class="prompt">New rank: ${name}</p><p class="sub">${esc(currentName||'You')} — keep it up. Your rank and XP are saved under your name on this device.</p><div class="controls"><button class="btn-check" id="rankok">Nice</button></div>`;
+  g.classList.add('open','rank');document.getElementById('gback').classList.add('open');burst('win',innerWidth/2,innerHeight/2,true);document.getElementById('rankok').onclick=()=>{g.classList.remove('rank');closeGuide();};}
+function paintScore(){document.getElementById('scv').textContent=correct+'/'+total;
+  const p=total?Math.round(correct/total*100):null;document.getElementById('scp').textContent=p===null?'—':p+'%';
+  document.getElementById('snum').textContent=(streak>=3?'🔥':'')+streak;
+  if(!PROF)loadProfile();const r=rankOf(PROF.xp);
+  document.getElementById('lvl').textContent=r.name;
+  document.getElementById('xptxt').textContent=PROF.xp+' XP';
+  document.getElementById('xpbar').style.width=(r.next?((PROF.xp-r.at)/(r.next[0]-r.at)*100):100)+'%';
+  document.getElementById('lvl').title=r.next?(r.next[0]-PROF.xp)+' XP to '+r.next[1]:'Top rank';
+  const ds=dayStreak();document.getElementById('daysv').textContent=ds+(ds>=3?'🔥':'');}
+function celebrate(ok,el){if(ok){glowCard();burstAt(el,'win');}else{shakeCard();burstAt(el,'miss');}}
+function pick(a){return a[(Math.random()*a.length)|0];}
+
+// modes
+function setMode(m){if(AUDIO)AUDIO.stop();if(sprintOn)endSprint(true);
+  mode=m;document.getElementById('mPr').classList.toggle('on',m==='practise');
+  document.getElementById('mRe').classList.toggle('on',m==='reference');
+  document.getElementById('mRec').classList.toggle('on',m==='record');
+  document.getElementById('dots').style.display=m==='practise'?'flex':'none';
+  document.getElementById('tabs').style.display=m==='record'?'none':'flex';
+  if(m==='practise'){ui=Math.min(ui,UNITS.length-1);openUnit();}
+  else if(m==='reference'){ui=0;loadRef();}
+  else renderRecord();}
+function csvLog(){const rows=[['Name','Section','Score %','Finished']].concat(LOG.map(e=>[e.name,e.section,e.pct,new Date(e.at).toLocaleString('en-AU')]));
+  return rows.map(r=>r.map(v=>'"'+(''+v).replace(/"/g,'""')+'"').join(',')).join('\r\n');}
+function renderRecord(){document.documentElement.style.setProperty('--accent','#b2862f');
+  const c=document.getElementById('card');
+  const grid=UNITS.map((u,i)=>{if(u.special)return '';const us=uStat[i],done=!!unitDone[i];const pct=us&&us.ans?Math.round(us.cor/N*100):null;
+    return `<div class="secrow"><span class="secname">${u.name}</span><span class="secprog">${us?us.ans:0}/${N}</span><span class="secpct">${pct===null?'—':pct+'%'}</span><span class="secdone">${done?'✓':''}</span></div>`;}).join('');
+  const rows=LOG.slice().sort((a,b)=>b.at-a.at).map(e=>`<tr><td class="logav">${e.av?avatarSVG(e.av,22):''}${esc(e.name)}</td><td>${esc(e.section)}</td><td><b>${e.pct}%</b></td><td>${new Date(e.at).toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td></tr>`).join('');
+  if(!PROF)loadProfile();const r=rankOf(PROF.xp);const mrows=REAL().map(u=>({u,m:mastery(u.key)})).filter(x=>x.m.n).sort((a,b)=>b.m.acc-a.m.acc);
+  const prof=`<div class="profgrid"><div class="profcell"><div class="l">Rank</div><div class="v">${r.name}</div><div class="d" style="font-size:11.5px;color:#4d463c">${r.next?(r.next[0]-PROF.xp)+' XP to '+r.next[1]:'top rank'}</div></div>
+    <div class="profcell"><div class="l">XP</div><div class="v">${PROF.xp}</div></div><div class="profcell"><div class="l">All-time</div><div class="v">${PROF.correct}/${PROF.total}</div></div>
+    <div class="profcell"><div class="l">Best streak</div><div class="v">${PROF.bestStreak||0}</div></div><div class="profcell"><div class="l">Days in a row</div><div class="v">${dayStreak()}</div><div style="font-size:11.5px;color:#4d463c">${PROF.days.length} day${PROF.days.length===1?'':'s'} total</div></div>
+    <div class="profcell"><div class="l">Sections mastered</div><div class="v">${REAL().filter(u=>mastery(u.key).mastered).length}</div></div></div>
+    <div class="refhd">Mastery (last 20 answers)</div><div class="masterbars">${mrows.length?mrows.map(x=>`<div class="mrow2"><span class="nm">${esc(x.u.name)}${x.m.mastered?' <span class="mast" style="color:var(--brass)">✓</span>':''}</span><span class="bar"><i class="${x.m.acc>=0.8?'':x.m.acc>=0.5?'mid':'low'}" style="width:${Math.round(x.m.acc*100)}%"></i></span><span class="pc">${Math.round(x.m.acc*100)}%</span></div>`).join(''):'<span style="color:#8a8277;font-size:13px">Answer some questions and your strengths and weak spots appear here.</span>'}</div>
+    ${mrows.length>=3?`<div class="controls"><button class="btn-check" id="goweak">Practise my weak spots</button><button class="btn-ghost" id="gotoday">Today's Blitz</button></div>`:''}
+    <div class="refhd">Achievements</div><div class="achgrid">${ACH.map(a=>`<div class="ach ${PROF.ach[a.id]?'':'locked'}"><span class="ic">${a.ic}</span><div><div class="t">${a.t}</div><div class="d">${a.d}${a.unlock?' · unlocks '+a.unlock:''}</div></div></div>`).join('')}</div>
+    ${(PROF.exams||[]).length?`<div class="refhd">Exam practice</div><p class="sub">${PROF.exams.slice(-6).map(e=>'Y'+e.year+' · <b>'+e.tot+'/'+e.max+'</b> ('+new Date(e.at).toLocaleDateString('en-AU',{day:'2-digit',month:'short'})+')').join(' · ')}</p>`:''}
+    ${Object.keys(PROF.sprint||{}).length?`<div class="refhd">Sprint bests</div><p class="sub">${REAL().filter(u=>PROF.sprint[u.key]).map(u=>esc(u.name)+' <b>'+PROF.sprint[u.key]+'</b>').join(' · ')}</p>`:''}`;
+  c.innerHTML=`<p class="prompt">Progress record</p>
+    <p class="sub"><span class="logav">${avatarSVG(avatar,22)}</span>Student: <b>${esc(currentName||'(type your name above)')}</b>. Your rank, XP and mastery are saved under your name on this device.</p>${prof}<div class="refhd">This session</div>
+    <div class="secgrid"><div class="secrow sechead"><span class="secname">Section</span><span class="secprog">Done</span><span class="secpct">Score</span><span class="secdone">✓</span></div>${grid}</div>
+    <div class="refhd">Class log</div>
+    <div class="reftable"><table><tr><th>Name</th><th>Section</th><th>%</th><th>Finished</th></tr>${rows||'<tr><td colspan="4" style="color:#8a8277">No finished sections yet.</td></tr>'}</table></div>
+    <div class="controls"><button class="btn-ghost" id="csvlog">Export CSV</button><button class="btn-ghost" id="printlog">Print</button><button class="btn-ans" id="clearlog">Clear class log</button></div>`;
+  const gw=document.getElementById('goweak');if(gw)gw.onclick=()=>{setMode('practise');ui=1;openUnit();};const gt=document.getElementById('gotoday');if(gt)gt.onclick=()=>{setMode('practise');ui=0;openUnit();};
+  document.getElementById('printlog').onclick=()=>window.print();
+  document.getElementById('csvlog').onclick=()=>{const b=new Blob([csvLog()],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='aural-blitz-log.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);};
+  document.getElementById('clearlog').onclick=()=>{if(confirm('Clear the whole class log saved on this device?')){LOG=[];saveLog();renderRecord();}};}
+function renderTabs(){const n=document.getElementById('tabs');n.innerHTML='';document.body.classList.toggle('paper',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].exam));
+  const list=mode==='practise'?UNITS:REFS;
+  list.forEach((u,i)=>{const b=document.createElement('button');b.textContent=u.name;b.className=(i===ui?'on':'')+(u.special?' special':'')+(u.exam?' exam':'');
+    if(mode==='practise'&&!u.special&&PROF){const m=mastery(u.key);if(m.n){const C=2*Math.PI*5.5;const col=m.mastered?'#d4a017':m.acc>=0.7?'#5d8a63':m.acc>=0.5?'#b2862f':'#b4433a';
+      b.innerHTML=esc(u.name)+`<svg class="ring" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="rgba(128,128,128,.35)"/><circle cx="7" cy="7" r="5.5" stroke="${col}" stroke-dasharray="${(C*m.acc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 7 7)"/></svg>`+(m.mastered?'<span class="mast">✓</span>':'');
+      b.title=Math.round(m.acc*100)+'% over your last '+m.n+(m.mastered?' — mastered':'');}}
+    b.onclick=()=>{if(sprintOn)endSprint(true);h2h=null;if(examOn&&!UNITS[i].exam&&!confirm('Leave the exam? Your marks so far will be lost.'))return;examOn=false;clearInterval(examTick);ui=i;mode==='practise'?openUnit():loadRef();};n.appendChild(b);});
+  const on=n.querySelector('.on');if(on&&on.scrollIntoView)try{on.scrollIntoView({inline:'nearest',block:'nearest'});}catch(e){}}
+const SPRINTABLE=u=>!u.special&&!['rd','pd','prog','dis'].includes(u.key);
+function renderDots(){const d=document.getElementById('dots');d.innerHTML='';
+  if(sprintOn)return;
+  order.slice(0,UNITS[ui].exam?order.length:N).forEach((actual,pos)=>{const s=document.createElement('div');const r=results[ui+'.'+actual];
+    s.className='d'+(pos===qi?' cur':'')+(r?(' '+r):'');s.onclick=()=>{qi=pos;load();};d.appendChild(s);});
+  const right=document.createElement('div');right.className='right';
+  if(UNITS[ui].exam){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent=examOn?'Finish exam':'Back to results';fb.onclick=()=>examOn?finishExam():finishExam();right.appendChild(fb);d.appendChild(right);return;}
+  if(SPRINTABLE(UNITS[ui])&&!h2h){const sb=document.createElement('button');sb.className='sprintbtn';const best=PROF&&PROF.sprint&&PROF.sprint[UNITS[ui].key];sb.textContent='⚡ 60s Sprint'+(best?' · best '+best:'');sb.onclick=startSprint;right.appendChild(sb);}
+  if(!UNITS[ui].special&&!h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='⚔ Head-to-head';hb.onclick=askH2H;right.appendChild(hb);}
+  if(h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='End head-to-head';hb.onclick=()=>{h2h=null;load();};right.appendChild(hb);}
+  d.appendChild(right);}
+// ---- 60-second Sprint ----
+let sprintOn=false,sprintEnd=0,sprintTick=null,sprintCor=0,sprintN=0;
+function startSprint(){if(!SPRINTABLE(UNITS[ui]))return;audioUnlocked=true;sprintOn=true;sprintCor=0;sprintN=0;sprintEnd=Date.now()+60000;
+  runQs[ui]=[];order=[...Array(400).keys()];qi=0;Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});
+  load();clearInterval(sprintTick);sprintTick=setInterval(()=>{const left=Math.max(0,Math.ceil((sprintEnd-Date.now())/1000));const c=document.getElementById('sprintclock');if(c)c.textContent=left+'s';if(left<=0)endSprint(false);},250);}
+function endSprint(abort){if(!sprintOn)return;sprintOn=false;clearInterval(sprintTick);if(AUDIO)AUDIO.stop();
+  const u=UNITS[ui];const best=(PROF&&PROF.sprint[u.key])||0;const isBest=sprintCor>best;if(PROF&&!abort){if(isBest){PROF.sprint[u.key]=sprintCor;}if(sprintCor>=15)grant('sprint15');saveProfiles();}
+  order=[...Array(N).keys()];runQs[ui]=[];qi=0;
+  if(abort){load();return;}
+  const c=document.getElementById('card');document.getElementById('dots').innerHTML='';
+  c.innerHTML=`<div class="qnum">${esc(u.name)} · Sprint over</div><p class="prompt">${sprintCor} correct in 60 seconds</p><p class="sub">${sprintN} answered · ${sprintN?Math.round(sprintCor/sprintN*100):0}% accuracy${isBest&&sprintCor?' · <b>new best!</b>':best?' · best '+best:''}</p>
+    <div class="controls"><button class="btn-check" id="sprintagain">⚡ Again</button><button class="btn-ghost" id="sprintdone">Back to practice</button></div>`;
+  if(isBest&&sprintCor)burst('win',innerWidth/2,innerHeight/2,true);
+  document.getElementById('sprintagain').onclick=startSprint;document.getElementById('sprintdone').onclick=()=>load();}
+// ---- head-to-head: two players, one device, first to 5 ----
+let h2h=null;
+function askH2H(){const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<p class="prompt">Head-to-head</p><p class="sub">Two players take turns on this device in <b>${esc(UNITS[ui].name)}</b>. First to 5 correct wins. Scores don't count towards your saved profile.</p>
+  <div class="setgrp"><div class="setlabel">Player 1</div><input class="h2hin" id="h2ha" maxlength="20" value="${esc(currentName||'')}" placeholder="Name" style="padding:9px 12px;border:1px solid var(--rule);border-radius:6px;font-family:var(--sans);font-size:14px;width:100%"></div>
+  <div class="setgrp"><div class="setlabel">Player 2</div><input class="h2hin" id="h2hb" maxlength="20" placeholder="Name" style="padding:9px 12px;border:1px solid var(--rule);border-radius:6px;font-family:var(--sans);font-size:14px;width:100%"></div>
+  <div class="controls"><button class="btn-check" id="h2hgo">Start</button><button class="btn-ghost" id="h2hno">Cancel</button></div>`;
+  g.classList.add('open');document.getElementById('gback').classList.add('open');
+  document.getElementById('h2hno').onclick=closeGuide;
+  document.getElementById('h2hgo').onclick=()=>{const a=document.getElementById('h2ha').value.trim()||'Player 1',b=document.getElementById('h2hb').value.trim()||'Player 2';h2h={names:[a,b],score:[0,0],turn:0,unit:ui};closeGuide();runQs[ui]=[];order=[...Array(400).keys()];qi=0;load();};}
+function h2hBar(){if(!h2h)return '';return `<div class="h2hbar">${h2h.names.map((n,i)=>`<span class="pl ${h2h.turn===i?'turn':''}">${esc(n)} <span class="sc">${h2h.score[i]}</span></span>`).join('<span style="color:var(--muted)">vs</span>')}<span style="color:var(--muted);font-size:12px">· first to 5</span></div>`;}
+function h2hCheck(){if(!h2h)return;const w=h2h.score.findIndex(s=>s>=5);if(w<0)return;const name=h2h.names[w];const g=document.getElementById('guide');
+  document.getElementById('guidebody').innerHTML=`<div style="font-size:54px;text-align:center">🏆</div><p class="prompt" style="text-align:center">${esc(name)} wins!</p><p class="sub" style="text-align:center">${h2h.score[0]} – ${h2h.score[1]}</p><div class="controls"><button class="btn-check" id="h2hre">Rematch</button><button class="btn-ghost" id="h2hend">Done</button></div>`;
+  g.classList.add('open');document.getElementById('gback').classList.add('open');burst('win',innerWidth/2,innerHeight/2,true);
+  document.getElementById('h2hre').onclick=()=>{h2h.score=[0,0];h2h.turn=0;closeGuide();runQs[ui]=[];qi=0;load();};
+  document.getElementById('h2hend').onclick=()=>{h2h=null;closeGuide();order=[...Array(N).keys()];runQs[ui]=[];qi=0;load();};}
+function openUnit(){if(sprintOn)endSprint(true);runQs[ui]=[];if(UNITS[ui].exam){buildExamPlan();order=[...Array(examPlan.length).keys()];qi=0;examOn=false;clearInterval(examTick);examStartCard();return;}order=[...Array(N).keys()];qi=0;load();}
+function feedback(msg,cls,why){const f=document.getElementById('fb');if(!f)return;f.innerHTML=msg+(why?`<div class="why">${why}</div>`:'');f.className='feedback '+(cls||'');}
+function loadRef(){document.documentElement.style.setProperty('--accent',RCOL);renderTabs();
+  const c=document.getElementById('card');c.innerHTML=REFS[ui].render();c.scrollTop=0;}
+
+// ---- audio play control ----
+function armBtnTimer(secs){playing=true;const b=document.getElementById('play');
+  if(b){b.disabled=true;b.classList.add('on');}
+  clearTimeout(playTimer);playTimer=setTimeout(()=>{playing=false;const bb=document.getElementById('play');if(bb){bb.disabled=false;bb.classList.remove('on');}},Math.max(400,secs*1000));}
+function doPlay(q){let r;try{r=q.play();}catch(e){r=1.2;}
+  if(r&&typeof r.then==='function'){r.then(s=>armBtnTimer(s||1.6)).catch(()=>armBtnTimer(1.6));armBtnTimer(1.6);}
+  else armBtnTimer(r||1.2);}
+function playCurrent(){const q=curQ();q._plays=(q._plays||0)+1;audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();
+  const b=document.getElementById('play');
+  if(q.needsSamples){if(b){b.disabled=true;b.textContent='Loading…';}
+    AUDIO.probeSamples().then(ok=>{if(b){b.textContent='▶ Play';}
+      if(!ok){feedback('Instrument samples couldn\'t load — open the app online once so they cache.','no');if(b)b.disabled=false;return;}
+      doPlay(q);}).catch(()=>{if(b){b.textContent='▶ Play';b.disabled=false;}feedback('Samples unavailable.','no');});
+  } else doPlay(q);}
+// sounding events for a dictation: ties merged, rests as null
+function soundingOf(notes){const out=[];for(let i=0;i<notes.length;i++){const n=notes[i];
+  if(i>0&&notes[i-1].tie&&!n.rest&&out.length){out[out.length-1].dur+=n.dur;continue;}
+  out.push({onset:n.onset,dur:n.dur,midi:n.rest?null:n.midi});}return out;}
+function armPartsTimer(secs){playing=true;document.querySelectorAll('.pp').forEach(b=>b.disabled=true);
+  clearTimeout(playTimer);playTimer=setTimeout(()=>{playing=false;document.querySelectorAll('.pp').forEach(b=>b.disabled=false);},Math.max(600,secs*1000));}
+function playPart(which){const q=curQ();if(!q||!q.dict)return;q._plays=(q._plays||0)+(which==='whole'?1:0.5);const src=q.kind==='discrep'?q.played:q.dict.notes;
+  const M=q.dict.metre, bpb=M.bpb||4, half=q.dict.totalBeats/2;
+  let sel=soundingOf(src); if(which==='h1')sel=sel.filter(n=>n.onset<half-1e-6);else if(which==='h2')sel=sel.filter(n=>n.onset>=half-1e-6);
+  audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();
+  let amps=null;
+  if(q.rhythmOnly){const acc=M.acc||[0];amps=sel.map(n=>{const pos=ENGRAVE.posInBar(n.onset,q.dict.pickup||0,bpb);return acc.some(a=>eq(a,pos))?1.3:0.82;});}
+  const spb=M.compound?dictSPB*0.82:dictSPB;
+  const ci=M.id==='7/8'?{n:7,beat:0.5,accents:[0,2,4]}:M.id==='5/4'?{n:5,beat:1,accents:[0,3]}:{n:M.compound?Math.round(M.numer/3):M.numer,beat:M.compound?1.5:1};
+  const opts={countIn:ci};
+  // a note followed by a rest is played short (detached) so the rest is unmistakable
+  opts.lens=sel.map((n,i)=>{const nx=sel[i+1];return (nx&&nx.midi==null)?0.5:0.95;});
+  if(which==='whole'&&q.cue){const tm=q.dict.tonicMidi, minor=/minor|dorian/.test(q.dict.scaleName); const first=sel.find(n=>n.midi!=null);
+    opts.cue={chord:[tm,tm+(minor?3:4),tm+7,tm+12],first:first?first.midi:null};}
+  // anacrusis: shorten the count-in so the pickup falls at the end of the count-in bar
+  if(q.dict.pickup&&which!=='h2'){const beatsIn=opts.countIn.n*opts.countIn.beat-q.dict.pickup;opts.countIn={n:Math.max(1,Math.round(beatsIn/opts.countIn.beat)),beat:opts.countIn.beat,accents:opts.countIn.accents};}
+  let r;try{r=AUDIO.melody(sel.map(n=>n.midi),sel.map(n=>n.dur),spb,q.swing,amps,opts);}catch(e){r=3;}armPartsTimer(r||3);}
+
+// ---- sol-fa cues (moveable do, la-based minor) for the four class scales ----
+const solfaCue=q=>{const d=q&&q.dict;if(!d||!ENGRAVE.solfaFor(d.scaleType))return '';return ' · '+(/minor/.test(d.scaleType)?'la':'do')+' = '+esc(d.tonicName);};
+const solfaAns=q=>{const d=q&&q.dict;if(!d||!ENGRAVE.solfaFor(d.scaleType))return '';return '<br><span style="font-weight:500;color:#5a5347">sol-fa: '+d.notes.filter(n=>!n.rest).map(n=>ENGRAVE.solfaOf(n.midi,d.tonicMidi,d.scaleType)).join(' ')+'</span>';};
+// ---- sol-fa entry row: students sing-name each note as well as writing it (moveable do, la-based minor) ----
+function sfInit(q,ans,pal,givenN){if(!ans||!ans.length)return;if(!q._sf||q._sf.ans.join()!==ans.join())q._sf={ans:ans.slice(),pal:pal.slice(),got:ans.map((a,i)=>i<(givenN||0)?a:''),given:givenN||0,cur:givenN||0,checked:false};return q._sf;}
+function sfRender(q){const el=document.getElementById('solfarow');const S=q&&q._sf;if(!el||!S)return;
+  const n=S.ans.filter((a,i)=>a===S.got[i]&&i>=S.given).length,of=S.ans.length-S.given;
+  el.innerHTML=`<div class="sfhd"><span>Sol-fa</span><span class="sfres">${S.checked?n+' / '+of+' syllables right':'tap a box, then a syllable'}</span></div>
+    <div class="sfchips">${S.got.map((g,i)=>`<button class="sfc${i<S.given?' given':''}${i===S.cur&&!S.checked?' cur':''}${S.checked&&i>=S.given?(g===S.ans[i]?' ok':' no'):''}" data-i="${i}" title="${S.checked?S.ans[i]:''}">${S.checked&&i>=S.given&&g!==S.ans[i]?`<s style="opacity:.55">${g||'·'}</s> ${S.ans[i]}`:(g||'·')}</button>`).join('')}</div>
+    ${S.checked?'':`<div class="sfpal">${S.pal.map(p=>`<button data-s="${p}">${p}</button>`).join('')}<button data-s="" title="Clear this box">✕</button></div>`}`;
+  el.querySelectorAll('.sfc').forEach(b=>b.onclick=()=>{if(S.checked||+b.dataset.i<S.given)return;S.cur=+b.dataset.i;sfRender(q);});
+  el.querySelectorAll('.sfpal button').forEach(b=>b.onclick=()=>{if(S.checked)return;S.got[S.cur]=b.dataset.s;if(b.dataset.s){let j=S.cur+1;while(j<S.got.length&&j<S.given)j++;S.cur=Math.min(S.got.length-1,j);}sfRender(q);});}
+function sfCheck(q){const S=q&&q._sf;if(!S)return '';S.checked=true;sfRender(q);const n=S.ans.filter((a,i)=>a===S.got[i]&&i>=S.given).length,of=S.ans.length-S.given;
+  const f=document.getElementById('fb');if(f&&of)f.insertAdjacentHTML('afterbegin',`<div class="sfline">Sol-fa: ${n} / ${of}${n===of?' ✓':''}</div>`);return n+'/'+of;}
+function sfReveal(q){const S=q&&q._sf;if(!S)return;S.got=S.ans.slice();S.checked=true;sfRender(q);}
+function sfReset(q){if(q)delete q._sf;}
+const sfRow=q=>(!UNITS[ui].exam&&q.dict&&ENGRAVE.solfaFor(q.dict.scaleType))?'<div class="solfarow" id="solfarow"></div>':'';
+const sfSetupDict=q=>{if(UNITS[ui].exam||!q.dict||!ENGRAVE.solfaFor(q.dict.scaleType))return;const d=q.dict;const notes=d.notes.filter(n=>!n.rest);sfInit(q,notes.map(n=>ENGRAVE.solfaOf(n.midi,d.tonicMidi,d.scaleType)),ENGRAVE.solfaFor(d.scaleType),d.notes.slice(0,q.given||0).filter(n=>!n.rest).length);sfRender(q);};
+// ---- load question ----
+function load(){if(AUDIO)AUDIO.stop();
+  const q=curQ();if(q&&q.kind==='embed'){renderTabs();renderDots();document.documentElement.style.setProperty('--accent','#b2862f');const c=document.getElementById('card');const src=THEORY_SRC();
+    c.innerHTML=`<div class="qnum">Exam practice · Section One · Part B: Theory</div>${examBar()}<p class="sub">Two score-based theory questions (${q._exam.marks} marks). Work through them below and press <b>Finish exam</b> inside the frame when done; the marks come back into this paper.${embedRes.B?' <b>Finished: '+embedRes.B.tot+' / '+embedRes.B.max+'</b>':''}</p>
+    <iframe class="embedframe" id="embedframe" ${src?`src="${src}"`:''} allow="autoplay"></iframe><div class="pfoot">End of questions</div><div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Finish ›</button></div>`;
+    if(!src){const f=document.getElementById('embedframe');f.srcdoc=EMBED_DOC.partB.replace('<head>','<head><script>window.__EMBED="partB";window.__EMBED_YEAR='+Math.max(11,YEAR)+';<\/script>');}
+    document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;c.scrollTop=0;return;}
+  const FU=fromUnit(q);document.documentElement.style.setProperty('--accent',UCOL[UNITS.indexOf(FU)%UCOL.length]);
+  accMode='';slots=[];nchecked=false;answered=false;renderTabs();renderDots();
+  const c=document.getElementById('card');
+  const eff=resolveMode(ui);
+  const toggle=(UNITS[ui].canNotate&&!sprintOn)?`<div class="modetoggle" id="mtog"><button data-m="choice" class="${eff==='choice'?'on':''}">Listen &amp; pick</button><button data-m="notate" class="${eff==='notate'?'on':''}">Listen &amp; write</button></div>`:'';
+  const tempos=[['0.85','Slow'],['0.55','Normal'],['0.4','Fast']];
+  const playpanel = q.multiPlay
+    ? `<div class="playpanel"><div class="playparts">
+         <button class="pp" data-pt="whole">▶ ${UNITS[ui].exam&&q._exam?'Listen to Track '+q._exam.track:'Whole'}</button>
+         <button class="pp sub" data-pt="h1">1st half</button>
+         <button class="pp sub" data-pt="h2">2nd half</button></div>
+       <span class="plabel">${(q.dict&&q.dict.bars)||4} bars in ${(q.dict&&q.dict.metre&&q.dict.metre.id)||'4/4'} · ${esc(q.scaleName)}${q.cue?' · tonic chord and starting note, then a count-in':' · one-bar count-in'}</span>
+       <div class="tempotog" id="tempotog"><span class="tlab">Tempo</span><div class="tgrp">${tempos.map(t=>`<button data-spb="${t[0]}" class="${Math.abs(dictSPB-parseFloat(t[0]))<1e-6?'on':''}">${t[1]}</button>`).join('')}</div></div></div>`
+    : `<div class="playpanel"><button class="playbtn" id="play">▶ ${UNITS[ui].exam&&q._exam?'Listen to Track '+q._exam.track+(q._exam.excerpt?' (excerpt '+q._exam.excerpt+')':''):'Play'}</button><button class="replaybtn" id="replay">Replay</button><span class="plabel">${UNITS[ui].exam&&q._exam?'':(q.playLabel||'')}</span></div>`;
+  const diffrow = (q.kind==='pitchdict'||q.kind==='melodydict'||q.kind==='rhythmdict'||q.kind==='discrep')
+    ? `<div class="difftog" id="difftog"><span class="tlab">Difficulty</span><div class="tgrp">${[['easy','Easy'],['med','Medium'],['hard','Hard']].map(d=>`<button data-diff="${d[0]}" class="${dictDiff===d[0]?'on':''}">${d[1]}</button>`).join('')}</div></div>` : '';
+  const qlabel=UNITS[ui].exam?examBar():sprintOn?`<div class="sprintbar"><span><span class="sp">Sprint</span> ${esc(FU.name)}</span><span class="clock" id="sprintclock">60s</span><span>${sprintCor} ✓</span></div>`:h2h?h2hBar():'';
+  const head=UNITS[ui].exam&&q._exam?`<div class="qnum">Exam practice · Section One · Part A · Question ${qi+1} of ${order.length}</div>${qlabel}${playpanel}<p class="prompt">${esc(q._exam.text||q.prompt)}</p>`:`<div class="qnum">${UNITS[ui].exam?'Exam practice · Section One · Part A':esc(UNITS[ui].name)+(UNITS[ui].special?' · '+esc(FU.name):'')} · ${sprintOn?'Question '+(sprintN+1):h2h?esc(h2h.names[h2h.turn])+"'s turn":'Question '+(qi+1)+' of '+order.length}</div>${qlabel}
+    <p class="prompt">${q.prompt||FU.ask}</p>
+    ${sprintOn?'':`<button class="howbtn" id="howbtn">How do I work this out?</button><button class="howbtn" id="gearbtn">⚙ Customise</button>`}${toggle}
+    ${sprintOn?'':diffrow}${playpanel}`;
+  const accbar=`<div class="toolbar"><span class="lab">Accidental</span><div class="acc" id="acc"><button data-acc="" title="As key signature">○</button><button data-acc="s">♯</button><button data-acc="f">♭</button><button data-acc="n">♮</button></div></div>`;
+  let body='';
+  if(q.kind==='pitchdict'){pd=[];
+    body=`<div class="scalebadge">Key: ${esc(q.scaleName)}${solfaCue(q)}</div>${accbar}
+      <div class="scoreWrap" id="scoreWrap"></div>${sfRow(q)}
+      <p class="hint">Click each empty note at its pitch (drag to adjust). A plain note takes the key signature; choose ♯ ♭ ♮ first for a note that needs one. ✕ clears a note.${sfRow(q)?' Then name each note in sol-fa in the boxes.':''}</p>
+      <div class="names" id="names"></div>
+      <div class="controls"><button class="btn-check" id="check">Check</button><button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else if(q.kind==='melodydict'||q.kind==='rhythmdict'){resetMD(q);
+    const vals=[[4,'Semibreve'],[3,'Dotted minim'],[2,'Minim'],[1.5,'Dotted crotchet'],[1,'Crotchet'],[0.75,'Dotted quaver'],[0.5,'Quaver'],[0.25,'Semiquaver'],[T3,'Triplet quaver']];
+    body=`<div class="scalebadge">${q.rhythmOnly?esc(q.scaleName):'Key: '+esc(q.scaleName)+solfaCue(q)}</div>
+      <div class="toolbar"><span class="lab">Value</span><div class="mpal" id="mpal">${vals.map(v=>`<button data-d="${v[0]}" class="${eq(v[0],1)?'on':''}">${v[1]}</button>`).join('')}
+        <button class="tool" id="restbtn">Rest</button><button class="tool" id="tiebtn">Tie to next</button></div></div>
+      ${q.rhythmOnly?'':accbar}
+      <div class="scoreWrap" id="scoreWrap"></div>${q.rhythmOnly?'':sfRow(q)}
+      <p class="hint">${q.rhythmOnly?'Choose a value (or Rest), then tap the stave to enter it at the cursor. "Tie to next" ties the last note into the next one you enter. ✕ removes a note and leaves its space empty; the next value you enter fills that space. Undo takes back the last note.':'Choose a value and accidental, then click the stave at the pitch. "Tie to next" ties the last note into the next one you enter. ✕ removes a note and leaves its space empty; the next value you enter fills that space. Undo takes back the last note.'+(sfRow(q)?' One sol-fa box per note you hear: name each in sol-fa too.':'')}</p>
+      <div class="names" id="names"></div>
+      <div class="controls"><button class="btn-check" id="check">Check</button><button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="undo">Undo</button><button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else if(q.kind==='numerals'){rn=q.answer.map((a,i)=>i<q.given?a:null);rnCur=q.given;
+    const scoreHtml=q.brackets?`<div class="scoreWrap">${bracketScore(q)}</div>`:'';
+    body=`${scoreHtml}<div class="slots" id="slots"></div>
+      <div class="rnpal" id="rnpal">${q.palette.map((p,i)=>`<button data-rn="${esc(p)}" title="${i+1}">${q.fmt?q.fmt(p):fmtRN(p)}</button>`).join('')}</div>
+      <p class="hint">${q.slotLabels?'Tap a slot, then your answer.':'Tap a slot, then a numeral. The first chord is given.'}</p>
+      <div class="controls"><button class="btn-check" id="check">Check</button><button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else if(q.kind==='discrep'){disMarks={};disPhase='locate';disWork=q.dict.notes.map(n=>Object.assign({},n));disRewrite=null;disLocOk=null;
+    const vals=[[4,'Semibreve'],[3,'Dotted minim'],[2,'Minim'],[1.5,'Dotted crotchet'],[1,'Crotchet'],[0.75,'Dotted quaver'],[0.5,'Quaver'],[0.25,'Semiquaver']];meSelDur=1;meRest=false;
+    body=`<div class="scalebadge">Key: ${esc(q.dict.scaleName)}</div>
+      <div id="fixtools" style="display:none"><div class="toolbar"><span class="lab">Value</span><div class="mpal" id="mpal">${vals.map(v=>`<button data-d="${v[0]}" class="${eq(v[0],1)?'on':''}">${v[1]}</button>`).join('')}<button class="tool" id="restbtn">Rest</button></div></div>${accbar}</div>
+      <div class="steps" id="dissteps"><span class="step on" id="step1">1 · Locate the discrepancies</span><span class="step" id="step2">2 · Correct the score</span></div>
+      <div class="scoreWrap" id="scoreWrap"></div>
+      <div class="barchips" id="barchips"></div>
+      <p class="hint" id="dishint">Step 1 — locate: tap a bar once for a pitch discrepancy, twice for rhythm, a third time to clear. Then Check — you'll then correct the score.</p>
+      <div id="asplayed"></div>
+      <div class="controls"><button class="btn-check" id="check">Check location</button><button class="btn-ghost" id="skipfix">Skip to correcting</button><button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else if(q.kind==='notate'){slots=q.notes.map((n,k)=>k<q.given?{d:dia(n[0],n[1]),a:n[2],given:true}:null);
+    body=`${accbar}<div class="staveWrap" id="sw"></div>${q.solfa&&!UNITS[ui].exam?'<div class="solfarow" id="solfarow"></div>':''}
+      <p class="hint">Pick an accidental, then click a line or space to place each note. Click a note to move it, or its ✕ to clear.${q.solfa&&!UNITS[ui].exam?' Then name each degree in sol-fa.':''}</p>
+      <div class="names" id="names"></div>
+      <div class="controls"><button class="btn-check" id="check">Check</button><button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else {const optOrder=q.options;
+    body=`<div class="opts" id="opts">`+optOrder.map((o,i)=>`<button data-o="${esc(o)}"><span class="k">${i+1}</span><span>${q.fmt?q.fmt(o):esc(o)}</span></button>`).join('')+`</div>
+      <div class="controls"><button class="btn-ans" id="answer">Show answer</button></div>`;
+  }
+  c.innerHTML=head+body+`<div class="feedback" id="fb"></div>${UNITS[ui].exam?`<div class="pfoot">${qi>=order.length-1?'End of questions':qi===examPlan.filter(x=>!x.embed).length-1?'End of Part A':'See next page'}</div>`:''}
+    <div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">${UNITS[ui].exam&&qi>=order.length-1?'Finish ›':'Next ›'}</button></div>`;
+  c.scrollTop=0;
+  wire(q);
+  if(q.kind==='notate'){drawStave();if(q.solfa&&!UNITS[ui].exam){sfInit(q,q.solfa,[...new Set(q.solfa)],q.given||0);sfRender(q);}}
+  else if(q.kind==='pitchdict'){renderPD(false);sfSetupDict(q);}
+  else if(q.kind==='melodydict'||q.kind==='rhythmdict'){renderMD(false);if(!q.rhythmOnly)sfSetupDict(q);}
+  else if(q.kind==='numerals')renderRN(false);
+  else if(q.kind==='discrep')renderDis(false);
+  if(audioUnlocked)setTimeout(()=>{if(mode!=='practise')return;q.multiPlay?playPart('whole'):playCurrent();},sprintOn?120:260);}
+// play back what the student has written (dictation) — before Check, so they can self-correct
+function playMine(){const q=curQ();audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();let ev=[];
+  if(q.kind==='pitchdict'){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie};const v=pd[i];if(v==null)return {onset:n.onset,dur:n.dur,rest:true};return {onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie};});
+    const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));ev=soundingOf(notes.map((n,k)=>({onset:n.onset,dur:n.dur,midi:n.rest?null:meta.midi[k],rest:n.rest,tie:n.tie})));}
+  else{let on=0;const notes=me.map(n=>{const o=on;on+=n.dur;if(n.gap)return {onset:o,dur:n.dur,rest:true};return {onset:o,dur:n.dur,rest:n.rest,tie:n.tie,d:n.d,acc:n.a};});
+    if(!notes.some(n=>!n.rest)){feedback('Enter some notes first.','no');return;}
+    const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));ev=soundingOf(notes.map((n,k)=>({onset:n.onset,dur:n.dur,midi:n.rest?null:(q.rhythmOnly?(q.dict.tonicMidi||67):meta.midi[k]),rest:n.rest,tie:n.tie})));}
+  const M=q.dict.metre;const spb=M.compound?dictSPB*0.82:dictSPB;let r;try{r=AUDIO.melody(ev.map(n=>n.midi),ev.map(n=>n.dur),spb,q.swing,null,{lens:ev.map((n,i)=>{const nx=ev[i+1];return (nx&&nx.midi==null)?0.5:0.95;})});}catch(e){r=3;}armPartsTimer(r||3);}
+
+// a printed melody with bracketed intervals (exam Q1)
+function bracketScore(q){const hide=new Set(q.brackets.map(b=>b.j));const notes=q.dict.notes.map((n,i)=>hide.has(i)?{onset:n.onset,dur:n.dur,state:'empty',trip:n.trip}:({onset:n.onset,dur:n.dur,rest:n.rest,tie:n.tie,trip:n.trip,d:n.d,acc:n.acc}));
+  const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'true'}));let svg=meta.svg;const add=[];
+  q.brackets.forEach((b,k)=>{const x1=meta.xs[b.i]-SS*0.9,x2=meta.xs[b.j]+SS*0.9;const y=Math.max(meta.y0+SS*1.5,Math.min(meta.ys[b.i],meta.ys[b.j])-SS*2.4);
+    add.push(`<path d="M${x1.toFixed(1)} ${(y+SS*0.7).toFixed(1)} V${y.toFixed(1)} H${x2.toFixed(1)} V${(y+SS*0.7).toFixed(1)}" fill="none" stroke="var(--ox)" stroke-width="1.4"/><text x="${((x1+x2)/2).toFixed(1)}" y="${(y-SS*0.4).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.95).toFixed(1)}" font-weight="700" fill="var(--ox)" font-family="Georgia,serif">(${'i'.repeat(k+1)})</text>`);});
+  return svg.replace('</svg>',add.join('')+'</svg>');}
+// ---- shared score spec ----
+function scoreSpec(q,notes,extra){const M=q.dict.metre||{};const w=document.getElementById('card').clientWidth||800;
+  const bars=q.dict.bars; let bps; if(w<620){bps=bars<=2?bars:2;} else if(w<820){bps=bars<=4?bars:(bars%4===0?4:3);} 
+  return Object.assign({clef:q.dict.clef||'treble',ks:q.dict.ks||0,bpb:M.bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:q.dict.pickup||0,bars,notes,rhythmOnly:!!q.rhythmOnly,barsPerSystem:bps},extra||{});}
+function givenRaw(q){const r=ENGRAVE.resolveLine(q.dict.notes,q.dict.ks||0,q.dict.pickup||0,q.dict.metre.bpb,'true');return r.shown[0];}
+
+// ---- pitch dictation ----
+function renderPD(checked){const q=curQ();const g0=givenRaw(q);
+  const notes=q.dict.notes.map((n,i)=>{
+    if(n.rest)return {onset:n.onset,dur:n.dur,rest:true,color:'#8a8277'};
+    if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie,color:'#8a8277'};
+    const v=pd[i];if(v==null)return {onset:n.onset,dur:n.dur,state:'empty'};
+    return {onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,showD:v.d,color:'var(--ink)',clearable:!checked,idx:i};});
+  const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));scoreMeta=meta;
+  if(checked){ // recolour by resolved midi
+    meta.order.forEach((n,k)=>{if(n.idx!==undefined){n.color=(meta.midi[k]===q.dict.notes[n.idx].midi)?'var(--green)':'var(--red)';}});
+    scoreMeta=ENGRAVE.drawScore(scoreSpec(q,meta.order,{mode:'raw'})); }
+  document.getElementById('scoreWrap').innerHTML=scoreMeta.svg;
+  document.getElementById('score').addEventListener('pointerdown',onScorePD);
+  const nm=document.getElementById('names');
+  if(checked){nm.style.display='block';nm.innerHTML='Answer: '+esc(q.dict.notes.filter(n=>!n.rest).map(n=>n.letter+ACCSYM[n.acc]).join(' '))+solfaAns(q);}else nm.style.display='none';}
+function nearestNote(ev){const q=curQ(),svg=document.getElementById('score');const h=ENGRAVE.hitTest(scoreMeta,svg,ev);let bi=-1,bd=1e9;
+  scoreMeta.order.forEach((n,k)=>{if(n.idx===undefined&&n.state!=='empty')return;if(scoreMeta.sysOf[k]!==h.sys)return;const dx=Math.abs(scoreMeta.xs[k]-h.x);if(dx<bd){bd=dx;bi=k;}});
+  if(bi<0)return {i:-1};const n=scoreMeta.order[bi];const i=(n.idx!==undefined)?n.idx:q.dict.notes.findIndex(x=>eq(x.onset,n.onset));return {i,d:h.d};}
+function onScorePD(ev){const cl=ev.target.closest('.sclr');if(cl){const k=+cl.dataset.i;const n=scoreMeta.order[k];if(n&&n.idx!==undefined)pd[n.idx]=null;feedback('','');renderPD(false);ev.preventDefault();return;}
+  const r=nearestNote(ev);if(r.i<0)return;const q=curQ();if(q.dict.notes[r.i].rest||r.i<q.given)return;
+  pd[r.i]={d:r.d,a:accMode};feedback('','');renderPD(false);pdDrag={i:r.i};ev.preventDefault();}
+function checkPitchDict(){const q=curQ();let right=0,empty=0;const need=q.dict.notes.filter((n,i)=>i>=q.given&&!n.rest).length;
+  const meta=ENGRAVE.drawScore(scoreSpec(q,q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenRaw(q),tie:n.tie};const v=pd[i];return v?{onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,idx:i}:{onset:n.onset,dur:n.dur,state:'empty',idx:i};}),{mode:'raw'}));
+  meta.order.forEach((n,k)=>{if(n.idx===undefined)return;if(n.state==='empty'){empty++;return;}if(meta.midi[k]===q.dict.notes[n.idx].midi)right++;});
+  const ok=(right===need);q._frac=need?right/need:1;renderPD(true);scoreOnce(ok);celebrate(ok);
+  if(ok){feedback(pick(WINMSG)+' All '+need+' pitches right.','ok',q.why);results[qid()]='ok';}
+  else{let m=pick(MISSMSG)+' '+right+' of '+need+' correct.';if(empty)m+=' '+empty+' empty.';feedback(m,'no',q.why);results[qid()]='no';}
+  sfCheck(q);renderDots();}
+function answerPitchDict(){const q=curQ();if(!(qid() in scored))scoreOnce(false);
+  const r=ENGRAVE.resolveLine(q.dict.notes,q.dict.ks||0,q.dict.pickup||0,q.dict.metre.bpb,'true');
+  for(let i=q.given;i<q.dict.notes.length;i++)if(!q.dict.notes[i].rest)pd[i]={d:q.dict.notes[i].d,a:r.shown[i]};
+  renderPD(true);feedback('Answer shown. Clear to try again.','',q.why);results[qid()]='no';sfReveal(q);renderDots();}
+
+// ---- melodic / rhythmic dictation (step entry) ----
+// gaps: a removed note leaves an empty space of its own length, so nothing after it shifts. The cursor sits at the first gap.
+function splitGap(G){const out=[];let r=G;for(const v of [4,3,2,1.5,1,0.75,0.5,0.25]){while(r>=v-1e-6){out.push({gap:true,dur:v});r-=v;}}
+  while(r>T3-1e-6){out.push({gap:true,dur:T3});r-=T3;}return out;}
+function mdTrim(){while(me.length>1&&me[me.length-1].gap)me.pop();const gi=me.findIndex(x=>x.gap);let on=0;for(let i=0;i<(gi<0?me.length:gi);i++)on+=me[i].dur;meCursor=on;}
+const fmtBeats=b=>{const w=Math.floor(b+1e-6),f=b-w;const fr=f<1e-6?'':Math.abs(f-0.5)<1e-6?'½':Math.abs(f-0.25)<1e-6?'¼':Math.abs(f-0.75)<1e-6?'¾':String(Math.round(f*100)/100).slice(1);return (w||!fr?w:'')+fr;};
+function resetMD(q){const f=q.dict.notes[0];me=[{dur:f.dur,d:f.d,a:givenRaw(q),rest:!!f.rest,tie:!!f.tie,given:true}];meCursor=f.dur;meSelDur=1;meRest=false;meTieNext=!!f.tie;}
+function renderMD(checked){const q=curQ();let on=0;
+  const notes=me.map((n,i)=>{const o=on;on+=n.dur;if(n.gap)return {onset:o,dur:n.dur,state:'empty',trip:eq(n.dur,T3),idx:i};return {onset:o,dur:n.dur,rest:n.rest,tie:n.tie,trip:eq(n.dur,T3),d:n.d,acc:n.a,showD:n.d,color:n.given?'#8a8277':'var(--ink)',clearable:(!checked&&!n.given),idx:i};});
+  const TB=q.dict.totalBeats;
+  let meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw',cursorBeat:(!checked&&meCursor<TB-1e-6)?meCursor:undefined}));
+  if(checked){ // compare sounding events
+    const stud=me.map((n,k)=>({onset:notes[k].onset,dur:n.dur,rest:n.rest,tie:n.tie,midi:n.rest?null:meta.midi[k]})).filter((x,k)=>!me[k].gap);
+    const ans=soundingOf(q.dict.notes), sEv=soundingOf(stud);
+    const good=k=>{const s=sEv.find(e=>eq(e.onset,notes[k].onset)||(e.onset<notes[k].onset+1e-6&&e.onset+e.dur>notes[k].onset+1e-6));if(!s)return false;
+      return ans.some(a=>eq(a.onset,s.onset)&&eq(a.dur,s.dur)&&(q.rhythmOnly?((a.midi==null)===(s.midi==null)):a.midi===s.midi));};
+    notes.forEach((n,k)=>{if(n.state==='empty')return;n.color=good(k)?'var(--green)':'var(--red)';n.clearable=false;});
+    meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'})); }
+  scoreMeta=meta;
+  document.getElementById('scoreWrap').innerHTML=meta.svg;
+  document.getElementById('score').addEventListener('pointerdown',onScoreMD);
+  const tb=document.getElementById('tiebtn');if(tb)tb.classList.toggle('on',meTieNext);
+  const rb=document.getElementById('restbtn');if(rb)rb.classList.toggle('on',meRest);
+  const nm=document.getElementById('names');
+  if(checked){nm.style.display='block';nm.innerHTML=q.rhythmOnly?'Rhythm shown — '+q.dict.notes.length+' notes/rests.':'Answer: '+esc(q.dict.notes.filter(n=>!n.rest).map(n=>n.letter+ACCSYM[n.acc]).join(' '))+solfaAns(q);}else nm.style.display='none';}
+function onScoreMD(ev){const q=curQ();const cl=ev.target.closest('.sclr');
+  if(cl){const k=+cl.dataset.i;const n=scoreMeta.order[k];if(n&&n.idx!==undefined&&n.idx>0){const x=me[n.idx];me.splice(n.idx,1,{gap:true,dur:x.dur});if(me[n.idx-1])me[n.idx-1].tie=false;mdTrim();feedback('','');renderMD(false);}ev.preventDefault();return;}
+  // fill a gap first if there is one: the new value must fit inside the empty space
+  const gi=me.findIndex(x=>x.gap);
+  if(gi>=0){let G=0,ge=gi;while(ge<me.length&&me[ge].gap){G+=me[ge].dur;ge++;}
+    if(meSelDur>G+1e-6){feedback('That value is bigger than the empty space ('+fmtBeats(G)+' beat'+(G>1?'s':'')+'). Pick a shorter value, or ✕ the next note to make more room.','no');return;}
+    const bpb0=q.dict.metre.bpb, pk0=q.dict.pickup||0;
+    if(ENGRAVE.barOf(meCursor+1e-4,pk0,bpb0)!==ENGRAVE.barOf(meCursor+meSelDur-1e-4,pk0,bpb0)){feedback('That note would cross a barline — use a shorter value and tie it.','no');return;}
+    if(eq(meSelDur,T3)){const pos=ENGRAVE.posInBar(meCursor,pk0,bpb0);let gEnd;if(q.dict.metre.compound){const g=q.dict.metre.g;let gj=0;for(let k=0;k<g.length;k++)if(pos>=g[k]-1e-6)gj=k;gEnd=g[gj+1]!==undefined?g[gj+1]:bpb0;}else gEnd=Math.floor(pos+1e-6)+1;if(pos+T3>gEnd+1e-6){feedback('A triplet quaver must sit inside one beat.','no');return;}}
+    const h0=ENGRAVE.hitTest(scoreMeta,document.getElementById('score'),ev);const d0=q.rhythmOnly?34:h0.d;
+    const prev0=me[gi-1];const tieIn=meTieNext&&prev0&&!prev0.gap&&!meRest;if(tieIn&&!prev0.rest)prev0.tie=true;
+    const rest=splitGap(G-meSelDur);me.splice(gi,ge-gi,{dur:meSelDur,d:(tieIn&&!prev0.rest)?prev0.d:d0,a:(tieIn&&!prev0.rest)?prev0.a:accMode,rest:meRest,tie:false},...rest);
+    meTieNext=false;mdTrim();feedback('','');renderMD(false);ev.preventDefault();return;}
+  const TB=q.dict.totalBeats; if(meCursor>=TB-1e-6){feedback('All the bars are full — remove a note first.','no');return;}
+  const h=ENGRAVE.hitTest(scoreMeta,document.getElementById('score'),ev); const d=q.rhythmOnly?34:h.d;
+  if(meCursor+meSelDur>TB+1e-6){feedback('That value would overflow the final bar.','no');return;}
+  const bpb=q.dict.metre.bpb, pk=q.dict.pickup||0;
+  if(ENGRAVE.barOf(meCursor+1e-4,pk,bpb)!==ENGRAVE.barOf(meCursor+meSelDur-1e-4,pk,bpb)){feedback('That note would cross a barline — use a shorter value and tie it.','no');return;}
+  if(eq(meSelDur,T3)){const pos=ENGRAVE.posInBar(meCursor,pk,bpb);let gEnd;if(q.dict.metre.compound){const g=q.dict.metre.g;let gi=0;for(let k=0;k<g.length;k++)if(pos>=g[k]-1e-6)gi=k;gEnd=g[gi+1]!==undefined?g[gi+1]:bpb;}else gEnd=Math.floor(pos+1e-6)+1;if(pos+T3>gEnd+1e-6){feedback('A triplet quaver must sit inside one beat.','no');return;}}
+  if(meRest&&meTieNext){meTieNext=false;}
+  if(meTieNext&&me.length){me[me.length-1].tie=true;}
+  const prev=me[me.length-1];
+  me.push({dur:meSelDur,d:(meTieNext&&prev&&!prev.rest)?prev.d:d,a:(meTieNext&&prev&&!prev.rest)?prev.a:accMode,rest:meRest,tie:false});
+  meTieNext=false;meCursor+=meSelDur;feedback('','');renderMD(false);ev.preventDefault();}
+function checkMelodyDict(){const q=curQ();const TB=q.dict.totalBeats;
+  if(me.some(x=>x.gap)){feedback('Fill the empty space first (the dashed notes).','no');return;}
+  if(meCursor<TB-0.001){feedback('Fill all the bars first ('+(Math.round(meCursor*100)/100)+' of '+TB+' beats).','no');return;}
+  let on=0;const notes=me.map(n=>{const o=on;on+=n.dur;return {onset:o,dur:n.dur,rest:n.rest,tie:n.tie,d:n.d,acc:n.a};});
+  const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));
+  const stud=notes.map((n,k)=>({onset:n.onset,dur:n.dur,midi:n.rest?null:meta.midi[k],rest:n.rest,tie:n.tie}));
+  const ans=soundingOf(q.dict.notes), sEv=soundingOf(stud);
+  let ok=ans.length===sEv.length; if(ok)for(let i=0;i<ans.length;i++){const a=ans[i],s=sEv[i];if(!eq(a.onset,s.onset)||!eq(a.dur,s.dur)||(q.rhythmOnly?((a.midi==null)!==(s.midi==null)):a.midi!==s.midi)){ok=false;break;}}
+  q._frac=ans.length?ans.filter(a=>sEv.some(s=>eq(a.onset,s.onset)&&eq(a.dur,s.dur)&&(q.rhythmOnly?((a.midi==null)===(s.midi==null)):a.midi===s.midi))).length/ans.length:1;
+  renderMD(true);scoreOnce(ok);celebrate(ok);
+  if(ok){feedback(pick(WINMSG)+(q.rhythmOnly?' Rhythm correct.':' Rhythm and pitch both right.')+bonusTag(),'ok',q.why);results[qid()]='ok';}
+  else{feedback(pick(MISSMSG)+' Check the red notes.','no',q.why);results[qid()]='no';}
+  sfCheck(q);renderDots();}
+function answerMelodyDict(){const q=curQ();if(!(qid() in scored))scoreOnce(false);
+  const r=ENGRAVE.resolveLine(q.dict.notes,q.dict.ks||0,q.dict.pickup||0,q.dict.metre.bpb,'true');
+  me=q.dict.notes.map((n,i)=>({dur:n.dur,d:n.d,a:r.shown[i],rest:n.rest,tie:n.tie,given:i===0}));meCursor=q.dict.totalBeats;renderMD(true);
+  feedback('Answer shown. Clear to try again.','',q.why);results[qid()]='no';sfReveal(q);renderDots();}
+
+// ---- harmonic dictation: numeral entry ----
+function renderRN(checked){const q=curQ();const el=document.getElementById('slots');
+  el.innerHTML=rn.map((v,i)=>{let cls='slot'+(i<q.given?' given':'')+(i===rnCur&&!checked?' cur':'');
+    if(checked&&i>=q.given)cls+=(v===q.answer[i]?' ok':' no');
+    return `<div class="${cls}" data-i="${i}"${q.slotLabels?' style="min-width:120px;font-size:15px"':''}><span class="n">${q.slotLabels?esc(q.slotLabels[i]):i+1}</span>${v?(q.fmt?q.fmt(v):fmtRN(v)):'<span style="color:#c9c1b2">·</span>'}</div>`;}).join('');
+  el.querySelectorAll('.slot').forEach(s=>s.onclick=()=>{const i=+s.dataset.i;if(i<q.given)return;rnCur=i;renderRN(false);});}
+function rnPick(label){const q=curQ();if(rnCur>=rn.length)return;rn[rnCur]=label;let nx=rnCur+1;while(nx<rn.length&&rn[nx])nx++;rnCur=nx<rn.length?nx:rnCur;feedback('','');renderRN(false);}
+function checkRN(){const q=curQ();if(rn.some(v=>!v)){feedback('Fill every slot first.','no');return;}
+  const ok=rn.every((v,i)=>v===q.answer[i]);q._frac=(rn.length-q.given)?rn.filter((v,i)=>i>=q.given&&v===q.answer[i]).length/(rn.length-q.given):1;renderRN(true);scoreOnce(ok);celebrate(ok);
+  if(ok){feedback(pick(WINMSG),'ok',q.why);results[qid()]='ok';}else{const right=rn.filter((v,i)=>v===q.answer[i]).length;feedback(pick(MISSMSG)+' '+right+' of '+rn.length+' chords right.','no',q.why);results[qid()]='no';}renderDots();}
+function answerRN(){const q=curQ();if(!(qid() in scored))scoreOnce(false);rn=q.answer.slice();renderRN(true);feedback('Answer shown.','',q.why);results[qid()]='no';renderDots();}
+
+// ---- discrepancies: phase 1 locate, phase 2 correct the score ----
+function disBarOf(q,onset){return ENGRAVE.barOf(onset+1e-4,0,q.dict.metre.bpb);}
+function renderDis(checked){const q=curQ();
+  if(disPhase==='locate'){
+    const notes=q.dict.notes.map(n=>({onset:n.onset,dur:n.dur,rest:n.rest,tie:n.tie,trip:n.trip,d:n.d,acc:n.acc}));
+    scoreMeta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'true',compact:q.bars<=4&&(document.getElementById('card').clientWidth||800)>=620}));
+    document.getElementById('scoreWrap').innerHTML=scoreMeta.svg;
+    const bc=document.getElementById('barchips');
+    bc.innerHTML=[...Array(q.bars).keys()].map(b=>{const m=disMarks[b];let cls='barchip'+(m?' '+m:'');
+      if(checked){const want=q.changes[b]||null;cls+=(want===(m||null))?' ok':' no';}
+      return `<button class="${cls}" data-b="${b}">Bar ${b+1}${m?' · '+m:''}</button>`;}).join('');
+    bc.querySelectorAll('.barchip').forEach(b=>b.onclick=()=>{if(checked)return;const i=+b.dataset.b;const m=disMarks[i];disMarks[i]=!m?'pitch':m==='pitch'?'rhythm':null;if(!disMarks[i])delete disMarks[i];feedback('','');renderDis(false);});
+    document.getElementById('asplayed').innerHTML='';return;}
+  // ---- fix phase ----
+  document.getElementById('fixtools').style.display='block';
+  document.getElementById('step1').className='step done';document.getElementById('step2').className='step on';
+  const ck=document.getElementById('check');if(ck)ck.textContent='Check correction';const sk=document.getElementById('skipfix');if(sk)sk.style.display='none';
+  disWork.sort((x,y)=>x.onset-y.onset);
+  const played=soundingOf(q.played);
+  const notes=disWork.map((n,i)=>{const o={onset:n.onset,dur:n.dur,rest:n.rest,tie:n.tie,trip:n.trip,d:n.d,acc:n.acc,idx:i};
+    if(checked){const s=soundingOf(disWork).find(e=>e.onset<=n.onset+1e-6&&e.onset+e.dur>n.onset+1e-6);const good=s&&played.some(p=>eq(p.onset,s.onset)&&eq(p.dur,s.dur)&&p.midi===s.midi);o.color=good?'var(--green)':'var(--red)';}
+    else if(q.changes[disBarOf(q,n.onset)])o.color='#3f5f7a';
+    return o;});
+  const M=q.dict.metre, bpb=M.bpb;
+  scoreMeta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'true',compact:q.bars<=4&&(document.getElementById('card').clientWidth||800)>=620,cursorBeat:(disRewrite!==null&&!checked)?disCursor:undefined}));
+  document.getElementById('scoreWrap').innerHTML=scoreMeta.svg;
+  document.getElementById('score').addEventListener('pointerdown',onScoreDis);
+  const bc=document.getElementById('barchips');
+  bc.innerHTML=[...Array(q.bars).keys()].map(b=>{const t=q.changes[b];const on=disRewrite===b;
+    return `<button class="barchip ${t||''}${on?' cur':''}" data-b="${b}" ${checked?'disabled':''}>${on?'Rewriting bar '+(b+1)+'…':'Rewrite bar '+(b+1)}${t?' · '+t:''}</button>`;}).join('');
+  bc.querySelectorAll('.barchip').forEach(b=>b.onclick=()=>{if(checked)return;startRewrite(+b.dataset.b);});
+  const rb=document.getElementById('restbtn');if(rb)rb.classList.toggle('on',meRest);
+  document.getElementById('dishint').textContent=disRewrite!==null?'Rewriting bar '+(disRewrite+1)+': choose a value (or Rest) and tap the stave at each pitch until the bar is full.':'Step 2 — correct the score: click a wrong note and drag it to the pitch you heard, or "Rewrite bar" to re-enter a bar\'s rhythm. Then Check.';
+  const ap=document.getElementById('asplayed');
+  if(checked){const pn=q.played.map(n=>({onset:n.onset,dur:n.dur,rest:n.rest,tie:n.tie,trip:n.trip,d:n.d,acc:n.acc,color:n.changed?'var(--red)':undefined}));
+    const m2=ENGRAVE.drawScore(scoreSpec(q,pn,{mode:'true',compact:q.bars<=4&&(document.getElementById('card').clientWidth||800)>=620}));
+    ap.innerHTML='<div class="asplayed">As performed (changes in red)</div><div class="scoreWrap">'+m2.svg.replace('id="score"','id="score2"')+'</div>';}
+  else ap.innerHTML='';}
+function startRewrite(b){const q=curQ(),bpb=q.dict.metre.bpb;disRewrite=b;disCursor=b*bpb;disWork=disWork.filter(n=>disBarOf(q,n.onset)!==b);feedback('','');renderDis(false);}
+function disAccFor(q,d){const km=ENGRAVE.keyAccMap(q.dict.ks||0),L=letterOf(d);return accMode===''?(km[L]||''):accMode==='n'?'':accMode;}
+function onScoreDis(ev){const q=curQ();const h=ENGRAVE.hitTest(scoreMeta,document.getElementById('score'),ev);const bpb=q.dict.metre.bpb;
+  if(disRewrite!==null){ const end=(disRewrite+1)*bpb;
+    if(disCursor+meSelDur>end+1e-6){feedback('That value would overflow bar '+(disRewrite+1)+'.','no');return;}
+    const acc=disAccFor(q,h.d);
+    disWork.push(meRest?{onset:disCursor,dur:meSelDur,rest:true,tie:false,trip:false,midi:null,d:undefined,acc:'',letter:''}:{onset:disCursor,dur:meSelDur,rest:false,tie:false,trip:false,midi:midiOf(h.d,acc),d:h.d,acc,letter:letterOf(h.d)});
+    disCursor+=meSelDur; if(disCursor>=end-1e-6)disRewrite=null; feedback('','');renderDis(false);ev.preventDefault();return;}
+  // pitch edit: nearest note in this system
+  let bi=-1,bd=1e9;scoreMeta.order.forEach((n,k)=>{if(n.rest||n.idx===undefined||scoreMeta.sysOf[k]!==h.sys)return;const dx=Math.abs(scoreMeta.xs[k]-h.x);if(dx<bd){bd=dx;bi=k;}});
+  if(bi<0)return;const n=disWork[scoreMeta.order[bi].idx];const acc=disAccFor(q,h.d);n.d=h.d;n.acc=acc;n.midi=midiOf(h.d,acc);n.letter=letterOf(h.d);
+  pdDrag={dis:true,i:scoreMeta.order[bi].idx};feedback('','');renderDis(false);ev.preventDefault();}
+function checkDis(){const q=curQ();
+  if(disPhase==='locate'){disLocOk=[...Array(q.bars).keys()].every(b=>(q.changes[b]||null)===(disMarks[b]||null));
+    renderDis(true);celebrate(disLocOk,document.getElementById('barchips'));
+    const tok=qid();setTimeout(()=>{if(mode!=='practise'||qid()!==tok||curQ().kind!=='discrep'||!document.getElementById('fixtools'))return;disPhase='fix';renderDis(false);feedback(disLocOk?'Located. ✓ Step 2: now correct the score so it matches what you heard.':'Not all located — the bars are now marked. Step 2: correct the score so it matches what you heard.',disLocOk?'ok':'no');},900);return;}
+  if(disRewrite!==null){feedback('Finish rewriting bar '+(disRewrite+1)+' first.','no');return;}
+  const a=soundingOf(q.played),s=soundingOf(disWork);
+  let ok=a.length===s.length;if(ok)for(let i=0;i<a.length;i++){if(!eq(a[i].onset,s[i].onset)||!eq(a[i].dur,s[i].dur)||a[i].midi!==s[i].midi){ok=false;break;}}
+  {const locFrac=[...Array(q.bars).keys()].filter(b=>(q.changes[b]||null)===(disMarks[b]||null)).length/q.bars;const fixFrac=a.length?a.filter(x=>s.some(y=>eq(x.onset,y.onset)&&eq(x.dur,y.dur)&&x.midi===y.midi)).length/a.length:1;q._frac=0.3*locFrac+0.7*fixFrac;}
+  const both=ok&&disLocOk;renderDis(true);scoreOnce(both);celebrate(both,document.getElementById('scoreWrap'));
+  if(both){feedback(pick(WINMSG)+' Located and corrected.','ok',q.why);results[qid()]='ok';}
+  else{feedback((ok?'Corrected, but the location step was wrong.':pick(MISSMSG)+' Check the red notes against the performance.'),'no',q.why);results[qid()]='no';}renderDots();}
+function answerDis(){const q=curQ();if(!(qid() in scored))scoreOnce(false);disMarks=Object.assign({},q.changes);disPhase='fix';disRewrite=null;disWork=q.played.map(n=>Object.assign({},n));renderDis(true);feedback('Answer shown.','',q.why);results[qid()]='no';renderDots();}
+
+function goPrev(){if(mode!=='practise'||sprintOn)return;if(qi>0){qi--;load();}else if(ui>0){ui--;openUnit();}}
+function goNext(){if(mode!=='practise'||sprintOn)return;if(UNITS[ui].exam&&qi>=order.length-1){finishExam();return;}if(qi<order.length-1){qi++;load();}else if(ui<UNITS.length-1){ui++;openUnit();}}
+function wireAcc(){document.querySelectorAll('#acc button').forEach(b=>{b.classList.toggle('on',b.dataset.acc===accMode);
+  b.onclick=()=>{accMode=b.dataset.acc;document.querySelectorAll('#acc button').forEach(x=>x.classList.toggle('on',x===b));};});}
+function wire(q){
+  document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;
+  document.getElementById('prev').disabled=(ui===0&&qi===0);document.getElementById('next').disabled=(ui===UNITS.length-1&&qi===order.length-1);
+  const hb0=document.getElementById('howbtn');if(hb0)hb0.onclick=openGuide;
+  const gb=document.getElementById('gearbtn');if(gb)gb.onclick=openSettings;
+  const pbtn=document.getElementById('play');if(pbtn)pbtn.onclick=playCurrent;
+  const hm=document.getElementById('hearme');if(hm)hm.onclick=playMine;
+  const rbtn=document.getElementById('replay');if(rbtn)rbtn.onclick=playCurrent;
+  document.querySelectorAll('.pp').forEach(b=>b.onclick=()=>playPart(b.dataset.pt));
+  document.querySelectorAll('#tempotog button').forEach(b=>b.onclick=()=>{dictSPB=parseFloat(b.dataset.spb);try{localStorage.setItem('blitzAuralTempo',dictSPB);}catch(e){}
+    document.querySelectorAll('#tempotog button').forEach(x=>x.classList.toggle('on',x===b));});
+  document.querySelectorAll('#difftog button').forEach(b=>b.onclick=()=>{dictDiff=b.dataset.diff;try{localStorage.setItem('blitzAuralDiff',dictDiff);}catch(e){}runQs[ui]=[];load();});
+  const mt=document.getElementById('mtog');if(mt)mt.querySelectorAll('button').forEach(b=>b.onclick=()=>{forceMode=b.dataset.m;runQs[ui]=[];load();});
+  if(q.kind==='notate'){wireAcc();
+    document.getElementById('check').onclick=checkNotate;document.getElementById('clear').onclick=()=>{sfReset(curQ());load();};document.getElementById('answer').onclick=answerNotate;
+  } else if(q.kind==='pitchdict'){wireAcc();
+    document.getElementById('check').onclick=checkPitchDict;document.getElementById('answer').onclick=answerPitchDict;
+    document.getElementById('clear').onclick=()=>{pd=[];feedback('','');renderPD(false);sfReset(q);sfSetupDict(q);};
+  } else if(q.kind==='melodydict'||q.kind==='rhythmdict'){wireAcc();
+    document.querySelectorAll('#mpal button[data-d]').forEach(b=>b.onclick=()=>{meSelDur=parseFloat(b.dataset.d);document.querySelectorAll('#mpal button[data-d]').forEach(x=>x.classList.toggle('on',x===b));});
+    document.getElementById('restbtn').onclick=()=>{meRest=!meRest;document.getElementById('restbtn').classList.toggle('on',meRest);};
+    document.getElementById('tiebtn').onclick=()=>{const last=me[me.length-1];if(!last||last.rest){feedback('A tie needs a note before it.','no');return;}meTieNext=!meTieNext;document.getElementById('tiebtn').classList.toggle('on',meTieNext);};
+    document.getElementById('check').onclick=checkMelodyDict;document.getElementById('answer').onclick=answerMelodyDict;
+    document.getElementById('undo').onclick=()=>{if(me.length>1){me.pop();if(me[me.length-1])me[me.length-1].tie=false;meTieNext=false;mdTrim();feedback('','');renderMD(false);}};
+    document.getElementById('clear').onclick=()=>{resetMD(q);feedback('','');renderMD(false);if(!q.rhythmOnly){sfReset(q);sfSetupDict(q);}};
+  } else if(q.kind==='numerals'){
+    document.querySelectorAll('#rnpal button').forEach(b=>b.onclick=()=>rnPick(b.dataset.rn));
+    document.getElementById('check').onclick=checkRN;document.getElementById('answer').onclick=answerRN;
+    document.getElementById('clear').onclick=()=>{rn=q.answer.map((a,i)=>i<q.given?a:null);rnCur=q.given;feedback('','');renderRN(false);};
+  } else if(q.kind==='discrep'){wireAcc();
+    document.querySelectorAll('#mpal button[data-d]').forEach(b=>b.onclick=()=>{meSelDur=parseFloat(b.dataset.d);document.querySelectorAll('#mpal button[data-d]').forEach(x=>x.classList.toggle('on',x===b));});
+    document.getElementById('restbtn').onclick=()=>{meRest=!meRest;document.getElementById('restbtn').classList.toggle('on',meRest);};
+    document.getElementById('check').onclick=checkDis;document.getElementById('answer').onclick=answerDis;
+    document.getElementById('skipfix').onclick=()=>{if(disPhase!=='locate')return;disLocOk=false;disPhase='fix';renderDis(false);feedback('Step 2: the discrepancy bars are marked — correct the score so it matches what you heard.','');};
+    document.getElementById('clear').onclick=()=>{if(disPhase==='locate')disMarks={};else{disWork=q.dict.notes.map(n=>Object.assign({},n));disRewrite=null;}feedback('','');renderDis(false);};
+  } else {document.querySelectorAll('#opts button').forEach(b=>b.onclick=()=>pickChoice(b,q));document.getElementById('answer').onclick=()=>answerChoice(q);}
+}
+
+// ---- notate (intervals / scales) ----
+function drawStave(){const q=curQ(),cd=clefData(q.clef),bot=cd.topLineDia-8;
+  const n=q.notes.length,x0=SS*0.6+cd.clefW*SS+SS*1.4,gap=SS*2.6,xs=[];for(let i=0;i<n;i++)xs.push(x0+i*gap);
+  const W=x0+(n-1)*gap+SS*1.2,H=(TOPK+4+TOPK)*SS;
+  const S=[`<svg class="stave" id="stave" width="${(W*1.12).toFixed(0)}" viewBox="0 0 ${W.toFixed(1)} ${H}" preserveAspectRatio="xMidYMid meet" style="touch-action:none" xmlns="http://www.w3.org/2000/svg">`];
+  for(let k=0;k<5;k++){const y=TOPK*SS+k*SS;S.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y}" x2="${(W-SS*0.3).toFixed(1)}" y2="${y}" stroke="var(--line)" stroke-width="1.25"/>`);}
+  S.push(gEl(cd.glyph,SS*0.6,yOf(cd.topLineDia,cd.lineDia),'var(--ink)'));
+  for(let i=0;i<n;i++){const x=xs[i],s=slots[i];
+    if(!s||(!s.given&&!s.reveal&&!nchecked)){const g0=TOPK*SS-SS*0.6,g1=TOPK*SS+4*SS+SS*0.6;
+      S.push(`<line x1="${x.toFixed(1)}" y1="${g0}" x2="${x.toFixed(1)}" y2="${g1}" stroke="#e3dccd" stroke-width="1" stroke-dasharray="2 3"/>`);
+      S.push(`<text x="${x.toFixed(1)}" y="${(H-SS*0.1).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.6).toFixed(1)}" fill="#b7b0a2">${i+1}</text>`);}
+    S.push(`<rect class="hit" data-i="${i}" x="${(x-SS*1.3).toFixed(1)}" y="0" width="${(SS*2.6).toFixed(1)}" height="${H}" fill="transparent"/>`);
+    if(!s)continue;const y=yOf(cd.topLineDia,s.d);
+    ledgerYs(cd.topLineDia,bot,s.d).forEach(ed=>{const ly=yOf(cd.topLineDia,ed);S.push(`<line x1="${(x-NW*0.75).toFixed(1)}" y1="${ly}" x2="${(x+NW*0.75).toFixed(1)}" y2="${ly}" stroke="var(--line)" stroke-width="1.25"/>`);});
+    let f='var(--ink)';if(s.given)f='#8a8277';if(nchecked&&!s.given)f=s.ok?'var(--green)':'var(--red)';if(s.reveal)f='var(--ox)';
+    S.push(drawWholeNote(x,y,s.a,f));
+    if(!s.given&&!s.reveal){const cy=H-SS*0.9;S.push(`<g class="clr" data-i="${i}"><circle cx="${x}" cy="${cy}" r="${(SS*0.55).toFixed(1)}" fill="#fff" stroke="var(--rule)"/><text x="${x}" y="${(cy+SS*0.2).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);}
+  }
+  S.push('</svg>');document.getElementById('sw').innerHTML=S.join('');
+  document.getElementById('stave').addEventListener('pointerdown',onDown);
+  const nm=document.getElementById('names');
+  if(nchecked||q.done){nm.style.display='block';nm.textContent=q.notes.map(t=>t[0]+ACCSYM[t[2]]).join('  ·  ');}else nm.style.display='none';}
+let dragNote=null;
+function syncAccButtons(){document.querySelectorAll('#acc button').forEach(b=>b.classList.toggle('on',b.dataset.acc===accMode));}
+function pitchAt(ev,svg,q){const cd=clefData(q.clef),r=svg.getBoundingClientRect(),H=(TOPK+4+TOPK)*SS,vy=(ev.clientY-r.top)/r.height*H;
+  let d=Math.round(cd.topLineDia-(vy-TOPK*SS)/(SS/2));return Math.max(cd.topLineDia-8-6,Math.min(cd.topLineDia+6,d));}
+function onDown(ev){const svg=document.getElementById('stave'),q=curQ();
+  const clr=ev.target.closest('.clr');if(clr){slots[+clr.dataset.i]=null;nchecked=false;feedback('','');drawStave();return;}
+  const hit=ev.target.closest('.hit');if(!hit)return;const i=+hit.dataset.i;if(slots[i]&&slots[i].given)return;
+  const d=pitchAt(ev,svg,q);
+  if(slots[i]&&!slots[i].given){accMode=slots[i].a||'';syncAccButtons();slots[i].d=d;}
+  else slots[i]={d,a:accMode};
+  nchecked=false;feedback('','');drawStave();dragNote={i};ev.preventDefault();}
+addEventListener('pointermove',ev=>{
+  if(pdDrag&&pdDrag.dis){const svg=document.getElementById('score');if(!svg)return;const h=ENGRAVE.hitTest(scoreMeta,svg,ev);const q=curQ();const n=disWork[pdDrag.i];if(n&&n.d!==h.d){const acc=disAccFor(q,h.d);n.d=h.d;n.acc=acc;n.midi=midiOf(h.d,acc);n.letter=letterOf(h.d);renderDis(false);}return;}
+  if(pdDrag){const svg=document.getElementById('score');if(!svg)return;const h=ENGRAVE.hitTest(scoreMeta,svg,ev);if(pd[pdDrag.i]&&pd[pdDrag.i].d!==h.d){pd[pdDrag.i].d=h.d;renderPD(false);}return;}
+  if(!dragNote)return;const svg=document.getElementById('stave');if(!svg)return;
+  const s=slots[dragNote.i];if(!s||s.given)return;const d=pitchAt(ev,svg,curQ());if(s.d!==d){s.d=d;drawStave();}});
+addEventListener('pointerup',()=>{dragNote=null;pdDrag=null;});
+function checkNotate(){const q=curQ();let right=0;const need=q.notes.length-q.given;
+  for(let k=q.given;k<q.notes.length;k++){const s=slots[k];if(!s)continue;
+    if(q.enharm){s.ok=midiOf(s.d,s.a)===q.mids[k];}
+    else{const ta=q.notes[k][2]||'';s.ok=(s.d===dia(q.notes[k][0],q.notes[k][1])&&(s.a||'')===ta);}
+    if(s.ok)right++;}
+  const empty=slots.filter((s,k)=>k>=q.given&&!s).length,ok=(right===need);q._frac=need?right/need:1;
+  nchecked=true;drawStave();scoreOnce(ok);celebrate(ok);
+  if(ok){feedback(pick(WINMSG)+' All '+need+' right.'+bonusTag(),'ok',q.why);results[qid()]='ok';}
+  else{let m=pick(MISSMSG)+' '+right+' of '+need+' correct.';if(empty)m+=' '+empty+' empty.';feedback(m,'no',q.why);results[qid()]='no';}
+  sfCheck(q);renderDots();}
+function answerNotate(){const q=curQ();if(!(qid() in scored))scoreOnce(false);slots=q.notes.map(t=>({d:dia(t[0],t[1]),a:t[2],reveal:true}));nchecked=false;q.done=true;drawStave();feedback('Answer shown. Clear to try it yourself.','',q.why);results[qid()]='no';sfReveal(q);renderDots();}
+// choice
+function pickChoice(btn,q){if(answered)return;answered=true;const ok=btn.dataset.o===(''+q.answer);q._frac=ok?1:0;
+  document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');if(b===btn&&!ok)b.classList.add('no');});
+  scoreOnce(ok);celebrate(ok);
+  if(ok){feedback(pick(WINMSG)+bonusTag(),'ok',q.why);results[qid()]='ok';}else{feedback(pick(MISSMSG),'no',q.why);results[qid()]='no';
+    if(q.playOpt&&!sprintOn){const picked=btn.dataset.o;const f=document.getElementById('fb');const hb=document.createElement('button');hb.className='hearbtn';hb.textContent='🎧 Hear the difference';f.appendChild(hb);
+      hb.onclick=()=>{if(AUDIO)AUDIO.stop();hb.disabled=true;hb.textContent='🎧 Yours: '+picked;let s1=0;try{s1=q.playOpt(picked)||1.5;}catch(e){s1=1.5;}
+        AUDIO.later(()=>{hb.textContent='🎧 Played: '+q.answer;let s2=0;try{s2=q.play()||1.5;}catch(e){s2=1.5;}AUDIO.later(()=>{hb.disabled=false;hb.textContent='🎧 Hear the difference';},(s2+0.3)*1000);},(s1+0.7)*1000);};}}
+  renderDots();
+  if(sprintOn){sprintN++;if(ok)sprintCor++;const sc=document.querySelector('.sprintbar span:last-child');if(sc)sc.textContent=sprintCor+' ✓';setTimeout(()=>{if(sprintOn){qi++;load();}},ok?500:900);}
+  if(h2h){setTimeout(()=>{if(!h2h)return;if(h2h.score.some(x=>x>=5))return;qi++;load();},1300);}}
+const bonusTag=()=>lastBonus>0?`<span class="xpbonus">+${10+lastBonus} XP${lastBonus===10?' · first listen':''}</span>`:'';
+function answerChoice(q){if(!answered)scoreOnce(false);answered=true;
+  document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');});
+  feedback('Answer shown.','',q.why);results[qid()]='no';renderDots();}
+
+// keyboard
+addEventListener('keydown',e=>{if(mode!=='practise'||e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;if(UNITS[ui].exam&&!examOn&&!document.getElementById('fb'))return;
+  if(e.key==='ArrowRight'){goNext();e.preventDefault();return;}if(e.key==='ArrowLeft'){goPrev();e.preventDefault();return;}
+  const q=curQ();
+  if(e.key===' '||e.key==='p'||e.key==='P'){if(q.multiPlay)playPart('whole');else if(document.getElementById('play'))playCurrent();e.preventDefault();return;}
+  if(q.kind==='choice'&&/^[1-9]$/.test(e.key)){const b=document.querySelectorAll('#opts button')[+e.key-1];if(b&&!b.disabled)b.click();}
+  if(q.kind==='numerals'&&/^[1-9]$/.test(e.key)){const b=document.querySelectorAll('#rnpal button')[+e.key-1];if(b)b.click();}
+  if((q.kind==='melodydict'||q.kind==='rhythmdict'||q.kind==='discrep')&&/^[1-9]$/.test(e.key)){const pb=document.querySelectorAll('#mpal button[data-d]')[+e.key-1];if(pb)pb.click();}
+  if((q.kind==='melodydict'||q.kind==='rhythmdict'||q.kind==='discrep')&&(e.key==='r'||e.key==='R')){const rb=document.getElementById('restbtn');if(rb)rb.click();}
+  if((q.kind==='melodydict'||q.kind==='rhythmdict')&&(e.key==='t'||e.key==='T')){const tb=document.getElementById('tiebtn');if(tb)tb.click();}
+  if(e.key==='Enter'&&document.getElementById('check')){document.getElementById('check').click();e.preventDefault();}});
+
+document.getElementById('mPr').onclick=()=>setMode('practise');
+document.getElementById('mRe').onclick=()=>setMode('reference');
+document.getElementById('mRec').onclick=()=>setMode('record');
+(function(){const ni=document.getElementById('nameinput');ni.value=currentName;
+  ni.oninput=()=>{currentName=ni.value.trim();try{localStorage.setItem('blitzName',currentName);}catch(e){}loadProfile();paintScore();renderTabs();};})();
+// ---- sounds on check (musical, mutable) ----
+let SFX=true;try{SFX=localStorage.getItem('blitzAuralSfx')!=='0';}catch(e){}
+function paintSfx(){const b=document.getElementById('sfxbtn');b.classList.toggle('off',!SFX);b.textContent=SFX?'🔔':'🔕';b.title=SFX?'Sounds on (tap to mute)':'Sounds off';}
+document.getElementById('sfxbtn').onclick=()=>{SFX=!SFX;try{localStorage.setItem('blitzAuralSfx',SFX?'1':'0');}catch(e){}paintSfx();};paintSfx();
+function sfx(ok){if(!SFX||!window.AUDIO)return;try{if(ok)AUDIO.progression([[53,60,65,69],[48,60,64,67]],0.38);else AUDIO.chord(0,[50,53,56,60],'block');}catch(e){}}
+document.getElementById('reset').onclick=()=>{if(!confirm('Reset this session\'s score and streak? (Your saved rank, XP and mastery stay.)'))return;if(sprintOn)endSprint(true);h2h=null;total=correct=streak=0;level=1;runQs={};
+  for(const k in results)delete results[k];for(const k in scored)delete scored[k];
+  for(const k in uStat)delete uStat[k];for(const k in unitDone)delete unitDone[k];
+  paintScore();mode==='practise'?openUnit():(mode==='reference'?loadRef():renderRecord());};
+
+function openGuide(){const u=UNITS[ui].special?fromUnit(curQ()):UNITS[ui];document.getElementById('guidebody').innerHTML=(UNITS[ui].special?UNITS[ui].guide+'<hr style="border:0;border-top:1px solid var(--rule);margin:12px 0">':'')+u.guide;
+  document.getElementById('guide').classList.add('open');document.getElementById('gback').classList.add('open');}
+function closeGuide(){document.getElementById('guide').classList.remove('open');document.getElementById('gback').classList.remove('open');}
+document.getElementById('gclose').onclick=closeGuide;document.getElementById('gback').onclick=closeGuide;
+
+// ---- per-unit customisation (⚙) ----
+function renderSettings(u){const unit=UNITS[u];let h=`<p class="prompt">${unit.name} — customise</p>
+   <p class="sub">Tick what to include. Items with a year badge are from later years than yours — open them up when you're ready. Y7–8 items are junior warm-ups.</p>`;
+  unit.cfg.forEach(g=>{ h+=`<div class="setgrp"><div class="setlabel">${g.label}</div><div class="setchips">`;
+    if(g.type==='multi'){ h+=g.items.map(it=>`<button class="chip ${CFG[unit.key][g.key][it.id]?'on':''}" data-g="${g.key}" data-id="${esc(it.id)}">${it.label}${(it.yr||7)>YEAR?'<span class="ytag">'+(it.yr>=11?'ATAR Y'+it.yr:'Y'+it.yr)+'</span>':(it.junior&&YEAR>=9?'<span class="ytag" style="background:#8a8277">Y7–8</span>':'')}</button>`).join(''); }
+    else { h+=g.items.map(it=>`<button class="chip ${CFG[unit.key][g.key]===it.id?'on':''}" data-single="${g.key}" data-id="${esc(it.id)}">${it.label}</button>`).join(''); }
+    h+=`</div></div>`; });
+  h+=`<div class="controls"><button class="btn-ghost" id="setyear">Year ${YEAR} defaults</button><button class="btn-ghost" id="setall">Enable all (to ATAR)</button><button class="btn-check" id="setdone">Done</button></div>`;
+  document.getElementById('setbody').innerHTML=h;
+  document.querySelectorAll('#setbody .chip[data-g]').forEach(b=>b.onclick=()=>{const gk=b.dataset.g,id=b.dataset.id;CFG[unit.key][gk][id]=!CFG[unit.key][gk][id];b.classList.toggle('on');saveCfg();});
+  document.querySelectorAll('#setbody .chip[data-single]').forEach(b=>b.onclick=()=>{const gk=b.dataset.single;CFG[unit.key][gk]=b.dataset.id;saveCfg();document.querySelectorAll('#setbody .chip[data-single="'+gk+'"]').forEach(x=>x.classList.toggle('on',x===b));});
+  document.getElementById('setall').onclick=()=>{unit.cfg.forEach(g=>{if(g.type==='multi')g.items.forEach(it=>CFG[unit.key][g.key][it.id]=true);});saveCfg();renderSettings(u);};
+  document.getElementById('setyear').onclick=()=>{unit.cfg.forEach(g=>{if(g.type==='multi')g.items.forEach(it=>CFG[unit.key][g.key][it.id]=((it.yr||7)<=YEAR&&!(it.junior&&YEAR>=9)));else CFG[unit.key][g.key]=singleDef(g);});saveCfg();renderSettings(u);};
+  document.getElementById('setdone').onclick=()=>closeSettings();}
+function openSettings(){renderSettings(UNITS[ui].special?UNITS.indexOf(fromUnit(curQ())):ui);document.getElementById('setmodal').classList.add('open');document.getElementById('setback').classList.add('open');}
+function closeSettings(){document.getElementById('setmodal').classList.remove('open');document.getElementById('setback').classList.remove('open');runQs[ui]=[];load();}
+document.getElementById('setclose').onclick=closeSettings;document.getElementById('setback').onclick=closeSettings;
+
+cfgInit();loadProfile();paintYear();paintScore();ui=2;openUnit();
+try{ if(!localStorage.getItem('blitzAuralYear')) askYear(); }catch(e){}
+try{ if(window.AUDIO&&AUDIO.preloadPiano) AUDIO.preloadPiano(); }catch(e){}
+if(EMBED==='partA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR&&EMBED_YEAR!==YEAR){const ok=document.querySelector('#yearbar button[data-y="'+EMBED_YEAR+'"]');if(ok)setYear(EMBED_YEAR);}ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
+else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
