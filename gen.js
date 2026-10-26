@@ -305,7 +305,7 @@ function keySigIdQ(){const k=randKey();const clef=clefPick();const major=T.major
   return choice('Name the '+(askMinor?'minor':'major')+' key of this key signature.',optsFrom(ans,pool,4),ans,{sub:clefWord(clef)+'.',show:show(stave(clef,k.sig,null,[{k:'gap',w:4}])),
     why:k.sig>0?'Last sharp is '+T.SHARP_ORDER[k.sig-1]+'♯; a semitone up gives '+name(major)+' major'+(askMinor?'; its relative minor is a minor 3rd lower: '+name(minor)+' minor.':'.'):k.sig<0?(k.sig===-1?'One flat (B♭) is F major.':'The second-last flat names the key: '+name(major)+' major')+(askMinor?'; relative minor '+name(minor)+' minor.':'.'):'No sharps or flats: C major / A minor.'});}
 function keySigWriteQ(){const k=randKey();const clef=clefPick();
-  return {t:'notate',prompt:'Write the key signature of '+keyName(k)+'.',sub:clefWord(clef)+'. Use the ♯ / ♭ buttons to build it, then Check.',clef,sig:0,keysigEdit:true,sigTarget:k.sig,items:[{k:'gap',w:6}],
+  return {t:'notate',prompt:'Write the key signature of '+keyName(k)+'.',sub:clefWord(clef)+'. Pick ♯ or ♭, then tap the line or space for each accidental in order (first one at position 1). For C major / A minor, leave it empty and Check.',clef,sig:0,ksPlace:true,sigTarget:k.sig,items:[{k:'ksig',n:7}],
     why:keyName(k)+' has '+T.sigWord(k.sig)+(k.sig?' ('+T.sigList(k.sig)+')':'')+'.'};}
 function keyFactQ(){const qs=[
   ()=>choice('The order of sharps in a key signature is…',['F C G D A E B','B E A D G C F','C G D A E B F','F G C D A E B'],'F C G D A E B'),
@@ -461,7 +461,7 @@ function chordFits(notes){if(UPTO()>=11)return true;const m=S('keysMax');for(let
 function notateChordQ(){const clef=clefPick();const type=pick(chordsOn());const nn=T.CHORDS[type].iv.length;const inv=nn>4?0:pick(invsOn().filter(i=>i<nn));
   let root=chordRoot(clef);let notes=T.chord(root,type,inv);if(notes.some(p=>Math.abs(p.a)>2)||!chordFits(notes))return notateChordQ();notes=fitScale(notes,clef);
   const withSym=UPTO()>=11&&Math.random()<0.5;const label=withSym?T.slashSym(root,type,inv)+(inv?'':'')+'':T.chordName(root,type)+', '+T.INV_NAMES[inv];
-  return {t:'notate',prompt:'Write '+(withSym?'the chord '+label:label)+'.',sub:clefWord(clef)+'. Build it as a block chord in one column: tap to add each note.'+(withSym&&inv?' The letter after the slash is the bass note.':''),clef,sig:0,items:[Object.assign(slot(0,notes,'w'),{chord:true,max:nn})],
+  return {t:'notate',prompt:'Write '+(withSym?'the chord '+label:label)+'.',sub:clefWord(clef)+'. Build it as a block chord in one column, in any octave that fits the stave: tap to add each note.'+(withSym&&inv?' The letter after the slash is the bass note.':''),clef,sig:0,items:[Object.assign(slot(0,notes,'w'),{chord:true,max:nn})],
     why:T.chordName(root,type)+' = '+T.chord(root,type,0).map(name).join(' ')+(inv?'; '+T.INV_NAMES[inv]+' puts '+name(notes[0])+' in the bass.':'.')};}
 function nameChordQ(){const clef=clefPick();const type=pick(chordsOn());const nn=T.CHORDS[type].iv.length;const inv=nn>4?0:pick(invsOn().filter(i=>i<nn));
   const root=chordRoot(clef);let notes=T.chord(root,type,inv);if(notes.some(p=>Math.abs(p.a)>2)||!chordFits(notes))return nameChordQ();notes=fitScale(notes,clef);

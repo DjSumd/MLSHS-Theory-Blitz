@@ -69,6 +69,7 @@ function prepare(spec){
     else if(it.k==='bar'){bar={};c.x=x+SS*0.3;c.w=SS*1.1;x+=c.w;}
     else if(it.k==='rep'){bar={};c.x=x+SS*0.3;c.w=(it.dir==='both'?SS*2.9:SS*1.9);x+=c.w;}
     else if(it.k==='gap'){c.w=(it.w||1)*SS;c.x=x;x+=c.w;if(it.q)c.q=true;}
+    else if(it.k==='ksig'){c.aw=gw('sharp')+SS*0.3;c.n=it.n||7;c.x=x+SS*0.3;c.w=c.n*c.aw+SS*0.4;x+=c.w+SS*0.6;}
     else if(it.k==='txt'||it.k==='sym'){c.w=0;c.x=x;}
     cols.push(c);});
   const W=x+SS*0.9;
@@ -100,6 +101,12 @@ function render(spec,opts){opts=opts||{};const L=prepare(spec);const {clef,sigN,
     if(c.k==='gap'&&c.q){S.push(`<rect x="${(c.x+SS*0.2).toFixed(1)}" y="${(TOP-SS*0.4).toFixed(1)}" width="${(c.w-SS*0.4).toFixed(1)}" height="${(4.8*SS).toFixed(1)}" rx="4" fill="#fff7f6" stroke="var(--red)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="${(c.x+c.w/2).toFixed(1)}" y="${(MID+SS*0.45).toFixed(1)}" text-anchor="middle" font-size="${(SS*1.3).toFixed(1)}" font-weight="800" fill="var(--red)">?</text>`);return;}
     if(c.k==='txt'){const y=c.below?TOP+4*SS+SS*1.6:TOP-SS*1.0;S.push(`<text x="${c.x.toFixed(1)}" y="${y.toFixed(1)}" font-size="${(SS*0.85).toFixed(1)}" font-weight="${c.bold?700:500}" font-style="${c.italic?'italic':'normal'}" fill="${ink}" text-anchor="${c.anchor||'start'}">${c.s}</text>`);return;}
     if(c.k==='sym'){const yy=c.below?TOP+4*SS+SS*1.2:TOP-SS*1.4;S.push(glyph(c.g,c.x,yy,ink));return;}
+    if(c.k==='ksig'){ // editable key signature: n accidental positions; placed ones drawn at their line/space
+      for(let i=0;i<c.n;i++){const x0=c.x+i*c.aw;const a=(c.accs||[])[i];
+        if(a){S.push(`<g class="ksg" data-k="${i}">${glyph(a.a>0?'sharp':'flat',x0,yOf(clef,a.d),a.col||ink)}</g>`);}
+        else{S.push(`<text x="${(x0+c.aw*0.45).toFixed(1)}" y="${(L.H-SS*0.35).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.7).toFixed(1)}" font-weight="700" fill="#aab0b8">${i+1}</text>`);}
+        S.push(`<rect class="kshit" data-pos="${i}" x="${(x0-SS*0.1).toFixed(1)}" y="0" width="${(c.aw).toFixed(1)}" height="${L.H}" fill="transparent"/>`);}
+      if(!(c.accs||[]).length)S.push(line(c.x+c.aw*0.45,TOP-SS*0.6,c.x+c.aw*0.45,TOP+4*SS+SS*0.6,1,'#cfd4da'));return;}
     if(c.k==='r'){const dur=c.dur||'q';const rn={w:'restWhole',h:'restHalf',q:'restQuarter',e:'rest8th',s:'rest16th'}[dur];
       const y=dur==='w'?TOP+SS:MID;S.push(glyph(rn,c.x,y,c.col||ink));
       if(c.dots)S.push(glyph('dot',c.x+gw(rn)+SS*0.25,MID-SS*0.5,c.col||ink));

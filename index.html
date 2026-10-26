@@ -683,12 +683,12 @@ function load(){const q=curQ();if(!q)return;
   let body='';
   if(q.t==='notate'){q.items.forEach(it=>{if(it.k==='slot'){if(it.given){it.p=it.p||[];}else if(!it._p)it._p=[];}});
     const needsKs=!!q.keysigEdit;
-    body=showHtml+`<div class="toolbar"><span class="lab">Accidental</span><div class="acc" id="acc"><button data-acc="" title="No accidental">○</button><button data-acc="s">♯</button><button data-acc="f">♭</button><button data-acc="n">♮</button>${GEN.getSet().dbl?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="Remove a note">⌫ erase</button></div>
+    body=showHtml+`<div class="toolbar"><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${GEN.getSet().dbl&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove an accidental':'Remove a note'}">⌫ erase</button></div>
       ${needsKs?`<span class="lab">Key signature</span><div class="ksb"><button id="ksflat">♭</button><span class="ksv" id="ksv"></span><button id="kssharp">♯</button></div>`:''}</div>
       <div class="staveWrap" id="sw"></div>${q.solfa&&!UNITS[ui].exam?'<div class="solfarow" id="solfarow"></div>':''}
-      <p class="hint">${q.solfa&&!UNITS[ui].exam?'Then name each degree in sol-fa in the boxes. ':''}${q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it); ⌫ erase then tap a note to remove it. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Tap a placed note to select it (change its accidental, or drag it). Keys: # b n 0, Backspace.'}</p>
+      <p class="hint">${q.solfa&&!UNITS[ui].exam?'Then name each degree in sol-fa in the boxes. ':''}${q.ksPlace?'Tap ♯ or ♭, then tap the stave where the next accidental goes: it is added at the next position, on the line or space you tap. ⌫ erase then tap an accidental to remove it. Keys: # b, Backspace removes the last.':q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it); ⌫ erase then tap a note to remove it. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Tap a placed note to select it (change its accidental, or drag it). Keys: # b n 0, Backspace.'}</p>
       <div class="names" id="names"></div>
-      <div class="controls"><button class="btn-check" id="check">Check</button>${UNITS[ui].exam?'':'<button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="hearans" title="Available after Check or Show answer">🔊 Hear the answer</button>'}<button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+      <div class="controls"><button class="btn-check" id="check">Check</button>${UNITS[ui].exam||q.ksPlace?'':'<button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="hearans" title="Available after Check or Show answer">🔊 Hear the answer</button>'}<button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
   } else if(q.t==='choice'){const svgo=q.opts.some(o=>o.svg);if(!q._order)q._order=T.shuffle(q.opts);
     body=showHtml+`<div class="opts${svgo?' svgopts':''}" id="opts">`+q._order.map((o,i)=>`<button data-o="${esc(o.v)}"><span class="k">${i+1}</span>${o.svg?o.svg:'<span>'+esc(o.v)+'</span>'}</button>`).join('')+`</div><div class="controls"><button class="btn-ans" id="answer">Show answer</button></div>`;
   } else if(q.t==='match'){if(!q._shuf)q._shuf=T.shuffle(q.pairs.map(p=>p[1]));
@@ -710,7 +710,7 @@ function wire(q){document.getElementById('prev').onclick=goPrev;document.getElem
       if(selected){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];if(p){applyAcc(p,a);nchecked=false;feedback('','');drawStave();}}syncAcc();};});
     syncAcc();
     if(q.keysigEdit){document.getElementById('kssharp').onclick=()=>{ksBuilt=Math.min(7,ksBuilt+1);nchecked=false;feedback('','');drawStave();};document.getElementById('ksflat').onclick=()=>{ksBuilt=Math.max(-7,ksBuilt-1);nchecked=false;feedback('','');drawStave();};}
-    document.getElementById('check').onclick=checkNotate;document.getElementById('clear').onclick=()=>{q.items.forEach(it=>{if(it.k==='slot'&&!it.given){it._p=[];}});q._reveal=false;if(q.solfa&&!UNITS[ui].exam){sfReset(q);sfInit(q,q.solfa,[...new Set(q.solfa)],1);sfRender(q);}ksBuilt=q.keysigEdit?0:ksBuilt;nchecked=false;selected=null;feedback('','');drawStave();const ha=document.getElementById('hearans');if(ha)ha.disabled=true;};
+    document.getElementById('check').onclick=checkNotate;document.getElementById('clear').onclick=()=>{q.items.forEach(it=>{if(it.k==='slot'&&!it.given){it._p=[];}});q._reveal=false;q._ksp=[];if(q.solfa&&!UNITS[ui].exam){sfReset(q);sfInit(q,q.solfa,[...new Set(q.solfa)],1);sfRender(q);}ksBuilt=q.keysigEdit?0:ksBuilt;nchecked=false;selected=null;feedback('','');drawStave();const ha=document.getElementById('hearans');if(ha)ha.disabled=true;};
     document.getElementById('answer').onclick=answerNotate;}
   else if(q.t==='choice'){document.querySelectorAll('#opts button').forEach(b=>b.onclick=()=>pickChoice(b,q));document.getElementById('answer').onclick=()=>answerChoice(q);}
   else if(q.t==='match'){document.getElementById('check').onclick=()=>checkMatch(q);document.getElementById('answer').onclick=()=>answerMatch(q);}}
@@ -721,7 +721,8 @@ let STV=null;
 const slotItem=(q,i)=>q.items.find(it=>it.k==='slot'&&it.slot===i);
 function curSig(q){return q.keysigEdit?ksBuilt:(q.sig||0);}
 function drawStave(){const q=curQ();const sig=curSig(q);
-  const items=q.items.map((it,idx)=>{if(it.k!=='slot')return Object.assign({},it);
+  const items=q.items.map((it,idx)=>{if(it.k==='ksig'){const t=ksTarget(q);const accs=q._reveal?t.map(a=>Object.assign({},a,{col:'var(--ox)'})):(q._ksp||[]).map((a,i)=>Object.assign({},a,{col:nchecked?(t[i]&&t[i].d===a.d&&t[i].a===a.a?'var(--green)':'var(--red)'):undefined}));return Object.assign({},it,{accs});}
+    if(it.k!=='slot')return Object.assign({},it);
     const s=Object.assign({},it);
     if(it.given){s.p=it.p;s.col='#9a9284';s.explicit=false;}
     else if(q._reveal){s.p=it.target;s.col='var(--ox)';s.explicit=false;s.reveal=true;}
@@ -735,11 +736,21 @@ function drawStave(){const q=curQ();const sig=curSig(q);
   svg.addEventListener('pointerdown',onDown);
   if(q.keysigEdit){const v=document.getElementById('ksv');if(v)v.textContent=T.sigWord(sig);}
   const nm=document.getElementById('names');
+  if(q.ksPlace){if(nchecked||q._reveal){nm.style.display='block';nm.textContent=T.sigWord(q.sigTarget)+(q.sigTarget?': '+T.sigList(q.sigTarget):'');}else nm.style.display='none';return;}
   if(nchecked||q._reveal){nm.style.display='block';nm.innerHTML=esc(q.items.filter(i=>i.k==='slot'&&!i.given).map(i=>i.target.map(p=>T.name(p)).join('·')).join('  '))+(q.solfa?'<br><span style="font-weight:500;color:#5a5347">sol-fa: '+q.solfa.join(' ')+'</span>':'');}else nm.style.display='none';}
 function svgPoint(ev,svg){try{const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const m=svg.getScreenCTM();if(m){const q=pt.matrixTransform(m.inverse());return {x:q.x,y:q.y};}}catch(e){}const r=svg.getBoundingClientRect();return {x:(ev.clientX-r.left)/r.width*STV.W,y:(ev.clientY-r.top)/r.height*STV.H};}
 function pitchAtY(y,clef){const d=E.diaAt(clef,y);const top=E.CLEF[clef].topDia;return Math.max(top-8-7,Math.min(top+7,d));}
 let drag=null;
+const keyName0=q=>(q.prompt.match(/of (.+)\.$/)||[,'This key'])[1];
+function ksTarget(q){const n=Math.abs(q.sigTarget||0),sg=q.sigTarget>0?1:-1;return E.KS[q.clef][sg>0?'s':'f'].slice(0,n).map(sp=>({d:T.dia(T.parse(sp)),a:sg}));}
 function onDown(ev){const q=curQ();if(q._reveal)return;const svg=document.getElementById('stave');
+  if(q.ksPlace){q._ksp=q._ksp||[];const g=ev.target.closest('.ksg');const kh=ev.target.closest('.kshit');
+    if(g){const k=+g.dataset.k;if(eraseMode){q._ksp.splice(k,1);}else{const pt=svgPoint(ev,svg);q._ksp[k].d=pitchAtY(pt.y,q.clef);if(accMode==='s'||accMode==='f')q._ksp[k].a=accMode==='s'?1:-1;}nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}
+    if(!kh||eraseMode)return;if(accMode!=='s'&&accMode!=='f'){toast('Pick ♯ or ♭ first');return;}
+    if(q._ksp.length>=7){toast('A key signature has at most seven accidentals.');return;}
+    const pt=svgPoint(ev,svg);const d=pitchAtY(pt.y,q.clef);const pos=+kh.dataset.pos;const a={d,a:accMode==='s'?1:-1};
+    if(pos<q._ksp.length)q._ksp[pos]=a;else q._ksp.push(a);
+    nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}
   const nh=ev.target.closest('.nh');const hit=ev.target.closest('.hit');
   if(nh&&!eraseMode){const s0=slotItem(q,+nh.dataset.i);if(s0&&!s0.given&&s0.chord){const pt0=svgPoint(ev,svg);const d0=pitchAtY(pt0.y,q.clef);
       if(d0!==+nh.dataset.d&&!s0._p.some(p=>T.dia(p)===d0)&&s0._p.length<(s0.max||4)){const p={l:T.LETTERS[((d0%7)+7)%7],a:0,o:Math.floor(d0/7)};applyAcc(p,accMode);s0._p.push(p);drag={i:s0.slot,p};selected=null;nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}}}
@@ -766,24 +777,31 @@ function checkNotate(){const q=curQ();const sig=curSig(q);let allOk=true,right=0
   q.items.forEach(it=>{if(it.k!=='slot'||it.given)return;need++;const got=it._p.map(p=>sounding(p,sig));
     const targets=[it.target].concat(it.alt||[]);let ok=false;
     for(const tg of targets){if(got.length!==tg.length)continue;
-      if(it.bassCheck){ // the lowest note must be the target's bass note (name); the rest by name in any octave
+      if(it.bassCheck||(it.chord&&q.anyOctaveChord)){ // the lowest note must be the target's bass note (name); the rest by name in any octave — so the inversion is checked but the octave is free
         const gs=got.slice().sort((a,b)=>T.dia(a)-T.dia(b));const ts=tg.slice().sort((a,b)=>T.dia(a)-T.dia(b));
         if(!matchPitch(gs[0],ts[0],true))continue;const used=[];let good=true;
         for(const t of ts){const j=gs.findIndex((g,k)=>!used.includes(k)&&matchPitch(g,t,true));if(j<0){good=false;break;}used.push(j);}
         if(good){ok=true;break;}continue;}
-      const used=[];let good=true;
-      for(const t of tg){const j=got.findIndex((g,k)=>!used.includes(k)&&matchPitch(g,t,it.anyOctave||(it.chord&&q.anyOctaveChord)));if(j<0){good=false;break;}used.push(j);}
-      if(good){ok=true;break;}}
+      // a chord may sit in any octave as long as its voicing is kept: try the target shifted by whole octaves
+      const shifts=(it.chord&&!it.anyOctave)?[0,-1,1,-2,2]:[0];
+      for(const sh of shifts){const tg2=sh?tg.map(p=>T.P(p.l,p.a,p.o+sh)):tg;const used=[];let good=true;
+        for(const t of tg2){const j=got.findIndex((g,k)=>!used.includes(k)&&matchPitch(g,t,it.anyOctave||(it.chord&&q.anyOctaveChord)));if(j<0){good=false;break;}used.push(j);}
+        if(good){ok=true;break;}}
+      if(ok)break;}
     it._ok=ok;if(ok)right++;else allOk=false;if(!got.length)empty++;});
   let sigOk=true;if(q.keysigEdit&&q.sigTarget!==undefined){sigOk=(ksBuilt===q.sigTarget);if(!sigOk)allOk=false;}
+  let ksMsg='';if(q.ksPlace){const t=ksTarget(q),pl=q._ksp||[];const match=t.filter((a,i)=>pl[i]&&pl[i].d===a.d&&pl[i].a===a.a).length;sigOk=(match===t.length&&pl.length===t.length);if(!sigOk)allOk=false;
+    need=Math.max(1,t.length);right=sigOk?need:Math.min(match,need-(pl.length>t.length?1:0));
+    if(!sigOk){ksMsg=t.length?' '+T.sigWord(q.sigTarget)+': '+T.sigList(q.sigTarget)+'.'+(pl.length>t.length?' Too many accidentals.':pl.length<t.length?' Only '+pl.length+' of '+t.length+' placed.':' Check the order and the lines/spaces.'):' '+keyName0(q)+' has no sharps or flats — the signature should be empty.';}}
   q._frac=(need+(q.keysigEdit?1:0))?((right+(q.keysigEdit&&sigOk?1:0))/(need+(q.keysigEdit?1:0))):(allOk?1:0);
   nchecked=true;q._checked=true;drawStave();scoreOnce(allOk);celebrate(allOk,document.getElementById('sw'));{const ha=document.getElementById('hearans');if(ha)ha.disabled=false;}
-  if(allOk){feedback(pick(WINMSG)+(need?' All '+need+' right.':' Key signature correct.')+bonusTag(),'ok',q.why);results[qid()]='ok';}
-  else{let m=pick(MISSMSG)+(need?' '+right+' / '+need+' correct.':'');if(empty)m+=' '+empty+' empty.';if(!sigOk)m+=' Key signature should be '+T.sigWord(q.sigTarget)+'.';
+  if(allOk){feedback(pick(WINMSG)+(q.ksPlace?' Key signature correct.':need?' All '+need+' right.':' Key signature correct.')+bonusTag(),'ok',q.why);results[qid()]='ok';}
+  else{let m=pick(MISSMSG)+(need?' '+right+' / '+need+' correct.':'');if(empty)m+=' '+empty+' empty.';if(!sigOk&&q.keysigEdit)m+=' Key signature should be '+T.sigWord(q.sigTarget)+'.';
+    if(ksMsg)m+=ksMsg;
     const wrong=q.items.filter(i=>i.k==='slot'&&!i.given&&!i._ok);const nm=(i,p)=>(i.anyOctave||i.bassCheck||(i.chord&&q.anyOctaveChord))?T.name(p):T.spn(p);if(wrong.length)m+=' Wrong: '+wrong.slice(0,3).map(i=>'slot '+(i.slot+1)+' ('+(i._p.length?i._p.map(p=>nm(i,sounding(p,sig))).join(' '):'empty')+' → '+i.target.map(p=>nm(i,p)).join(' ')+')').join(', ')+'.';
     feedback(m,'no',q.why);results[qid()]='no';}
   sfCheck(q);renderDots();}
-function answerNotate(){const q=curQ();if(!(qid() in scored)){scoreOnce(false);results[qid()]='no';renderDots();}q._reveal=true;if(q.keysigEdit&&q.sigTarget!==undefined)ksBuilt=q.sigTarget;nchecked=false;selected=null;drawStave();feedback('Answer shown. Clear to try it yourself.','',q.why);sfReveal(q);{const ha=document.getElementById('hearans');if(ha)ha.disabled=false;}}
+function answerNotate(){const q=curQ();if(!(qid() in scored)){scoreOnce(false);results[qid()]='no';renderDots();}q._reveal=true;if(q.keysigEdit&&q.sigTarget!==undefined)ksBuilt=q.sigTarget;if(q.ksPlace)q._ksp=ksTarget(q);nchecked=false;selected=null;drawStave();feedback('Answer shown. Clear to try it yourself.','',q.why);sfReveal(q);{const ha=document.getElementById('hearans');if(ha)ha.disabled=false;}}
 // ---------- choice / match ----------
 function pickChoice(btn,q){if(answered)return;answered=true;const ok=btn.dataset.o===(''+q.answer);q._picked=btn.dataset.o;q._frac=ok?1:0;
   document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');if(b===btn&&!ok)b.classList.add('no');});
@@ -797,7 +815,7 @@ addEventListener('keydown',e=>{if(mode!=='practise'||e.target.tagName==='SELECT'
   if(e.key==='ArrowRight'){goNext();e.preventDefault();return;}if(e.key==='ArrowLeft'){goPrev();e.preventDefault();return;}
   if(q.t==='choice'&&/^[1-9]$/.test(e.key)){const b=document.querySelectorAll('#opts button')[+e.key-1];if(b&&!b.disabled)b.click();}
   if(e.key==='Enter'&&q.t!=='choice'){const ch=document.getElementById('check');if(ch){ch.click();e.preventDefault();}}
-  if(q.t==='notate'){const map={'#':'s','s':'s','b':'f','f':'f','n':'n','0':''};if(e.key in map){const b=document.querySelector(`#acc button[data-acc="${map[e.key]}"]`);if(b)b.click();}if(e.key==='Backspace'||e.key==='Delete'){if(selected){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];s._p.splice(s._p.indexOf(p),1);selected=null;nchecked=false;drawStave();e.preventDefault();}}}});
+  if(q.t==='notate'){const map={'#':'s','s':'s','b':'f','f':'f','n':'n','0':''};if(e.key in map){const b=document.querySelector(`#acc button[data-acc="${map[e.key]}"]`);if(b)b.click();}if((e.key==='Backspace'||e.key==='Delete')&&q.ksPlace){if(q._ksp&&q._ksp.length){q._ksp.pop();nchecked=false;drawStave();}e.preventDefault();return;}if(e.key==='Backspace'||e.key==='Delete'){if(selected){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];s._p.splice(s._p.indexOf(p),1);selected=null;nchecked=false;drawStave();e.preventDefault();}}}});
 // ---------- header controls ----------
 document.getElementById('mPr').onclick=()=>setMode('practise');document.getElementById('mRe').onclick=()=>setMode('reference');document.getElementById('mRec').onclick=()=>setMode('record');
 (function(){const ni=document.getElementById('nameinput');ni.value=currentName;ni.oninput=()=>{currentName=ni.value.trim();LS.set('name',currentName);loadProfile();paintScore();if(mode==='practise')renderTabs();};})();
