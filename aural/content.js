@@ -23,6 +23,7 @@ const INSTR={
   guitar:{name:'Acoustic guitar',fam:'Guitars',lo:48,hi:60}, piano:{name:'Piano',fam:'Keyboard',lo:55,hi:72},
   xylophone:{name:'Xylophone',fam:'Percussion',lo:79,hi:88}
 };
+const A_keep=a=>a.slice(); // fixed answer order: students learn where each answer lives (matters in a 60s Sprint)
 const IVL={m2:{n:'Minor 2nd (semitone)',s:1,l:1,up:'Jaws',dn:'Für Elise'},M2:{n:'Major 2nd (tone)',s:2,l:1,up:'Happy Birthday',dn:'Mary Had a Little Lamb'},
   m3:{n:'Minor 3rd',s:3,l:2,up:'Greensleeves',dn:'Hey Jude'},M3:{n:'Major 3rd',s:4,l:2,up:'When the Saints',dn:'Swing Low, Sweet Chariot'},
   P4:{n:'Perfect 4th',s:5,l:3,up:'Here Comes the Bride',dn:'Eine kleine Nachtmusik'},P5:{n:'Perfect 5th',s:7,l:4,up:'Star Wars / Twinkle Twinkle',dn:'The Flintstones'},
@@ -138,7 +139,7 @@ var UNITS=[
      '5/4':{l:'5/4 — irregular (3+2)',p:['S','s','b','s','b','s','M','s','b','s'],spb:0.30,why:'five beats grouped 3+2 — the accents fall unevenly.'},
      '7/8':{l:'7/8 — irregular (2+2+3)',p:['S','s','M','s','M','s','s'],spb:0.26,why:'seven quavers grouped 2+2+3 — the last group is longer.'}};
     const ids=ctx.cfg('metres'),id=A_pick(ids),m=MET[id],asMusic=ctx.cfg('style')==='music';
-    return {kind:'choice',options:A_shuf(ids.map(x=>MET[x].l)),answer:m.l,
+    return {kind:'choice',options:A_keep(ids.map(x=>MET[x].l)),answer:m.l,
       play:()=>asMusic?AUDIO.metreGroove(m.p,m.spb):AUDIO.groove(m.p,m.spb),playLabel:asMusic?'A groove — find beat 1 and count':'Click pulse — find beat 1 and count',why:`${m.l}: ${m.why}`};}},
 
  {name:'Rhythmic dictation', key:'rd', ask:'Notate the rhythm you hear.',
@@ -173,7 +174,7 @@ var UNITS=[
     if(ctx.mode==='notate'){return {kind:'notate',clef:'treble',given:1,enharm:true,notes:[[R[0],Math.floor(root/12)-1,R[1]],[topN.letter,topN.octave,topN.acc]],mids:[root,root+iv.s],
         play:()=>AUDIO.interval(root,iv.s,'up'),playLabel:'Ascending interval — write the top note',prompt:'Write the note that completes the interval',why:`${iv.n} above ${noteName(rootN)} is <b>${noteName(topN)}</b> (${iv.s} semitones).`};}
     const dir=A_pick(dirs),names=ivls.map(x=>IVL[x].n);const hook=dir==='down'?(iv.dn?'Descending hook: '+iv.dn+'.':''):(iv.up?'Hook: '+iv.up+'.':'');
-    return {kind:'choice',options:A_shuf(names),answer:iv.n,play:()=>AUDIO.interval(root,iv.s,dir),playOpt:(lab)=>{const c=ivls.find(x=>IVL[x].n===lab);return c?AUDIO.interval(root,IVL[c].s,dir):0;},playLabel:dir==='harm'?'Two notes together':dir==='down'?'Descending interval':'Ascending interval',why:`${iv.n} — ${iv.s} semitones (${noteName(rootN)} to ${noteName(topN)}). ${hook}`};}},
+    return {kind:'choice',options:ivls.slice().sort((a,b)=>IVL[a].s-IVL[b].s).map(x=>IVL[x].n),answer:iv.n,play:()=>AUDIO.interval(root,iv.s,dir),playOpt:(lab)=>{const c=ivls.find(x=>IVL[x].n===lab);return c?AUDIO.interval(root,IVL[c].s,dir):0;},playLabel:dir==='harm'?'Two notes together':dir==='down'?'Descending interval':'Ascending interval',why:`${iv.n} — ${iv.s} semitones (${noteName(rootN)} to ${noteName(topN)}). ${hook}`};}},
 
  {name:'Melodic dictation', key:'pd', ask:'Listen — write the notes.',
   guide:`<p class="prompt">Melody patterns</p><ul><li><b>Shape</b> questions: does each note go up, down or stay? Pick the matching contour.</li>
@@ -243,7 +244,7 @@ var UNITS=[
     if(ctx.mode==='notate'){const mids=steps.map(s=>root+s);return {kind:'notate',clef:'treble',given:1,enharm:true,notes:spelled.map(n=>[n.letter,n.octave,n.acc]),mids,solfa:SOLFA_SYL[ch]||null,play:()=>AUDIO.scale(root,steps),playLabel:'Scale going up — write it',prompt:'Write the scale you hear',why:`${disp(ch)} from ${rootName}: ${spelled.map(noteName).join(' ')}.`+sfx};}
     const ex=inContext?colourMelody(root,steps,COL[ch],12):null;
     const undisp=lab=>names.find(n=>disp(n)===lab);
-    return {kind:'choice',options:A_shuf(names.map(disp)),answer:disp(ch),play:()=>inContext?AUDIO.melody(ex.mids,ex.durs,0.42):AUDIO.scale(root,steps),playOpt:(lab)=>{const id=undisp(lab);if(!id)return 0;const st=D[id].map(d=>d[0]);if(inContext){const e2=colourMelody(root,st,COL[id],12);return AUDIO.melody(e2.mids,e2.durs,0.42);}return AUDIO.scale(root,st);},playLabel:inContext?'A tune built on this scale':'A scale going up',why:`${disp(ch)} (from ${rootName}) — ${TELL[ch]}.`+sfx};}},
+    return {kind:'choice',options:A_keep(names.map(disp)),answer:disp(ch),play:()=>inContext?AUDIO.melody(ex.mids,ex.durs,0.42):AUDIO.scale(root,steps),playOpt:(lab)=>{const id=undisp(lab);if(!id)return 0;const st=D[id].map(d=>d[0]);if(inContext){const e2=colourMelody(root,st,COL[id],12);return AUDIO.melody(e2.mids,e2.durs,0.42);}return AUDIO.scale(root,st);},playLabel:inContext?'A tune built on this scale':'A scale going up',why:`${disp(ch)} (from ${rootName}) — ${TELL[ch]}.`+sfx};}},
 
  {name:'Tonality & modulation', key:'ton', ask:'Listen — what is the tonality?',
   guide:`<p class="prompt">Tonality</p><ul><li><b>Major</b> = bright; <b>minor</b> = darker, sadder; <b>pentatonic</b> = open, folky, no semitones (hum it — only five different notes).</li>
@@ -263,14 +264,14 @@ var UNITS=[
       else if(choice==='Subdominant'){ans='Subdominant';seq=est.concat(isMin?[['i',0,'mi'],['V7/iv',0,'7'],['iv',5,'mi'],['V7/iv',0,'7'],['iv',5,'mi']]:[['I7',0,'7'],['IV',5,''],['V7/IV',0,'7'],['IV',5,'']]);desc='the home 7th is flattened (the tonic becomes a dominant 7th) and the cadence lands a 4th higher — the subdominant.';}
       else {ans='No modulation';seq=est.concat(isMin?[['iv',5,'mi'],['V7',7,'7'],['i',0,'mi'],['iv',5,'mi'],['V7',7,'7'],['i',0,'mi']]:[['ii',2,'mi'],['V7',7,'7'],['I',0,''],['IV',5,''],['V7',7,'7'],['I',0,'']]);desc='it stays in the home key and cadences on the home tonic.';}
       const opts=dests.map(d=>d==='Relative'?rel:d==='None'?'No modulation':d);const vc=voiceProg(seq,root);const mel=chordMelody(vc,2,root,[]);
-      return {kind:'choice',options:A_shuf(opts),answer:ans,startTonality:isMin?'Minor':'Major',play:()=>ctx.cfg('play')==='harm'?AUDIO.progMelody(vc,mel.mids,mel.durs,0.5,2):AUDIO.progression(vc,1.1),playLabel:(isMin?'Minor':'Major')+' home key established first — where does it go?',why:`${ans}: ${desc}`};}
+      return {kind:'choice',options:A_keep(opts),answer:ans,startTonality:isMin?'Minor':'Major',play:()=>ctx.cfg('play')==='harm'?AUDIO.progMelody(vc,mel.mids,mel.durs,0.5,2):AUDIO.progression(vc,1.1),playLabel:(isMin?'Minor':'Major')+' home key established first — where does it go?',why:`${ans}: ${desc}`};}
     const tons=ctx.cfg('tons'),id=A_pick(tons);const modal=A_pick([{n:'dorian',steps:[0,2,3,5,7,9,10],col:[3,9,10]},{n:'mixolydian',steps:[0,2,4,5,7,9,10],col:[4,10]}]);
     const T={'Major':{steps:MAJ,col:[4,11],set:PROGSET.Major},'Minor':{steps:MINH,col:[3,11],set:PROGSET.Minor},'Pentatonic':{steps:PENT,col:[4,9],set:PROGSET.Major},'Modal':{steps:modal.steps,col:modal.col,fixed:modal.n==='dorian'?[['i',0,'mi'],['IV',5,''],['i',0,'mi'],['VII',10,''],['i',0,'mi']]:[['I',0,''],['bVII',10,''],['IV',5,''],['bVII',10,''],['I',0,'']]},'Atonal':{}};
     const WHY={'Major':'bright — a major 3rd above the tonic and a leading note pulling home.','Minor':'darker — the 3rd is lowered.','Pentatonic':'five notes only, no semitones — open and folky.','Modal':'a clear centre but a modal colour — '+modal.n+' ('+(modal.n==='dorian'?'minor 3rd with a raised 6th':'major 3rd with a ♭7')+').','Atonal':'no tonal centre — nothing feels like home.'};
     let play; if(id==='Atonal'){const mids=[];let m=root+5;for(let i=0;i<11;i++){m+=A_pick([-7,-5,-4,-2,-1,1,2,4,5,7,-10,10]);m=Math.max(52,Math.min(84,m));mids.push(m);}play=()=>AUDIO.melody(mids,mids.map(()=>A_pick([1,0.5,1,1.5])),0.4);}
     else if(ctx.cfg('play')==='harm'){const seq=T[id].fixed||genProgression(T[id].set,5);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,T[id].steps);play=()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.42,2);}
     else {const ex=colourMelody(root,T[id].steps.concat([12]),T[id].col,12);play=()=>AUDIO.melody(ex.mids,ex.durs,0.42);}
-    return {kind:'choice',options:A_shuf(tons),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${WHY[id]}`};}},
+    return {kind:'choice',options:A_keep(tons),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${WHY[id]}`};}},
 
  {name:'Chords', key:'chd', ask:'Listen — what do you hear?',
   guide:`<p class="prompt">Chords</p><ul><li>A <b>triad</b> is three notes stacked in 3rds. Year 7: can you tell one note, two notes and a full chord apart?</li>
@@ -285,7 +286,7 @@ var UNITS=[
     const quals=ctx.cfg('quals').filter(q=>CHORDQ[q]),q=A_pick(quals.length?quals:['Major']),Q=CHORDQ[q];
     if(qt==='inv'){const base=['Major','Minor','Diminished'].includes(q)?q:A_pick(['Major','Minor']);const inv=A_pick([0,1,2]);const INV=['Root position','1st inversion','2nd inversion']; // inversions are asked on triads only: a 7th or 9th chord re-stacked sounds like a cluster, not an inversion
       return {kind:'choice',options:INV,answer:INV[inv],play:()=>AUDIO.chord(0,voiced(root,CHORDQ[base].iv,inv),style),playOpt:(lab)=>{const k=INV.indexOf(lab);return k<0?0:AUDIO.chord(0,voiced(root,CHORDQ[base].iv,k),style);},playLabel:base+' triad — which note is at the bottom?',why:`${INV[inv]} — the bass note is the ${inv===0?'root':inv===1?'3rd':'5th'}.`};}
-    return {kind:'choice',options:A_shuf(quals),answer:q,play:()=>AUDIO.chord(0,voiced(root,Q.iv,0),style),playOpt:(lab)=>CHORDQ[lab]?AUDIO.chord(0,voiced(root,CHORDQ[lab].iv,0),style):0,playLabel:style==='arp'?'A chord, one note at a time':'A chord',why:`${q} — ${Q.cue}.${['Diminished 7th','Augmented'].includes(q)?' (Symmetrical — every inversion sounds the same.)':''}`};}},
+    return {kind:'choice',options:A_keep(quals),answer:q,play:()=>AUDIO.chord(0,voiced(root,Q.iv,0),style),playOpt:(lab)=>CHORDQ[lab]?AUDIO.chord(0,voiced(root,CHORDQ[lab].iv,0),style):0,playLabel:style==='arp'?'A chord, one note at a time':'A chord',why:`${q} — ${Q.cue}.${['Diminished 7th','Augmented'].includes(q)?' (Symmetrical — every inversion sounds the same.)':''}`};}},
 
  {name:'Harmonic dictation', key:'prog', ask:'Listen — write the chords.',
   guide:`<p class="prompt">Chord changes &amp; progressions</p><ul><li>Year 7: can you hear when the chord <b>changes</b>? Count the changes, or say whether two chords are the same or different.</li>
@@ -328,7 +329,7 @@ var UNITS=[
     const scale=isMin?MINH.concat([12]):MAJ.concat([12]);
     const cads=ctx.cfg('cads'),fmt=ctx.cfg('format'),ch=A_pick(cads),c=CAD[ch],kl=key.toLowerCase();
     const EXPL={Perfect:'dominant to tonic; the leading note rises to the tonic — closed.',Plagal:'subdominant to tonic; the 4th degree falls to the 3rd — gentle, closed.',Imperfect:'ends on the dominant — open, unfinished.',Interrupted:'the dominant resolves to vi instead of I — the "surprise" chord.'};
-    if(fmt==='chords'){const vc=voiceCadenceSATB(ton,c.s,R,ch,isMin);return {kind:'choice',options:A_shuf(cads),answer:ch,
+    if(fmt==='chords'){const vc=voiceCadenceSATB(ton,c.s,R,ch,isMin);return {kind:'choice',options:A_keep(cads),answer:ch,
       play:()=>AUDIO.progression(vc,1.5),playOpt:(lab)=>CAD[lab]?AUDIO.progression(voiceCadenceSATB(ton,CAD[lab].s,R,lab,isMin),1.5):0,playLabel:key+' — tonic chord, then the cadence (SATB)',why:`${ch} cadence (${c.rn}) in ${kl}: ${EXPL[ch]}`};}
     if(fmt==='two'){const c1=A_pick(cads),c2=A_pick(cads),label=c1+', then '+c2;
       const prog=voiceProg([ton,pre].concat(CAD[c1].s).concat([ton,pre]).concat(CAD[c2].s),R);
@@ -337,7 +338,7 @@ var UNITS=[
       return {kind:'choice',options:A_opts(pairLabels,label,Math.min(4,pairLabels.length)),answer:label,
         play:()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.45,2),playLabel:key+' — two phrases: a cadence halfway and at the end',why:`${label} (${kl}). ${EXPL[c1]} Then: ${EXPL[c2]}`};}
     const prog=voiceProg([ton,pre].concat(c.s),R);const mel=chordMelody(prog,2,R,isMin?MINH:MAJ);
-    return {kind:'choice',options:A_shuf(cads),answer:ch,
+    return {kind:'choice',options:A_keep(cads),answer:ch,
       play:()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.45,2),playOpt:(lab)=>{if(!CAD[lab])return 0;const p2=voiceProg([ton,pre].concat(CAD[lab].s),R);return AUDIO.progMelody(p2,mel.mids,mel.durs,0.45,2);},playLabel:key+' — a phrase ending on the cadence',why:`${ch} cadence (${c.rn}) in ${kl}: ${EXPL[ch]}`};}},
 
  {name:'Texture', key:'tex', ask:'Listen — what texture?',
@@ -351,7 +352,7 @@ var UNITS=[
     else if(id==='Melody with a counter-melody'){const seq=genProgression(isMin?PROGSET.Minor:PROGSET.Major,6);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,steps);const cm=chordMelody(prog,2,root-12,steps);cm.durs=cm.durs.map(d=>d<1?1:d);
       play=()=>AUDIO.lines([{mids:mel.mids,durs:mel.durs,offset:0,amp:1},{mids:cm.mids.map(m=>m),durs:cm.durs,offset:0,amp:0.75}],0.42);sub='the main tune with a second, slower tune (a counter-melody) running underneath it.';}
     else {const subj=TUNE(root+12,steps,8);const cont=outlineMelody(root+12,steps.concat([12]),7,true);const v1={mids:subj.mids.concat(cont.mids),durs:subj.durs.concat(cont.durs),offset:0,amp:1};const ans={mids:subj.mids.map(m=>m-5).concat(cont.mids.map(m=>m-5)),durs:subj.durs.concat(cont.durs),offset:2,amp:0.9};play=()=>AUDIO.lines([v1,ans],0.4);sub='two independent tunes — the second copies the first a little later (imitation).';}
-    return {kind:'choice',options:A_shuf(texs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${sub}`};}},
+    return {kind:'choice',options:A_keep(texs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${sub}`};}},
 
  {name:'Form', key:'form', ask:'Listen — what is the form?',
   guide:`<p class="prompt">Form</p><ul><li>Give each section a letter as you hear it. Is this <b>new</b> (B, C) or a <b>return</b> (A)? Repetition and contrast make form.</li>
@@ -362,17 +363,17 @@ var UNITS=[
     const push=(s)=>{chords=chords.concat(s.prog);mel.mids=mel.mids.concat(s.m.mids);mel.durs=mel.durs.concat(s.m.durs);};
     if(id==='12-bar blues'){const bars=[0,0,0,0,5,5,0,0,7,5,0,0];const seq=bars.map(o=>['',o,'7']);chords=voiceProg(seq,root);const base=[root+12,root+15,root+17,root+18,root+19];
       bars.forEach(o=>{const sh=o===7?-5:o;const pat=A_pick([[0,1,2,3,4],[0,2,4,2,0],[4,3,2,1,0]]);const d=[1,0.5,0.5,1,1];pat.forEach((p,k)=>{mel.mids.push(base[p]+sh);mel.durs.push(d[k]);});});
-      return {kind:'choice',options:A_shuf(forms),answer:id,play:()=>AUDIO.progMelody(chords,mel.mids,mel.durs,0.3,4),playLabel:'Twelve bars with a riff',why:'12-bar blues: I I I I · IV IV I I · V IV I I.'};}
+      return {kind:'choice',options:A_keep(forms),answer:id,play:()=>AUDIO.progMelody(chords,mel.mids,mel.durs,0.3,4),playLabel:'Twelve bars with a riff',why:'12-bar blues: I I I I · IV IV I I · V IV I I.'};}
     if(id==='Call and response'){const seq=[['I',0,''],['V',7,''],['V',7,''],['I',0,'']];const prog=voiceProg(seq,root);const call=chordMelody(prog.slice(0,2),2,root,MAJ),resp=chordMelody(prog.slice(2),2,root-12,MAJ);
       const play=()=>AUDIO.lines([{mids:call.mids.concat(call.mids.map(()=>null)).concat(call.mids).concat(call.mids.map(()=>null)),durs:call.durs.concat(call.durs).concat(call.durs).concat(call.durs),offset:0,amp:1},{mids:call.mids.map(()=>null).concat(resp.mids).concat(call.mids.map(()=>null)).concat(resp.mids),durs:call.durs.concat(resp.durs).concat(call.durs).concat(resp.durs),offset:0,amp:0.85}],0.4);
-      return {kind:'choice',options:A_shuf(forms),answer:id,play,playLabel:'Phrases taking turns',why:'Call and response — a high "call" phrase is answered by a lower "response", then again.'};}
+      return {kind:'choice',options:A_keep(forms),answer:id,play,playLabel:'Phrases taking turns',why:'Call and response — a high "call" phrase is answered by a lower "response", then again.'};}
     const PLAN={'Binary (AB)':'AB','Ternary (ABA)':'ABA','Verse–chorus (ABAB)':'ABAB','Rondo (ABACA)':'ABACA','Through-composed (ABC)':'ABC','Strophic (AAA)':'AAA','Theme and variations':'AVW'};
     const SEC={};const mk=(k)=>{let seq,r=root,steps=MAJ;if(k==='A'){seq=genProgression(PROGSET.Major.filter(e=>e[4]<=8),4);}else if(k==='B'){seq=[['IV',5,''],['V',7,''],['vi',9,'mi'],['V7',7,'7']];}else if(k==='C'){r=root+9;steps=MINH;seq=[['i',0,'mi'],['iv',5,'mi'],['V7',7,'7'],['i',0,'mi']];}
       if(k==='V'||k==='W'){const a=SEC.A;const m={mids:[],durs:[]};a.m.mids.forEach((x,i)=>{if(k==='V'){m.mids.push(x,x+(Math.random()<0.5?2:-1));m.durs.push(a.m.durs[i]/2,a.m.durs[i]/2);}else{m.mids.push(x+12);m.durs.push(a.m.durs[i]);}});return {prog:a.prog,m};}
       const prog=voiceProg(seq,r);const m=chordMelody(prog,2,r,steps);if(k==='B')m.mids=m.mids.map(x=>x+(x<r+17?12:0));return {prog,m};};
     PLAN[id].split('').forEach(k=>{if(!SEC[k])SEC[k]=mk(k);push(SEC[k]);});
     const WHY={'Binary (AB)':'two different sections, no return.','Ternary (ABA)':'A, a contrasting B, then A comes back.','Verse–chorus (ABAB)':'verse and chorus alternate — the chorus is the bigger, higher section.','Rondo (ABACA)':'A keeps returning between new episodes.','Through-composed (ABC)':'new material all the way — nothing returns.','Strophic (AAA)':'the same section repeated for every verse.','Theme and variations':'the theme, then the same chords with the tune decorated, then up an octave.'};
-    return {kind:'choice',options:A_shuf(forms),answer:id,play:()=>AUDIO.progMelody(chords,mel.mids,mel.durs,0.33,2),playLabel:PLAN[id].length+' sections of four bars',why:`${id}: ${WHY[id]}`};}},
+    return {kind:'choice',options:A_keep(forms),answer:id,play:()=>AUDIO.progMelody(chords,mel.mids,mel.durs,0.33,2),playLabel:PLAN[id].length+' sections of four bars',why:`${id}: ${WHY[id]}`};}},
 
  {name:'Dynamics & articulation', key:'dyn', ask:'Listen — how is it played?',
   guide:`<p class="prompt">Dynamics &amp; articulation</p><ul><li>Dynamics are how loud: <b>pp</b> pianissimo · <b>p</b> piano · <b>mp</b> mezzo piano · <b>mf</b> mezzo forte · <b>f</b> forte · <b>ff</b> fortissimo. You hear a phrase at <b>mf</b> first as a reference.</li>
@@ -397,7 +398,7 @@ var UNITS=[
         G('terms','Tempo terms',[Y('Largo','Largo (very slow, ~45)',7),Y('Adagio','Adagio (slow, ~65)',7),Y('Moderato','Moderato (medium, ~105)',7),Y('Allegro','Allegro (fast, ~140)',7),Y('Presto','Presto (very fast, ~180)',7),Y('Andante','Andante (walking, ~85)',9),Y('Allegretto','Allegretto (fairly fast, ~120)',9)]) ],
   gen(ctx){const qt=A_pick(ctx.cfg('qtype')),root=A_root(57,64);const BPM={Largo:45,Adagio:65,Andante:85,Moderato:105,Allegretto:120,Allegro:140,Presto:180};
     const seq=genProgression(PROGSET.Major.filter(e=>e[4]<=9),4);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,MAJ);
-    if(qt==='term'){const terms=ctx.cfg('terms'),t=A_pick(terms);return {kind:'choice',options:A_shuf(terms),answer:t,play:()=>AUDIO.progMelody(prog.concat(prog),mel.mids.concat(mel.mids),mel.durs.concat(mel.durs),60/BPM[t],2),playLabel:'A phrase — tap along and judge the speed',why:`${t} — about ${BPM[t]} beats per minute.`};}
+    if(qt==='term'){const terms=ctx.cfg('terms'),t=A_pick(terms);return {kind:'choice',options:A_keep(terms),answer:t,play:()=>AUDIO.progMelody(prog.concat(prog),mel.mids.concat(mel.mids),mel.durs.concat(mel.durs),60/BPM[t],2),playLabel:'A phrase — tap along and judge the speed',why:`${t} — about ${BPM[t]} beats per minute.`};}
     if(qt==='rub'){const rub=Math.random()<0.5;
       // rubato = the whole texture breathes together: a time-warp over the phrase (push through the middle, broaden into the end), chords and melody alike
       const play=()=>{const spb=0.5;const total=mel.durs.reduce((x,y)=>x+y,0);const W=b=>{if(!rub)return b;const u=b/total;return total*(u-0.12*Math.sin(2*Math.PI*u)+0.22*u*u*u);};
@@ -423,8 +424,8 @@ var UNITS=[
     if(type==='Two'&&keys.length>=2){const two=A_shuf(keys).slice(0,2),label=two.map(k=>INSTR[k].name).sort().join(' & ');const opts=[label];let tries=0;while(opts.length<4&&tries<40){const pr=A_shuf(keys).slice(0,2).map(k=>INSTR[k].name).sort().join(' & ');if(!opts.includes(pr))opts.push(pr);tries++;}
       const p1=phrase(two[0]),p2=phrase(two[1]);return {kind:'choice',options:A_shuf(opts),answer:label,needsSamples:true,play:async()=>{AUDIO.sampleMelody(two[0],p1.mids,p1.durs,0.4);return AUDIO.sampleMelody(two[1],p2.mids,p2.durs,0.4);},playLabel:'Two instruments — a phrase each',why:two.map(k=>INSTR[k].name+' ('+TELL[k]+')').join(' and ')+'.'};}
     const k=A_pick(keys),ph=phrase(k);
-    if(type==='Instrument'){return {kind:'choice',options:A_shuf(keys.map(x=>INSTR[x].name)),answer:INSTR[k].name,needsSamples:true,play:()=>AUDIO.sampleMelody(k,ph.mids,ph.durs,0.42),playLabel:'A phrase — which instrument?',why:`${INSTR[k].name} (${INSTR[k].fam}) — ${TELL[k]}.`};}
-    const fams=[...new Set(keys.map(x=>INSTR[x].fam))];return {kind:'choice',options:A_shuf(fams),answer:INSTR[k].fam,needsSamples:true,play:()=>AUDIO.sampleMelody(k,ph.mids,ph.durs,0.42),playLabel:'A phrase — which family?',why:`${INSTR[k].fam} — this was the ${INSTR[k].name.toLowerCase()}: ${TELL[k]}.`};}},
+    if(type==='Instrument'){return {kind:'choice',options:A_keep(keys.map(x=>INSTR[x].name)),answer:INSTR[k].name,needsSamples:true,play:()=>AUDIO.sampleMelody(k,ph.mids,ph.durs,0.42),playLabel:'A phrase — which instrument?',why:`${INSTR[k].name} (${INSTR[k].fam}) — ${TELL[k]}.`};}
+    const fams=[...new Set(keys.map(x=>INSTR[x].fam))];return {kind:'choice',options:A_keep(fams),answer:INSTR[k].fam,needsSamples:true,play:()=>AUDIO.sampleMelody(k,ph.mids,ph.durs,0.42),playLabel:'A phrase — which family?',why:`${INSTR[k].fam} — this was the ${INSTR[k].name.toLowerCase()}: ${TELL[k]}.`};}},
 
  {name:'Devices', key:'dev', ask:'Listen — which device is being used?',
   guide:`<p class="prompt">Compositional devices</p><ul><li><b>Drone / pedal</b>: one note held (or repeated) underneath while the tune moves. <b>Ostinato / riff</b>: a short pattern repeated over and over.</li>
@@ -440,5 +441,5 @@ var UNITS=[
       else if(id==='Diminution'){second=base;sd=md.map(d=>d/2);desc='the motif, then the same motif at double speed — every note half as long (diminution).';}
       else {second=motif.map(m=>root+12-(MAJ[m%7]+(m>=7?12:0)));sd=md;desc='the motif, then the motif turned upside down — every rise becomes a fall (inversion).';}
       const mids=base.concat([null],second),durs=md.concat([1],sd);play=()=>AUDIO.melody(mids,durs,0.42);why=desc;}
-    return {kind:'choice',options:A_shuf(devs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${why}`};}}
+    return {kind:'choice',options:A_keep(devs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${why}`};}}
 ];

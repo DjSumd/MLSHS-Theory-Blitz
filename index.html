@@ -301,7 +301,7 @@
       <div class="modebar yearbar" id="yearbar" title="Which year's syllabus is the default"><span class="ylab">Year</span><button data-y="7">7</button><button data-y="8">8</button><button data-y="9">9</button><button data-y="10">10</button><button data-y="11">11</button><button data-y="12">12</button></div>
       <button class="gear" id="gear">⚙ Customise</button>
     </div>
-    <div class="namebar"><button class="avbtn" id="avbtn" title="Customise your avatar"><span id="avmini"></span><span>Avatar</span></button><input id="nameinput" maxlength="28" placeholder="Your name" autocomplete="off"></div>
+    <div class="namebar"><button class="avbtn" id="avbtn" title="Customise your avatar"><span id="avmini"></span><span>Avatar</span></button><input id="nameinput" maxlength="28" placeholder="Your name" autocomplete="off"><button class="taskbtn" id="taskbtn" title="Open a task your teacher has set">📋 Class task</button></div>
   </div>
   <nav class="tabs" id="tabs"></nav>
   <div class="dots" id="dots"></div>
@@ -318,6 +318,8 @@
 <script src="gen.js"></script>
 <script src="refs.js"></script>
 <script src="embed.js"></script>
+<script src="qr.js"></script>
+<script src="task.js"></script>
 <script>
 const APP='theoryAll';
 // ---- Exam: Section One Part B in the WACE shape (two score-based theory questions, ~9 marks each) ----
@@ -328,7 +330,21 @@ const TODAY={id:'today',name:"Today's Blitz",short:"Today's Blitz",special:true,
 const WEAK={id:'weak',name:'Weak spots',short:'Weak spots',special:true,yr:7,guide:`<b>Weak spots</b><ul><li>Questions from the three units where your recent accuracy is lowest.</li><li>The mastery rings on the tabs show how each unit is going (your last 20 answers).</li></ul>`,
   make(){const real=REAL().filter(u=>unitOn(UNITS.indexOf(u)));const sc=real.map(u=>({u,m:mastery(u.id)})).filter(x=>x.m.n>=3).sort((a,b)=>a.m.acc-b.m.acc).slice(0,3).map(x=>x.u);const pool=sc.length?sc:real;const out=[];let g=0;const seen=new Set();
     while(out.length<SETN&&g++<SETN*5){const u=pool[Math.floor(Math.random()*pool.length)];const q=GEN.makeSet(u.id,1)[0];if(!q)continue;const key=q.prompt+'|'+(q.answer||'');if(seen.has(key))continue;seen.add(key);out.push(q);}return out;}};
-const UNITS=[TODAY,WEAK].concat(GEN.UNITS,[EXAM]);
+// ---- Class task: a locked set the teacher shares as a link / QR / code (see task.js) ----
+const TASKT={id:'task',name:'Class task',short:'Class task',special:true,task:true,yr:7,guide:`<b>Class task</b><ul><li>Your teacher set these questions. The first answer you give to each one is the one that counts.</li><li>Your answers are saved on this device as you go: if you close the app, open the task link again to carry on.</li><li>At the end you get a sealed result code to show or hand in.</li></ul>`,
+  make(){const R=window.TaskKit&&TaskKit.run;if(!R)return [];const out=[];
+    R.task.s.forEach((sec,si)=>{const it=R.items.find(x=>x.si===si);let qs=withSeed(it.secSeed,()=>GEN.makeSet(sec.u,sec.n));let t=1;while(qs.length<sec.n&&t<5){qs=qs.concat(withSeed(it.secSeed+t*7919,()=>GEN.makeSet(sec.u,sec.n-qs.length)));t++;}
+      qs.slice(0,sec.n).forEach(q=>{q.unit=sec.u;out.push(q);});});return out;}};
+const UNITS=[TODAY,WEAK].concat(GEN.UNITS,[EXAM,TASKT]);
+const TASKI=()=>UNITS.indexOf(TASKT);
+let taskPrev=null;
+function taskOpen(){const R=TaskKit.run;SETQ=TASKT.make();SETQ.forId='task';
+  Object.keys(scored).forEach(k=>{if(k.startsWith('task.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith('task.'))delete results[k];});delete uStat[ui];
+  Object.entries(R.state.rec).forEach(([pos,r])=>{scored['task.'+pos]=!!r[3];results['task.'+pos]=r[3]?'ok':'no';});
+  if(TaskKit.isDone()){showTaskFinish();return;}const f=TaskKit.firstOpen();qi=f<0?0:f;load();}
+async function showTaskFinish(){renderTabs();document.getElementById('dots').innerHTML='';const c=document.getElementById('card');c.innerHTML=await TaskKit.finishHtml();TaskKit.wireFinish();c.scrollTop=0;burst('win',innerWidth/2,innerHeight/2,true);}
+function taskRecord(ok){const q=curQ();const pos=qi;const secs=q._t0?(Date.now()-q._t0)/1000:0;
+  setTimeout(()=>{TaskKit.record(pos,ok,q._frac,secs,0);renderDots();const b=document.querySelector('.tkbar');if(b){b.outerHTML=TaskKit.banner();TaskKit.wireBanner();}if(TaskKit.isDone())toast('All answered — press Next to get your result code');},0);}
 let examPlan=[],examOn=false,examStart=0,examTick=null;const embedRes={};
 const EMBED=(()=>{if(window.__EMBED)return window.__EMBED;try{return new URL(location.href).searchParams.get('embed')||'';}catch(e){return '';}})();
 const EMBED_YEAR=(()=>{if(window.__EMBED_YEAR)return window.__EMBED_YEAR;try{return parseInt(new URL(location.href).searchParams.get('year'),10)||0;}catch(e){return 0;}})();
@@ -558,6 +574,7 @@ function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;
     dayAnswers++;const t=todayStr();if(dayAnswers>=5&&!PROF.days.includes(t))PROF.days.push(t);
     saveProfiles();const after=rankOf(PROF.xp);if(after.name!==before)setTimeout(()=>rankUp(after.name),500);checkAch();}
   sfx(ok);paintScore();
+  if(UNITS[ui].task){taskRecord(ok);return;}
   if(!sprintOn&&!h2h&&!UNITS[ui].exam&&us.ans===SETQ.length&&!unitDone[ui]){unitDone[ui]=true;finishSection(ui);}}
 function paintScore(){document.getElementById('scv').textContent=correct+'/'+total;const p=total?Math.round(correct/total*100):null;
   document.getElementById('scp').textContent=p===null?'—':p+'%';
@@ -574,7 +591,7 @@ function setMode(m){if(window.AUDIO)AUDIO.stop();if(sprintOn)endSprint(true);h2h
   if(m==='practise'){ui=Math.min(ui,UNITS.length-1);if(!unitOn(ui))ui=firstUnit();if(!SETQ.length||SETQ.forId!==UNITS[ui].id)openUnit();else load();}
   else if(m==='reference'){ui=0;loadRef();}else renderRecord();}
 function renderTabs(){const nv=document.getElementById('tabs');nv.innerHTML='';document.body.classList.toggle('paper',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].exam));const list=mode==='practise'?UNITS:REFS;
-  list.forEach((u,i)=>{if(mode==='practise'&&!unitOn(i))return;const b=document.createElement('button');
+  list.forEach((u,i)=>{if(mode==='practise'&&(!unitOn(i)||u.task))return;const b=document.createElement('button');
     b.innerHTML=esc(u.short||u.name);b.className=(i===ui?'on':'')+(u.exam?' exam':'')+(u.special?' special':'');
     if(mode==='practise'&&!u.special&&!u.exam&&PROF){const m=mastery(u.id);if(m.n){const C=2*Math.PI*5.5;const col=m.mastered?'#d4a017':m.acc>=0.7?'#5d8a63':m.acc>=0.5?'#b2862f':'#b4433a';
       b.innerHTML=esc(u.short||u.name)+`<svg class="ring" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="rgba(128,128,128,.35)"/><circle cx="7" cy="7" r="5.5" stroke="${col}" stroke-dasharray="${(C*m.acc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 7 7)"/></svg>`+(m.mastered?'<span class="mast">✓</span>':'');
@@ -585,6 +602,7 @@ function renderDots(){const d=document.getElementById('dots');d.innerHTML='';if(
   SETQ.forEach((q,pos)=>{const s=document.createElement('div');const r=results[UNITS[ui].id+'.'+pos];s.className='d'+(pos===qi?' cur':'')+(r?(' '+r):'');s.title='Q'+(pos+1);s.onclick=()=>{qi=pos;load();};d.appendChild(s);});
   const right=document.createElement('div');right.className='right';
   if(UNITS[ui].exam){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent=examOn?'Finish exam':'Back to results';fb.onclick=finishExam;right.appendChild(fb);d.appendChild(right);return;}
+  if(UNITS[ui].task){if(TaskKit.isDone()){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent='Get my result code';fb.onclick=showTaskFinish;right.appendChild(fb);}d.appendChild(right);return;}
   if(SPRINTABLE(UNITS[ui])&&!h2h){const sb=document.createElement('button');sb.className='sprintbtn';const best=PROF&&PROF.sprint&&PROF.sprint[HK(UNITS[ui].id)];sb.textContent='⚡ 60s Sprint'+(best?' · best '+best:'');sb.onclick=startSprint;right.appendChild(sb);}
   if(!UNITS[ui].special&&!h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='⚔ Head-to-head';hb.onclick=askH2H;right.appendChild(hb);}
   if(h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='End head-to-head';hb.onclick=()=>{h2h=null;openUnit(true);};right.appendChild(hb);}
@@ -621,7 +639,7 @@ function h2hCheck(){if(!h2h)return;const w=h2h.score.findIndex(s=>s>=5);if(w<0){
   g.classList.add('open');document.getElementById('gback').classList.add('open');burst('win',innerWidth/2,innerHeight/2,true);
   document.getElementById('h2hre').onclick=()=>{h2h.score=[0,0];h2h.turn=0;closeGuide();SETQ=GEN.makeSet(UNITS[ui].id,40);SETQ.forId=UNITS[ui].id;qi=0;clearSetState();load();};
   document.getElementById('h2hend').onclick=()=>{h2h=null;closeGuide();openUnit(true);};}
-function openUnit(fresh){if(sprintOn)endSprint(true);const u=UNITS[ui];if(u.exam){buildExamPlan();SETQ=examPlan.map(examGen);qi=0;Object.keys(results).forEach(k=>{if(k.startsWith('exam.'))delete results[k];});Object.keys(scored).forEach(k=>{if(k.startsWith('exam.'))delete scored[k];});delete uStat[ui];delete unitDone[ui];examOn=false;clearInterval(examTick);examStartCard();return;}
+function openUnit(fresh){if(sprintOn)endSprint(true);if(UNITS[ui].task){if(window.TaskKit&&TaskKit.run){taskOpen();return;}ui=firstUnit();}const u=UNITS[ui];if(u.exam){buildExamPlan();SETQ=examPlan.map(examGen);qi=0;Object.keys(results).forEach(k=>{if(k.startsWith('exam.'))delete results[k];});Object.keys(scored).forEach(k=>{if(k.startsWith('exam.'))delete scored[k];});delete uStat[ui];delete unitDone[ui];examOn=false;clearInterval(examTick);examStartCard();return;}
   SETQ=u.special?u.make():GEN.makeSet(u.id,SETN);SETQ.forId=u.id;qi=0;if(!SETQ.length){SETQ=GEN.makeSet(REAL()[0].id,SETN);SETQ.forId=u.id;}
   Object.keys(results).forEach(k=>{if(k.startsWith(u.id+'.'))delete results[k];});Object.keys(scored).forEach(k=>{if(k.startsWith(u.id+'.'))delete scored[k];});
   delete uStat[ui];delete unitDone[ui];load();}
@@ -648,9 +666,9 @@ function renderRecord(){document.documentElement.style.setProperty('--accent','#
     <div class="secgrid"><div class="secrow sechead"><span class="secname">Unit</span><span class="secprog">This set</span><span class="secpct">Score</span><span class="secbest">Best</span></div>${grid}</div>
     <div class="refhd">Class log</div>
     <div class="reftable"><table><tr><th>Name</th><th>Unit</th><th>Year</th><th>%</th><th>Finished</th></tr>${rows||'<tr><td colspan="5" style="color:#8a8277">No finished sets yet.</td></tr>'}</table></div>
-    <div class="controls"><button class="btn-ghost" id="csvlog">Export CSV</button><button class="btn-ghost" id="printlog">Print</button><button class="btn-ans" id="clearlog">Clear class log</button></div>`;
+    <div class="controls"><button class="btn-ghost" id="csvlog">Export CSV</button><button class="btn-ghost" id="printlog">Print</button><button class="btn-ghost" id="teachbtn">👩‍🏫 Teacher tools: class tasks</button><button class="btn-ans" id="clearlog">Clear class log</button></div>`;
   const gw=document.getElementById('goweak');if(gw)gw.onclick=()=>{setMode('practise');ui=1;openUnit();};const gt=document.getElementById('gotoday');if(gt)gt.onclick=()=>{setMode('practise');ui=0;openUnit();};
-  document.getElementById('printlog').onclick=()=>window.print();
+  document.getElementById('printlog').onclick=()=>window.print();document.getElementById('teachbtn').onclick=()=>TaskKit.openTeacher();
   document.getElementById('csvlog').onclick=()=>{const csv='Name,Unit,Year,Percent,Finished\n'+LOG.map(e=>[e.name,e.section,'Year '+(e.level||''),e.pct,new Date(e.at).toLocaleString('en-AU')].map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='theory-blitz-log.csv';a.click();};
   document.getElementById('clearlog').onclick=()=>{const w=prompt('This wipes the whole class log on this device. Type CLEAR to confirm.');if(w==='CLEAR'){LOG=[];saveLog();renderRecord();}};}
@@ -693,13 +711,15 @@ function load(){const q=curQ();if(!q)return;
     body=showHtml+`<div class="opts${svgo?' svgopts':''}" id="opts">`+q._order.map((o,i)=>`<button data-o="${esc(o.v)}"><span class="k">${i+1}</span>${o.svg?o.svg:'<span>'+esc(o.v)+'</span>'}</button>`).join('')+`</div><div class="controls"><button class="btn-ans" id="answer">Show answer</button></div>`;
   } else if(q.t==='match'){if(!q._shuf)q._shuf=T.shuffle(q.pairs.map(p=>p[1]));
     body=`<div class="match" id="match">`+q.pairs.map((p,r)=>`<div class="mrow" data-r="${r}"><div class="term">${esc(p[0])}</div><select><option value="">— choose —</option>`+q._shuf.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')+`</select></div>`).join('')+`</div><div class="controls"><button class="btn-check" id="check">Check</button><button class="btn-ans" id="answer">Show answer</button></div>`;}
-  c.innerHTML=head+body+`<div class="feedback" id="fb"></div>${UNITS[ui].exam?`<div class="pfoot">${qi>=SETQ.length-1?'End of questions':'See next page'}</div>`:''}<div class="nav"${sprintOn?' style="visibility:hidden"':''}><button id="prev">‹ Prev</button><span class="pos">${sprintOn?'':(qi+1)+' / '+SETQ.length}</span><button id="next">${UNITS[ui].exam&&qi>=SETQ.length-1?'Finish ›':'Next ›'}</button></div>`;
+  if(UNITS[ui].task&&!q._t0)q._t0=Date.now();
+  c.innerHTML=(UNITS[ui].task?TaskKit.banner():'')+head+body+`<div class="feedback" id="fb"></div>${UNITS[ui].exam?`<div class="pfoot">${qi>=SETQ.length-1?'End of questions':'See next page'}</div>`:''}<div class="nav"${sprintOn?' style="visibility:hidden"':''}><button id="prev">‹ Prev</button><span class="pos">${sprintOn?'':(qi+1)+' / '+SETQ.length}</span><button id="next">${UNITS[ui].exam&&qi>=SETQ.length-1?'Finish ›':'Next ›'}</button></div>`;
   c.scrollTop=0;
-  wire(q);if(q.t==='notate'){drawStave();if(q.solfa&&!UNITS[ui].exam){sfInit(q,q.solfa,[...new Set(q.solfa)],1);sfRender(q);}}
+  wire(q);if(UNITS[ui].task){TaskKit.wireBanner();const nx=document.getElementById('next');if(nx)nx.disabled=false;if(scored[qid()]!==undefined&&results[qid()]&&q.t!=='choice'&&q.t!=='match')feedback('Answered earlier — your first answer counts.',scored[qid()]?'ok':'no');}if(q.t==='notate'){drawStave();if(q.solfa&&!UNITS[ui].exam){sfInit(q,q.solfa,[...new Set(q.solfa)],1);sfRender(q);}}
   const r=results[qid()];if(r&&q.t==='choice'){answered=true;document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');if(b.dataset.o===q._picked&&q._picked!==q.answer)b.classList.add('no');});feedback(r==='ok'?'Correct.':'Answered.',r,q.why);}
   if(r&&q.t==='match'){document.querySelectorAll('#match .mrow').forEach((row,i)=>{row.querySelector('select').value=q.pairs[i][1];row.className='mrow ok';});feedback(r==='ok'?'Correct.':'Answered.',r,q.why);}}
 function goPrev(){if(mode!=='practise')return;if(qi>0){qi--;load();}}
-function goNext(){if(mode!=='practise'||sprintOn)return;if(UNITS[ui].exam&&qi>=SETQ.length-1){finishExam();return;}if(qi<SETQ.length-1){qi++;load();}else{let j=ui+1;while(j<UNITS.length&&!unitOn(j))j++;if(j<UNITS.length){ui=j;openUnit();}}}
+function taskNext(){if(qi<SETQ.length-1){qi++;load();}else if(TaskKit.isDone())showTaskFinish();else{const f=TaskKit.firstOpen();toast('Question '+(f+1)+' still needs an answer');qi=f;load();}}
+function goNext(){if(mode!=='practise'||sprintOn)return;if(UNITS[ui].task){taskNext();return;}if(UNITS[ui].exam&&qi>=SETQ.length-1){finishExam();return;}if(qi<SETQ.length-1){qi++;load();}else{let j=ui+1;while(j<UNITS.length&&!unitOn(j))j++;if(j<UNITS.length){ui=j;openUnit();}}}
 function wire(q){document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;
   document.getElementById('prev').disabled=(qi===0);const lastUnit=!UNITS.some((u,j)=>j>ui&&unitOn(j));document.getElementById('next').disabled=(lastUnit&&qi===SETQ.length-1);
   const hb=document.getElementById('howbtn');if(hb)hb.onclick=openGuide;const gb=document.getElementById('gearbtn');if(gb)gb.onclick=()=>openSettings(fromUnit(q));
@@ -884,6 +904,19 @@ document.getElementById('gclose').onclick=closeGuide;document.getElementById('gb
 loadGensel();loadProfile();paintLevel();paintScore();ui=2;if(!unitOn(ui))ui=firstUnit();openUnit();if(FIRSTRUN&&!EMBED)askYear();try{if(window.AUDIO&&AUDIO.preloadPiano)AUDIO.preloadPiano();}catch(e){}
 if(EMBED==='partB'){document.body.classList.add('embed');const yr=String(Math.max(11,Math.min(12,EMBED_YEAR||11)));GEN.setLevel(yr);paintLevel();ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
 else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+// ---- class tasks: adapter for task.js ----
+TaskKit.init({app:'theory',label:'Theory Blitz',years:[7,8,9,10,11,12],
+  sections:()=>REAL().filter(u=>unitOn(UNITS.indexOf(u))).map(u=>({key:u.id,name:u.name})),
+  sectionNames:()=>Object.fromEntries(REAL().map(u=>[u.id,u.name])),
+  snapshot:()=>{const st=JSON.parse(JSON.stringify(GEN.getSet()));delete st.level;return {global:{set:st,gs:JSON.parse(JSON.stringify(GENSEL||{}))}};},
+  year:()=>+LEVEL(),getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_AURAL_DIR!=='undefined'&&HAS_AURAL_DIR&&/^https?:/.test(location.protocol))?'aural/index.html':'',
+  setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();paintScore();},
+  start:run=>{closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
+    if(!taskPrev)taskPrev={ui,set:JSON.parse(JSON.stringify(GEN.getSet())),gs:JSON.parse(JSON.stringify(GENSEL||{}))};
+    GEN.setLevel(String(run.task.y));if(run.task.g&&run.task.g.set)GEN.applySet(run.task.g.set);GENSEL=(run.task.g&&run.task.g.gs)||{};GEN.setGensel(GENSEL);paintLevel();ui=TASKI();SETQ=[];setMode('practise');},
+  exit:()=>{const pv=taskPrev;taskPrev=null;if(pv){GEN.setLevel(String(pv.set.level));GEN.applySet(pv.set);GENSEL=pv.gs;GEN.setGensel(GENSEL);}paintLevel();ui=pv&&pv.ui!==TASKI()?pv.ui:firstUnit();SETQ=[];setMode('practise');}});
+document.getElementById('taskbtn').onclick=()=>TaskKit.openStudentEntry();
+if(!EMBED)TaskKit.handleHash();
 </script>
 </body>
 </html>

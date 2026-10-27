@@ -312,7 +312,7 @@ header h1{font-size:27px}header .eye{font-size:9.5px;letter-spacing:1.8px}.hud{g
   <div class="topbar">
     <div class="modebar"><button id="mPr" class="on">Train</button><button id="mRe">Reference</button><button id="mRec">Record</button></div>
     <div class="modebar yearbar" id="yearbar" title="Which year's content is the default"><span class="ylab">Year</span><button data-y="7">7</button><button data-y="8">8</button><button data-y="9">9</button><button data-y="10">10</button><button data-y="11">11</button><button data-y="12">12</button></div>
-    <div class="namebar"><button class="avbtn" id="avbtn" title="Customise your avatar"><span id="avmini"></span><span>Avatar</span></button><input id="nameinput" maxlength="28" placeholder="Your name" autocomplete="off"></div>
+    <div class="namebar"><button class="avbtn" id="avbtn" title="Customise your avatar"><span id="avmini"></span><span>Avatar</span></button><input id="nameinput" maxlength="28" placeholder="Your name" autocomplete="off"><button class="taskbtn" id="taskbtn" title="Open a task your teacher has set">📋 Class task</button></div>
   </div>
   <nav class="tabs" id="tabs"></nav>
   <div class="dots" id="dots"></div>
@@ -327,6 +327,8 @@ header h1{font-size:27px}header .eye{font-size:9.5px;letter-spacing:1.8px}.hud{g
 <script src="content.js"></script>
 <script src="refs.js"></script>
 <script src="embed.js"></script>
+<script src="qr.js"></script>
+<script src="task.js"></script>
 <script>
 const ACCSYM={'':'',s:'♯',f:'♭',n:'♮',ss:'𝄪',ff:'♭♭'};
 const UCOL=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#5b5fc7','#c2185b','#0e7c86','#b2862f','#2e7d32','#6a3df0','#d35400','#3f5f7a'];
@@ -470,7 +472,22 @@ function finishExam(){const wasOn=examOn;examOn=false;clearInterval(examTick);if
     <div class="controls"><button class="btn-ghost" id="examreview">Review answers</button><button class="btn-check" id="examagain">New paper</button></div>`;
   if(pct>=70)burst('win',innerWidth/2,innerHeight/2,true);
   document.getElementById('examreview').onclick=()=>{qi=0;load();};document.getElementById('examagain').onclick=()=>{buildExamPlan();runQs[ui]=[];Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});examStartCard();};}
-UNITS=[TODAY,WEAK].concat(UNITS,[EXAM]);
+// ---- Class task: a locked set the teacher shares as a link / QR / code (see task.js) ----
+const TASKU={name:'Class task',key:'task',special:true,task:true,ask:'Listen.',guide:`<p class="prompt">Class task</p><ul><li>Your teacher set these questions. The first answer you give to each one is the one that counts.</li><li>Your answers are saved on this device as you go: if you close the app, open the task link again to carry on.</li><li>At the end you get a sealed result code to show or hand in.</li></ul>`,
+  gen(ctx){const R=window.TaskKit&&TaskKit.run;const it=R&&R.items[ctx.pos];if(!it)return null;const ri=UNITS.findIndex(u=>u.key===it.u);const u=UNITS[ri];if(!u)return null;
+    const cfg=(gk)=>(it.cfg&&gk in it.cfg)?it.cfg[gk]:cfgGet(ri,gk);
+    let q=null;for(let t=0;t<4&&!q;t++){try{q=withSeed(it.seed+t*7919,()=>u.gen(Object.assign({},ctx,{diff:it.d||'med',mode:u.canNotate?(it.m||'choice'):undefined,year:R.task.y,cfg})));}catch(e){q=null;}}
+    if(!q)return null;q._from=ri;q._task=it;return q;}};
+UNITS=[TODAY,WEAK].concat(UNITS,[EXAM,TASKU]);
+const TASKI=()=>UNITS.indexOf(TASKU);
+let taskPrev=null;
+function taskOpen(){const R=TaskKit.run;order=[...Array(R.total).keys()];runQs[ui]=[];
+  Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});
+  Object.entries(R.state.rec).forEach(([pos,r])=>{scored[ui+'.'+pos]=!!r[3];results[ui+'.'+pos]=r[3]?'ok':(r[0]>0?'no':'no');});
+  if(TaskKit.isDone()){showTaskFinish();return;}const f=TaskKit.firstOpen();qi=f<0?0:f;load();}
+async function showTaskFinish(){if(AUDIO)AUDIO.stop();renderTabs();document.getElementById('dots').innerHTML='';const c=document.getElementById('card');c.innerHTML=await TaskKit.finishHtml();TaskKit.wireFinish();c.scrollTop=0;burst('win',innerWidth/2,innerHeight/2,true);}
+function taskRecord(ok){const q=curQ();const pos=order[qi];const secs=q._t0?(Date.now()-q._t0)/1000:0;
+  setTimeout(()=>{TaskKit.record(pos,ok,q._frac,secs,q._plays||0);renderDots();const b=document.querySelector('.tkbar');if(b){b.outerHTML=TaskKit.banner();TaskKit.wireBanner();}if(TaskKit.isDone())toast('All answered — press Next to get your result code');},0);}
 const fromUnit=q=>(q&&q._from!==undefined)?UNITS[q._from]:UNITS[ui];
 // ---- profiles: progress that lasts, per student name ----
 const RANKS=[[0,'Busker'],[150,'Session Player'],[400,'Section Leader'],[800,'Principal'],[1400,'Soloist'],[2200,'Concertmaster'],[3500,'Maestro']];
@@ -630,6 +647,7 @@ function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;
     saveProfiles();const after=rankOf(PROF.xp);if(after.name!==before)setTimeout(()=>rankUp(after.name),500);checkAch();}
   if(ok)sfx(true);else sfx(false);
   paintScore();
+  if(UNITS[ui].task){taskRecord(ok);return;}
   if(!sprintOn&&us.ans===N&&!unitDone[ui]){unitDone[ui]=true;finishSection(ui);}}
 let lastBonus=0;
 function rankUp(name){const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<div style="font-size:54px">${name==='Maestro'?'🎼':name==='Concertmaster'?'👑':name==='Soloist'?'🌟':'🎺'}</div><p class="prompt">New rank: ${name}</p><p class="sub">${esc(currentName||'You')} — keep it up. Your rank and XP are saved under your name on this device.</p><div class="controls"><button class="btn-check" id="rankok">Nice</button></div>`;
@@ -678,14 +696,14 @@ function renderRecord(){document.documentElement.style.setProperty('--accent','#
     <div class="secgrid"><div class="secrow sechead"><span class="secname">Section</span><span class="secprog">Done</span><span class="secpct">Score</span><span class="secdone">✓</span></div>${grid}</div>
     <div class="refhd">Class log</div>
     <div class="reftable"><table><tr><th>Name</th><th>Section</th><th>%</th><th>Finished</th></tr>${rows||'<tr><td colspan="4" style="color:#8a8277">No finished sections yet.</td></tr>'}</table></div>
-    <div class="controls"><button class="btn-ghost" id="csvlog">Export CSV</button><button class="btn-ghost" id="printlog">Print</button><button class="btn-ans" id="clearlog">Clear class log</button></div>`;
+    <div class="controls"><button class="btn-ghost" id="csvlog">Export CSV</button><button class="btn-ghost" id="printlog">Print</button><button class="btn-ghost" id="teachbtn">👩‍🏫 Teacher tools: class tasks</button><button class="btn-ans" id="clearlog">Clear class log</button></div>`;
   const gw=document.getElementById('goweak');if(gw)gw.onclick=()=>{setMode('practise');ui=1;openUnit();};const gt=document.getElementById('gotoday');if(gt)gt.onclick=()=>{setMode('practise');ui=0;openUnit();};
-  document.getElementById('printlog').onclick=()=>window.print();
+  document.getElementById('printlog').onclick=()=>window.print();document.getElementById('teachbtn').onclick=()=>TaskKit.openTeacher();
   document.getElementById('csvlog').onclick=()=>{const b=new Blob([csvLog()],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='aural-blitz-log.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);};
   document.getElementById('clearlog').onclick=()=>{if(confirm('Clear the whole class log saved on this device?')){LOG=[];saveLog();renderRecord();}};}
 function renderTabs(){const n=document.getElementById('tabs');n.innerHTML='';document.body.classList.toggle('paper',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].exam));
   const list=mode==='practise'?UNITS:REFS;
-  list.forEach((u,i)=>{const b=document.createElement('button');b.textContent=u.name;b.className=(i===ui?'on':'')+(u.special?' special':'')+(u.exam?' exam':'');
+  list.forEach((u,i)=>{if(u.task)return;const b=document.createElement('button');b.textContent=u.name;b.className=(i===ui?'on':'')+(u.special?' special':'')+(u.exam?' exam':'');
     if(mode==='practise'&&!u.special&&PROF){const m=mastery(u.key);if(m.n){const C=2*Math.PI*5.5;const col=m.mastered?'#d4a017':m.acc>=0.7?'#5d8a63':m.acc>=0.5?'#b2862f':'#b4433a';
       b.innerHTML=esc(u.name)+`<svg class="ring" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="rgba(128,128,128,.35)"/><circle cx="7" cy="7" r="5.5" stroke="${col}" stroke-dasharray="${(C*m.acc).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 7 7)"/></svg>`+(m.mastered?'<span class="mast">✓</span>':'');
       b.title=Math.round(m.acc*100)+'% over your last '+m.n+(m.mastered?' — mastered':'');}}
@@ -694,10 +712,11 @@ function renderTabs(){const n=document.getElementById('tabs');n.innerHTML='';doc
 const SPRINTABLE=u=>!u.special&&!['rd','pd','prog','dis'].includes(u.key);
 function renderDots(){const d=document.getElementById('dots');d.innerHTML='';
   if(sprintOn)return;
-  order.slice(0,UNITS[ui].exam?order.length:N).forEach((actual,pos)=>{const s=document.createElement('div');const r=results[ui+'.'+actual];
+  order.slice(0,UNITS[ui].exam||UNITS[ui].task?order.length:N).forEach((actual,pos)=>{const s=document.createElement('div');const r=results[ui+'.'+actual];
     s.className='d'+(pos===qi?' cur':'')+(r?(' '+r):'');s.onclick=()=>{qi=pos;load();};d.appendChild(s);});
   const right=document.createElement('div');right.className='right';
   if(UNITS[ui].exam){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent=examOn?'Finish exam':'Back to results';fb.onclick=()=>examOn?finishExam():finishExam();right.appendChild(fb);d.appendChild(right);return;}
+  if(UNITS[ui].task){if(TaskKit.isDone()){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent='Get my result code';fb.onclick=showTaskFinish;right.appendChild(fb);}d.appendChild(right);return;}
   if(SPRINTABLE(UNITS[ui])&&!h2h){const sb=document.createElement('button');sb.className='sprintbtn';const best=PROF&&PROF.sprint&&PROF.sprint[UNITS[ui].key];sb.textContent='⚡ 60s Sprint'+(best?' · best '+best:'');sb.onclick=startSprint;right.appendChild(sb);}
   if(!UNITS[ui].special&&!h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='⚔ Head-to-head';hb.onclick=askH2H;right.appendChild(hb);}
   if(h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='End head-to-head';hb.onclick=()=>{h2h=null;load();};right.appendChild(hb);}
@@ -731,7 +750,7 @@ function h2hCheck(){if(!h2h)return;const w=h2h.score.findIndex(s=>s>=5);if(w<0)r
   g.classList.add('open');document.getElementById('gback').classList.add('open');burst('win',innerWidth/2,innerHeight/2,true);
   document.getElementById('h2hre').onclick=()=>{h2h.score=[0,0];h2h.turn=0;closeGuide();runQs[ui]=[];qi=0;load();};
   document.getElementById('h2hend').onclick=()=>{h2h=null;closeGuide();order=[...Array(N).keys()];runQs[ui]=[];qi=0;load();};}
-function openUnit(){if(sprintOn)endSprint(true);runQs[ui]=[];if(UNITS[ui].exam){buildExamPlan();order=[...Array(examPlan.length).keys()];qi=0;examOn=false;clearInterval(examTick);examStartCard();return;}order=[...Array(N).keys()];qi=0;load();}
+function openUnit(){if(sprintOn)endSprint(true);runQs[ui]=[];if(UNITS[ui].task){if(window.TaskKit&&TaskKit.run){taskOpen();return;}ui=2;}if(UNITS[ui].exam){buildExamPlan();order=[...Array(examPlan.length).keys()];qi=0;examOn=false;clearInterval(examTick);examStartCard();return;}order=[...Array(N).keys()];qi=0;load();}
 function feedback(msg,cls,why){const f=document.getElementById('fb');if(!f)return;f.innerHTML=msg+(why?`<div class="why">${why}</div>`:'');f.className='feedback '+(cls||'');}
 function loadRef(){document.documentElement.style.setProperty('--accent',RCOL);renderTabs();
   const c=document.getElementById('card');c.innerHTML=REFS[ui].render();c.scrollTop=0;}
@@ -862,10 +881,11 @@ function load(){if(AUDIO)AUDIO.stop();
     body=`<div class="opts" id="opts">`+optOrder.map((o,i)=>`<button data-o="${esc(o)}"><span class="k">${i+1}</span><span>${q.fmt?q.fmt(o):esc(o)}</span></button>`).join('')+`</div>
       <div class="controls"><button class="btn-ans" id="answer">Show answer</button></div>`;
   }
-  c.innerHTML=head+body+`<div class="feedback" id="fb"></div>${UNITS[ui].exam?`<div class="pfoot">${qi>=order.length-1?'End of questions':qi===examPlan.filter(x=>!x.embed).length-1?'End of Part A':'See next page'}</div>`:''}
+  if(UNITS[ui].task&&!q._t0)q._t0=Date.now();
+  c.innerHTML=(UNITS[ui].task?TaskKit.banner():'')+head+body+`<div class="feedback" id="fb"></div>${UNITS[ui].exam?`<div class="pfoot">${qi>=order.length-1?'End of questions':qi===examPlan.filter(x=>!x.embed).length-1?'End of Part A':'See next page'}</div>`:''}
     <div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">${UNITS[ui].exam&&qi>=order.length-1?'Finish ›':'Next ›'}</button></div>`;
   c.scrollTop=0;
-  wire(q);
+  wire(q);if(UNITS[ui].task){TaskKit.wireBanner();if(scored[qid()]!==undefined&&!document.getElementById('fb').textContent)feedback('Answered earlier — your first answer counts.',scored[qid()]?'ok':'no');}
   if(q.kind==='notate'){drawStave();if(q.solfa&&!UNITS[ui].exam){sfInit(q,q.solfa,[...new Set(q.solfa)],q.given||0);sfRender(q);}}
   else if(q.kind==='pitchdict'){renderPD(false);sfSetupDict(q);}
   else if(q.kind==='melodydict'||q.kind==='rhythmdict'){renderMD(false);if(!q.rhythmOnly)sfSetupDict(q);}
@@ -1068,8 +1088,8 @@ function checkDis(){const q=curQ();
   else{feedback((ok?'Corrected, but the location step was wrong.':pick(MISSMSG)+' Check the red notes against the performance.'),'no',q.why);results[qid()]='no';}renderDots();}
 function answerDis(){const q=curQ();if(!(qid() in scored))scoreOnce(false);disMarks=Object.assign({},q.changes);disPhase='fix';disRewrite=null;disWork=q.played.map(n=>Object.assign({},n));renderDis(true);feedback('Answer shown.','',q.why);results[qid()]='no';renderDots();}
 
-function goPrev(){if(mode!=='practise'||sprintOn)return;if(qi>0){qi--;load();}else if(ui>0){ui--;openUnit();}}
-function goNext(){if(mode!=='practise'||sprintOn)return;if(UNITS[ui].exam&&qi>=order.length-1){finishExam();return;}if(qi<order.length-1){qi++;load();}else if(ui<UNITS.length-1){ui++;openUnit();}}
+function goPrev(){if(mode!=='practise'||sprintOn)return;if(qi>0){qi--;load();}else if(ui>0&&!UNITS[ui].task){ui--;openUnit();}}
+function goNext(){if(mode!=='practise'||sprintOn)return;if(UNITS[ui].task){if(qi<order.length-1){qi++;load();}else if(TaskKit.isDone())showTaskFinish();else{const f=TaskKit.firstOpen();toast('Question '+(f+1)+' still needs an answer');qi=f;load();}return;}if(UNITS[ui].exam&&qi>=order.length-1){finishExam();return;}if(qi<order.length-1){qi++;load();}else if(ui<UNITS.length-1){ui++;openUnit();}}
 function wireAcc(){document.querySelectorAll('#acc button').forEach(b=>{b.classList.toggle('on',b.dataset.acc===accMode);
   b.onclick=()=>{accMode=b.dataset.acc;document.querySelectorAll('#acc button').forEach(x=>x.classList.toggle('on',x===b));};});}
 function wire(q){
@@ -1231,6 +1251,17 @@ try{ if(!localStorage.getItem('blitzAuralYear')) askYear(); }catch(e){}
 try{ if(window.AUDIO&&AUDIO.preloadPiano) AUDIO.preloadPiano(); }catch(e){}
 if(EMBED==='partA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR&&EMBED_YEAR!==YEAR){const ok=document.querySelector('#yearbar button[data-y="'+EMBED_YEAR+'"]');if(ok)setYear(EMBED_YEAR);}ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
 else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+// ---- class tasks: adapter for task.js ----
+TaskKit.init({app:'aural',label:'Aural Blitz',years:[7,8,9,10,11,12],
+  sections:()=>REAL().map(u=>({key:u.key,name:u.name,notate:!!u.canNotate,diff:['rd','pd','dis'].includes(u.key)})),
+  sectionNames:()=>Object.fromEntries(REAL().map(u=>[u.key,u.name])),
+  snapshot:(keys)=>({per:Object.fromEntries(keys.map(k=>{const ri=UNITS.findIndex(u=>u.key===k);const u=UNITS[ri];return [k,Object.fromEntries((u.cfg||[]).map(g=>[g.key,cfgGet(ri,g.key)]))];}))}),
+  year:()=>YEAR,getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_THEORY_DIR!=='undefined'&&HAS_THEORY_DIR&&/^https?:/.test(location.protocol))?'theory/index.html':'',
+  setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();paintScore();},
+  start:run=>{closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(!taskPrev)taskPrev={ui,year:YEAR};YEAR=run.task.y;paintYear();ui=TASKI();setMode('practise');},
+  exit:()=>{const pv=taskPrev||{ui:2,year:YEAR};taskPrev=null;YEAR=pv.year;paintYear();runQs[TASKI()]=[];ui=pv.ui===TASKI()?2:pv.ui;setMode('practise');}});
+document.getElementById('taskbtn').onclick=()=>TaskKit.openStudentEntry();
+if(!EMBED)TaskKit.handleHash();
 </script>
 </body>
 </html>
