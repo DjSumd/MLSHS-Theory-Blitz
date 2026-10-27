@@ -34,9 +34,9 @@
     const key=await crypto.subtle.deriveKey({name:'ECDH',public:tp},eph.privateKey,{name:'AES-GCM',length:256},false,['encrypt']);
     const iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,bytes));
     const ep=new Uint8Array(await crypto.subtle.exportKey('raw',eph.publicKey));return cat(new Uint8Array([1]),ep,iv,ct);}
-  async function unseal(bytes){const T=LS.get(K_TEACH,null);if(!T)throw new Error('nokey');
+  async function unseal(bytes){if(!KEY.priv)throw new Error('locked');
     const ep=bytes.slice(1,66),iv=bytes.slice(66,78),ct=bytes.slice(78);
-    const priv=await crypto.subtle.importKey('jwk',T.priv,EC,false,['deriveKey']);const epk=await crypto.subtle.importKey('raw',ep,EC,false,[]);
+    const priv=KEY.priv;const epk=await crypto.subtle.importKey('raw',ep,EC,false,[]);
     const key=await crypto.subtle.deriveKey({name:'ECDH',public:epk},priv,{name:'AES-GCM',length:256},false,['decrypt']);
     const pt=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct));return {payload:await unpackBytes(pt),fp:b64u.enc(ep).slice(0,22)};}
   const cryptoOK=()=>!!(window.crypto&&crypto.subtle&&window.isSecureContext!==false);
@@ -52,7 +52,7 @@
   // ---------- modal ----------
   function modal(html,wide){let m=document.getElementById('tkmodal'),b=document.getElementById('tkback');
     if(!m){b=document.createElement('div');b.className='gback';b.id='tkback';document.body.appendChild(b);m=document.createElement('div');m.className='guide';m.id='tkmodal';document.body.appendChild(m);b.onclick=closeModal;}
-    m.style.width=wide?'min(860px,95vw)':'';m.innerHTML='<button class="gclose" id="tkclose">✕</button>'+html;document.getElementById('tkclose').onclick=closeModal;m.classList.add('open');b.classList.add('open');m.scrollTop=0;return m;}
+    m.style.width=wide?'min(860px,95vw)':'';m.dataset.teacher=wide?'1':'';m.innerHTML='<button class="gclose" id="tkclose">✕</button>'+html;document.getElementById('tkclose').onclick=closeModal;m.classList.add('open');b.classList.add('open');m.scrollTop=0;return m;}
   function closeModal(){const m=document.getElementById('tkmodal'),b=document.getElementById('tkback');if(m)m.classList.remove('open');if(b)b.classList.remove('open');}
   function toast(t){if(A&&A.toast)A.toast(t);}
   async function copy(text,label){try{await navigator.clipboard.writeText(text);toast((label||'Copied')+' ✓');}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast((label||'Copied')+' ✓');}catch(e2){}ta.remove();}}
@@ -116,26 +116,49 @@
 
   // ---------- teacher ----------
   const teacher=()=>LS.get(K_TEACH,null);
-  let unlocked=false;try{unlocked=sessionStorage.getItem('blitzTeacherOpen')==='1';}catch(e){}
-  async function checkPin(pin){const T=teacher();return T&&(await sha(T.salt+'|'+pin))===T.pin;}
+  // The private key is stored only encrypted with the teacher's PIN (PBKDF2 → AES-GCM). It is decrypted into memory
+  // when the PIN is entered and dropped on lock, after 10 minutes without use, or when the app closes.
+  const KEY={priv:null,jwk:null},PBKDF2_IT=400000,IDLE_MS=10*60*1000;let idleT=null,fails=0,waitUntil=0;
+  async function pinKey(pin,salt,it){const base=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64u.dec(salt),iterations:it||PBKDF2_IT,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+  async function wrapKey(jwk,pin){const salt=b64u.enc(crypto.getRandomValues(new Uint8Array(16)));const iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await pinKey(pin,salt),enc.encode(JSON.stringify(jwk))));return {salt,iv:b64u.enc(iv),ct:b64u.enc(ct),it:PBKDF2_IT};}
+  async function loadKey(jwk){KEY.jwk=jwk;KEY.priv=await crypto.subtle.importKey('jwk',jwk,EC,false,['deriveKey']);touch();}
+  function lockNow(quiet){const was=!!KEY.priv;KEY.priv=null;KEY.jwk=null;clearTimeout(idleT);const m=document.getElementById('tkmodal');if(was&&m&&m.classList.contains('open')&&m.dataset.teacher==='1')closeModal();if(was&&!quiet)toast('Teacher tools locked');}
+  function touch(){if(!KEY.priv)return;clearTimeout(idleT);idleT=setTimeout(()=>lockNow(),IDLE_MS);}
+  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,touch,true));addEventListener('pagehide',()=>lockNow(true));
+  // returns 'ok' | 'bad' | 'weak' (old short PIN that must be replaced)
+  async function unlockWith(pin){const T=teacher();if(!T)return 'bad';
+    if(T.enc){try{const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u.dec(T.enc.iv)},await pinKey(pin,T.enc.salt,T.enc.it),b64u.dec(T.enc.ct));await loadKey(JSON.parse(dec.decode(pt)));return 'ok';}catch(e){return 'bad';}}
+    if(T.priv&&T.pin){if((await sha(T.salt+'|'+pin))!==T.pin)return 'bad';await loadKey(T.priv);if(pin.length<6)return 'weak';await saveWrapped(pin);return 'ok';}
+    return 'bad';}
+  async function saveWrapped(pin){const T=teacher();LS.set(K_TEACH,{v:2,pub:T.pub,enc:await wrapKey(KEY.jwk,pin),at:T.at||Date.now()});}
+  const pinFields=(a,b)=>`<div class="setgrp"><div class="setlabel">${a}</div><input id="tkpin1" type="password" autocomplete="new-password" maxlength="64" class="tkin"></div>
+      <div class="setgrp"><div class="setlabel">${b}</div><input id="tkpin2" type="password" autocomplete="new-password" maxlength="64" class="tkin"></div>`;
+  function readNewPin(){const a=document.getElementById('tkpin1').value,b=document.getElementById('tkpin2').value;if(a.length<6){toast('Use at least 6 characters');return null;}if(a!==b){toast('They don\'t match');return null;}if(/^(\d)\1+$/.test(a)||/^(012345|123456|234567|345678|456789|987654|654321)/.test(a)){toast('Too easy to guess — choose another');return null;}return a;}
+  function needNewPin(then){modal(`<p class="prompt">Choose a longer PIN</p><p class="sub">Teacher tools now encrypt your teacher key with your PIN, so it needs at least 6 characters. Letters and numbers both work; a short passphrase is strongest.</p>${pinFields('New PIN or passphrase (6+ characters)','Again')}<div class="controls"><button class="btn-check" id="tkset">Save</button></div>`);document.getElementById('tkmodal').dataset.teacher='1';
+    document.getElementById('tkset').onclick=async()=>{const v=readNewPin();if(!v)return;await saveWrapped(v);toast('PIN saved');teacherHome(then);};}
   function needCrypto(){modal('<p class="prompt">Teacher tools need a secure page</p><p class="sub">Open the app from its https web address (GitHub Pages) or a recent browser. This browser can\'t do the encryption the results use.</p>');}
   TK.openTeacher=async function(then){if(!cryptoOK()){needCrypto();return;}
     const T=teacher();
-    if(!T){modal(`<p class="prompt">Set up teacher tools</p><p class="sub">This creates a teacher key on this device. Class task results are sealed to this key, so only devices holding it can open them. Choose a PIN so students can't open these tools on this device.</p>
-      <div class="setgrp"><div class="setlabel">PIN (4 or more digits)</div><input id="tkpin1" type="password" inputmode="numeric" maxlength="12" class="tkin"></div>
-      <div class="setgrp"><div class="setlabel">PIN again</div><input id="tkpin2" type="password" inputmode="numeric" maxlength="12" class="tkin"></div>
+    if(!T){modal(`<p class="prompt">Set up teacher tools</p><p class="sub">This creates a teacher key on this device. Class task results are sealed to this key, so only devices holding it can open them. The key is stored encrypted with your PIN: without the PIN it can't be used, even by someone who gets onto this device.</p>
+      ${pinFields('PIN or passphrase (6+ characters)','Again')}
       <div class="controls"><button class="btn-check" id="tkmake">Create teacher key</button></div>
-      <p class="sub">Already set up on another device? Open that device's Teacher tools → Settings → <b>Add another device</b> and scan or copy its code to this one.</p>`);
-      document.getElementById('tkmake').onclick=async()=>{const a=document.getElementById('tkpin1').value,b=document.getElementById('tkpin2').value;if(a.length<4){toast('PIN needs 4 or more digits');return;}if(a!==b){toast('The PINs don\'t match');return;}
-        const kp=await crypto.subtle.generateKey(EC,true,['deriveKey']);const pub=b64u.enc(new Uint8Array(await crypto.subtle.exportKey('raw',kp.publicKey)));const priv=await crypto.subtle.exportKey('jwk',kp.privateKey);const salt=rid(12);
-        LS.set(K_TEACH,{pub,priv,salt,pin:await sha(salt+'|'+a),at:Date.now()});unlocked=true;try{sessionStorage.setItem('blitzTeacherOpen','1');}catch(e){}toast('Teacher key created');teacherHome(then);};return;}
-    if(!unlocked){modal(`<p class="prompt">Teacher tools</p><div class="setgrp"><div class="setlabel">PIN</div><input id="tkpin" type="password" inputmode="numeric" maxlength="12" class="tkin"></div><div class="controls"><button class="btn-check" id="tkunlock">Open</button></div>`);
-      const go=async()=>{if(await checkPin(document.getElementById('tkpin').value)){unlocked=true;try{sessionStorage.setItem('blitzTeacherOpen','1');}catch(e){}teacherHome(then);}else toast('Wrong PIN');};
+      <p class="sub">Already set up on another device? Open that device's Teacher tools → Settings → <b>Add another device</b> and copy its code to this one.</p>`);
+      document.getElementById('tkmake').onclick=async()=>{const a=readNewPin();if(!a)return;
+        const kp=await crypto.subtle.generateKey(EC,true,['deriveKey']);const pub=b64u.enc(new Uint8Array(await crypto.subtle.exportKey('raw',kp.publicKey)));const jwk=await crypto.subtle.exportKey('jwk',kp.privateKey);
+        LS.set(K_TEACH,{v:2,pub,enc:await wrapKey(jwk,a),at:Date.now()});await loadKey(jwk);toast('Teacher key created');teacherHome(then);};return;}
+    if(!KEY.priv){modal(`<p class="prompt">Teacher tools</p><div class="setgrp"><div class="setlabel">PIN</div><input id="tkpin" type="password" autocomplete="current-password" maxlength="64" class="tkin"></div><div class="controls"><button class="btn-check" id="tkunlock">Open</button></div><p class="sub">Teacher tools lock themselves after 10 minutes without use and whenever the app closes.</p>`);
+      const go=async()=>{const now=Date.now();if(now<waitUntil){toast('Too many tries — wait '+Math.ceil((waitUntil-now)/1000)+' s');return;}
+        const btn=document.getElementById('tkunlock');btn.disabled=true;btn.textContent='Checking…';const r=await unlockWith(document.getElementById('tkpin').value);
+        if(r==='bad'){fails++;if(fails>=5)waitUntil=Date.now()+30000*Math.pow(2,Math.min(4,fails-5));btn.disabled=false;btn.textContent='Open';toast('Wrong PIN');return;}
+        fails=0;if(r==='weak'){needNewPin(then);return;}teacherHome(then);};
       document.getElementById('tkunlock').onclick=go;document.getElementById('tkpin').onkeydown=e=>{if(e.key==='Enter')go();};setTimeout(()=>{const p=document.getElementById('tkpin');if(p)p.focus();},50);return;}
-    teacherHome(then);};
+    touch();teacherHome(then);};
   const tabsHtml=cur=>`<div class="tktabs">${[['new','Set a task'],['res','Results'],['tasks','My tasks'],['set','Settings']].map(([k,l])=>`<button data-tt="${k}" class="${cur===k?'on':''}">${l}</button>`).join('')}</div>`;
+  function markT(){const m=document.getElementById('tkmodal');if(m)m.dataset.teacher='1';}
   function wireTabs(){document.querySelectorAll('.tktabs button').forEach(b=>b.onclick=()=>teacherHome(b.dataset.tt));}
-  function teacherHome(tab){if(typeof tab==='function'){tab();return;}tab=tab||'new';if(tab==='new')builder();else if(tab==='res')results();else if(tab==='tasks')myTasks();else settings();}
+  function teacherHome(tab){if(!KEY.priv){TK.openTeacher(tab);return;}if(typeof tab==='function'){Promise.resolve(tab()).then(markT);return;}setTimeout(markT,0);tab=tab||'new';if(tab==='new')builder();else if(tab==='res')results();else if(tab==='tasks')myTasks();else settings();}
 
   function builder(){const secs=A.sections();const yrs=A.years;const y=A.year();
     modal(`<p class="prompt">Set a class task — ${esc(A.label)}</p>${tabsHtml('new')}
@@ -219,19 +242,19 @@
   // ---------- settings / devices ----------
   function settings(){const T=teacher();const addr=appAddr();
     modal(`<p class="prompt">Settings</p>${tabsHtml('set')}
-      <div class="setgrp"><div class="setlabel">Add another device</div><p class="sub">Use this to set tasks and read results on another of your own devices. Scan this code with the other device, or copy the device code to it. <b>Don't show or share this with students</b>: anyone with it can open results.</p><button class="btn-ghost" id="tkdev">Show the device code</button><div id="tkdevbox"></div></div>
+      <div class="setgrp"><div class="setlabel">Add another device</div><p class="sub">Use this to set tasks and read results on another of your own devices. Scan this code with the other device, or copy the device code to it. The code carries your key encrypted with your PIN, so the other device also needs your PIN. Still keep it to yourself.</p><button class="btn-ghost" id="tkdev">Show the device code</button><div id="tkdevbox"></div></div>
       ${/^https?:/.test(location.protocol)?'':`<div class="setgrp"><div class="setlabel">This app's web address</div><p class="sub">This copy is opened from a file. To make links and QR codes, enter the GitHub Pages address of this app.</p><input id="tkaddr" class="tkin" value="${esc(addr)}" placeholder="https://…/index.html"><div class="controls" style="margin-top:6px"><button class="btn-ghost" id="tksaveaddr">Save</button></div></div>`}
-      <div class="setgrp"><div class="setlabel">Change PIN</div><input id="tknp" type="password" inputmode="numeric" maxlength="12" class="tkin" placeholder="New PIN"><div class="controls" style="margin-top:6px"><button class="btn-ghost" id="tkchg">Change PIN</button><button class="btn-ghost" id="tklock">Lock teacher tools</button></div></div>
-      <p class="sub">Teacher key created ${new Date(T.at).toLocaleDateString('en-AU')}. Results and tasks are saved on this device only.</p>`,true);wireTabs();
+      <div class="setgrp"><div class="setlabel">Change PIN</div>${pinFields('New PIN or passphrase (6+ characters)','Again')}<div class="controls" style="margin-top:6px"><button class="btn-ghost" id="tkchg">Change PIN</button><button class="btn-check" id="tklock">Lock teacher tools now</button></div></div>
+      <p class="sub">Teacher key created ${new Date(T.at).toLocaleDateString('en-AU')}, stored encrypted with your PIN. Teacher tools lock after 10 minutes without use and when the app closes. Results and tasks are saved on this device only.</p>`,true);wireTabs();
     document.getElementById('tkdev').onclick=async()=>{const blob=b64u.enc(await packBytes(LS.get(K_TEACH,null)));const a=appAddr();const link=a?a+'#tkey='+blob:'';document.getElementById('tkdevbox').innerHTML=`<div class="tkqr">${qrSVG(link||blob,240)}</div>${link?'':'<p class="sub">No web address: copy the code below to the other device instead.</p>'}<div class="controls"><button class="btn-ghost" id="tkdevcopy">Copy device code</button></div>`;document.getElementById('tkdevcopy').onclick=()=>copy(link||blob,'Device code copied');};
     const sa=document.getElementById('tksaveaddr');if(sa)sa.onclick=()=>{LS.set(K_ADDR+':'+A.app,document.getElementById('tkaddr').value.trim());toast('Saved');};
-    document.getElementById('tkchg').onclick=async()=>{const v=document.getElementById('tknp').value;if(v.length<4){toast('PIN needs 4 or more digits');return;}const T2=teacher();T2.pin=await sha(T2.salt+'|'+v);LS.set(K_TEACH,T2);toast('PIN changed');};
-    document.getElementById('tklock').onclick=()=>{unlocked=false;try{sessionStorage.removeItem('blitzTeacherOpen');}catch(e){}closeModal();toast('Teacher tools locked');};}
+    document.getElementById('tkchg').onclick=async()=>{const v=readNewPin();if(!v)return;await saveWrapped(v);toast('PIN changed');settings();};
+    document.getElementById('tklock').onclick=()=>lockNow();}
   async function importKey(blob){let T;try{T=await unpackBytes(b64u.dec(blob));}catch(e){modal('<p class="prompt">That device code didn\'t open</p>');return;}
-    if(!T||!T.priv||!T.pub){modal('<p class="prompt">That isn\'t a device code</p>');return;}
+    if(!T||!T.pub||!(T.enc||T.priv)){modal('<p class="prompt">That isn\'t a device code</p>');return;}
     const cur=teacher();if(cur&&cur.pub===T.pub){modal('<p class="prompt">This device already has this teacher key</p>');return;}
-    modal(`<p class="prompt">Add the teacher key to this device?</p><p class="sub">${cur?'<b>This device already has a different teacher key — it will be replaced.</b> ':''}After this, this device can open class-task results. It uses the same PIN as your other device.</p><div class="controls"><button class="btn-check" id="tkimp">Add teacher key</button><button class="btn-ghost" id="tkno">Cancel</button></div>`);
-    document.getElementById('tkno').onclick=closeModal;document.getElementById('tkimp').onclick=()=>{LS.set(K_TEACH,T);unlocked=false;toast('Teacher key added');TK.openTeacher('res');};}
+    modal(`<p class="prompt">Add the teacher key to this device?</p><p class="sub">${cur?'<b>This device already has a different teacher key — it will be replaced.</b> ':''}After this, this device can open class-task results. You'll need the same PIN as your other device to open it.</p><div class="controls"><button class="btn-check" id="tkimp">Add teacher key</button><button class="btn-ghost" id="tkno">Cancel</button></div>`);
+    document.getElementById('tkno').onclick=closeModal;document.getElementById('tkimp').onclick=()=>{LS.set(K_TEACH,T);lockNow(true);toast('Teacher key added');TK.openTeacher('res');};}
 
   // ---------- routing ----------
   TK.handleHash=function(){const h=location.hash||'';let m;
