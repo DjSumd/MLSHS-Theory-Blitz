@@ -148,13 +148,22 @@
       document.getElementById('tkmake').onclick=async()=>{const a=readNewPin();if(!a)return;
         const kp=await crypto.subtle.generateKey(EC,true,['deriveKey']);const pub=b64u.enc(new Uint8Array(await crypto.subtle.exportKey('raw',kp.publicKey)));const jwk=await crypto.subtle.exportKey('jwk',kp.privateKey);
         LS.set(K_TEACH,{v:2,pub,enc:await wrapKey(jwk,a),at:Date.now()});await loadKey(jwk);toast('Teacher key created');teacherHome(then);};return;}
-    if(!KEY.priv){modal(`<p class="prompt">Teacher tools</p><div class="setgrp"><div class="setlabel">PIN</div><input id="tkpin" type="password" autocomplete="current-password" maxlength="64" class="tkin"></div><div class="controls"><button class="btn-check" id="tkunlock">Open</button></div><p class="sub">Teacher tools lock themselves after 10 minutes without use and whenever the app closes.</p>`);
+    if(!KEY.priv){modal(`<p class="prompt">Teacher tools</p><div class="setgrp"><div class="setlabel">PIN</div><input id="tkpin" type="password" autocomplete="current-password" maxlength="64" class="tkin"></div><div class="controls"><button class="btn-check" id="tkunlock">Open</button></div><p class="sub">This is the PIN you chose when you first set up teacher tools. It's shared by every Blitz app on this web address (Aural and Theory, 7–12 and ATAR), so a PIN set in one app opens the others. Teacher tools lock after 10 minutes without use and whenever the app closes.</p><p class="sub"><a href="#" id="tkforgot">Forgot your PIN?</a></p>`);
+      document.getElementById('tkforgot').onclick=e=>{e.preventDefault();forgotPin(then);};
       const go=async()=>{const now=Date.now();if(now<waitUntil){toast('Too many tries — wait '+Math.ceil((waitUntil-now)/1000)+' s');return;}
         const btn=document.getElementById('tkunlock');btn.disabled=true;btn.textContent='Checking…';const r=await unlockWith(document.getElementById('tkpin').value);
-        if(r==='bad'){fails++;if(fails>=5)waitUntil=Date.now()+30000*Math.pow(2,Math.min(4,fails-5));btn.disabled=false;btn.textContent='Open';toast('Wrong PIN');return;}
+        if(r==='bad'){fails++;if(fails>=5)waitUntil=Date.now()+30000*Math.pow(2,Math.min(4,fails-5));btn.disabled=false;btn.textContent='Open';toast(fails>=3?'Wrong PIN — use "Forgot your PIN?" if you can\'t remember it':'Wrong PIN');return;}
         fails=0;if(r==='weak'){needNewPin(then);return;}teacherHome(then);};
       document.getElementById('tkunlock').onclick=go;document.getElementById('tkpin').onkeydown=e=>{if(e.key==='Enter')go();};setTimeout(()=>{const p=document.getElementById('tkpin');if(p)p.focus();},50);return;}
     touch();teacherHome(then);};
+  function forgotPin(then){const nT=LS.get(K_TASKS,[]).length,nR=LS.get(K_RES,[]).length;
+    modal(`<p class="prompt">Start again with a new teacher key?</p><p class="sub">Your PIN can't be recovered: it isn't stored anywhere. Starting again creates a new teacher key and PIN for every Blitz app on this web address, on this device.</p>
+      <p class="sub"><b>This also removes, from this device:</b> ${nT} saved task${nT===1?'':'s'} and ${nR} recorded result${nR===1?'':'s'}. Result codes from tasks you set with the old key can't be opened any more, so set those tasks again. Another device that still has the old key and knows its PIN is unaffected.</p>
+      <div class="setgrp"><div class="setlabel">Type RESET to confirm</div><input id="tkreset" class="tkin" maxlength="8" autocomplete="off"></div>
+      <div class="controls"><button class="btn-ans" id="tkdoreset">Start again</button><button class="btn-ghost" id="tkkeep">Cancel</button></div>`);
+    document.getElementById('tkkeep').onclick=()=>TK.openTeacher(then);
+    document.getElementById('tkdoreset').onclick=()=>{if(document.getElementById('tkreset').value.trim().toUpperCase()!=='RESET'){toast('Type RESET to confirm');return;}
+      lockNow(true);LS.del(K_TEACH);LS.del(K_TASKS);LS.del(K_RES);fails=0;waitUntil=0;toast('Teacher tools reset');TK.openTeacher(then);};}
   const tabsHtml=cur=>`<div class="tktabs">${[['new','Set a task'],['res','Results'],['tasks','My tasks'],['set','Settings']].map(([k,l])=>`<button data-tt="${k}" class="${cur===k?'on':''}">${l}</button>`).join('')}</div>`;
   function markT(){const m=document.getElementById('tkmodal');if(m)m.dataset.teacher='1';}
   function wireTabs(){document.querySelectorAll('.tktabs button').forEach(b=>b.onclick=()=>teacherHome(b.dataset.tt));}
