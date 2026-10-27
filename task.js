@@ -7,7 +7,7 @@
 (function(){
   const TK={V:1,run:null};
   const LS={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},del(k){try{localStorage.removeItem(k);}catch(e){}}};
-  const K_TEACH='blitzTeacherKey',K_TASKS='blitzTeacherTasks',K_RES='blitzTeacherResults',K_ADDR='blitzTeacherAddr';
+  const K_EMAIL='blitzTeacherEmail',K_TEACH='blitzTeacherKey',K_TASKS='blitzTeacherTasks',K_RES='blitzTeacherResults',K_ADDR='blitzTeacherAddr';
   const esc=s=>(''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   let A=null; // adapter from the host app
 
@@ -90,9 +90,17 @@
     return `<div class="tkdone"><div class="qnum">Class task complete</div><p class="prompt">${esc(R.task.ti||'Task')} — done</p>
       <p class="sub"><b>${esc(R.name)}</b>${R.task.cl?' · '+esc(R.task.cl):''} · ${sc.got} / ${sc.max} · ${mins} min</p>
       <div class="setgrp" style="text-align:left"><div class="setlabel">Your result code</div><textarea id="tkcode" class="tkin tkcodebox" rows="4" readonly>${code}</textarea></div>
-      <p class="sub"><b>Copy your result code and paste it where your teacher asks</b> (for example your Connect submission). The code is sealed: only your teacher's device can open it, so it can't be changed.</p>
-      <div class="controls"><button class="btn-check" id="tkcopy">Copy result code</button><button class="btn-ghost" id="tkback2">Back to practice</button></div></div>`;};
-  TK.wireFinish=function(){const R=TK.run;const c=document.getElementById('tkcopy');if(c)c.onclick=()=>copy(R.state.receipt,'Result code copied');const box=document.getElementById('tkcode');if(box)box.onfocus=()=>box.select();const b=document.getElementById('tkback2');if(b)b.onclick=()=>TK.leave();};
+      ${R.task.em?`<p class="sub"><b>Press Email it to my teacher, then press Send in Outlook.</b> If Outlook doesn't open, use the other email button, or copy the code and paste it where your teacher asks.</p>
+      <div class="controls"><button class="btn-check" id="tkmail">✉ Email it to my teacher</button><button class="btn-ghost" id="tkmail2">Use my email app</button></div>
+      <div class="controls"><button class="btn-ghost" id="tkcopy">Copy result code</button><button class="btn-ghost" id="tkback2">Back to practice</button></div>`
+      :`<p class="sub"><b>Copy your result code and paste it where your teacher asks</b> (for example your Connect submission).</p>
+      <div class="controls"><button class="btn-check" id="tkcopy">Copy result code</button><button class="btn-ghost" id="tkback2">Back to practice</button></div>`}
+      <p class="sub">The code is sealed: only your teacher's device can open it, so it can't be changed.</p></div>`;};
+  function mailParts(){const R=TK.run;const subj='Blitz result · '+(R.task.ti||'Class task')+(R.task.cl?' · '+R.task.cl:'')+' · '+R.name;
+    const body='Result for '+R.name+(R.task.cl?' ('+R.task.cl+')':'')+' — '+(R.task.ti||'Class task')+'.\n\nSealed result code (please don\'t change it):\n[['+R.state.receipt+']]\n';return {to:R.task.em,subj,body};}
+  TK.wireFinish=function(){const R=TK.run;
+    const m1=document.getElementById('tkmail');if(m1)m1.onclick=()=>{const m=mailParts();const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(m.to)+'&subject='+encodeURIComponent(m.subj)+'&body='+encodeURIComponent(m.body);window.open(u,'_blank','noopener');R.state.mailed=Date.now();saveRun();};
+    const m2=document.getElementById('tkmail2');if(m2)m2.onclick=()=>{const m=mailParts();location.href='mailto:'+encodeURIComponent(m.to)+'?subject='+encodeURIComponent(m.subj)+'&body='+encodeURIComponent(m.body);R.state.mailed=Date.now();saveRun();};const c=document.getElementById('tkcopy');if(c)c.onclick=()=>copy(R.state.receipt,'Result code copied');const box=document.getElementById('tkcode');if(box)box.onfocus=()=>box.select();const b=document.getElementById('tkback2');if(b)b.onclick=()=>TK.leave();};
 
   // ---------- student entry ----------
   async function openTaskCode(code,fromLink){let task;try{task=await decodeTask(code);}catch(e){modal('<p class="prompt">That task code didn\'t open</p><p class="sub">Check you copied the whole link or code.</p>');return;}
@@ -175,6 +183,7 @@
       <div class="tkgrid"><div class="setgrp"><div class="setlabel">Title</div><input id="tkti" class="tkin" maxlength="60" placeholder="e.g. Intervals and melodic dictation"></div>
         <div class="setgrp"><div class="setlabel">Class</div><input id="tkcl" class="tkin" maxlength="24" placeholder="e.g. 8B"></div>
         <div class="setgrp"><div class="setlabel">Year content</div><select id="tky" class="setsel">${yrs.map(v=>`<option value="${v}"${v===y?' selected':''}>Year ${v}</option>`).join('')}</select></div></div>
+      <div class="setgrp"><div class="setlabel">Your email for results</div><input id="tkem" class="tkin" type="email" maxlength="80" value="${esc(LS.get(K_EMAIL,''))}" placeholder="e.g. firstname.lastname@education.wa.edu.au"><p class="sub" style="margin:4px 0 0">Students get an <b>Email it to my teacher</b> button that sends their sealed result here. Leave it empty if you'd rather they copy the code into Connect.</p></div>
       <div class="setlabel" style="margin-top:6px">Sections and number of questions</div>
       <div class="tksecs">${secs.map(s=>`<div class="tksec" data-u="${s.key}"><span class="nm">${esc(s.name)}</span>
         ${s.notate?`<select class="tkm"><option value="choice">Listen &amp; pick</option><option value="notate">Listen &amp; write</option></select>`:''}
@@ -188,7 +197,8 @@
     document.getElementById('tkmake2').onclick=async()=>{const n=tot();if(!n){toast('Add some questions first');return;}if(n>60){toast('Keep a task to 60 questions or fewer');return;}
       const chosen=[...document.querySelectorAll('.tksec')].filter(r=>+r.querySelector('b').textContent>0).map(r=>({u:r.dataset.u,n:+r.querySelector('b').textContent,m:r.querySelector('.tkm')?r.querySelector('.tkm').value:'',d:r.querySelector('.tkd')?r.querySelector('.tkd').value:''}));
       const yv=+document.getElementById('tky').value;const snap=A.snapshot(chosen.map(c=>c.u),yv);
-      const task={v:1,a:A.app,id:rid(8),ti:document.getElementById('tkti').value.trim()||'Class task',cl:document.getElementById('tkcl').value.trim(),y:yv,ps:document.getElementById('tkps').classList.contains('on')?1:0,h:document.getElementById('tkh').classList.contains('on')?1:0,pk:teacher().pub,
+      const em=document.getElementById('tkem').value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Check the email address');return;}LS.set(K_EMAIL,em);
+      const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti:document.getElementById('tkti').value.trim()||'Class task',cl:document.getElementById('tkcl').value.trim(),y:yv,ps:document.getElementById('tkps').classList.contains('on')?1:0,h:document.getElementById('tkh').classList.contains('on')?1:0,pk:teacher().pub,
         s:chosen.map(c=>Object.assign({u:c.u,n:c.n},c.m?{m:c.m}:{},c.d?{d:c.d}:{},snap.per&&snap.per[c.u]?{cfg:snap.per[c.u]}:{})),g:snap.global||null,at:Date.now()};
       const code=await encodeTask(task);const th=(await sha(code)).slice(0,16);const list=LS.get(K_TASKS,[]);list.unshift({id:task.id,ti:task.ti,cl:task.cl,y:task.y,a:task.a,n,at:task.at,code,th});LS.set(K_TASKS,list.slice(0,80));
       showTask(list[0]);};}
@@ -213,7 +223,13 @@
     const qs=p.q.filter(x=>x[1]>0);const quick=qs.filter(x=>x[1]<(p.a==='aural'?2:1.5)&&x[0]===100).length;if(quick>=Math.max(3,p.n*0.4))out.push(['warn',quick+' answers in under 2 s']);
     if(p.ot&&p.ot.length)out.push(['warn','same device also opened this task as: '+p.ot.join(', ')]);
     if(p.rl>3)out.push(['info','resumed '+p.rl+' times']);return out;}
-  async function addCodes(text){const codes=(text.match(/B1\.[A-Za-z0-9_-]{40,}/g)||[]);let added=0,dup=0,bad=0;const res=LS.get(K_RES,[]);const last=[];
+  function findCodes(text){text=String(text||'').replace(/=\r?\n/g,'').replace(/=3D/g,'=');const out=[];
+    (text.match(/\[\[\s*B1\.[\sA-Za-z0-9_-]{40,}?\]\]/g)||[]).forEach(m=>out.push(m.replace(/[\[\]\s]/g,'')));
+    (text.match(/B1\.[A-Za-z0-9_-]{40,}/g)||[]).forEach(c=>{if(!out.some(o=>o.startsWith(c)||c.startsWith(o)))out.push(c);});return [...new Set(out)];}
+  async function readFiles(files){let all='';for(const f of files){const buf=new Uint8Array(await f.arrayBuffer());all+='\n'+new TextDecoder('utf-8').decode(buf);
+      // Outlook .msg files keep the body as UTF-16
+      if(/\.msg$/i.test(f.name)||buf.length>1&&buf[1]===0){try{all+='\n'+new TextDecoder('utf-16le').decode(buf);}catch(e){}}}return all;}
+  async function addCodes(text){const codes=findCodes(text);let added=0,dup=0,bad=0;const res=LS.get(K_RES,[]);const last=[];
     for(const c of codes){try{const {payload:p,fp}=await unseal(b64u.dec(c.slice(3)));if(res.some(r=>r.fp===fp)){dup++;last.push(res.find(r=>r.fp===fp));continue;}
         const got=p.q.reduce((a,x)=>a+x[0]/100,0);const r={fp,k:p.k,a:p.a,ti:p.ti,cl:p.cl,nm:p.nm,y:p.y,n:p.n,got:Math.round(got*2)/2,st:p.st,fn:p.fn,q:p.q,s:p.s,flags:flagsFor(p,fp),at:Date.now()};res.push(r);last.push(r);added++;}
       catch(e){bad++;}}
@@ -223,12 +239,24 @@
     const ids=[...new Set(res.map(r=>r.k))];const cur=taskId||ids[ids.length-1]||'';const rows=res.filter(r=>r.k===cur).sort((a,b)=>a.nm.localeCompare(b.nm));
     const tmeta=tasks.find(t=>t.id===cur)||rows[0]||{};
     modal(`<p class="prompt">Results</p>${tabsHtml('res')}${note?`<p class="sub"><b>${note}</b></p>`:''}
-      <div class="setgrp"><div class="setlabel">Add result codes</div><textarea id="tkcodes" rows="3" class="tkin" placeholder="Paste one or many result codes at once (copy them from the Connect submissions, email or a shared doc). Anything that isn't a result code is ignored."></textarea><div class="controls" style="margin-top:6px"><button class="btn-check" id="tkadd">Add results</button></div></div>
+      <div class="setgrp"><div class="setlabel">Add results</div><textarea id="tkcodes" rows="3" class="tkin" placeholder="Paste result codes, or whole emails: one or many at once. Anything that isn't a result code is ignored."></textarea>
+        <div class="tkdrop" id="tkdrop">Or drop result emails or files here <span>(.eml, .msg, .txt)</span> · <a href="#" id="tkpickf">choose files</a><input type="file" id="tkfiles" multiple accept=".eml,.msg,.txt,.htm,.html,.csv,text/*" style="display:none"></div>
+        <div class="controls" style="margin-top:6px"><button class="btn-check" id="tkadd">Add results</button><button class="btn-ghost" id="tkhow">How to collect them from Outlook</button></div></div>
       ${ids.length?`<div class="setgrp"><div class="setlabel">Task</div><select id="tkpick" class="setsel">${ids.map(id=>{const t=tasks.find(x=>x.id===id)||res.find(r=>r.k===id);return `<option value="${id}"${id===cur?' selected':''}>${esc((t.ti||'Task')+(t.cl?' · '+t.cl:''))}</option>`;}).join('')}</select></div>`:''}
       ${rows.length?`<div class="reftable"><table><tr><th>Student</th><th>Mark</th><th>%</th><th>Time</th><th>Finished</th><th>Flags</th></tr>${rows.map(r=>`<tr><td><a href="#" data-det="${r.fp}">${esc(r.nm)}</a></td><td><b>${r.got} / ${r.n}</b></td><td>${Math.round(r.got/r.n*100)}%</td><td>${fmtMin(r.fn-r.st)}</td><td>${new Date(r.fn*1000).toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td><td>${r.flags.filter(f=>f[0]==='warn').map(f=>`<span class="tkflag">${esc(f[1])}</span>`).join(' ')}</td></tr>`).join('')}</table></div>
         <p class="sub">${rows.length} student${rows.length===1?'':'s'} · class average ${Math.round(rows.reduce((a,r)=>a+r.got/r.n,0)/rows.length*100)}%</p>
         <div class="controls"><button class="btn-ghost" id="tkcsv">Export CSV</button><button class="btn-ghost" id="tkprint">Print</button><button class="btn-ans" id="tkclr">Delete these results</button></div>`:'<p class="sub">No results for this task yet.</p>'}`,true);wireTabs();
-    document.getElementById('tkadd').onclick=async()=>{const r=await addCodes(document.getElementById('tkcodes').value);results(r.last.length?r.last[r.last.length-1].k:cur,`${r.added} added${r.dup?' · '+r.dup+' already recorded':''}${r.bad?' · '+r.bad+' couldn\'t be opened (not sealed to this teacher key, or incomplete)':''}${!r.total?'no result codes found in that text':''}`);};
+    const report=r=>results(r.last.length?r.last[r.last.length-1].k:cur,`${r.added} added${r.dup?' · '+r.dup+' already recorded':''}${r.bad?' · '+r.bad+' couldn\'t be opened (not sealed to this teacher key, or incomplete)':''}${!r.total?'no result codes found':''}`);
+    document.getElementById('tkadd').onclick=async()=>report(await addCodes(document.getElementById('tkcodes').value));
+    const fi=document.getElementById('tkfiles'),dz=document.getElementById('tkdrop');
+    document.getElementById('tkpickf').onclick=e=>{e.preventDefault();fi.click();};fi.onchange=async()=>{if(fi.files.length)report(await addCodes(await readFiles(fi.files)));};
+    dz.ondragover=e=>{e.preventDefault();dz.classList.add('on');};dz.ondragleave=()=>dz.classList.remove('on');
+    dz.ondrop=async e=>{e.preventDefault();dz.classList.remove('on');const txt=e.dataTransfer.getData('text');if(e.dataTransfer.files.length)report(await addCodes(await readFiles(e.dataTransfer.files)+'\n'+txt));else if(txt)report(await addCodes(txt));};
+    document.getElementById('tkhow').onclick=()=>{modal(`<p class="prompt">Collecting emailed results</p><p class="sub">Every result email has a subject starting <b>Blitz result</b>.</p>
+      <ol class="sub" style="padding-left:20px"><li><b>Outlook on the web (one or a few):</b> open an email, press Ctrl+A then Ctrl+C in the message, and paste into Add results. You can paste several emails one after another before pressing Add results.</li>
+      <li><b>Outlook desktop (a whole class):</b> search for <i>Blitz result</i>, select all the emails (Ctrl+A), then File → Save As → save as <b>Text Only</b>. Drop that one .txt file onto Add results.</li>
+      <li><b>Or</b> select the emails in Outlook desktop and drag them straight onto the drop box.</li></ol>
+      <p class="sub">Duplicates are counted once, so it doesn't matter if you add the same email twice.</p><div class="controls"><button class="btn-ghost" id="tkhowback">Back to results</button></div>`,true);document.getElementById('tkhowback').onclick=()=>results(cur);};
     const pk=document.getElementById('tkpick');if(pk)pk.onchange=()=>results(pk.value);
     document.querySelectorAll('[data-det]').forEach(a=>a.onclick=e=>{e.preventDefault();detail(res.find(r=>r.fp===a.dataset.det));});
     const cs=document.getElementById('tkcsv');if(cs)cs.onclick=()=>{const secNames=A.sectionNames();const head=['Student','Class','Task','Mark','Out of','Percent','Time (min)','Finished'].concat((rows[0].s||[]).map(s=>(secNames[s[0]]||s[0])+' (/'+s[1]+')'),['Flags']);
@@ -289,7 +317,7 @@
   .tkx{border:0;background:transparent;cursor:pointer;color:var(--muted)}
   .tkfull{position:fixed;inset:0;background:#fff;z-index:200;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer}.tkfull p{font-family:var(--sans);font-size:22px;font-weight:600;color:#111}
   .tkverified{text-align:center;border:3px solid #5d8a63;border-radius:8px;padding:14px}.tkverified.warn{border-color:#b4433a}.tkbig{font-family:var(--serif);font-size:44px;font-weight:600;margin:4px 0}.tkbig span{font-size:20px;color:var(--muted)}
-  .tkdone{text-align:center}.tkcodebox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;word-break:break-all;resize:none;background:#fbf8f2}.tkdone .controls{justify-content:center}
+  .tkdone{text-align:center}.tkdrop{margin-top:6px;border:1.5px dashed var(--rule);border-radius:6px;padding:12px;text-align:center;font-size:13px;color:#4d463c;background:#fff}.tkdrop span{color:var(--muted)}.tkdrop.on{border-color:var(--ink);background:var(--paper2)}.tkcodebox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;word-break:break-all;resize:none;background:#fbf8f2}.tkdone .controls{justify-content:center}
   .taskbtn{background:transparent;border:1px solid rgba(239,233,220,.3);color:#cfc8ba;border-radius:999px;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;font-family:var(--sans)}.taskbtn:hover{border-color:var(--cream);color:var(--cream)}
   body.tasking .topbar .modebar,body.tasking #yearbar,body.tasking #gear,body.tasking .tabs,body.tasking .btn-ans,body.tasking #gearbtn,body.tasking .sprintbtn,body.tasking .h2hbtn,body.tasking .newset,body.tasking .difftog,body.tasking .modetoggle,body.tasking #reset,body.tasking .taskbtn,body.tasking #avbtn{display:none!important}
   body.tasking #nameinput{pointer-events:none;opacity:.8}
