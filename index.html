@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@600;700;800;900&display=swap">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -69,7 +69,7 @@
   .guide b{color:#222} .guide ol,.guide ul{margin:6px 0 0;padding-left:20px} .guide li{margin:5px 0}
   .guide .gclose{position:absolute;top:10px;right:12px;border:0;background:var(--shade);border-radius:999px;width:30px;height:30px;font-size:15px;cursor:pointer}
   .showbox{display:flex;justify-content:center;background:#fff;border:1px solid var(--rule);border-radius:6px;padding:6px 8px;margin:2px 0 10px;overflow-x:auto}
-  .showbox svg{height:118px;width:auto;max-width:100%} .showbox.tall svg{height:150px}
+  .showbox svg{height:118px;width:auto;max-width:100%} .showbox.tall svg{height:150px} .showbox.long svg{height:auto;width:100%;max-height:220px}
   .legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:-4px 0 10px;font-size:12px;color:#4d463c}
   .legend .lab{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700}
   .legend .lgitem{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--rule);border-radius:6px;padding:2px 8px 2px 2px} .legend svg{height:56px;width:auto}
@@ -326,6 +326,7 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <script src="qr.js"></script>
 <script src="task.js"></script>
 <script src="testkit.js"></script>
+<script src="blitzui.js"></script>
 <script>
 const APP='theoryAll';
 // ---- Exam: Section One Part B in the WACE shape (two score-based theory questions, ~9 marks each) ----
@@ -381,24 +382,30 @@ let testRun={y:0,sem:'',seed:0},testGroups=[];
 const EMBED_P=(k,d)=>{const w=window['__EMBED_'+k.toUpperCase()];if(w!==undefined)return w;try{const v=new URL(location.href).searchParams.get(k);return v===null?d:v;}catch(e){return d;}};
 const TEST_AURAL_MARKS={7:TestKit.MARKS[7].a,8:TestKit.MARKS[8].a,9:TestKit.MARKS[9].a,10:TestKit.MARKS[10].a};
 function testTheoryGroups(y){const G=(title,text,list)=>({title,text,items:list.map(([g,m,sf])=>({g,m,sf})),marks:list.reduce((a,x)=>a+x[1],0)});const r=(g,n,m)=>Array.from({length:n},()=>[g,m||1]);
-  if(y<=7)return [G('Note Names','Name each note.',r('noteNameQ',4)),G('Notation','Write each note on the stave.',r('notateNoteQ',4)),
+  const MK=(title,text,make,marks)=>({title,text,make,marks,items:[]});const ALT=a=>a[Math.floor(Math.random()*a.length)];
+  const study=MK('Melody Study','Study the melody below and answer the questions.','study',8);
+  const visual=MK('Score Analysis','Look at the score below and answer the questions.','visual',4);
+  const terms=G('Terms and Signs','Answer each question about musical terms and signs.',[['termQ',1],['termQ',1],['artSymbolQ',1],['signRenderQ',1]]);
+  if(y<=7)return [].concat(ALT([[G('Note Names','Name each note.',r('noteNameQ',4)),G('Notation','Write each note on the stave.',r('notateNoteQ',4))],[study]]),[
     G('Note and Rest Values','Answer each question about note and rest values.',r('valueQ',2).concat(r('restQ',2))),G('Rhythm','Name each time signature, then complete each bar.',r('timeSigQ',2).concat(r('completeBarQ',2))),
-    G('Key Signatures and Chords','Identify the key signatures, then name the chord and give its Roman numeral.',r('keySigIdQ',2).concat(r('chordRnQ',1,2))),G('Scales','Write the scale on the stave, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]])];
-  if(y===8)return [G('Intervals','Name each interval.',r('nameIntervalQ',4)),G('Key Signatures','Identify the following key signatures.',r('keySigIdQ',4)),G('Writing Key Signatures','Write each key signature on the stave.',r('keySigWriteQ',2,2)),
-    G('Chords','Name each chord and give its Roman numeral in the key shown.',r('chordRnQ',2,2)),G('Notating Chords','Notate the following chords.',[['notateChordQ',2],['notateRnQ',2]]),G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]]),G('Identify the Scale','Name the scale.',r('nameScaleQ',1,2))];
-  if(y===9)return [G('Intervals','Notate the upper note of these intervals.',r('notateIntervalQ',4)),G('Key Signatures','Identify the following key signatures.',r('keySigIdQ',4)),G('Chords','Identify i) and ii); for iii) name the chord and give its Roman numeral.',r('nameChordQ',2).concat(r('chordRnQ',1,2))),
-    G('Notating Chords','Notate the following chords.',r('notateChordQ',2).concat(r('notateRnQ',2))),G('Scales','Write one octave of each scale. For i), also write its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1],['notateScaleQ',4]]),G('Identify the Scale','Name the scale.',r('nameScaleQ',1,2))];
-  return [G('Intervals','Notate the upper note of i) and ii); name iii) and iv).',r('notateIntervalQ',2).concat(r('nameIntervalQ',2))),G('Key Signatures','Write each key signature on the stave.',r('keySigWriteQ',2,2)),
-    G('Chords','Identify i); name ii) and give its Roman numeral; notate iii).',[['nameChordQ',1],['chordRnQ',2],['notateRnQ',1]]),G('Harmony','Answer the harmony questions.',[['romanQ',1],['cadenceIdQ',1]]),G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]]),
+    G('Key Signatures and Chords','Identify the key signatures, then name the chord and give its Roman numeral.',r('keySigIdQ',2).concat(r('chordRnQ',1,2))),ALT([G('Scales','Write the scale on the stave, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]]),G('Scales','Write the scale on the stave, then its sol-fa under each note (la is the tonic in minor). Then answer the question about semitones.',[['notateScaleQ',3,1],['semitoneQ',1]])])]);
+  if(y===8)return [G('Intervals','Name each interval.',r('nameIntervalQ',4))].concat(ALT([[G('Key Signatures','Identify the following key signatures.',r('keySigIdQ',4)),G('Writing Key Signatures','Write each key signature on the stave.',r('keySigWriteQ',2,2))],[G('Writing Key Signatures','Write each key signature on the stave.',r('keySigWriteQ',2,2)),visual]]),[
+    G('Chords','Name each chord and give its Roman numeral in the key shown.',r('chordRnQ',2,2)),G('Notating Chords','Notate the following chords.',[['notateChordQ',2],['notateRnQ',2]]),ALT([G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]]),G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor). Then answer the question about semitones.',[['notateScaleQ',3,1],['semitoneQ',1]])]),G('Identify the Scale','Name the scale.',r('nameScaleQ',1,2))]);
+  if(y===9)return [G('Intervals','Notate the upper note of these intervals.',r('notateIntervalQ',4)),ALT([G('Key Signatures','Identify the following key signatures.',r('keySigIdQ',4)),terms]),G('Chords','Identify i) and ii); for iii) name the chord and give its Roman numeral.',r('nameChordQ',2).concat(r('chordRnQ',1,2))),
+    G('Notating Chords','Notate the following chords.',r('notateChordQ',2).concat(r('notateRnQ',2))),].concat(ALT([[G('Scales','Write one octave of each scale. For i), also write its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1],['notateScaleQ',4]])],[ALT([G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]]),G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor). Then answer the question about semitones.',[['notateScaleQ',3,1],['semitoneQ',1]])]),visual]]),[G('Identify the Scale','Name the scale.',r('nameScaleQ',1,2))]);
+  return [G('Intervals','Notate the upper note of i) and ii); name iii) and iv).',r('notateIntervalQ',2).concat(r('nameIntervalQ',2))),ALT([G('Key Signatures','Write each key signature on the stave.',r('keySigWriteQ',2,2)),visual]),
+    G('Chords','Identify i); name ii) and give its Roman numeral; notate iii).',[['nameChordQ',1],['chordRnQ',2],['notateRnQ',1]]),G('Harmony','Answer the harmony questions.',[['romanQ',1],['cadenceIdQ',1]]),ALT([G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor).',[['notateScaleQ',4,1]]),G('Scales','Write one octave of the scale, then its sol-fa under each note (la is the tonic in minor). Then answer the question about semitones.',[['notateScaleQ',3,1],['semitoneQ',1]])]),
     G('Identify the Scale','Name the scale.',r('nameScaleQ',1,2)),G('Transposition','Rewrite the melody in the new key.',r('transposeKeyQ',1,4))];}
 const testTMarks=()=>testGroups.reduce((a,g)=>a+g.marks,0);
 const testCode=()=>TestKit.code(testRun.y,testRun.seed,testRun.sem);
 function withTestLevel(fn){const keep=JSON.parse(JSON.stringify(GEN.getSet())),kg=JSON.parse(JSON.stringify(GENSEL||{}));GEN.setLevel(String(testRun.y));GEN.setGensel({});try{return fn();}finally{GEN.setLevel(String(keep.level));GEN.applySet(keep);GEN.setGensel(kg);}}
 function buildTestPlan(){const y=Math.max(7,Math.min(10,+LEVEL()));if(!testRun.seed)testRun.seed=TestKit.newSeed();testRun.y=y;testRun.sem=testRun.sem||TestKit.semester();
-  for(const k in embedRes)delete embedRes[k];testGroups=testTheoryGroups(y);examPlan=[];
+  for(const k in embedRes)delete embedRes[k];testGroups=withSeed((testRun.seed*3+1)>>>0,()=>testTheoryGroups(y));examPlan=[];
+  testGroups.forEach((g,gi)=>{if(!g.make)return;g.st=withTestLevel(()=>withSeed((testRun.seed*977+gi*31)>>>0,()=>GEN.makeStudy(g.make)));g.items=GEN.studyItems(g.st).map(([part,m,sf])=>({g:'study:'+part,m,sf}));});
   if(!EMBED&&HAS_AURAL())examPlan.push({n:'A',t:'Aural section',m:TEST_AURAL_MARKS[y],embed:'A'});
   testGroups.forEach((g,gi)=>g.items.forEach((it,k)=>examPlan.push({n:gi+1,gi,gl:TestKit.letter(gi),gt:g.title,gx:g.text,gm:g.marks,t:g.title,sub:k,subn:g.items.length,g:it.g,m:it.m,sf:it.sf,test:true})));}
-function testGen(it,pos){const seen=new Set(SETQ.filter(Boolean).map(q=>q.prompt+'|'+(q.answer||'')+'|'+JSON.stringify((q.items||[]).map(i=>i.target&&i.target.map(T.spn)))));
+function testGen(it,pos){if(String(it.g).startsWith('study:')){const st=testGroups[it.gi].st;const q=withTestLevel(()=>withSeed((testRun.seed*31+pos*7919)>>>0,()=>GEN.studyQ(it.g.slice(6),st)));q.unit='pitch';q.gen=it.g;q._exam=it;return q;}
+  const seen=new Set(SETQ.filter(Boolean).map(q=>q.prompt+'|'+(q.answer||'')+'|'+JSON.stringify((q.items||[]).map(i=>i.target&&i.target.map(T.spn)))));
   return withTestLevel(()=>{let q=null;for(let t=0;t<30;t++){try{q=withSeed((testRun.seed*31+pos*7919+t*104729)>>>0,()=>GEN.one(it.g));}catch(e){q=null;}if(!q)continue;const key=q.prompt+'|'+(q.answer||'')+'|'+JSON.stringify((q.items||[]).map(i=>i.target&&i.target.map(T.spn)));if(seen.has(key)||(it.sf&&!q.solfa&&t<29)){q=null;continue;}break;}
     if(!q)q=GEN.one('noteNameQ');q._exam=it;return q;});}
 function testSetq(){SETQ=[];examPlan.forEach((it,pos)=>{SETQ.push(it.embed?{t:'embed',_exam:it,prompt:it.t}:testGen(it,pos));});SETQ.forId='test';}
@@ -428,18 +435,20 @@ function testTracks(){const c=document.getElementById('card');document.getElemen
 // paper versions of the theory questions
 function paperT(q,it,key){const K=v=>key?`<span class="ans k">${esc(v)}</span>`:'<span class="ans"></span>';const lbl=`<div class="lbl">${it.subn>1?TestKit.roman(it.sub)+') ':''}${q.prompt}</div>`;
   const showSvg=()=>q.show?(q.show.svg||E.render(Object.assign({},q.show.spec,{paper:true})).svg):'';
+  if(q.t==='choice'&&q._sharedShow){const ans=String(q.answer);return `<div class="cell wide">${lbl}<div class="opts">${q.opts.map(o=>`<span class="o${key&&String(o.v)===ans?' k':''}">${esc(o.v)}</span>`).join('')}</div></div>`;}
   if(q.t==='choice'){const ans=String(q.answer);if(q.show&&q.parts)return `<div class="cell">${lbl}${showSvg()}<div class="pr">Chord: ${K(q.parts[0])}</div><div class="pr">Roman numeral: ${K(q.parts[1])}</div></div>`;
     if(q.show){const n=q.show.spec&&q.show.spec.items?q.show.spec.items.length:0;return `<div class="cell${n>5?' wide':''}">${lbl}${showSvg()}${K(ans)}</div>`;}
     return `<div class="cell${q.opts.length>3?' wide':''}">${lbl}<div class="opts">${q.opts.map(o=>`<span class="o${key&&String(o.v)===ans?' k':''}">${o.svg?o.svg:esc(o.v)}</span>`).join('')}</div></div>`;}
   if(q.t==='match')return `<div class="cell wide">${lbl}${q.pairs.map(p=>`<div>${esc(p[0])} ${K(p[1])}</div>`).join('')}</div>`;
   const items=q.items.map(x=>{if(x.k==='ksig'){const tg=ksTarget(q);return Object.assign({},x,{accs:key?tg.map(a=>Object.assign({},a,{col:'#b3261e'})):[]});}
     if(x.k!=='slot')return Object.assign({},x);const o=Object.assign({},x);if(x.given){o.p=x.p;o.explicit=false;}else if(key){o.p=x.target;o.col='#b3261e';o.explicit=false;}else{o.p=[];}return o;});
-  const svg=E.render({clef:q.clef,sig:q.ksPlace?0:q.keysigEdit?(key?(q.sigTarget||0):0):(q.sig||0),time:q.time||null,items,noBar:!q.time,paper:true}).svg;
-  const sf=q.solfa&&it.sf?`<div class="lbl" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${q.solfa.map((x,i)=>i<1?`<span class="b g">${x}</span>`:`<span class="b${key?' k':''}">${key?x:''}</span>`).join('')}</div>`:'';
-  return `<div class="cell${items.length>3||q.time?' wide':''}">${lbl}${showSvg()}${svg}${sf}</div>`;}
+  const svg=E.render({clef:q.clef,sig:q.ksPlace?0:q.keysigEdit?(key?(q.sigTarget||0):0):(q.sig||0),time:q.time||null,items,noBar:!q.time,paper:true,barNums:!!q.barNums}).svg;
+  const sf=q.sfOnly?`<div class="lbl" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${q.solfa.map(x=>`<span class="b${key?' k':''}">${key?x:''}</span>`).join('')}</div>`:q.solfa&&it.sf?`<div class="lbl" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${q.solfa.map((x,i)=>i<1?`<span class="b g">${x}</span>`:`<span class="b${key?' k':''}">${key?x:''}</span>`).join('')}</div>`:'';
+  return `<div class="cell${items.length>3||q.time?' wide':''}">${lbl}${q._sharedShow?'':showSvg()}${svg}${sf}</div>`;}
 function testPaperB(key){let html=TestKit.sectionHead('THEORY',testTMarks());if(!SETQ.length||SETQ.forId!=='test')testSetq();
   testGroups.forEach((g,gi)=>{const list=examPlan.map((it,pos)=>[it,pos]).filter(([it])=>!it.embed&&it.gi===gi);
-    html+=`<div class="pq">${TestKit.groupHead({title:g.title,text:g.text,marks:g.marks},gi)}<div class="row">${list.map(([it,pos])=>paperT(SETQ[pos],it,key)).join('')}</div></div>`;});return html;}
+    const sq=list.length&&SETQ[list[0][1]];const shared=g.st&&g.st.kind==='visual'&&sq&&sq.show?`<div class="cell wide">${E.render(Object.assign({},sq.show.spec,{paper:true})).svg}</div>`:'';
+    html+=`<div class="pq">${TestKit.groupHead({title:g.title,text:g.text,marks:g.marks},gi)}<div class="row">${shared}${list.map(([it,pos])=>paperT(SETQ[pos],it,key)).join('')}</div></div>`;});return html;}
 async function testPrint(key){closeGuide();const title=TestKit.title(testRun.y)+(key?' — answer key':'');const w=TestKit.openPrint(title);if(!w){toast('Allow pop-ups for this site to print');return;}
   const secs=[];let a=0;
   if(HAS_AURAL()){try{const S=AURAL_TEST_SRC('printA',key);const m=await TestKit.request(S.src,S.doc,'blitz-test-print',30000);secs.push({html:m.html});a=m.marks;}catch(e){secs.push({html:'<p>The aural section could not be prepared on this device.</p>'});}}
@@ -556,7 +565,7 @@ const ACH=[
   {id:'today7',ic:'🗓️',t:'Regular',d:"Finish Today's Blitz 7 times"},
 ];
 const ACC_LOCK={headphones:'hundred',glasses:'master1',beanie:'days5',bow:'perfect',crown:'concert'};
-function unlocked(acc){const need=ACC_LOCK[acc];return !need||(PROF&&PROF.ach&&PROF.ach[need])||(avatar.acc===AV.acc.indexOf(acc));}
+function unlocked(acc){const need=ACC_LOCK[acc];return !need||(PROF&&PROF.ach&&PROF.ach[need])||avatar.hat===acc||avatar.glasses===acc;}
 function badgesUnlocked(){return REAL().filter(u=>mastery(u.id).mastered).length;}
 function grant(id){if(!PROF.ach[id]){PROF.ach[id]=Date.now();saveProfiles();const a=ACH.find(x=>x.id===id);if(!a)return;setTimeout(()=>{toast(a.ic+' Achievement: '+a.t+(a.unlock?' — '+a.unlock+' unlocked for your avatar':''));burst('win',innerWidth/2,120,true);},700);}}
 function checkAch(){if(!PROF)return;if(PROF.correct>=1)grant('first');if(streak>=10)grant('streak10');if(streak>=25)grant('streak25');if(PROF.correct>=100)grant('hundred');if(dayStreak()>=5)grant('days5');
@@ -614,51 +623,22 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 const TESTING=()=>!!(UNITS[ui]&&UNITS[ui].test&&examOn);
 function celebrate(ok,el){if(TESTING())return;if(ok){glowCard();burstAt(el,'win');}else{shakeCard();burstAt(el,'miss');}}
 // ---------- avatar ----------
-const AV={skin:['#f6d5b8','#e8b894','#c68642','#8d5524','#5c3a1e','#ffdbac'],hair:['short','long','curly','bun','mohawk','none'],hairc:['#1b1a18','#4a2c17','#a0522d','#d4a017','#e74c3c','#2e86c1','#8e44ad','#f6f1e7'],
-  eyes:['round','happy','cool','wink'],mouth:['smile','grin','neutral','whistle'],acc:['none','headphones','glasses','beanie','bow','crown'],bg:['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#1b1a18'],badge:['','🎷','🎺','🎸','🎹','🎻','🥁','🎤','🎼','🎧']};
-let avatar={skin:0,hair:0,hairc:0,eyes:0,mouth:0,acc:0,bg:2,badge:0}; try{const a=JSON.parse(localStorage.getItem('blitzAvatar')||'null');if(a)avatar=Object.assign(avatar,a);}catch(e){}
-function avatarSVG(a,size){a=a||avatar;const sk=AV.skin[a.skin]||AV.skin[0],hc=AV.hairc[a.hairc]||AV.hairc[0],bg=AV.bg[a.bg]||AV.bg[0],hair=AV.hair[a.hair],eyes=AV.eyes[a.eyes],mouth=AV.mouth[a.mouth],acc=AV.acc[a.acc],badge=AV.badge[a.badge]||'';
-  let s=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"${size?` width="${size}" height="${size}"`:''}><rect width="100" height="100" fill="${bg}"/>`;
-  s+=`<path d="M22 100 C22 76 34 70 50 70 C66 70 78 76 78 100 Z" fill="${hc==='#f6f1e7'?'#d8d0c1':'#f6f1e7'}" opacity=".9"/>`;
-  if(hair==='long')s+=`<path d="M26 48 C24 24 36 16 50 16 C64 16 76 24 74 48 L76 78 L24 78 Z" fill="${hc}"/>`;
-  if(hair==='curly')s+=`<circle cx="30" cy="36" r="12" fill="${hc}"/><circle cx="50" cy="26" r="14" fill="${hc}"/><circle cx="70" cy="36" r="12" fill="${hc}"/><circle cx="38" cy="26" r="10" fill="${hc}"/><circle cx="62" cy="26" r="10" fill="${hc}"/>`;
-  s+=`<ellipse cx="50" cy="50" rx="22" ry="25" fill="${sk}"/>`;
-  if(hair==='short')s+=`<path d="M28 44 C28 26 38 20 50 20 C62 20 72 26 72 44 C66 36 58 32 50 32 C42 32 34 36 28 44 Z" fill="${hc}"/>`;
-  if(hair==='bun')s+=`<path d="M28 44 C28 26 38 20 50 20 C62 20 72 26 72 44 C66 36 58 32 50 32 C42 32 34 36 28 44 Z" fill="${hc}"/><circle cx="50" cy="18" r="8" fill="${hc}"/>`;
-  if(hair==='mohawk')s+=`<path d="M44 30 L50 8 L56 30 Z" fill="${hc}"/><path d="M36 40 C40 30 60 30 64 40 C58 36 42 36 36 40Z" fill="${hc}"/>`;
-  if(hair==='long')s+=`<path d="M28 46 C28 26 38 20 50 20 C62 20 72 26 72 46 C66 34 58 30 50 30 C42 30 34 34 28 46 Z" fill="${hc}"/>`;
-  if(hair==='curly')s+=`<path d="M28 44 C30 30 40 28 50 28 C60 28 70 30 72 44 C66 38 58 34 50 34 C42 34 34 38 28 44Z" fill="${hc}"/>`;
-  if(eyes==='round')s+=`<circle cx="42" cy="48" r="3" fill="#1b1a18"/><circle cx="58" cy="48" r="3" fill="#1b1a18"/>`;
-  if(eyes==='happy')s+=`<path d="M38 49 Q42 44 46 49" stroke="#1b1a18" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M54 49 Q58 44 62 49" stroke="#1b1a18" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
-  if(eyes==='wink')s+=`<circle cx="42" cy="48" r="3" fill="#1b1a18"/><path d="M54 48 L62 48" stroke="#1b1a18" stroke-width="2.4" stroke-linecap="round"/>`;
-  if(eyes==='cool')s+=`<rect x="34" y="43" width="14" height="9" rx="3" fill="#1b1a18"/><rect x="52" y="43" width="14" height="9" rx="3" fill="#1b1a18"/><path d="M48 46 L52 46" stroke="#1b1a18" stroke-width="2"/>`;
-  if(mouth==='smile')s+=`<path d="M42 60 Q50 67 58 60" stroke="#8c2b22" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
-  if(mouth==='grin')s+=`<path d="M40 59 Q50 70 60 59 Z" fill="#8c2b22"/><path d="M43 60 Q50 64 57 60" fill="#fff"/>`;
-  if(mouth==='neutral')s+=`<path d="M43 62 L57 62" stroke="#8c2b22" stroke-width="2.4" stroke-linecap="round"/>`;
-  if(mouth==='whistle')s+=`<circle cx="50" cy="62" r="3" fill="#8c2b22"/><text x="60" y="58" font-size="9" fill="#1b1a18" font-family="Georgia">♪</text>`;
-  if(acc==='glasses')s+=`<circle cx="42" cy="48" r="6.5" stroke="#1b1a18" stroke-width="1.8" fill="none"/><circle cx="58" cy="48" r="6.5" stroke="#1b1a18" stroke-width="1.8" fill="none"/><path d="M48.5 48 L51.5 48" stroke="#1b1a18" stroke-width="1.8"/>`;
-  if(acc==='headphones')s+=`<path d="M27 50 C27 30 36 22 50 22 C64 22 73 30 73 50" stroke="#1b1a18" stroke-width="4" fill="none"/><rect x="22" y="44" width="9" height="16" rx="3" fill="#1b1a18"/><rect x="69" y="44" width="9" height="16" rx="3" fill="#1b1a18"/>`;
-  if(acc==='beanie')s+=`<path d="M26 44 C26 24 38 18 50 18 C62 18 74 24 74 44 Z" fill="#b2862f"/><rect x="26" y="40" width="48" height="7" rx="2" fill="#8c2b22"/><circle cx="50" cy="17" r="4" fill="#8c2b22"/>`;
-  if(acc==='bow')s+=`<path d="M62 26 L72 20 L72 32 Z M62 26 L52 20 L52 32 Z" fill="#c2185b"/><circle cx="62" cy="26" r="2.5" fill="#8c2b22"/>`;
-  if(acc==='crown')s+=`<path d="M34 28 L34 16 L42 23 L50 12 L58 23 L66 16 L66 28 Z" fill="#d4a017"/>`;
-  if(badge)s+=`<circle cx="82" cy="82" r="13" fill="#f6f1e7"/><text x="82" y="87" font-size="15" text-anchor="middle">${badge}</text>`;
-  return s+'</svg>';}
-function paintAvatar(){document.getElementById('avmini').innerHTML=avatarSVG(avatar,34);}
-function openAvatar(){const b=document.getElementById('avbody');const lockOf=(key,it,i)=>{if(key==='acc'&&!unlocked(it)){const a=ACH.find(x=>x.id===ACC_LOCK[it]);return a?a.d:'';}if(key==='badge'&&i>1&&i-1>badgesUnlocked()&&avatar.badge!==i)return 'master '+(i-1)+' unit'+(i>2?'s':'');return '';};
-  const row=(key,label,items,swatch)=>`<div class="avopt"><div class="setlabel">${label}</div><div class="setchips">${items.map((it,i)=>{const lk=swatch?'':lockOf(key,it,i);return swatch?`<span class="sw ${avatar[key]===i?'on':''}" data-k="${key}" data-i="${i}" style="background:${it}"></span>`:`<button class="avchip ${avatar[key]===i?'on':''} ${lk?'locked':''}" data-k="${key}" data-i="${i}" ${lk?`data-lock="${esc(lk)}"`:''} title="${lk?'Locked: '+esc(lk):''}">${lk?'🔒 ':''}${it===''?'none':it}</button>`;}).join('')}</div></div>`;
-  b.innerHTML=`<p class="prompt">Your avatar</p><p class="sub">Accessories and badges unlock with achievements and mastered units.</p><div class="avgrid"><div class="prev" id="avprev">${avatarSVG(avatar)}</div><div>
-    ${row('bg','Background',AV.bg,true)}${row('skin','Skin',AV.skin,true)}${row('hair','Hair',AV.hair)}${row('hairc','Hair colour',AV.hairc,true)}${row('eyes','Eyes',AV.eyes)}${row('mouth','Mouth',AV.mouth)}${row('acc','Accessory',AV.acc)}${row('badge','Instrument badge',AV.badge)}
-    <div class="controls"><button class="btn-ghost" id="avrandom">Surprise me</button><button class="btn-check" id="avdone">Done</button></div></div></div>`;
-  b.querySelectorAll('[data-k]').forEach(el=>el.onclick=()=>{if(el.dataset.lock){toast('🔒 '+el.dataset.lock);return;}avatar[el.dataset.k]=+el.dataset.i;saveAvatar();openAvatar();});
-  document.getElementById('avrandom').onclick=()=>{Object.keys(AV).forEach(k=>{if(k==='acc'||k==='badge')return;avatar[k]=(Math.random()*AV[k].length)|0;});saveAvatar();openAvatar();};
-  document.getElementById('avdone').onclick=closeAvatar;
+// ---- avatar (v2 builder in blitzui.js) ----
+const AV={acc:['none','headphones','glasses','beanie','bow','crown']};
+let avatar=BlitzUI.loadAvatar(typeof currentName!=='undefined'?currentName:'');
+const AV_LOCK={hat:{headphones:'hundred',beanie:'days5',bow:'perfect',crown:'concert'},glasses:{sunglasses:'master1',star:'master1'}};
+function avLock(k,v){if(k==='badge'){const i=+v;return (i>1&&i-1>badgesUnlocked()&&avatar.badge!==i)?'master '+(i-1)+' unit'+(i>2?'s':''):'';}
+  const need=AV_LOCK[k]&&AV_LOCK[k][v];if(!need||avatar[k]===v||(PROF&&PROF.ach&&PROF.ach[need]))return '';const a=ACH.find(x=>x.id===need);return a?a.d:'locked';}
+function avatarSVG(a,size){return BlitzUI.avatarSVG(a||avatar,size);}
+function paintAvatar(){document.getElementById('avmini').innerHTML=avatarSVG(avatar,34);if(BlitzUI.inHome())BlitzUI.renderHome();}
+function openAvatar(){BlitzUI.openAvatar(document.getElementById('avbody'),{name:currentName,lock:avLock,toast:t=>toast(t),onChange:a=>{avatar=a;paintAvatar();},done:closeAvatar});
   document.getElementById('avmodal').classList.add('open');document.getElementById('avback').classList.add('open');}
 function closeAvatar(){document.getElementById('avmodal').classList.remove('open');document.getElementById('avback').classList.remove('open');}
-function saveAvatar(){try{localStorage.setItem('blitzAvatar',JSON.stringify(avatar));}catch(e){}paintAvatar();}
+function saveAvatar(){BlitzUI.saveAvatar(avatar,currentName);paintAvatar();}
 document.getElementById('avbtn').onclick=openAvatar;document.getElementById('avclose').onclick=closeAvatar;document.getElementById('avback').onclick=closeAvatar;
 paintAvatar();
 // ---------- scoring ----------
-function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
+function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)BlitzUI.answered(currentName);if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
   const us=uStat[ui]||(uStat[ui]={ans:0,cor:0});us.ans++;if(ok)us.cor++;
   const q=curQ();let bonus=0;
   if(ok){correct++;streak++;bonus=(sprintOn||h2h)?0:(streak>=5?5:0);const mile=[5,10,15,20,25,30,40,50].includes(streak);if(mile&&!TESTING()){toast('🔥 '+streak+' in a row!');burst('win',innerWidth/2,120,true);}}
@@ -683,12 +663,12 @@ function paintScore(){document.getElementById('scv').textContent=correct+'/'+tot
   document.getElementById('lvl').title=r.next?(r.next[0]-PROF.xp)+' XP to '+r.next[1]:'Top rank';
   const ds=dayStreak();document.getElementById('daysv').textContent=ds+(ds>=3?'🔥':'');}
 // ---------- modes / tabs ----------
-function setMode(m){if(window.AUDIO)AUDIO.stop();if(sprintOn)endSprint(true);h2h=null;mode=m;
+function setMode(m){document.body.classList.toggle('prac',m==='practise');if(window.BlitzUI){if(m!=='practise')BlitzUI.showHome(false);setTimeout(()=>BlitzUI.paintTabbar(),0);}if(window.AUDIO)AUDIO.stop();if(sprintOn)endSprint(true);h2h=null;mode=m;
   document.getElementById('mPr').classList.toggle('on',m==='practise');document.getElementById('mRe').classList.toggle('on',m==='reference');document.getElementById('mRec').classList.toggle('on',m==='record');
   document.getElementById('dots').style.display=m==='practise'?'flex':'none';document.getElementById('tabs').style.display=m==='record'?'none':'flex';
   if(m==='practise'){ui=Math.min(ui,UNITS.length-1);if(!unitOn(ui))ui=firstUnit();if(!SETQ.length||SETQ.forId!==UNITS[ui].id)openUnit();else load();}
   else if(m==='reference'){ui=0;loadRef();}else renderRecord();}
-function renderTabs(){const nv=document.getElementById('tabs');nv.innerHTML='';document.body.classList.toggle('paper',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].exam));document.body.classList.toggle('testmode',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].test));const list=mode==='practise'?UNITS:REFS;
+function renderTabs(){document.body.classList.toggle('prac',mode==='practise');if(window.BlitzUI&&BlitzUI.inHome())setTimeout(()=>BlitzUI.renderHome(),0);if(mode==='practise'&&UNITS[ui]&&window.BlitzUI)BlitzUI.unitBar(UNITS[ui].name,unitIcon(UNITS[ui]),ui);const nv=document.getElementById('tabs');nv.innerHTML='';document.body.classList.toggle('paper',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].exam));document.body.classList.toggle('testmode',mode==='practise'&&!!(UNITS[ui]&&UNITS[ui].test));const list=mode==='practise'?UNITS:REFS;
   list.forEach((u,i)=>{if(mode==='practise'&&(!unitOn(i)||u.task||(u.test&&+LEVEL()>10)))return;const b=document.createElement('button');
     b.innerHTML=esc(u.short||u.name);b.className=(i===ui?'on':'')+(u.exam?' exam':'')+(u.special?' special':'');
     if(mode==='practise'&&!u.special&&!u.exam&&PROF){const m=mastery(u.id);if(m.n){const C=2*Math.PI*5.5;const col=m.mastered?'#d4a017':m.acc>=0.7?'#5d8a63':m.acc>=0.5?'#b2862f':'#b4433a';
@@ -802,14 +782,14 @@ function load(){document.body.classList.toggle('testing',TESTING());const q=curQ
   const c=document.getElementById('card');
   const FU=fromUnit(q);const bar=UNITS[ui].exam?examBar(q):sprintOn?`<div class="sprintbar"><span><span class="sp">Sprint</span> ${esc(FU.name)}</span><span class="clock" id="sprintclock">60s</span><span id="sprintscore">${sprintCor} ✓</span></div>`:h2h?h2hBar():'';
   const head=`<div class="qnum">${UNITS[ui].exam?'Exam practice · Section One · Part B':esc(UNITS[ui].name)+(UNITS[ui].special?' · '+esc(FU.name):'')+' · '+(sprintOn?'Question '+(sprintN+1):h2h?esc(h2h.names[h2h.turn])+"'s turn":'Q'+(qi+1)+' of '+SETQ.length)} · Year ${LEVEL()}</div>${bar}<p class="prompt">${q.prompt}</p>${q.sub?`<p class="sub">${q.sub}</p>`:''}${sprintOn?'':`<button class="howbtn" id="howbtn">💡 How do I work this out?</button><button class="howbtn" id="gearbtn">⚙ Customise</button>`}${q.show&&q.show.spec&&!UNITS[ui].exam?`<button class="hearbtn" id="hearshown">🔊 Hear it</button>`:''}`;
-  const showHtml=(q.show?`<div class="showbox${q.show.spec&&q.show.spec.time?' tall':''}">${q.show.svg||E.render(q.show.spec).svg}</div>`:'')+(q.legend||'');
+  const showHtml=(q.show?`<div class="showbox${q.show.spec&&q.show.spec.barNums?' long':q.show.spec&&q.show.spec.time?' tall':''}">${q.show.svg||E.render(q.show.spec).svg}</div>`:'')+(q.legend||'');
   let body='';
   if(q.t==='notate'){q.items.forEach(it=>{if(it.k==='slot'){if(it.given){it.p=it.p||[];}else if(!it._p)it._p=[];}});
     const needsKs=!!q.keysigEdit;
-    body=showHtml+`<div class="toolbar"><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${GEN.getSet().dbl&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove an accidental':'Remove a note'}">⌫ erase</button></div>
+    body=showHtml+`<div class="toolbar"${q.sfOnly?' style="display:none"':''}><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${GEN.getSet().dbl&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove an accidental':'Remove a note'}">⌫ erase</button></div>
       ${needsKs?`<span class="lab">Key signature</span><div class="ksb"><button id="ksflat">♭</button><span class="ksv" id="ksv"></span><button id="kssharp">♯</button></div>`:''}</div>
-      <div class="staveWrap" id="sw"></div>${q.solfa&&sfOK(q)?'<div class="solfarow" id="solfarow"></div>':''}
-      <p class="hint">${q.solfa&&sfOK(q)?'Then name each degree in sol-fa in the boxes. ':''}${q.ksPlace?'Tap ♯ or ♭, then tap the stave where the next accidental goes: it is added at the next position, on the line or space you tap. ⌫ erase then tap an accidental to remove it. Keys: # b, Backspace removes the last.':q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it); ⌫ erase then tap a note to remove it. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Tap a placed note to select it (change its accidental, or drag it). Keys: # b n 0, Backspace.'}</p>
+      <div class="staveWrap" id="sw"${q.sfOnly?' style="display:none"':''}></div>${q.solfa&&sfOK(q)?'<div class="solfarow" id="solfarow"></div>':''}
+      <p class="hint"${q.sfOnly?' style="display:none"':''}>${q.solfa&&sfOK(q)?'Then name each degree in sol-fa in the boxes. ':''}${q.ksPlace?'Tap ♯ or ♭, then tap the stave where the next accidental goes: it is added at the next position, on the line or space you tap. ⌫ erase then tap an accidental to remove it. Keys: # b, Backspace removes the last.':q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it); ⌫ erase then tap a note to remove it. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Tap a placed note to select it (change its accidental, or drag it). Keys: # b n 0, Backspace.'}</p>
       <div class="names" id="names"></div>
       <div class="controls"><button class="btn-check" id="check">Check</button>${UNITS[ui].exam||q.ksPlace?'':'<button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="hearans" title="Available after Check or Show answer">🔊 Hear the answer</button>'}<button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
   } else if(q.t==='choice'){const svgo=q.opts.some(o=>o.svg);if(!q._order)q._order=T.shuffle(q.opts);
@@ -819,7 +799,7 @@ function load(){document.body.classList.toggle('testing',TESTING());const q=curQ
   if(UNITS[ui].task&&!q._t0)q._t0=Date.now();
   c.innerHTML=(UNITS[ui].task?TaskKit.banner():'')+head+body+`<div class="feedback" id="fb"></div>${UNITS[ui].exam?`<div class="pfoot">${qi>=SETQ.length-1?'End of questions':'See next page'}</div>`:''}<div class="nav"${sprintOn?' style="visibility:hidden"':''}><button id="prev">‹ Prev</button><span class="pos">${sprintOn?'':(qi+1)+' / '+SETQ.length}</span><button id="next">${UNITS[ui].exam&&qi>=SETQ.length-1?'Finish ›':'Next ›'}</button></div>`;
   c.scrollTop=0;
-  wire(q);if(UNITS[ui].task){TaskKit.wireBanner();const nx=document.getElementById('next');if(nx)nx.disabled=false;if(scored[qid()]!==undefined&&results[qid()]&&q.t!=='choice'&&q.t!=='match')feedback('Answered earlier — your first answer counts.',scored[qid()]?'ok':'no');}if(q.t==='notate'){drawStave();if(q.solfa&&sfOK(q)){sfInit(q,q.solfa,[...new Set(q.solfa)],1);sfRender(q);}}
+  wire(q);if(UNITS[ui].task){TaskKit.wireBanner();const nx=document.getElementById('next');if(nx)nx.disabled=false;if(scored[qid()]!==undefined&&results[qid()]&&q.t!=='choice'&&q.t!=='match')feedback('Answered earlier — your first answer counts.',scored[qid()]?'ok':'no');}if(q.t==='notate'){drawStave();if(q.solfa&&sfOK(q)){sfInit(q,q.solfa,q.sfPal||[...new Set(q.solfa)],q.sfOnly?0:1);sfRender(q);}}
   const r=results[qid()];if(r&&q.t==='choice'){answered=true;document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');if(b.dataset.o===q._picked&&q._picked!==q.answer)b.classList.add('no');});feedback(r==='ok'?'Correct.':'Answered.',r,q.why);}
   if(r&&q.t==='match'){document.querySelectorAll('#match .mrow').forEach((row,i)=>{row.querySelector('select').value=q.pairs[i][1];row.className='mrow ok';});feedback(r==='ok'?'Correct.':'Answered.',r,q.why);}}
 function goPrev(){if(mode!=='practise')return;if(qi>0){qi--;load();}}
@@ -835,7 +815,7 @@ function wire(q){document.getElementById('prev').onclick=goPrev;document.getElem
       if(selected){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];if(p){applyAcc(p,a);nchecked=false;feedback('','');drawStave();}}syncAcc();};});
     syncAcc();
     if(q.keysigEdit){document.getElementById('kssharp').onclick=()=>{ksBuilt=Math.min(7,ksBuilt+1);nchecked=false;feedback('','');drawStave();};document.getElementById('ksflat').onclick=()=>{ksBuilt=Math.max(-7,ksBuilt-1);nchecked=false;feedback('','');drawStave();};}
-    document.getElementById('check').onclick=checkNotate;document.getElementById('clear').onclick=()=>{q.items.forEach(it=>{if(it.k==='slot'&&!it.given){it._p=[];}});q._reveal=false;q._ksp=[];if(q.solfa&&sfOK(q)){sfReset(q);sfInit(q,q.solfa,[...new Set(q.solfa)],1);sfRender(q);}ksBuilt=q.keysigEdit?0:ksBuilt;nchecked=false;selected=null;feedback('','');drawStave();const ha=document.getElementById('hearans');if(ha)ha.disabled=true;};
+    document.getElementById('check').onclick=checkNotate;document.getElementById('clear').onclick=()=>{q.items.forEach(it=>{if(it.k==='slot'&&!it.given){it._p=[];}});q._reveal=false;q._ksp=[];if(q.solfa&&sfOK(q)){sfReset(q);sfInit(q,q.solfa,q.sfPal||[...new Set(q.solfa)],q.sfOnly?0:1);sfRender(q);}ksBuilt=q.keysigEdit?0:ksBuilt;nchecked=false;selected=null;feedback('','');drawStave();const ha=document.getElementById('hearans');if(ha)ha.disabled=true;};
     document.getElementById('answer').onclick=answerNotate;}
   else if(q.t==='choice'){document.querySelectorAll('#opts button').forEach(b=>b.onclick=()=>pickChoice(b,q));document.getElementById('answer').onclick=()=>answerChoice(q);}
   else if(q.t==='match'){document.getElementById('check').onclick=()=>checkMatch(q);document.getElementById('answer').onclick=()=>answerMatch(q);}}
@@ -898,7 +878,9 @@ addEventListener('pointermove',ev=>{if(!drag)return;const svg=document.getElemen
 addEventListener('pointerup',()=>{drag=null;});
 function sounding(p,sig){if(p.showNat||p.a!==0)return T.P(p.l,p.a,p.o);const m=T.sigAccidentals(sig);return T.P(p.l,m[p.l]||0,p.o);}
 function matchPitch(a,t,anyOct){return a.l===t.l&&a.a===t.a&&(anyOct||a.o===t.o);}
-function checkNotate(){const q=curQ();const sig=curSig(q);let allOk=true,right=0,need=0,empty=0;
+function checkNotate(){const q=curQ();if(q.sfOnly){const S=q._sf;if(!S)return;const n=S.ans.filter((a,i)=>a===S.got[i]).length,of=S.ans.length;q._frac=of?n/of:1;S.applied=1;const ok=n===of;q._checked=true;scoreOnce(ok);celebrate(ok);
+    if(ok){feedback(pick(WINMSG)+' All '+of+' syllables right.','ok',q.why);results[qid()]='ok';}else{feedback(pick(MISSMSG)+' '+n+' / '+of+' syllables right.','no',q.why);results[qid()]='no';}sfCheck(q);renderDots();return;}
+  const sig=curSig(q);let allOk=true,right=0,need=0,empty=0;
   q.items.forEach(it=>{if(it.k!=='slot'||it.given)return;need++;const got=it._p.map(p=>sounding(p,sig));
     const targets=[it.target].concat(it.alt||[]);let ok=false;
     for(const tg of targets){if(got.length!==tg.length)continue;
@@ -936,7 +918,7 @@ function checkMatch(q){const rows=document.querySelectorAll('#match .mrow');let 
   const ok=(right===q.pairs.length);q._frac=right/q.pairs.length;scoreOnce(ok);celebrate(ok,document.getElementById('match'));if(ok){feedback(pick(WINMSG)+' All matched.'+bonusTag(),'ok',q.why);results[qid()]='ok';}else{feedback(pick(MISSMSG)+' '+right+' / '+q.pairs.length+' matched.','no',q.why);results[qid()]='no';}renderDots();}
 function answerMatch(q){if(!(qid() in scored))scoreOnce(false);document.querySelectorAll('#match .mrow').forEach((row,r)=>{row.querySelector('select').value=q.pairs[r][1];row.className='mrow ok';});feedback('Answer shown.','',q.why);results[qid()]='no';renderDots();}
 // ---------- keyboard ----------
-addEventListener('keydown',e=>{if(mode!=='practise'||e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;if(document.querySelector('.guide.open'))return;const q=curQ();if(!q)return;if(UNITS[ui].exam&&(!examOn&&!document.getElementById('fb')||q.t==='embed'))return;
+addEventListener('keydown',e=>{if(document.body.classList.contains('home')||mode!=='practise'||e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;if(document.querySelector('.guide.open'))return;const q=curQ();if(!q)return;if(UNITS[ui].exam&&(!examOn&&!document.getElementById('fb')||q.t==='embed'))return;
   if(e.key==='ArrowRight'){goNext();e.preventDefault();return;}if(e.key==='ArrowLeft'){goPrev();e.preventDefault();return;}
   if(q.t==='choice'&&/^[1-9]$/.test(e.key)){const b=document.querySelectorAll('#opts button')[+e.key-1];if(b&&!b.disabled)b.click();}
   if(e.key==='Enter'&&q.t!=='choice'){const ch=document.getElementById('check');if(ch){ch.click();e.preventDefault();}}
@@ -1019,13 +1001,43 @@ TaskKit.init({app:'theory',label:'Theory Blitz',years:[7,8,9,10,11,12],test:true
   snapshot:()=>{const st=JSON.parse(JSON.stringify(GEN.getSet()));delete st.level;return {global:{set:st,gs:JSON.parse(JSON.stringify(GENSEL||{}))}};},
   year:()=>+LEVEL(),getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_AURAL_DIR!=='undefined'&&HAS_AURAL_DIR&&/^https?:/.test(location.protocol))?'aural/index.html':'',
   setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();paintScore();},
-  start:run=>{closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
+  start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
     if(!taskPrev)taskPrev={ui,set:JSON.parse(JSON.stringify(GEN.getSet())),gs:JSON.parse(JSON.stringify(GENSEL||{}))};
     GEN.setLevel(String(run.task.y));if(run.task.tt){GENSEL={};GEN.setGensel(GENSEL);paintLevel();testRun={y:run.task.y,sem:run.task.sem||TestKit.semester(),seed:TaskKit.testSeed()};ui=UNITS.indexOf(TEST);SETQ=[];setMode('practise');taskTestSync();return;}
     if(run.task.g&&run.task.g.set)GEN.applySet(run.task.g.set);GENSEL=(run.task.g&&run.task.g.gs)||{};GEN.setGensel(GENSEL);paintLevel();ui=TASKI();SETQ=[];setMode('practise');},
-  exit:()=>{const pv=taskPrev;taskPrev=null;if(pv){GEN.setLevel(String(pv.set.level));GEN.applySet(pv.set);GENSEL=pv.gs;GEN.setGensel(GENSEL);}paintLevel();ui=pv&&pv.ui!==TASKI()?pv.ui:firstUnit();testRun={y:0,sem:'',seed:0};SETQ=[];setMode('practise');}});
+  exit:()=>{setTimeout(()=>{if(window.BlitzUI)BlitzUI.showHome(true);},0);const pv=taskPrev;taskPrev=null;if(pv){GEN.setLevel(String(pv.set.level));GEN.applySet(pv.set);GENSEL=pv.gs;GEN.setGensel(GENSEL);}paintLevel();ui=pv&&pv.ui!==TASKI()?pv.ui:firstUnit();testRun={y:0,sem:'',seed:0};SETQ=[];setMode('practise');}});
 document.getElementById('taskbtn').onclick=()=>TaskKit.openStudentEntry();
-if(!EMBED)TaskKit.handleHash();
+
+// ---- app-icon home screen (blitzui.js) ----
+function unitIcon(u){const UICON={today:'sun',weak:'target',pitch:'pitch',rhythm:'rhythm',expr:'accent',keys:'sharp',scales:'stairs',intervals:'interval',chords:'chord',harmony:'roman',transp:'transpose',form:'form',exam:'cap',test:'clipboard'};return UICON[u.id]||(u.exam?'cap':'note');}
+function goUnit(i){if(sprintOn)endSprint(true);h2h=null;if(examOn&&!UNITS[i].exam&&!confirm('Leave the exam? Your marks so far will be lost.'))return;examOn=false;clearInterval(examTick);
+  if(mode!=='practise'){mode='practise';document.getElementById('mPr').classList.add('on');document.getElementById('mRe').classList.remove('on');document.getElementById('mRec').classList.remove('on');document.getElementById('dots').style.display='flex';document.getElementById('tabs').style.display='flex';}
+  ui=i;BlitzUI.showHome(false);openUnit();}
+function goHome(){if(examOn&&!confirm('Leave the '+(UNITS[ui]&&UNITS[ui].test?'test':'exam')+'? Your answers so far will be lost.'))return;if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(window.AUDIO)AUDIO.stop();
+  if(mode!=='practise')setMode('practise');document.body.classList.remove('paper','testmode','testing');BlitzUI.showHome(true);}
+const BPATH={7:['pitch','rhythm','keys','scales','intervals','chords','expr'],8:['pitch','rhythm','keys','scales','intervals','chords','expr','form'],9:['rhythm','keys','scales','intervals','chords','harmony','expr','form','transp'],10:['keys','scales','intervals','chords','harmony','transp','rhythm','form','expr','pitch'],11:['keys','scales','intervals','chords','harmony','transp','rhythm','form','expr','pitch'],12:['keys','scales','intervals','chords','harmony','transp','rhythm','form','expr','pitch']};
+function homeSetName(v){currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();try{avatar=BlitzUI.loadAvatar(v);paintAvatar();}catch(e){}paintScore();}
+BlitzUI.init({
+  years:()=>[7,8,9,10,11,12],year:()=>+LEVEL(),setYear:y=>{setLevelUI(y);setTimeout(()=>BlitzUI.renderHome(),0);},setName:homeSetName,customise:()=>{const g=document.getElementById('gear');if(g)g.click();},
+  toast:t=>toast(t),burst:()=>burst('win',innerWidth/2,innerHeight/2,true),
+  reloadProfiles:()=>{try{PROFS=JSON.parse(localStorage.getItem('blitzAuralProfiles')||'{}');}catch(e){}loadProfile();},
+  path:()=>{const kf=u=>u.id;const order=BPATH[+LEVEL()]||BPATH[12];const out=[];order.forEach((k,n)=>{const i=UNITS.findIndex(u=>kf(u)===k);if(i<0||UNITS[i].special)return;if(typeof unitOn==='function'&&!unitOn(i))return;const u=UNITS[i];out.push({i,name:u.short||u.name,icon:unitIcon(u),hue:i,m:PROF?mastery(kf(u)):null});});return out;},
+  upNext:()=>{const kf=u=>u.id;const order=BPATH[+LEVEL()]||BPATH[12];let best=null;
+    order.forEach(k=>{const i=UNITS.findIndex(u=>kf(u)===k);if(i<0)return;if(typeof unitOn==='function'&&!unitOn(i))return;const m=PROF?mastery(k):{n:0};if(m.n>=5&&m.acc<0.7&&(!best||best.weak&&m.acc<best.acc))best={i,acc:m.acc,weak:1,why:'Strengthen · '+Math.round(m.acc*100)+'% recently'};});
+    if(!best){for(const k of order){const i=UNITS.findIndex(u=>kf(u)===k);if(i<0)continue;if(typeof unitOn==='function'&&!unitOn(i))continue;const m=PROF?mastery(k):{n:0};if(!m.mastered){best={i,why:m.n?'Keep going on your path':'Next on your path'};break;}}}
+    if(!best){const i=UNITS.findIndex(u=>kf(u)==='today');if(i>=0)best={i,why:'Every section mastered · daily practice'};}
+    if(!best)return null;const u=UNITS[best.i];return {i:best.i,name:u.short||u.name,icon:unitIcon(u),hue:best.i,why:best.why};},
+  skillTitle:'Theory skills',
+  units:()=>{const vis=(u,i)=>unitOn(i)&&!u.task&&!(u.test&&+LEVEL()>10);const out=[];UNITS.forEach((u,i)=>{if(!vis(u,i))return;const g=u.exam?'test':u.special?'daily':'skill';const m=g==='skill'&&PROF?(u=>mastery(u.id))(u):null;out.push({i,name:u.short||u.name,group:g,icon:unitIcon(u),m,hue:g==='skill'?i:undefined,sub:u.test?'Years 7–10':''});});
+    out.push({i:-1,name:'Class task',group:'test',icon:'task',sub:'from your teacher'});return out;},
+  open:i=>{if(i===-1){TaskKit.openStudentEntry();return;}goUnit(i);},
+  home:goHome,
+  tab:t=>{if(t==='learn'){goHome();}else if(t==='ref'){BlitzUI.showHome(false);setMode('reference');}else if(t==='rec'){BlitzUI.showHome(false);setMode('record');}else openAvatar();BlitzUI.paintTabbar();},
+  currentTab:()=>mode==='practise'?'learn':mode==='reference'?'ref':'rec',
+  stats:()=>{const T=id=>{const e=document.getElementById(id);return e?e.textContent:'';};const xp=PROF?PROF.xp:0;const r=rankOf(xp);const pct=r.next?(xp-r.at)/(r.next[0]-r.at):1;
+    return {name:currentName,rank:r.name,xp,xpPct:pct,streak:typeof streak!=='undefined'?streak:0,days:BlitzUI.daysStreak(PROF&&PROF.days),acc:T('scp'),mastered:PROF?REAL().filter(u=>(u=>mastery(u.id))(u).mastered).length:0};}});
+const _h0=location.hash;if(!EMBED)TaskKit.handleHash();
+if(!EMBED&&!/#(task|verify|tkey)=/.test(_h0)&&!/[?&]nohome/.test(location.search)){BlitzUI.showHome(true);if(!currentName)setTimeout(()=>BlitzUI.pickProfile(true),400);}
 </script>
 </body>
 </html>

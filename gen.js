@@ -767,8 +767,72 @@ function notateRnQ(){const k=testKey();const clef=clefPick();const ds=TDEG().fil
   const items=[Object.assign(slot(0,fitScale(T.chord(c.root,c.type,0),clef),'w'),{chord:true,max:3})];
   return {t:'notate',prompt:'Write chord '+c.rn+' in '+keyName(k)+'.',sub:clefWord(clef)+'. Root position block chord; the key signature is given'+(k.mode==='minor'&&(d===4||d===6)?' (remember the raised leading note)':'')+'. Any octave.',clef,sig:k.sig,items,anyOctaveChord:true,
     why:c.rn+' in '+keyName(k)+' = '+T.chordName(c.root,c.type)+' ('+T.chord(c.root,c.type,0).map(name).join(' ')+').'};}
-const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=chordRnQ;BYNAME.notateRnQ=notateRnQ;
+// ---- Test-only: one short melody shared by several questions (melody study; visual analysis of a marked score) ----
+const ST_TEMPO=[['Largo','very slowly and broadly'],['Adagio','slowly'],['Andante','at a walking pace'],['Moderato','at a moderate speed'],['Allegro','fast and lively'],['Presto','very fast']];
+const ST_DYN=[['pp','very soft'],['p','soft'],['mp','moderately soft'],['mf','moderately loud'],['f','loud'],['ff','very loud']];
+const ST_ART={stac:['staccato','Play it short and detached'],acc:['accent','Play it with an accent (stress it)'],ten:['tenuto','Hold it for its full length']};
+function semitoneQ(){const y=UPTO();const type=pick(['major','natminor'].concat(y>=8?['natminor']:[],y>=9?['harmminor']:[]));const t=scaleTonic(type);const clef=pick(['treble','bass']);const notes=fitScale(T.scale(t,type),clef);
+  const items=[];notes.forEach((p,i)=>{items.push({k:'txt',s:String(i+1),below:true});items.push(n([p],'w'));});
+  const ANS={major:'3–4 and 7–8',natminor:'2–3 and 5–6',harmminor:'2–3, 5–6 and 7–8'};const ans=ANS[type];const pool=['3–4 and 7–8','2–3 and 5–6','2–3, 5–6 and 7–8','1–2 and 4–5','4–5 and 7–8','3–4 and 6–7','2–3 and 6–7'];
+  return choice('Between which notes of this scale are the semitones?',optsFrom(ans,pool,4),ans,{sub:'The notes are numbered 1 to 8 under the stave.',show:show(stave(clef,0,null,items,{noBar:true})),
+    why:T.scaleName(t,type)+': semitones between '+ans+'. '+(type==='major'?'Major: T T S T T T S.':type==='natminor'?'Natural minor: T S T T S T T.':'Harmonic minor: T S T T S (T+S) S.')});}
+function stSyl(p,key){const k=(T.LETTERS.indexOf(p.l)-T.LETTERS.indexOf(key.tonic.l)+7)%7;return (key.mode==='minor'?SOLFA_MIN:SOLFA_MAJ)[k];}
+function stLower(a,b){return dia(a)<=dia(b)?[a,b]:[b,a];}
+function makeStudy(kind){const y=UPTO();let key;
+  if(kind==='study'){const t=pick(keyTonics(Math.min(S('keysMax')||1,y<=7?1:2)));key={tonic:t,mode:'major',sig:T.sigOf(t,'major')};}else key=testKey();
+  const clef=(kind==='study'||y<=8)?'treble':pick(['treble','bass']);const ts=pick(y<=7?['2/4','3/4','4/4']:['2/4','3/4','4/4','6/8']);
+  const mid=MIDD[clef];let items=null,bars=null;
+  for(let t=0;t<20;t++){items=melody(key,clef,ts,4,{lo:mid-4,hi:mid+4});bars=[[]];items.forEach(it=>{if(it.k==='bar'||it.k==='fin'){bars.push([]);}else if(it.k==='n')bars[bars.length-1].push(it);});bars=bars.filter(b=>b.length);if(bars.length===4&&bars.every(b=>b.length>=2))break;}
+  const st={kind,key,clef,ts,items,bars,info:{}};
+  if(kind==='visual'){const I=st.info;const tm=pick(ST_TEMPO.slice(1,5));I.tempo=tm;items.unshift({k:'txt',s:tm[0],bold:true,high:true});
+    const d1=pick(ST_DYN.slice(1,5));bars[0][0].mk={dyn:d1[0]};I.dyn={bar:1,mark:d1};
+    if(bars[0].length>=3){bars[0][1].mk=Object.assign(bars[0][1].mk||{},{sl:1});bars[0][2].mk=Object.assign(bars[0][2].mk||{},{slEnd:1});}
+    const hb=pick([1,3]);const hp=pick(['cresc','dim']);const hbn=bars[hb];hbn[0].mk=Object.assign(hbn[0].mk||{},{hp});hbn[hbn.length-1].mk=Object.assign(hbn[hbn.length-1].mk||{},{hpEnd:1});I.hp={bar:hb+1,type:hp};
+    const ab=hb===1?2:1;const an=bars[ab][Math.min(1,bars[ab].length-1)];const at=pick(['stac','acc','ten']);an.art=[at];I.art={bar:ab+1,type:at};
+    const okN=y<=8?[2,3,4,5,8]:[2,3,4,5,6,7,8];const bb=hb===1?3:2;const bn=bars[bb];const pairs=[];for(let i=0;i+1<bn.length;i++){const [lo,hi]=stLower(bn[i].p[0],bn[i+1].p[0]);if(dia(lo)===dia(hi))continue;const iv=T.interval(lo,hi);if(iv&&okN.includes(iv.n)&&['M','m','P'].includes(iv.q))pairs.push([i,iv]);}
+    if(pairs.length){const [i,iv]=pick(pairs);bn[i].mk=Object.assign(bn[i].mk||{},{br:'*1'});bn[i+1].mk=Object.assign(bn[i+1].mk||{},{brEnd:1});I.iv={bar:bb+1,iv};}
+    for(let bb2=0;bb2<4&&!I.semi;bb2++){const bn2=bars[bb2];if(bn2.length<3)continue;for(let i=0;i+1<bn2.length;i++){if(Math.abs(T.midi(bn2[i].p[0])-T.midi(bn2[i+1].p[0]))===1){I.semi={bar:bb2+1,i,count:bn2.length};break;}}}
+    const pool={8:['key','time','tempo','dyn','hp','art','iv','semi'],9:['key','time','tempo','dyn','hp','art','iv','semi'],10:['key','time','tempo','dyn','hp','art','iv','semi']}[Math.max(8,Math.min(10,y))];
+    const av=pool.filter(a=>(a!=='iv'||I.iv)&&(a!=='semi'||I.semi));const vis=shuffle(av.filter(a=>['dyn','hp','art','iv','semi'].includes(a))).slice(0,2);const rest=shuffle(av.filter(a=>!vis.includes(a))).slice(0,2);
+    st.asks=pool.filter(a=>vis.includes(a)||rest.includes(a));st.noTime=st.asks.includes('time');}
+  return st;}
+function stStave(st,extra){return stave(st.clef,st.key.sig,st.noTime?null:METRE(st.ts),st.items.map(it=>Object.assign({},it)),Object.assign({barNums:true},extra||{}));}
+function studyQ(part,st){const k=st.key,I=st.info,b=st.bars;const sh=show(stStave(st));const base={_sharedShow:true};
+  const tonicDo=name(k.tonic)+' = '+(k.mode==='minor'?'la':'do');
+  if(part==='solfa'){const ns=b[0].concat(b[1]);const items=stStave(st).items;
+    return Object.assign(base,{t:'notate',prompt:'Write the sol-fa under each note in bars 1 and 2 ('+tonicDo+').',sub:'One box for each note, in order.',clef:st.clef,sig:k.sig,time:METRE(st.ts),items,barNums:true,show:sh,sfOnly:true,solfa:ns.map(n=>stSyl(n.p[0],k)),sfPal:k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ,why:'Bars 1–2: '+ns.map(n=>name(n.p[0])+' = '+stSyl(n.p[0],k)).join(', ')+'.'});}
+  if(part==='letters'){const ns=b[2];const ans=ns.map(n=>name(n.p[0])).join(' ');const shiftL=(p,d)=>{const i=(T.LETTERS.indexOf(p.l)+d+7)%7;return T.LETTERS[i];};
+    const dis=[ns.map(n=>shiftL(n.p[0],1)).join(' '),ns.map(n=>shiftL(n.p[0],-1)).join(' '),ns.map((n,i)=>i===ns.length-1?shiftL(n.p[0],2):name(n.p[0])).join(' '),ns.map(n=>shiftL(n.p[0],2)).join(' ')];
+    return Object.assign(base,choice('What are the letter names of the notes in bar 3?',optsFrom(ans,uniq(dis),4),ans,{show:sh,why:'Bar 3: '+ans+'.'}));}
+  if(part==='tempo'){const t=pick(ST_TEMPO.filter(x=>x[0]!=='Largo'));const opts=ST_TEMPO.filter(x=>x[0]===t[0]||Math.random()<0.6).map(x=>x[0]).slice(0,4);if(!opts.includes(t[0]))opts[3]=t[0];const o2=ST_TEMPO.map(x=>x[0]).filter(x=>opts.includes(x));
+    return Object.assign(base,choice('Which word, written at the start, would tell the player to play '+t[1]+'?',o2,t[0],{show:sh,why:t[0]+' = '+t[1]+'.'}));}
+  if(part==='dyn'){if(Math.random()<0.5){const d=pick(ST_DYN.slice(1,5));return Object.assign(base,choice('Which dynamic marking in bar 1 would tell the player to play '+d[1]+'?',ST_DYN.map(x=>x[0]),d[0],{show:sh,why:d[0]+' = '+d[1]+'.'}));}
+    const soft=Math.random()<0.5;return Object.assign(base,choice('Which marking in bar 4 would make the music gradually get '+(soft?'softer':'louder')+'?',['< (crescendo)','> (diminuendo)','rit. (ritardando)','accel. (accelerando)'],soft?'> (diminuendo)':'< (crescendo)',{show:sh,why:soft?'Diminuendo (>): gradually softer.':'Crescendo (<): gradually louder.'}));}
+  if(part==='transpose'){const cands=keyTonics(1).filter(t=>t.l!==k.tonic.l);const nt=cands.find(t=>t.l==='F')||cands[0];
+    const b4=P(k.tonic.l,k.tonic.a,4);let tgt=P(nt.l,nt.a,4);const semis=((T.midi(tgt)-T.midi(b4))%12+12)%12;const useUp=semis<=6;
+    if(useUp){if(dia(tgt)<=dia(b4))tgt=up8(tgt);}else{if(dia(tgt)>=dia(b4))tgt=up8(tgt,-1);}
+    const iv=useUp?T.ivShort(T.interval(b4,tgt)):T.ivShort(T.interval(tgt,b4));
+    let si=0;const items=[];st.items.forEach(it=>{if(it.k==='n'){const tp=useUp?T.transposeUp(it.p[0],iv):T.transposeDown(it.p[0],iv);
+        const sl=slot(si++,[tp],it.dur,{dots:it.dots,beam:it.beam,tie:it.tie});if(si===1){sl.p=[tp];sl.given=true;}items.push(sl);}else if(it.k!=='txt')items.push(Object.assign({},it));});
+    return {t:'notate',prompt:'Transpose the melody into '+name(nt)+' = do ('+name(nt)+' major).',sub:clefWord(st.clef)+'. The key signature, rhythm and first note are given.',clef:st.clef,sig:T.sigOf(nt,'major'),time:METRE(st.ts),items,show:sh,
+      why:'Every note moves '+(useUp?'up':'down')+' '+an(T.ivWord(iv))+', to the same sol-fa in '+name(nt)+' major.'};}
+  // visual analysis
+  if(part==='key'){const ans=keyName(k);const rel=k.mode==='major'?{tonic:T.relMinor(k.tonic),mode:'minor'}:{tonic:T.relMajor(k.tonic),mode:'major'};const pool=[ans,keyName(rel)];
+    keyTonics(Math.min(4,S('keysMax')||3)).forEach(t=>pool.push(name(t)+' major'));return Object.assign(base,choice('What key is this melody in?',optsFrom(ans,uniq(pool),4),ans,{show:sh,why:'The key signature and the final note point to '+ans+'.'}));}
+  if(part==='time'){const ans=st.ts;return Object.assign(base,choice('The time signature has been left off. Which time signature belongs at the start?',['2/4','3/4','4/4','6/8'],ans,{show:sh,why:'Count the beats in each bar: '+ans+'.'}));}
+  if(part==='tempo2'||part==='tempoV'){const t=I.tempo;return Object.assign(base,choice('What does '+t[0]+' at the start mean?',ST_TEMPO.slice(0,5).map(x=>x[1]),t[1],{show:sh,why:t[0]+' = '+t[1]+'.'}));}
+  if(part==='dynV'){const d=I.dyn.mark;return Object.assign(base,choice('What does '+d[0]+' in bar 1 tell the player?',ST_DYN.map(x=>x[1]),d[1],{show:sh,why:d[0]+' = '+d[1]+'.'}));}
+  if(part==='hp'){return Object.assign(base,choice('In which bar is the player told to get gradually '+(I.hp.type==='cresc'?'louder':'softer')+'?',['Bar 1','Bar 2','Bar 3','Bar 4'],'Bar '+I.hp.bar,{show:sh,why:(I.hp.type==='cresc'?'The crescendo hairpin (<)':'The diminuendo hairpin (>)')+' is in bar '+I.hp.bar+'.'}));}
+  if(part==='art'){const a=ST_ART[I.art.type];return Object.assign(base,choice('What does the '+a[0]+' marking in bar '+I.art.bar+' tell the player?',['Play it short and detached','Play it with an accent (stress it)','Hold it for its full length','Pause on it'],a[1],{show:sh,why:a[0][0].toUpperCase()+a[0].slice(1)+': '+a[1].toLowerCase()+'.'}));}
+  if(part==='semi'){const S=I.semi;const ord=['1st','2nd','3rd','4th','5th','6th','7th','8th'];const opts=[];for(let i=0;i+1<S.count&&i<6;i++)opts.push(ord[i]+' and '+ord[i+1]);const ans=ord[S.i]+' and '+ord[S.i+1];
+    return Object.assign(base,choice('Which two neighbouring notes in bar '+S.bar+' are a semitone apart?',opts.slice(0,Math.max(4,S.i+2)).slice(-6),ans,{show:sh,why:'The '+ans+' notes of bar '+S.bar+' are a semitone apart.'}));}
+  if(part==='iv'){const ans=T.ivWord(I.iv.iv);const pool=[2,3,4,5,6,7,8].flatMap(nn=>T.isPerfClass(nn)?[T.ivWord({q:'P',n:nn})]:[T.ivWord({q:'M',n:nn}),T.ivWord({q:'m',n:nn})]);
+    return Object.assign(base,choice('Name the interval marked *1 in bar '+I.iv.bar+'.',optsFrom(ans,pool,4),ans,{show:sh,why:'*1 = '+ans+'.'}));}
+  return choice('?',['a'],'a');}
+function studyItems(st){if(st.kind==='study')return [['solfa',3,1],['letters',1],['tempo',1],['dyn',1],['transpose',2]];
+  return st.asks.map(a=>[{tempo:'tempoV',dyn:'dynV'}[a]||a,1]);}
+const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=chordRnQ;BYNAME.notateRnQ=notateRnQ;BYNAME.semitoneQ=semitoneQ;
 function defaultWhy(q){if(q.why)return;if(q.t==='match'&&q.pairs)q.why=q.pairs.map(p=>'<b>'+p[0]+'</b> — '+p[1]).join(' · ');}
 function one(name){let q=null;for(let i=0;i<20&&!q;i++)q=BYNAME[name]();const u=UNITS.find(u=>u.gens.some(g=>g[0].name===name))||UNITS.find(u=>u.id==='chords');q.unit=u.id;q.gen=name;defaultWhy(q);return q;}
-return {UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one};
+return {UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one,makeStudy,studyQ,studyItems};
 })();

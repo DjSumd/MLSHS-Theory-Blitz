@@ -290,7 +290,7 @@
     // ---- horizontal layout: slots ----
     const cw=w_of(1), barPad=SS*1.0;
     const pieces=[]; let t=0,x=0;
-    const addGap=(to)=>{while(bi<bounds.length&&bounds[bi]>t+1e-6&&bounds[bi]<to-1e-6){const b=bounds[bi];pieces.push({t0:t,t1:b,x0:x,x1:x+(b-t)*cw,gap:true});x+=(b-t)*cw;t=b;crossBoundary(b);}if(to>t+1e-6){pieces.push({t0:t,t1:to,x0:x,x1:x+(to-t)*cw,gap:true});x+=(to-t)*cw;t=to;}};
+    const addGap=(to)=>{if(to>t+1e-6)crossBoundary(t);while(bi<bounds.length&&bounds[bi]>t+1e-6&&bounds[bi]<to-1e-6){const b=bounds[bi];pieces.push({t0:t,t1:b,x0:x,x1:x+(b-t)*cw,gap:true});x+=(b-t)*cw;t=b;crossBoundary(b);}if(to>t+1e-6){pieces.push({t0:t,t1:to,x0:x,x1:x+(to-t)*cw,gap:true});x+=(to-t)*cw;t=to;}};
     const slotX=[]; // raw x of each note's slot start
     let bi=0; const barX={}; // raw x at each boundary
     const crossBoundary=(to)=>{while(bi<bounds.length&&bounds[bi]<=to+1e-6){barX[bi]=x;x+=barPad;bi++;}};
@@ -318,7 +318,7 @@
     const sysH=(spec.rhythmOnly?9.5:11.5)*SS;
     const E=[]; let minY=1e9,maxY=-1e9; const track=y=>{if(y<minY)minY=y;if(y>maxY)maxY=y;};
     const rx=SS*0.62, ry=SS*0.44, stemLen=SS*3.4, beamT=SS*0.48;
-    const xs=[], sysOf=[], ys=[];
+    const xs=[], sysOf=[], ys=[], upOf=[];
     // ---- per-system furniture ----
     systems.forEach((sy,si)=>{ const oy=si*sysH;
       for(let k=0;k<5;k++){const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);}
@@ -326,7 +326,7 @@
       E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
       let kx=SS*0.5+cd.clefW*SS+SS*0.5; const pos=KS_POS[spec.clef==='bass'?'bass':'treble'][ks>0?'s':'f'];
       for(let k=0;k<Math.abs(ks);k++){E.push(gEl(ks>0?'sharp':'flat',kx,oy+yOf(top,pos[k]),'var(--ink)'));kx+=SS*0.62;}
-      if(si===0){const tsx=kx+(ks?SS*0.3:0)+tsW*0.5;
+      if(si===0&&!spec.noTime){const tsx=kx+(ks?SS*0.3:0)+tsW*0.5;
         E.push(`<text x="${tsx.toFixed(1)}" y="${(oy+TOPK*SS+1.62*SS).toFixed(1)}" text-anchor="middle" font-size="${(SS*2.05).toFixed(1)}" font-weight="700" font-family="Georgia,'Times New Roman',serif" fill="var(--ink)">${numer}</text>`);
         E.push(`<text x="${tsx.toFixed(1)}" y="${(oy+TOPK*SS+3.68*SS).toFixed(1)}" text-anchor="middle" font-size="${(SS*2.05).toFixed(1)}" font-weight="700" font-family="Georgia,'Times New Roman',serif" fill="var(--ink)">${denom}</text>`);}
       // barlines
@@ -393,7 +393,7 @@
       if(n.clearable){const cyc=oy+TOPK*SS+4*SS+SS*1.75;
         E.push(`<g class="sclr" data-i="${i}"><circle cx="${x.toFixed(1)}" cy="${cyc.toFixed(1)}" r="${(SS*0.55).toFixed(1)}" fill="var(--paper)" stroke="var(--rule)"/><text x="${x.toFixed(1)}" y="${(cyc+SS*0.22).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);track(cyc+SS*0.9);}
       if(n.dur>=4-1e-6)return;
-      const gi=inGroup[i]; const up=(gi!==undefined)?groupDir[gi]==='up':(d<top-4);
+      const gi=inGroup[i]; const up=(gi!==undefined)?groupDir[gi]==='up':(d<top-4); upOf[i]=up;
       const sx=up?x+rx*0.88:x-rx*0.88;
       if(gi===undefined){ const sy2=up?y-stemLen:y+stemLen;
         E.push(`<line x1="${sx.toFixed(2)}" y1="${y.toFixed(2)}" x2="${sx.toFixed(2)}" y2="${sy2.toFixed(2)}" stroke="${col}" stroke-width="1.6"/>`); track(up?sy2-SS*2.4:sy2+SS*2.4);
@@ -436,6 +436,28 @@
     if(spec.cursorBeat!==undefined&&spec.cursorBeat<totalBeats-1e-6){ const si=sysOfBeat(spec.cursorBeat), sy=systems[si], oy=si*sysH; cursorSys=si;
       const cx=sy.mapX(xAt(spec.cursorBeat))+SS*0.95;
       E.push(`<line x1="${cx.toFixed(1)}" y1="${(oy+TOPK*SS-SS*0.9).toFixed(1)}" x2="${cx.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS+SS*0.9).toFixed(1)}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3"/>`); }
+    // ---- analysis marks (tests): spec.marks={dyn:{i:'mf'},hp:[[i,j,'cresc']],art:{i:'stac'|'acc'|'ten'},sl:[[i,j]],br:[[i,j,'*1']],box:{i:'x'},barNums:true,tempo:'Andante'} ----
+    if(spec.marks){const M=spec.marks,R=v=>v.toFixed(1);const stTop=si=>si*sysH+TOPK*SS,stBot=si=>si*sysH+TOPK*SS+4*SS;
+      const upAt=i=>upOf[i]!==undefined?upOf[i]:dd[i]<top-4;
+      Object.entries(M.dyn||{}).forEach(([i,t])=>{i=+i;const si=sysOf[i];const y=Math.max(stBot(si)+SS*2.4,ys[i]+(upAt(i)?SS*1.8:SS*4.6));E.push(`<text x="${R(xs[i])}" y="${R(y)}" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="${R(SS*1.25)}" fill="var(--ink)">${t}</text>`);track(y+SS*0.4);});
+      (M.hp||[]).forEach(([i,j,t])=>{const si=sysOf[i];if(sysOf[j]!==si)j=i;const x0=xs[i]-SS*0.4,x1=Math.max(xs[j]+SS*0.6,x0+SS*3);const y=stBot(si)+SS*2.0,h=SS*0.55;
+        E.push(t==='cresc'?`<path d="M${R(x1)} ${R(y-h)} L${R(x0)} ${R(y)} L${R(x1)} ${R(y+h)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`:`<path d="M${R(x0)} ${R(y-h)} L${R(x1)} ${R(y)} L${R(x0)} ${R(y+h)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`);track(y+h+SS*0.4);});
+      Object.entries(M.art||{}).forEach(([i,a])=>{i=+i;const up=upAt(i);const y=up?ys[i]+SS*1.25:ys[i]-SS*1.25;const x=xs[i];
+        if(a==='stac')E.push(`<circle cx="${R(x)}" cy="${R(y)}" r="${R(SS*0.2)}" fill="var(--ink)"/>`);
+        else if(a==='ten')E.push(`<line x1="${R(x-SS*0.6)}" y1="${R(y)}" x2="${R(x+SS*0.6)}" y2="${R(y)}" stroke="var(--ink)" stroke-width="${R(SS*0.18)}"/>`);
+        else {const yy=up?ys[i]+SS*1.5:ys[i]-SS*1.5;E.push(`<path d="M${R(x-SS*0.6)} ${R(yy-SS*0.35)} L${R(x+SS*0.6)} ${R(yy)} L${R(x-SS*0.6)} ${R(yy+SS*0.35)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`);}
+        track(y-SS*0.6);track(y+SS*0.6);});
+      (M.sl||[]).forEach(([i,j])=>{const si=sysOf[i];if(sysOf[j]!==si)return;const up=upAt(i);const seg=ys.slice(i,j+1);const x0=xs[i],x1=xs[j];
+        if(up){const y=Math.max(...seg)+SS*1.1;E.push(`<path d="M${R(x0)} ${R(y)} Q${R((x0+x1)/2)} ${R(y+SS*1.4)} ${R(x1)} ${R(y)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`);track(y+SS*1.4);}
+        else{const y=Math.min(...seg)-SS*1.1;E.push(`<path d="M${R(x0)} ${R(y)} Q${R((x0+x1)/2)} ${R(y-SS*1.4)} ${R(x1)} ${R(y)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`);track(y-SS*1.4);}});
+      (M.br||[]).forEach(([i,j,t])=>{const si=sysOf[i];const x1=xs[i]-SS*0.9,x2=(sysOf[j]===si?xs[j]:xs[i]+SS*3)+SS*0.9;
+        const hi=Math.min(ys[i],ys[j],stTop(si))-(upAt(i)||upAt(j)?SS*4.2:SS*1.6);const y=Math.min(hi,stTop(si)-SS*1.2);
+        E.push(`<path d="M${R(x1)} ${R(y+SS*0.7)} V${R(y)} H${R(x2)} V${R(y+SS*0.7)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/><text x="${R((x1+x2)/2)}" y="${R(y-SS*0.4)}" text-anchor="middle" font-size="${R(SS*0.95)}" font-weight="700" fill="var(--ink)" font-family="Arial,sans-serif">${t}</text>`);track(y-SS*1.4);});
+      Object.entries(M.box||{}).forEach(([i,t])=>{i=+i;const si=sysOf[i];const y=Math.min(stTop(si)-SS*2.6,ys[i]-(upAt(i)?SS*5.2:SS*2.6));
+        E.push(`<rect x="${R(xs[i]-SS*0.7)}" y="${R(y-SS*1.05)}" width="${R(SS*1.4)}" height="${R(SS*1.4)}" fill="none" stroke="var(--ink)" stroke-width="1.2"/><text x="${R(xs[i])}" y="${R(y)}" text-anchor="middle" font-size="${R(SS*1.0)}" fill="var(--ink)" font-family="Arial,sans-serif">${t}</text>`);track(y-SS*1.3);});
+      if(M.barNums){systems.forEach((sy,si)=>{if(si===0)return;const b=sy.segA+(pickup>1e-6?0:1);E.push(`<text x="${R(SS*0.4)}" y="${R(stTop(si)-SS*1.0)}" font-size="${R(SS*0.85)}" font-style="italic" fill="var(--ink)" font-family="Georgia,serif">${b}</text>`);track(stTop(si)-SS*1.8);});}
+      if(M.tempo){const y=stTop(0)-SS*2.6;E.push(`<text x="${R(SS*0.4)}" y="${R(y)}" font-size="${R(SS*1.05)}" font-weight="700" fill="var(--ink)" font-family="Georgia,serif">${M.tempo}</text>`);track(y-SS*1.2);}
+    }
     const pad=SS*0.5, y0=minY-pad, vh=(maxY-minY)+pad*2;
     const svg=`<svg class="score" id="score" viewBox="0 ${y0.toFixed(1)} ${W.toFixed(1)} ${vh.toFixed(1)}" width="${W.toFixed(0)}" preserveAspectRatio="xMidYMid meet" style="touch-action:none;max-width:${(W*1.5).toFixed(0)}px" xmlns="http://www.w3.org/2000/svg">${E.join('')}</svg>`;
     return {svg,xs,ys,sysOf,W,top,y0,vh,sysH,nSys:systems.length,midi:res.midi,shown:res.shown,cursorSys,order:notes};
