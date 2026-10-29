@@ -29,12 +29,14 @@
   let actx=null;const AC=()=>actx||(actx=new (window.AudioContext||window.webkitAudioContext)());
   function click(t,acc,freq){const c=AC();const o=c.createOscillator(),g=c.createGain();o.frequency.value=freq||(acc?1600:1000);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(acc?0.6:0.35,t+0.003);g.gain.exponentialRampToValueAtTime(0.0001,t+0.06);o.connect(g).connect(c.destination);o.start(t);o.stop(t+0.08);}
   function beep(t,d){const c=AC();const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=523.25;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.4,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+Math.max(0.08,d*0.9));o.connect(g).connect(c.destination);o.start(t);o.stop(t+d);}
+  function tapSound(){const c=AC();const t=c.currentTime;const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(880,t);o.frequency.exponentialRampToValueAtTime(420,t+0.05);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.09);o.connect(g).connect(c.destination);o.start(t);o.stop(t+0.1);}
+  LV.tapSound=tapSound;
   // play the rhythm (onsets/durs in beats) on one pitch after a count-in
   LV.playRhythm=function(onsets,durs,spb,bpb){const c=AC();if(c.state==='suspended')c.resume();const t0=c.currentTime+0.15;for(let b=0;b<bpb;b++)click(t0+b*spb,b===0);const s=t0+bpb*spb;onsets.forEach((on,i)=>beep(s+on*spb,durs[i]*spb));return (bpb*spb+(onsets.length?onsets[onsets.length-1]+durs[durs.length-1]:0)*spb+0.3);};
   // record taps: count-in, then the student taps; returns {expected:[s], taps:[s]} relative to the first beat after the count-in
   LV.tapRun=function(o){const c=AC();if(c.state==='suspended')c.resume();const spb=o.spb,bpb=o.bpb;const t0=c.currentTime+0.2;for(let b=0;b<bpb;b++)click(t0+b*spb,b===0);
     const first=t0+bpb*spb;if(o.guide)for(let b=0;b<Math.ceil(o.total);b++)click(first+b*spb,b%bpb===0,b%bpb===0?900:700);
-    const taps=[];const lat=(c.outputLatency||c.baseLatency||0);const tap=()=>{const t=c.currentTime-lat-first;if(t>-spb*0.6)taps.push(t);o.onTap&&o.onTap(t);};
+    const taps=[];const lat=(c.outputLatency||c.baseLatency||0);const tap=()=>{tapSound();const t=c.currentTime-lat-first;if(t>-spb*0.6)taps.push(t);o.onTap&&o.onTap(t);};
     const end=first+(o.total+1)*spb;let timer=setInterval(()=>{if(c.currentTime>=end){clearInterval(timer);timer=null;o.onDone&&o.onDone(grade(o.onsets.map(x=>x*spb),taps,spb));}},40);
     o.onStart&&o.onStart((first-c.currentTime)*1000);return {tap,stop:()=>{if(timer)clearInterval(timer);timer=null;}};};
   function grade(exp,taps,spb){const tol=Math.max(0.09,Math.min(0.16,spb*0.25));const used=new Set();const hits=exp.map(e=>{let bi=-1,bd=1e9;taps.forEach((t,j)=>{if(used.has(j))return;const d=Math.abs(t-e);if(d<bd){bd=d;bi=j;}});if(bi>=0&&bd<=tol){used.add(bi);return {ok:true,d:taps[bi]-e};}return {ok:false};});
