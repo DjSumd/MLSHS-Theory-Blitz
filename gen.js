@@ -755,8 +755,20 @@ function makeSet(unitId,count){const u=UNITS.find(x=>x.id===unitId);const bag=[]
     const key=q.prompt+'|'+(q.answer||'')+'|'+JSON.stringify(q.items?q.items.map(i=>i.target&&i.target.map(spn)):'')+(q.pairs?JSON.stringify(q.pairs):'');if(seen.has(key))continue;seen.add(key);
     q.unit=unitId;q.gen=fn.name;defaultWhy(q);out.push(q);}
   return out;}
-const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));
+// Test-only generators (Years 7–10 tests): chords in a key with Roman numerals
+const TDEG=()=>UPTO()<=8?[0,3,4]:UPTO()===9?[0,1,3,4,5]:[0,1,2,3,4,5,6];
+function testKey(){const k=randKey();return (UPTO()<=8&&k.mode==='minor')?{tonic:T.relMajor(k.tonic),mode:'major',sig:k.sig}:k;}
+function chordRnQ(){const k=testKey();const clef=clefPick();const d=pick(TDEG());const c=T.diatonicChord(k.tonic,k.mode,d,false);const nm=x=>T.chordName(x.root,x.type);
+  const notes=fitScale(T.chord(c.root,c.type,0),clef);const ans=nm(c)+' · '+c.rn;const pool=[];
+  [0,1,2,3,4,5,6].forEach(e=>{const x=T.diatonicChord(k.tonic,k.mode,e,false);pool.push(nm(x)+' · '+x.rn,nm(c)+' · '+x.rn,nm(x)+' · '+c.rn);});
+  return choice('In '+keyName(k)+', name this chord and give its Roman numeral.',optsFrom(ans,uniq(pool),4),ans,{sub:'Root position. Upper case = major, lower case = minor, ° = diminished.',parts:[nm(c),c.rn],
+    show:show(stave(clef,k.sig,null,[n(notes,'w')],{noBar:true})),why:'Degree '+(d+1)+' of '+keyName(k)+' is '+name(c.root)+', so the chord is '+nm(c)+' = '+c.rn+'.'});}
+function notateRnQ(){const k=testKey();const clef=clefPick();const ds=TDEG().filter(x=>x!==0);const d=pick(ds.length?ds:[3]);const c=T.diatonicChord(k.tonic,k.mode,d,false);
+  const items=[Object.assign(slot(0,fitScale(T.chord(c.root,c.type,0),clef),'w'),{chord:true,max:3})];
+  return {t:'notate',prompt:'Write chord '+c.rn+' in '+keyName(k)+'.',sub:clefWord(clef)+'. Root position block chord; the key signature is given'+(k.mode==='minor'&&(d===4||d===6)?' (remember the raised leading note)':'')+'. Any octave.',clef,sig:k.sig,items,anyOctaveChord:true,
+    why:c.rn+' in '+keyName(k)+' = '+T.chordName(c.root,c.type)+' ('+T.chord(c.root,c.type,0).map(name).join(' ')+').'};}
+const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=chordRnQ;BYNAME.notateRnQ=notateRnQ;
 function defaultWhy(q){if(q.why)return;if(q.t==='match'&&q.pairs)q.why=q.pairs.map(p=>'<b>'+p[0]+'</b> — '+p[1]).join(' · ');}
-function one(name){let q=null;for(let i=0;i<20&&!q;i++)q=BYNAME[name]();const u=UNITS.find(u=>u.gens.some(g=>g[0].name===name));q.unit=u.id;q.gen=name;defaultWhy(q);return q;}
+function one(name){let q=null;for(let i=0;i<20&&!q;i++)q=BYNAME[name]();const u=UNITS.find(u=>u.gens.some(g=>g[0].name===name))||UNITS.find(u=>u.id==='chords');q.unit=u.id;q.gen=name;defaultWhy(q);return q;}
 return {UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one};
 })();

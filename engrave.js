@@ -78,7 +78,8 @@ function stemDir(clef,ps,it){if(it.stem==='up')return true;if(it.stem==='down')r
   const mid=CLEF[clef].topDia-4;const lo=T.dia(ps[0]),hi=T.dia(ps[ps.length-1]);
   const far=(hi-mid)>=(mid-lo)?hi:lo;return far<mid;}
 // ---------- drawing ----------
-function render(spec,opts){opts=opts||{};const L=prepare(spec);const {clef,sigN,cols,W,H}=L;const S=[];
+let PAPER=false;
+function render(spec,opts){opts=opts||{};PAPER=!!spec.paper;const L=prepare(spec);const {clef,sigN,cols,W,H}=L;const S=[];
   const ink=opts.ink||'var(--ink)';
   const right=W-SS*0.3;
   for(let k=0;k<5;k++)S.push(line(SS*0.3,TOP+k*SS,right,TOP+k*SS,1.3));
@@ -104,9 +105,9 @@ function render(spec,opts){opts=opts||{};const L=prepare(spec);const {clef,sigN,
     if(c.k==='ksig'){ // editable key signature: n accidental positions; placed ones drawn at their line/space
       for(let i=0;i<c.n;i++){const x0=c.x+i*c.aw;const a=(c.accs||[])[i];
         if(a){S.push(`<g class="ksg" data-k="${i}">${glyph(a.a>0?'sharp':'flat',x0,yOf(clef,a.d),a.col||ink)}</g>`);}
-        else{S.push(`<text x="${(x0+c.aw*0.45).toFixed(1)}" y="${(L.H-SS*0.35).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.7).toFixed(1)}" font-weight="700" fill="#aab0b8">${i+1}</text>`);}
+        else if(!spec.paper){S.push(`<text x="${(x0+c.aw*0.45).toFixed(1)}" y="${(L.H-SS*0.35).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.7).toFixed(1)}" font-weight="700" fill="#aab0b8">${i+1}</text>`);}
         S.push(`<rect class="kshit" data-pos="${i}" x="${(x0-SS*0.1).toFixed(1)}" y="0" width="${(c.aw).toFixed(1)}" height="${L.H}" fill="transparent"/>`);}
-      if(!(c.accs||[]).length)S.push(line(c.x+c.aw*0.45,TOP-SS*0.6,c.x+c.aw*0.45,TOP+4*SS+SS*0.6,1,'#cfd4da'));return;}
+      if(!(c.accs||[]).length&&!spec.paper)S.push(line(c.x+c.aw*0.45,TOP-SS*0.6,c.x+c.aw*0.45,TOP+4*SS+SS*0.6,1,'#cfd4da'));return;}
     if(c.k==='r'){const dur=c.dur||'q';const rn={w:'restWhole',h:'restHalf',q:'restQuarter',e:'rest8th',s:'rest16th'}[dur];
       const y=dur==='w'?TOP+SS:MID;S.push(glyph(rn,c.x,y,c.col||ink));
       if(c.dots)S.push(glyph('dot',c.x+gw(rn)+SS*0.25,MID-SS*0.5,c.col||ink));
@@ -129,7 +130,7 @@ function render(spec,opts){opts=opts||{};const L=prepare(spec);const {clef,sigN,
   const attrs=opts.attrs||'';const cls=opts.cls||'';
   return {svg:`<svg class="${cls}" viewBox="${vb}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"${attrs}>${S.join('')}</svg>`,W,H,cols:L.cols,clef};}
 function drawNoteCol(S,L,c,ink,opts,beams){const {clef}=L;const col=c.col||ink;const dur=c.dur;
-  if(c.k==='slot'&&(!c.p.length)){ // placeholder (+ ghost of the rhythm value when the slot carries one)
+  if(c.k==='slot'&&(!c.p.length)&&!PAPER){ // placeholder (+ ghost of the rhythm value when the slot carries one)
     const g0=TOP-SS*0.6,g1=TOP+4*SS+SS*0.6;
     S.push(line(c.x+c.hw/2,g0,c.x+c.hw/2,g1,1,'#cfd4da'));
     S.push(`<text x="${(c.x+c.hw/2).toFixed(1)}" y="${(L.H-SS*0.35).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.7).toFixed(1)}" font-weight="700" fill="#aab0b8">${c.slotNo!==undefined?c.slotNo:c.slot+1}</text>`);

@@ -290,7 +290,7 @@
     // ---- horizontal layout: slots ----
     const cw=w_of(1), barPad=SS*1.0;
     const pieces=[]; let t=0,x=0;
-    const addGap=(to)=>{if(to>t+1e-6){pieces.push({t0:t,t1:to,x0:x,x1:x+(to-t)*cw,gap:true});x+=(to-t)*cw;t=to;}};
+    const addGap=(to)=>{while(bi<bounds.length&&bounds[bi]>t+1e-6&&bounds[bi]<to-1e-6){const b=bounds[bi];pieces.push({t0:t,t1:b,x0:x,x1:x+(b-t)*cw,gap:true});x+=(b-t)*cw;t=b;crossBoundary(b);}if(to>t+1e-6){pieces.push({t0:t,t1:to,x0:x,x1:x+(to-t)*cw,gap:true});x+=(to-t)*cw;t=to;}};
     const slotX=[]; // raw x of each note's slot start
     let bi=0; const barX={}; // raw x at each boundary
     const crossBoundary=(to)=>{while(bi<bounds.length&&bounds[bi]<=to+1e-6){barX[bi]=x;x+=barPad;bi++;}};
