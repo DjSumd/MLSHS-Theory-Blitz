@@ -1,3 +1,4 @@
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261029c";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;

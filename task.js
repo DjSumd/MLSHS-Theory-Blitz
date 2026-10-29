@@ -1,3 +1,4 @@
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261029c";
 // task.js — Class tasks for Aural Blitz and Theory Blitz (shared, identical in both apps).
 // A teacher builds a task (sections, counts, settings) and shares it as a link / QR / code.
 // Students complete it in a locked mode. The result is a sealed receipt: compressed JSON encrypted
@@ -75,10 +76,10 @@
   TK.record=function(pos,ok,frac,secs,plays){const R=TK.run;if(!R||R.state.rec[pos])return;
     const f=Math.max(0,Math.min(1,frac===undefined||frac===null||isNaN(frac)?(ok?1:0):frac));R.state.rec[pos]=[Math.round(f*100),Math.min(65535,Math.round(secs||0)),Math.min(255,Math.round((plays||0)*2)),ok?1:0];saveRun();};
   // tests (Years 7–10): the shell sets the plan once it has built the test. mk = marks for each position, groups = [[label,count],…]
-  TK.setPlan=function(mk,groups){const R=TK.run;if(!R)return;R.total=mk.length;R.mk=mk;R.groups=groups;};
+  TK.setPlan=function(mk,groups){const R=TK.run;if(!R)return;R.total=mk.length;R.mk=mk;R.groups=groups;const S=R.state;if(S.done&&!(S.n>0)&&!Object.keys(S.rec||{}).length){S.done=false;delete S.receipt;delete S.fn;saveRun();}};
   TK.testSeed=function(){const R=TK.run;return R?hashStr(R.task.id+'|test|'+(R.task.ps?nameKey(R.name):''))%33554432:0;};
   TK.answered=()=>TK.run?Object.keys(TK.run.state.rec).length:0;
-  TK.isDone=()=>TK.run&&TK.answered()>=TK.run.total;
+  TK.isDone=()=>!!(TK.run&&TK.run.total>0&&TK.answered()>=TK.run.total);
   TK.firstOpen=()=>{if(!TK.run)return 0;for(let i=0;i<TK.run.total;i++)if(!TK.run.state.rec[i])return i;return -1;};
   TK.score=()=>{const R=TK.run;if(!R)return {got:0,max:0};const w=i=>R.mk?R.mk[i]:1;let g=0;Object.entries(R.state.rec).forEach(([i,r])=>g+=r[0]/100*w(+i));return {got:Math.round(g*2)/2,max:R.mk?R.mk.reduce((a,b)=>a+b,0):R.total};};
   TK.banner=function(){const R=TK.run;if(!R)return '';const n=TK.answered();return `<div class="tkbar"><span><b>Class task</b> · ${esc(R.task.ti||'')}${R.task.cl?' · '+esc(R.task.cl):''}</span><span>${esc(R.name)} · ${n} / ${R.total} answered <button class="tkleave" id="tkleave">Leave task</button></span></div>`;};
@@ -88,7 +89,7 @@
     const payload={v:1,a:A.app,k:R.task.id,ti:R.task.ti||'',cl:R.task.cl||'',nm:R.name,y:R.task.y,n:R.total,st:Math.round(S.st/1000),fn:Math.round(S.fn/1000),th:S.th,
       s:R.task.tt?(R.groups||[]):R.task.s.map(x=>[x.u,x.n]),mk:R.task.tt?R.mk:undefined,tt:R.task.tt?1:undefined,q:Array.from({length:R.total},(_,i)=>S.rec[i]||[0,0,0,0]),u:Array.from({length:R.total},(_,i)=>i).filter(i=>!S.rec[i]),rl:S.reloads||0,
       ot:(LS.get('blitzTaskSeen:'+R.task.id,[])).filter(n=>n!==nameKey(R.name)).slice(0,6)};
-    const sealed=await seal(R.task.pk,await packBytes(payload));S.receipt='B1.'+b64u.enc(sealed);S.done=true;saveRun();return S.receipt;}
+    const sealed=await seal(R.task.pk,await packBytes(payload));S.receipt='B1.'+b64u.enc(sealed);S.done=true;S.n=R.total;saveRun();return S.receipt;}
   TK.finishHtml=async function(){const R=TK.run;const code=await receipt();const sc=TK.score();const S=R.state;const mins=Math.max(1,Math.round((S.fn-S.st)/60000));
     return `<div class="tkdone"><div class="qnum">Class task complete</div><p class="prompt">${esc(R.task.ti||'Task')} — done</p>
       <p class="sub"><b>${esc(R.name)}</b>${R.task.cl?' · '+esc(R.task.cl):''} · ${sc.got} / ${sc.max} · ${mins} min</p>

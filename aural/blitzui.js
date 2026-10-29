@@ -1,3 +1,4 @@
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261029c";
 // blitzui.js — the "Blitz" look shared by Aural Blitz and Theory Blitz (identical copy in both apps).
 // 1) a clean, rounded, app-icon home screen (tap an icon to open the exercise) with a bottom tab bar;
 // 2) a much richer avatar builder (face, hair, eyes, brows, mouth, extras, glasses, headwear, clothes, background, instrument).
@@ -246,6 +247,33 @@
   UI.daysStreak=function(days){if(!days||!days.length)return 0;const set=new Set(days);let d=new Date();const key=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
     if(!set.has(key(d)))d.setDate(d.getDate()-1);let n=0;while(set.has(key(d))){n++;d.setDate(d.getDate()-1);}return n;};
   UI.level=m=>!m||!m.n?0:m.mastered?5:(m.n>=15&&m.acc>=0.85)?4:(m.n>=10&&m.acc>=0.75)?3:m.acc>=0.6?2:1;
+
+  // ---- profiles: merge on save so two open copies (Aural + Theory, two tabs, the test's companion section) never wipe each other's progress ----
+  UI.mergeDelta=function(st,base,mine){const J=JSON.stringify,out={};base=base||{};const keys=new Set(Object.keys(st||{}).concat(Object.keys(mine||{})));
+    keys.forEach(k=>{const s=st?st[k]:undefined,b=base[k],m=mine[k];
+      if(m===undefined){out[k]=s;return;}if(s===undefined){out[k]=m;return;}
+      if(k==='name'){out[k]=m||s;return;}
+      if(typeof m==='number'&&typeof s==='number'){out[k]=k==='bestStreak'?Math.max(s,m):s+(m-(typeof b==='number'?b:0));return;}
+      if(k==='days'&&Array.isArray(m)&&Array.isArray(s)){out[k]=Array.from(new Set(s.concat(m))).sort();return;}
+      if(k==='exams'&&Array.isArray(m)&&Array.isArray(s)){const seen=new Set(s.map(x=>x&&x.at));out[k]=s.concat(m.filter(x=>x&&!seen.has(x.at)));return;}
+      if(m&&s&&typeof m==='object'&&typeof s==='object'&&!Array.isArray(m)&&!Array.isArray(s)){const o=Object.assign({},s);
+        Object.keys(m).forEach(x=>{if(J(m[x])===J(b&&b[x]))return;o[x]=(k==='sprint'&&typeof m[x]==='number'&&typeof s[x]==='number')?Math.max(m[x],s[x]):m[x];});out[k]=o;return;}
+      out[k]=J(m)!==J(b)?m:s;});return out;};
+  // PROFS: the app's map, k: this student's key, PROF: this student's live object, baseJ: PROF as last read/written. Returns the new base.
+  UI.profSync=function(PROFS,k,PROF,baseJ,write){let cur={};try{cur=JSON.parse(localStorage.getItem('blitzAuralProfiles')||'{}')||{};}catch(e){}
+    Object.keys(cur).forEach(x=>{if(x!==k)PROFS[x]=cur[x];});const st=cur[k];
+    if(PROF){if(st){const mg=UI.mergeDelta(st,baseJ?JSON.parse(baseJ):null,PROF);Object.keys(PROF).forEach(x=>delete PROF[x]);Object.assign(PROF,mg);}PROFS[k]=PROF;}
+    if(write){try{localStorage.setItem('blitzAuralProfiles',JSON.stringify(PROFS));}catch(e){}return PROF?JSON.stringify(PROF):baseJ;}
+    return st?JSON.stringify(st):baseJ;};
+  // ---- tests: feedback is hidden, so say plainly that the answer was saved (or why it wasn't) ----
+  UI.testAck=function(o){const card=document.getElementById('card');if(!card||!window.MutationObserver)return;let busy=false;
+    const run=()=>{busy=false;const fb=document.getElementById('fb');let t=document.getElementById('tfb');
+      let on=false;try{on=o.testing();}catch(e){}if(!on||!fb){if(t)t.remove();return;}
+      if(!t){t=document.createElement('div');t.id='tfb';t.className='tfb';t.setAttribute('role','status');}
+      if(fb.nextElementSibling!==t)fb.insertAdjacentElement('afterend',t);
+      let sc=false;try{sc=o.scored();}catch(e){}const txt=(fb.textContent||'').trim();
+      const msg=sc?'✓ Answer saved. Press Next ›':txt;if(t.textContent!==msg)t.textContent=msg;t.style.display=msg?'':'none';};
+    new MutationObserver(()=>{if(!busy){busy=true;setTimeout(run,40);}}).observe(card,{childList:true,subtree:true,characterData:true});};
   // ---- overlay sheet ----
   function sheet(html,wide){let w=document.getElementById('bsheet');if(!w){w=document.createElement('div');w.id='bsheet';w.innerHTML='<div class="bsback"></div><div class="bsbox"><button class="gclose bsx">✕</button><div class="bsbody"></div></div>';document.body.appendChild(w);
       w.querySelector('.bsback').onclick=UI.closeSheet;w.querySelector('.bsx').onclick=UI.closeSheet;}
@@ -383,6 +411,7 @@
   body.nui:not(.paper) .hud .stat:has(#scv),body.nui:not(.paper) .hud .stat:has(#scp),body.nui:not(.paper) .hud .stat:has(#snum),body.nui:not(.paper) .hud .rst{display:none}
   body.nui:not(.paper) header{padding-top:calc(6px + env(safe-area-inset-top,0))}
   body.nui :focus-visible{outline:3px solid #1cb0f6;outline-offset:2px}
+.tfb{margin-top:10px;padding:11px 14px;border-radius:14px;background:#e8f4ff;color:#1453a0;font-weight:800;font-size:15px;text-align:center}
   body.nui:not(.paper):not(.testing) .opts button.ok::after{content:'✓';margin-left:auto;font-weight:900;color:#3a7d00;font-size:18px}
   body.nui:not(.paper):not(.testing) .opts button.no::after{content:'✗';margin-left:auto;font-weight:900;color:#c4232b;font-size:18px}
   body.nui:not(.paper) .dots .d.ok::after{content:''}

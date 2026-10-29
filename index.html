@@ -327,6 +327,7 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <script src="task.js"></script>
 <script src="testkit.js"></script>
 <script src="blitzui.js"></script>
+<script>/*blitz-check*/(function(){var S="20261029c";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
 <script>
 const APP='theoryAll';
 // ---- Exam: Section One Part B in the WACE shape (two score-based theory questions, ~9 marks each) ----
@@ -538,10 +539,11 @@ const fromUnit=q=>(q&&q.unit&&UNITS.find(u=>u.id===q.unit))||UNITS[ui];
 // ---------- profiles: progress that lasts, per student name (shared with Aural Blitz on this device) ----------
 const RANKS=[[0,'Busker'],[150,'Session Player'],[400,'Section Leader'],[800,'Principal'],[1400,'Soloist'],[2200,'Concertmaster'],[3500,'Maestro']];
 let PROFS={};try{PROFS=JSON.parse(localStorage.getItem('blitzAuralProfiles')||'{}');}catch(e){}
-let PROF=null;
+let PROF=null,PROFBASE=null;
 const profKey=()=>(currentName||'(no name)').trim().toLowerCase()||'(no name)';
-function loadProfile(){const k=profKey();PROF=PROFS[k]||(PROFS[k]={xp:0,correct:0,total:0,bestStreak:0,days:[],hist:{},ach:{},sprint:{},name:currentName});PROF.hist=PROF.hist||{};PROF.ach=PROF.ach||{};PROF.sprint=PROF.sprint||{};PROF.days=PROF.days||[];PROF.name=currentName||PROF.name;}
-function saveProfiles(){try{localStorage.setItem('blitzAuralProfiles',JSON.stringify(PROFS));}catch(e){}}
+function loadProfile(){const k=profKey();PROF=PROFS[k]||(PROFS[k]={xp:0,correct:0,total:0,bestStreak:0,days:[],hist:{},ach:{},sprint:{},name:currentName});PROF.hist=PROF.hist||{};PROF.ach=PROF.ach||{};PROF.sprint=PROF.sprint||{};PROF.days=PROF.days||[];PROF.name=currentName||PROF.name;PROFBASE=JSON.stringify(PROF);}
+function saveProfiles(){try{if(window.BlitzUI&&BlitzUI.profSync){PROFBASE=BlitzUI.profSync(PROFS,profKey(),PROF,PROFBASE,true);return;}}catch(e){}try{localStorage.setItem('blitzAuralProfiles',JSON.stringify(PROFS));}catch(e){}}
+addEventListener('storage',e=>{if(e.key!=='blitzAuralProfiles'||!window.BlitzUI||!BlitzUI.profSync)return;try{PROFBASE=BlitzUI.profSync(PROFS,profKey(),PROF,PROFBASE,false);}catch(x){}});
 function rankOf(xp){let r=RANKS[0],next=null;for(let i=0;i<RANKS.length;i++){if(xp>=RANKS[i][0]){r=RANKS[i];next=RANKS[i+1]||null;}}return {name:r[1],at:r[0],next};}
 const HK=id=>'t:'+id;
 function mastery(id){const h=(PROF&&PROF.hist&&PROF.hist[HK(id)])||[];const n=h.length;const acc=n?h.reduce((a,b)=>a+b,0)/n:0;return {n,acc,mastered:n>=20&&acc>=0.9};}
@@ -638,7 +640,7 @@ function saveAvatar(){BlitzUI.saveAvatar(avatar,currentName);paintAvatar();}
 document.getElementById('avbtn').onclick=openAvatar;document.getElementById('avclose').onclick=closeAvatar;document.getElementById('avback').onclick=closeAvatar;
 paintAvatar();
 // ---------- scoring ----------
-function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)BlitzUI.answered(currentName);if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
+function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)try{BlitzUI.answered(currentName);}catch(e){}if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
   const us=uStat[ui]||(uStat[ui]={ans:0,cor:0});us.ans++;if(ok)us.cor++;
   const q=curQ();let bonus=0;
   if(ok){correct++;streak++;bonus=(sprintOn||h2h)?0:(streak>=5?5:0);const mile=[5,10,15,20,25,30,40,50].includes(streak);if(mile&&!TESTING()){toast('🔥 '+streak+' in a row!');burst('win',innerWidth/2,120,true);}}
@@ -1017,6 +1019,7 @@ function goHome(){if(examOn&&!confirm('Leave the '+(UNITS[ui]&&UNITS[ui].test?'t
   if(mode!=='practise')setMode('practise');document.body.classList.remove('paper','testmode','testing');BlitzUI.showHome(true);}
 const BPATH={7:['pitch','rhythm','keys','scales','intervals','chords','expr'],8:['pitch','rhythm','keys','scales','intervals','chords','expr','form'],9:['rhythm','keys','scales','intervals','chords','harmony','expr','form','transp'],10:['keys','scales','intervals','chords','harmony','transp','rhythm','form','expr','pitch'],11:['keys','scales','intervals','chords','harmony','transp','rhythm','form','expr','pitch'],12:['keys','scales','intervals','chords','harmony','transp','rhythm','form','expr','pitch']};
 function homeSetName(v){currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();try{avatar=BlitzUI.loadAvatar(v);paintAvatar();}catch(e){}paintScore();}
+if(window.BlitzUI&&BlitzUI.testAck)BlitzUI.testAck({testing:TESTING,scored:()=>qid() in scored});
 BlitzUI.init({
   years:()=>[7,8,9,10,11,12],year:()=>+LEVEL(),setYear:y=>{setLevelUI(y);setTimeout(()=>BlitzUI.renderHome(),0);},setName:homeSetName,customise:()=>{const g=document.getElementById('gear');if(g)g.click();},
   toast:t=>toast(t),burst:()=>burst('win',innerWidth/2,innerHeight/2,true),

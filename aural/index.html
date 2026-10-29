@@ -345,6 +345,7 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <script src="testkit.js"></script>
 <script src="blitzui.js"></script>
 <script src="live.js"></script>
+<script>/*blitz-check*/(function(){var S="20261029c";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
 <script>
 const ACCSYM={'':'',s:'♯',f:'♭',n:'♮',ss:'𝄪',ff:'♭♭'};
 const UCOL=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#5b5fc7','#c2185b','#0e7c86','#b2862f','#2e7d32','#6a3df0','#d35400','#3f5f7a'];
@@ -752,10 +753,11 @@ const fromUnit=q=>(q&&q._from!==undefined)?UNITS[q._from]:UNITS[ui];
 // ---- profiles: progress that lasts, per student name ----
 const RANKS=[[0,'Busker'],[150,'Session Player'],[400,'Section Leader'],[800,'Principal'],[1400,'Soloist'],[2200,'Concertmaster'],[3500,'Maestro']];
 let PROFS={};try{PROFS=JSON.parse(localStorage.getItem('blitzAuralProfiles')||'{}');}catch(e){}
-let PROF=null;
+let PROF=null,PROFBASE=null;
 const profKey=()=>(currentName||'(no name)').trim().toLowerCase()||'(no name)';
-function loadProfile(){const k=profKey();PROF=PROFS[k]||(PROFS[k]={xp:0,correct:0,total:0,bestStreak:0,days:[],hist:{},ach:{},sprint:{},name:currentName});PROF.name=currentName||PROF.name;}
-function saveProfiles(){try{localStorage.setItem('blitzAuralProfiles',JSON.stringify(PROFS));}catch(e){}}
+function loadProfile(){const k=profKey();PROF=PROFS[k]||(PROFS[k]={xp:0,correct:0,total:0,bestStreak:0,days:[],hist:{},ach:{},sprint:{},name:currentName});PROF.name=currentName||PROF.name;PROFBASE=JSON.stringify(PROF);}
+function saveProfiles(){try{if(window.BlitzUI&&BlitzUI.profSync){PROFBASE=BlitzUI.profSync(PROFS,profKey(),PROF,PROFBASE,true);return;}}catch(e){}try{localStorage.setItem('blitzAuralProfiles',JSON.stringify(PROFS));}catch(e){}}
+addEventListener('storage',e=>{if(e.key!=='blitzAuralProfiles'||!window.BlitzUI||!BlitzUI.profSync)return;try{PROFBASE=BlitzUI.profSync(PROFS,profKey(),PROF,PROFBASE,false);}catch(x){}});
 function rankOf(xp){let r=RANKS[0],next=null;for(let i=0;i<RANKS.length;i++){if(xp>=RANKS[i][0]){r=RANKS[i];next=RANKS[i+1]||null;}}return {name:r[1],at:r[0],next};}
 function mastery(key){const h=(PROF&&PROF.hist&&PROF.hist[key])||[];const n=h.length;const acc=n?h.reduce((a,b)=>a+b,0)/n:0;return {n,acc,mastered:n>=20&&acc>=0.9};}
 function dayStreak(){const days=(PROF.days||[]).slice().sort();if(!days.length)return 0;const t=todayStr();const y=new Date();y.setDate(y.getDate()-1);const ys=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');
@@ -858,7 +860,7 @@ let toastT=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='';void t.offsetWidth;t.className='show';clearTimeout(toastT);toastT=setTimeout(()=>t.className='',1900);}
 
 // scoring
-function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)BlitzUI.answered(currentName);if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
+function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)try{BlitzUI.answered(currentName);}catch(e){}if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
   const us=uStat[ui]||(uStat[ui]={ans:0,cor:0});us.ans++;if(ok)us.cor++;
   const q=curQ();const plays=q._plays||1;let bonus=0;
   if(ok){correct++;streak++;bonus=sprintOn?0:(plays<=1?10:plays===2?5:0);
@@ -1516,6 +1518,7 @@ function goHome(){if(examOn&&!confirm('Leave the '+(UNITS[ui]&&UNITS[ui].test?'t
   if(mode!=='practise')setMode('practise');document.body.classList.remove('paper','testmode','testing');BlitzUI.showHome(true);}
 const BPATH={7:['met','tap','rd','ivl','sing','pd','scl','ton','dyn','tmp','tim','tex'],8:['met','tap','rd','ivl','sing','pd','scl','ton','chd','prog','dyn','tmp','tim','tex','form'],9:['rd','tap','ivl','sing','pd','scl','ton','chd','prog','cad','tex','form','dyn','tim','dev'],10:['rd','ivl','pd','dis','scl','ton','chd','prog','cad','tex','form','dev','tim'],11:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met'],12:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met']};
 function homeSetName(v){currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();try{avatar=BlitzUI.loadAvatar(v);paintAvatar();}catch(e){}paintScore();}
+if(window.BlitzUI&&BlitzUI.testAck)BlitzUI.testAck({testing:TESTING,scored:()=>qid() in scored});
 BlitzUI.init({
   years:()=>[7,8,9,10,11,12],year:()=>YEAR,setYear:y=>{setYear(y);},setName:homeSetName,customise:null,
   toast:t=>toast(t),burst:()=>burst('win',innerWidth/2,innerHeight/2,true),
