@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261029c";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261030e";
 // refs.js — reference tabs for Aural Blitz Years 7–12.
 const _tbl=(heads,rows)=>`<div class="reftable"><table><tr>${heads.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
 const _y=y=>`<span class="ytag">Y${y}</span>`;

@@ -345,7 +345,7 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <script src="testkit.js"></script>
 <script src="blitzui.js"></script>
 <script src="live.js"></script>
-<script>/*blitz-check*/(function(){var S="20261029c";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-check*/(function(){var S="20261030e";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
 <script>
 const ACCSYM={'':'',s:'♯',f:'♭',n:'♮',ss:'𝄪',ff:'♭♭'};
 const UCOL=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#5b5fc7','#c2185b','#0e7c86','#b2862f','#2e7d32','#6a3df0','#d35400','#3f5f7a'];
@@ -545,6 +545,33 @@ function paperItem(q,it,key){const K=s=>key?`<span class="ans k">${esc(s)}</span
   if(it.unit==='tim')return `<div class="cell wide"><div class="qtext">${esc(it.text)} ${K(q.answer)}</div></div>`;
   if(it.share||it.subn===1)return `<div class="cell wide"><div class="qtext">${esc(it.text)}</div>${opts(q.options,q.answer,q.options.length>4)}</div>`;
   return `<div class="cell"><span class="lbl">${esc(it.text)}</span>${opts(q.options,q.answer)}</div>`;}
+function ansYou(q,it){const r=q&&q._resp;if(!r)return '<div class="na">Not answered</div>';const G=TestKit.GOOD,B=TestKit.BAD;
+  const sfY=()=>{const S=q._sf;if(!r.sf||!S)return '';return `<div class="note" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${S.ans.map((a,i)=>i<(S.given||0)?`<span class="b g">${esc(a)}</span>`:`<span class="b ${r.sf[i]===a?'ok':'no'}">${esc(r.sf[i]||'–')}</span>`).join('')}</div>`;};
+  if((q.kind==='rhythmdict'||q.kind==='melodydict')&&r.me){let on=0;const notes=r.me.map(n=>{const o=on;on+=n.dur;return {onset:o,dur:n.dur,rest:n.rest,tie:n.tie,d:n.d,acc:n.a};});
+    let midi=[];try{midi=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'})).midi||[];}catch(e){}
+    notes.forEach((n,k)=>{const hit=q.dict.notes.some(a=>eq(a.onset,n.onset)&&eq(a.dur,n.dur)&&!!a.rest===!!n.rest&&(q.rhythmOnly||n.rest||a.midi===midi[k]));n.color=k===0?'#000':hit?G:B;});
+    return `<div class="cell wide">${paperScore(q,notes)}${q.kind==='melodydict'?sfY():''}</div>`;}
+  if(q.kind==='pitchdict'&&r.pd){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie};const v=r.pd[i];return v?{onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,idx:i}:{onset:n.onset,dur:n.dur,state:'empty',idx:i};});
+    const ok={};try{const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));meta.order.forEach((n,k)=>{if(n.idx!==undefined&&n.state!=='empty')ok[n.idx]=meta.midi[k]===q.dict.notes[n.idx].midi;});}catch(e){}
+    notes.forEach((n,i)=>{if(n.idx!==undefined&&n.state!=='empty')n.color=ok[i]?G:B;});return `<div class="cell wide">${paperScore(q,notes)}${sfY()}</div>`;}
+  if(q.kind==='numerals'&&r.rn){const F=a=>q.solfaDict?esc(a||'–'):a?(q.fmt?q.fmt(a):fmtRN(a)):'–';return `<div class="cell wide"><div class="boxes${q.solfaDict?' sf':''}">${q.answer.map((a,i)=>i<q.given?`<span class="b g">${F(a)}</span>`:`<span class="b ${r.rn[i]===a?'ok':'no'}">${F(r.rn[i])}</span>`).join('')}</div>${q.slotLabels?`<div class="note">${q.slotLabels.join(' · ')}</div>`:''}</div>`;}
+  if(q.kind==='discrep'&&r.disMarks){const C=q.changes||{};const bars=[...new Set(Object.keys(C).concat(Object.keys(r.disMarks)))].map(Number).sort((a,b)=>a-b);return bars.length?bars.map(b=>`<div>Bar ${b+1}: <span class="yv ${(C[b]||null)===(r.disMarks[b]||null)?'ok':'no'}">${esc(r.disMarks[b]||'no change')}</span></div>`).join(''):'<div class="note">No bars marked.</div>';}
+  if(r.picked!==undefined&&r.picked!==null){const ok=r.picked===''+q.answer;return `<span class="yv ${ok?'ok':'no'}">${q.fmt?q.fmt(r.picked):esc(r.picked)}</span>`;}
+  return '<div class="note">Answered — see the marks.</div>';}
+function answerSheetBody(){const m=examMarks();const Q=pos=>{let q=runQs[ui]&&runQs[ui][pos];if(!q&&UNITS[ui].test){try{q=tq(pos);}catch(e){}}return q;};
+  const row=(it,pos,label)=>{const q=Q(pos);if(!q)return '';let key='';if(q.kind==='discrep'){const C=q.changes||{};key=Object.keys(C).sort((a,b)=>a-b).map(b=>`<div>Bar ${+b+1}: <b class="k">${esc(C[b])}</b></div>`).join('')||'<div>No changes</div>';}else try{key=UNITS[ui].test?paperItem(q,it,true):(paperItem(q,Object.assign({text:''},it),true));}catch(e){key='<div class="note">'+esc(String(q.answer||''))+'</div>';}
+    const mx=it.marks||it.m||1;return TestKit.ansRow(label,(m[pos]&&m[pos].got)||0,mx,ansYou(q,it),key);};
+  let html='';
+  if(UNITS[ui].test){html+=TestKit.sectionHead('AURAL',testAMarks());const groups={};examPlan.forEach((it,pos)=>{if(!it.embed)(groups[it.gi]=groups[it.gi]||[]).push([it,pos]);});
+    testGroups.forEach((g,gi)=>{const list=groups[gi]||[];if(!list.length)return;html+=`<div class="pq">${TestKit.groupHead(g,gi)}${g.score?`<div class="cell wide">${testScoreSvg(g.score.X,g.score.S,true)}</div>`:''}${list.map(([it,pos])=>row(it,pos,esc(it.text||'')||('Question '+(pos+1)))).join('')}</div>`;});}
+  else{html+=`<div class="tstsec"><span>${EMBED?'Part A: Aural':'Section One · Part A: Aural'}</span></div>`;examPlan.forEach((it,pos)=>{if(it.embed)return;const q=Q(pos);html+=row(it,pos,'Question '+(pos+1)+(q&&q.prompt?' · '+esc(String(q.prompt).replace(/<[^>]+>/g,'')).slice(0,90):''));});}
+  return html;}
+window.answerSheetBody=answerSheetBody;
+function openAnswerSheet(){if(LASTQ&&LASTQ._exam){try{LASTQ._work=snapWork();}catch(e){}}let body='';try{body=answerSheetBody();}catch(e){body='<p class="na">The answer sheet could not be built ('+esc(e.message)+').</p>';}
+  if(examPlan.some(it=>it.embed)){let cb='';const f=embedFrame();try{if(f&&f.contentWindow&&f.contentWindow.answerSheetBody)cb=f.contentWindow.answerSheetBody();}catch(e){}
+    body+=cb||`<div class="tstsec"><span>${UNITS[ui].test?'THEORY':'Part B: Theory'}</span></div><p class="na">This section wasn't opened, so there are no answers to show.</p>`;}
+  const mk=examMarks();const tot=mk.reduce((a,x)=>a+(x.got||0),0),max=mk.reduce((a,x)=>a+(x.max||x.it.marks||0),0);
+  TestKit.answerSheet({title:(UNITS[ui].test?TestKit.title(testRun.y):'Exam practice')+' · answer sheet',y:UNITS[ui].test?testRun.y:0,sem:testRun.sem,name:currentName,body,summary:`<p style="font-size:13pt;font-weight:700;margin:0 0 3mm">Total: ${Math.round(tot*2)/2} / ${max}</p>`});}
 function testPaperA(key){let html=TestKit.sectionHead('AURAL',testAMarks());const groups={};examPlan.forEach((it,pos)=>{if(it.embed)return;(groups[it.gi]=groups[it.gi]||[]).push([it,pos]);});
   testGroups.forEach((g,gi)=>{const list=groups[gi]||[];const tr=[...new Set(list.map(([it])=>it.track))];
     html+=`<div class="pq">${TestKit.groupHead(g,gi)}<div class="tracks">Track${tr.length>1?'s':''} ${tr.length>1?tr[0]+'–'+tr[tr.length-1]:tr[0]}</div><div class="row">${g.score?`<div class="cell wide">${testScoreSvg(g.score.X,g.score.S,true)}</div>`:''}${list.map(([it,pos])=>{const q=tq(pos);return q?paperItem(q,it,key):'';}).join('')}</div></div>`;});return html;}
@@ -576,9 +603,9 @@ function finishTest(){if(examOn&&!finishTest._ok){const m=examMarks();const un=m
     ${TestKit.sectionHead('AURAL',am)}<table class="examtable"><tr><th></th><th>Question</th><th style="text-align:right">Marks</th></tr>${rows}</table>
     ${th?`${TestKit.sectionHead('THEORY',tm)}<table class="examtable"><tr><td>Theory section</td><td class="r">${tg===null?'not finished':tg+' / '+tm}</td></tr></table>`:''}
     ${TestKit.totalLine({a:am,ag,t:tm,tg})}<p class="sub">Finished in ${examClock()}${EMBED?'':' · logged to the class record'}. Use Prev / the markers to review any question with its answer.</p>
-    <div class="controls"><button class="btn-ghost" id="examreview">Review answers</button><button class="btn-check" id="examagain">New test</button></div>`;
+    <div class="controls">${EMBED?'':'<button class="btn-check" id="examsheet">📝 Answer sheet</button>'}<button class="btn-ghost" id="examreview">Review answers</button><button class="btn-ghost" id="examagain">New test</button></div>`;
   if(pct>=70)burst('win',innerWidth/2,innerHeight/2,true);
-  document.getElementById('examreview').onclick=()=>{qi=0;load();};document.getElementById('examagain').onclick=()=>{testRun.seed=TestKit.newSeed();buildExamPlan();Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});examStartCard();};}
+  {const sb=document.getElementById('examsheet');if(sb)sb.onclick=openAnswerSheet;}document.getElementById('examreview').onclick=()=>{qi=0;load();};document.getElementById('examagain').onclick=()=>{testRun.seed=TestKit.newSeed();buildExamPlan();Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});examStartCard();};}
 
 function examIntervalsQ(ctx,u,r,cfg){ // a printed melody with three bracketed intervals to name (3 marks)
   const dict=ENGRAVE.buildDictation({diff:'med',scaleNames:['major','natural minor','harmonic minor'],bars:4,clef:'treble',metre:A_pick(['4/4','3/4']),maxKs:4,rests:false,ties:false,anacrusis:false,triplets:false});
@@ -628,7 +655,7 @@ function examAnalysisQ(part){return function(ctx){const X=part.x==='X2'?examX.X2
   else {const names={'major':'Major','natural minor':'Natural minor','harmonic minor':'Harmonic minor','dorian':'Dorian','mixolydian':'Mixolydian'};const pool=['Major','Natural minor','Harmonic minor','Major pentatonic','Minor pentatonic'].concat(UPTO()>=11?['Mixolydian']:[],UPTO()>=12?['Dorian']:[]);const ans=names[X.scale];q.options=A_shuf([ans].concat(A_shuf(pool.filter(x=>x!==ans)).slice(0,3)));q.answer=ans;q.examPrompt='Aural analysis — name the scale the melody is built on';q.why=ans+'.';}
   return q;};}
 const UPTO=()=>YEAR;
-function buildExamPlan(){if(UNITS[ui]&&UNITS[ui].test){buildTestPlan();return;}const d=examDiff();
+function buildExamPlan(){EMBKEY++;if(UNITS[ui]&&UNITS[ui].test){buildTestPlan();return;}const d=examDiff();
   const scales1=['major','natural minor','harmonic minor'].concat(YEAR>=11?['mixolydian']:[],YEAR>=12?['dorian']:[]);
   examX.X1=examExcerpt({scale:A_pick(scales1)});
   examX.X2=examExcerpt({scale:A_pick(['major','natural minor','harmonic minor'].concat(YEAR>=11?['mixolydian']:[])),texture:'homophonic',metre:A_pick(['4/4','3/4']),cadence:A_pick(YEAR>=10?['perfect','plagal','imperfect','interrupted']:['perfect','plagal','imperfect'])});
@@ -679,9 +706,9 @@ function finishExam(){if(UNITS[ui]&&UNITS[ui].test){finishTest();return;}const w
   c.innerHTML=`<div class="qnum">Exam practice · Section One${HAS_THEORY()&&!EMBED?'':' · Part A'} · finished in ${examClock()}</div><div class="rhead"><span>Music · Section One${HAS_THEORY()&&!EMBED?'':' · Part A'}</span><span>Marks · finished in <span class="tm">${examClock()}</span></span></div><p class="prompt" style="font-weight:700;font-size:16px">${esc(currentName||'Your')} result</p><div class="examtotal">${tot} / ${max} <span style="font-size:18px;color:var(--muted)">(${pct}%)</span></div>
     <table class="examtable"><tr><th>Q</th><th>Question</th><th style="text-align:right">Marks</th></tr>${rows}</table>
     <p class="sub">Logged to the class record. Use Prev / the dots to review any question with its answer shown.</p>
-    <div class="controls"><button class="btn-ghost" id="examreview">Review answers</button><button class="btn-check" id="examagain">New paper</button></div>`;
+    <div class="controls">${EMBED?'':'<button class="btn-check" id="examsheet">📝 Answer sheet</button>'}<button class="btn-ghost" id="examreview">Review answers</button><button class="btn-ghost" id="examagain">New paper</button></div>`;
   if(pct>=70)burst('win',innerWidth/2,innerHeight/2,true);
-  document.getElementById('examreview').onclick=()=>{qi=0;load();};document.getElementById('examagain').onclick=()=>{buildExamPlan();runQs[ui]=[];Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});examStartCard();};}
+  {const sb=document.getElementById('examsheet');if(sb)sb.onclick=openAnswerSheet;}document.getElementById('examreview').onclick=()=>{qi=0;load();};document.getElementById('examagain').onclick=()=>{buildExamPlan();runQs[ui]=[];Object.keys(scored).forEach(k=>{if(k.startsWith(ui+'.'))delete scored[k];});Object.keys(results).forEach(k=>{if(k.startsWith(ui+'.'))delete results[k];});examStartCard();};}
 // ---- Class task: a locked set the teacher shares as a link / QR / code (see task.js) ----
 const TASKU={name:'Class task',key:'task',special:true,task:true,ask:'Listen.',guide:`<p class="prompt">Class task</p><ul><li>Your teacher set these questions. The first answer you give to each one is the one that counts.</li><li>Your answers are saved on this device as you go: if you close the app, open the task link again to carry on.</li><li>At the end you get a sealed result code to show or hand in.</li></ul>`,
   gen(ctx){const R=window.TaskKit&&TaskKit.run;const it=R&&R.items[ctx.pos];if(!it)return null;const ri=UNITS.findIndex(u=>u.key===it.u);const u=UNITS[ri];if(!u)return null;
@@ -860,7 +887,7 @@ let toastT=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='';void t.offsetWidth;t.className='show';clearTimeout(toastT);toastT=setTimeout(()=>t.className='',1900);}
 
 // scoring
-function scoreOnce(ok){const k=qid();if(k in scored)return;scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)try{BlitzUI.answered(currentName);}catch(e){}if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
+function scoreOnce(ok){const k=qid();if(k in scored)return;try{const q1=curQ();if(q1&&q1._exam&&!q1._resp){q1._resp=snapWork();q1._resp.sf=q1._sf?q1._sf.got.slice():null;q1._resp.picked=q1._picked;}}catch(e){}scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)try{BlitzUI.answered(currentName);}catch(e){}if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
   const us=uStat[ui]||(uStat[ui]={ans:0,cor:0});us.ans++;if(ok)us.cor++;
   const q=curQ();const plays=q._plays||1;let bonus=0;
   if(ok){correct++;streak++;bonus=sprintOn?0:(plays<=1?10:plays===2?5:0);
@@ -896,13 +923,19 @@ function celebrate(ok,el){if(TESTING())return;if(ok){glowCard();burstAt(el,'win'
 function pick(a){return a[(Math.random()*a.length)|0];}
 
 // modes
+// ---- Reference/Progress keep the question you were on: its card is set aside untouched and put back when you return ----
+let PARK=null;
+function parkPractice(){if(mode!=='practise'||PARK||examOn||sprintOn||h2h||!UNITS[ui]||(window.BlitzUI&&BlitzUI.inHome()))return;const c=document.getElementById('card');if(!c||!c.firstChild)return;const f=document.createDocumentFragment();while(c.firstChild)f.appendChild(c.firstChild);PARK={ui,qi,order:typeof order!=='undefined'&&order.slice?order.slice():null,frag:f,sc:c.scrollTop,acc:document.documentElement.style.getPropertyValue('--accent')};backPill(true);}
+function dropPark(){PARK=null;backPill(false);}
+function restorePractice(){const P=PARK;PARK=null;backPill(false);ui=P.ui;qi=P.qi;if(P.order)order=P.order;const c=document.getElementById('card');c.innerHTML='';c.appendChild(P.frag);if(P.acc)document.documentElement.style.setProperty('--accent',P.acc);renderTabs();renderDots();requestAnimationFrame(()=>{c.scrollTop=P.sc;});}
+function backPill(on){let b=document.getElementById('backq');document.body.classList.toggle('parked',!!on);if(!on){if(b)b.style.display='none';return;}if(!b){b=document.createElement('button');b.id='backq';b.className='backq';b.textContent='↩ Back to your question';b.onclick=()=>{if(PARK){if(window.BlitzUI)BlitzUI.showHome(false);setMode('practise');}};document.body.appendChild(b);}b.style.display='';}
 function setMode(m){document.body.classList.toggle('prac',m==='practise');if(window.BlitzUI){if(m!=='practise')BlitzUI.showHome(false);setTimeout(()=>BlitzUI.paintTabbar(),0);}if(AUDIO)AUDIO.stop();if(sprintOn)endSprint(true);
   mode=m;document.getElementById('mPr').classList.toggle('on',m==='practise');
   document.getElementById('mRe').classList.toggle('on',m==='reference');
   document.getElementById('mRec').classList.toggle('on',m==='record');
   document.getElementById('dots').style.display=m==='practise'?'flex':'none';
   document.getElementById('tabs').style.display=m==='record'?'none':'flex';
-  if(m==='practise'){ui=Math.min(ui,UNITS.length-1);openUnit();}
+  if(m==='practise'){if(PARK)restorePractice();else{ui=Math.min(ui,UNITS.length-1);openUnit();}}
   else if(m==='reference'){ui=0;loadRef();}
   else renderRecord();}
 function csvLog(){const rows=[['Name','Section','Score %','Finished']].concat(LOG.map(e=>[e.name,e.section,e.pct,new Date(e.at).toLocaleString('en-AU')]));
@@ -981,7 +1014,7 @@ function h2hCheck(){if(!h2h)return;const w=h2h.score.findIndex(s=>s>=5);if(w<0)r
   g.classList.add('open');document.getElementById('gback').classList.add('open');burst('win',innerWidth/2,innerHeight/2,true);
   document.getElementById('h2hre').onclick=()=>{h2h.score=[0,0];h2h.turn=0;closeGuide();runQs[ui]=[];qi=0;load();};
   document.getElementById('h2hend').onclick=()=>{h2h=null;closeGuide();order=[...Array(N).keys()];runQs[ui]=[];qi=0;load();};}
-function openUnit(){if(sprintOn)endSprint(true);runQs[ui]=[];if(UNITS[ui].task){if(window.TaskKit&&TaskKit.run){taskOpen();return;}ui=2;}if(UNITS[ui].exam){buildExamPlan();order=[...Array(examPlan.length).keys()];qi=0;examOn=false;clearInterval(examTick);examStartCard();return;}order=[...Array(N).keys()];qi=0;load();}
+function openUnit(){dropPark();if(sprintOn)endSprint(true);runQs[ui]=[];if(UNITS[ui].task){if(window.TaskKit&&TaskKit.run){taskOpen();return;}ui=2;}if(UNITS[ui].exam){buildExamPlan();order=[...Array(examPlan.length).keys()];qi=0;examOn=false;clearInterval(examTick);examStartCard();return;}order=[...Array(N).keys()];qi=0;load();}
 function feedback(msg,cls,why){const f=document.getElementById('fb');if(!f)return;f.innerHTML=msg+(why?`<div class="why">${why}</div>`:'');f.className='feedback '+(cls||'');}
 function loadRef(){document.documentElement.style.setProperty('--accent',RCOL);renderTabs();
   const c=document.getElementById('card');c.innerHTML=REFS[ui].render();c.scrollTop=0;}
@@ -1045,17 +1078,29 @@ const sfOK=()=>!UNITS[ui].exam||!!UNITS[ui].test;
 const sfRow=q=>(sfOK()&&q.dict&&ENGRAVE.solfaFor(q.dict.scaleType))?'<div class="solfarow" id="solfarow"></div>':'';
 const sfSetupDict=q=>{if(!sfOK()||!q.dict||!ENGRAVE.solfaFor(q.dict.scaleType))return;const d=q.dict;const notes=d.notes.filter(n=>!n.rest);sfInit(q,notes.map(n=>ENGRAVE.solfaOf(n.midi,d.tonicMidi,d.scaleType)),ENGRAVE.solfaFor(d.scaleType),d.notes.slice(0,q.given||0).filter(n=>!n.rest).length);sfRender(q);};
 // ---- load question ----
-function load(){document.body.classList.toggle('testing',TESTING());if(AUDIO)AUDIO.stop();liveStop();
+// ---- the companion section lives in its own card that is kept, never rebuilt, so going back to it keeps the student's work ----
+function showEmbed(key,top,bot,src,doc){const c=document.getElementById('card');let w=document.getElementById('embedwrap');
+  if(w&&w.dataset.key!==key){w.remove();w=null;}
+  if(!w){w=document.createElement('section');w.id='embedwrap';w.className='card';w.dataset.key=key;w.innerHTML='<div class="ewtop"></div><iframe class="embedframe" id="embedframe" allow="autoplay"></iframe><div class="ewbot"></div>';c.parentNode.insertBefore(w,c.nextSibling);const f=w.querySelector('iframe');if(src)f.src=src;else f.srcdoc=doc;}
+  c.innerHTML='';c.style.display='none';w.style.display='';w.querySelector('.ewtop').innerHTML=top;w.querySelector('.ewbot').innerHTML=bot;w.scrollTop=0;
+  const pv=w.querySelector('#prev'),nx=w.querySelector('#next');if(pv&&!pv.disabled)pv.onclick=goPrev;if(nx)nx.onclick=goNext;return w;}
+function embedFrame(){const w=document.getElementById('embedwrap');return w?w.querySelector('iframe'):null;}
+(function(){const c=document.getElementById('card');if(!c||!window.MutationObserver)return;new MutationObserver(()=>{if(!c.firstChild)return;c.style.display='';const w=document.getElementById('embedwrap');if(w)w.style.display='none';}).observe(c,{childList:true});})();
+let EMBKEY=0,LASTQ=null;
+function snapWork(){return JSON.parse(JSON.stringify({pd,me,meCursor,meTieNext,rn,rnCur,slots,disMarks}));}
+function restoreWork(q){const w=q._work||q._resp;if(w){
+    if(q.kind==='pitchdict'&&w.pd)pd=w.pd.map(x=>x?Object.assign({},x):undefined);
+    else if((q.kind==='melodydict'||q.kind==='rhythmdict')&&w.me&&w.me.length){me=w.me.map(x=>Object.assign({},x));meCursor=w.meCursor;meTieNext=w.meTieNext;}
+    else if(q.kind==='numerals'&&w.rn){rn=w.rn.slice();rnCur=w.rnCur;}
+    else if(q.kind==='notate'&&w.slots)slots=w.slots.map(x=>x?Object.assign({},x):null);}
+  if(q._picked!==undefined&&document.getElementById('opts')){answered=true;const T=TESTING();document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===q._picked)b.classList.add('picked');if(!T&&b.dataset.o===''+q.answer)b.classList.add('ok');if(!T&&b.dataset.o===q._picked&&q._picked!==''+q.answer)b.classList.add('no');});}}
+function load(){document.body.classList.toggle('testing',TESTING());{const q0=curQ();if(LASTQ&&LASTQ!==q0&&LASTQ._exam){try{LASTQ._work=snapWork();}catch(e){}}LASTQ=null;}if(AUDIO)AUDIO.stop();liveStop();
   const q=curQ();if(q&&q.kind==='embed'&&UNITS[ui].test){renderTabs();renderDots();const c=document.getElementById('card');const S=THEORY_TEST_SRC('testB',false);
-    c.innerHTML=`${testBar()}<p class="sub">Work through the theory questions below and press <b>Finish</b> inside the frame when done; the marks come back into this test.${embedRes.B?' <b>Finished: '+embedRes.B.tot+' / '+embedRes.B.max+'</b>':''}</p>
-    <iframe class="embedframe" id="embedframe" ${S.src?`src="${S.src}"`:''} allow="autoplay"></iframe>${TestKit.totalLine({a:testAMarks(),t:q._exam.marks})}<div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Finish ›</button></div>`;
-    if(!S.src)document.getElementById('embedframe').srcdoc=S.doc;
-    document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;c.scrollTop=0;return;}
+    showEmbed('T'+EMBKEY+':'+testRun.y+':'+testRun.seed,`${testBar()}<p class="sub">Work through the theory questions below and press <b>Finish</b> inside the frame when done; the marks come back into this test.${embedRes.B?' <b>Finished: '+embedRes.B.tot+' / '+embedRes.B.max+'</b>':''}</p>
+    `,`${TestKit.totalLine({a:testAMarks(),t:q._exam.marks})}<div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Finish ›</button></div>`,S.src,S.src?'':S.doc);return;}
   if(q&&q.kind==='embed'){renderTabs();renderDots();document.documentElement.style.setProperty('--accent','#b2862f');const c=document.getElementById('card');const src=THEORY_SRC();
-    c.innerHTML=`<div class="qnum">Exam practice · Section One · Part B: Theory</div>${examBar()}<p class="sub">Two score-based theory questions (${q._exam.marks} marks). Work through them below and press <b>Finish exam</b> inside the frame when done; the marks come back into this paper.${embedRes.B?' <b>Finished: '+embedRes.B.tot+' / '+embedRes.B.max+'</b>':''}</p>
-    <iframe class="embedframe" id="embedframe" ${src?`src="${src}"`:''} allow="autoplay"></iframe><div class="pfoot">End of questions</div><div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Finish ›</button></div>`;
-    if(!src){const f=document.getElementById('embedframe');f.srcdoc=EMBED_DOC.partB.replace('<head>','<head><script>window.__EMBED="partB";window.__EMBED_YEAR='+Math.max(11,YEAR)+';<\/script>');}
-    document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;c.scrollTop=0;return;}
+    showEmbed('E'+EMBKEY,`<div class="qnum">Exam practice · Section One · Part B: Theory</div>${examBar()}<p class="sub">Two score-based theory questions (${q._exam.marks} marks). Work through them below and press <b>Finish exam</b> inside the frame when done; the marks come back into this paper.${embedRes.B?' <b>Finished: '+embedRes.B.tot+' / '+embedRes.B.max+'</b>':''}</p>
+    `,`<div class="pfoot">End of questions</div><div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Finish ›</button></div>`,src,src?'':EMBED_DOC.partB.replace('<head>','<head><script>window.__EMBED="partB";window.__EMBED_YEAR='+Math.max(11,YEAR)+';<\/script>'));return;}
   if(q&&(q.kind==='sing'||q.kind==='tap')){renderLive(q);return;}
   const FU=fromUnit(q);document.documentElement.style.setProperty('--accent',UCOL[UNITS.indexOf(FU)%UCOL.length]);
   accMode='';slots=[];nchecked=false;answered=false;renderTabs();renderDots();
@@ -1126,6 +1171,7 @@ function load(){document.body.classList.toggle('testing',TESTING());if(AUDIO)AUD
     <div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">${UNITS[ui].exam&&qi>=order.length-1?'Finish ›':'Next ›'}</button></div>`;
   c.scrollTop=0;
   wire(q);if(UNITS[ui].task){TaskKit.wireBanner();if(scored[qid()]!==undefined&&!document.getElementById('fb').textContent)feedback('Answered earlier — your first answer counts.',scored[qid()]?'ok':'no');}
+  if(q._exam){try{restoreWork(q);}catch(e){}LASTQ=q;}
   if(q.kind==='notate'){drawStave();if(q.solfa&&sfOK()){sfInit(q,q.solfa,[...new Set(q.solfa)],q.given||0);sfRender(q);}}
   else if(q.kind==='pitchdict'){renderPD(false);sfSetupDict(q);}
   else if(q.kind==='melodydict'||q.kind==='rhythmdict'){renderMD(false);if(!q.rhythmOnly)sfSetupDict(q);}
@@ -1421,7 +1467,7 @@ function checkNotate(){const q=curQ();let right=0;const need=q.notes.length-q.gi
   sfCheck(q);renderDots();}
 function answerNotate(){const q=curQ();if(!(qid() in scored))scoreOnce(false);slots=q.notes.map(t=>({d:dia(t[0],t[1]),a:t[2],reveal:true}));nchecked=false;q.done=true;drawStave();feedback('Answer shown. Clear to try it yourself.','',q.why);results[qid()]='no';sfReveal(q);renderDots();}
 // choice
-function pickChoice(btn,q){if(answered)return;answered=true;const ok=btn.dataset.o===(''+q.answer);q._frac=ok?1:0;
+function pickChoice(btn,q){if(answered)return;answered=true;q._picked=btn.dataset.o;const ok=btn.dataset.o===(''+q.answer);q._frac=ok?1:0;
   btn.classList.add('picked');document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');if(b===btn&&!ok)b.classList.add('no');});
   scoreOnce(ok);celebrate(ok);
   if(ok){feedback(pick(WINMSG)+bonusTag(),'ok',q.why);results[qid()]='ok';}else{feedback(pick(MISSMSG),'no',q.why);results[qid()]='no';
@@ -1503,7 +1549,7 @@ TaskKit.init({app:'aural',label:'Aural Blitz',years:[7,8,9,10,11,12],
   snapshot:(keys)=>({per:Object.fromEntries(keys.map(k=>{const ri=UNITS.findIndex(u=>u.key===k);const u=UNITS[ri];return [k,Object.fromEntries((u.cfg||[]).map(g=>[g.key,cfgGet(ri,g.key)]))];}))}),
   year:()=>YEAR,getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_THEORY_DIR!=='undefined'&&HAS_THEORY_DIR&&/^https?:/.test(location.protocol))?'theory/index.html':'',
   setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();paintScore();},
-  test:true,start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(!taskPrev)taskPrev={ui,year:YEAR};YEAR=run.task.y;paintYear();
+  answerSheet:()=>openAnswerSheet(),test:true,start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(!taskPrev)taskPrev={ui,year:YEAR};YEAR=run.task.y;paintYear();
     if(run.task.tt){testRun={y:run.task.y,sem:run.task.sem||TestKit.semester(),seed:TaskKit.testSeed()};ui=UNITS.indexOf(TEST);runQs[ui]=[];setMode('practise');taskTestSync();return;}
     ui=TASKI();setMode('practise');},
   exit:()=>{setTimeout(()=>{if(window.BlitzUI)BlitzUI.showHome(true);},0);const pv=taskPrev||{ui:2,year:YEAR};taskPrev=null;YEAR=pv.year;paintYear();runQs[TASKI()]=[];runQs[UNITS.indexOf(TEST)]=[];testRun={y:0,sem:'',seed:0};Object.keys(scored).forEach(k=>{if(k.startsWith(UNITS.indexOf(TEST)+'.'))delete scored[k];});ui=pv.ui===TASKI()?2:pv.ui;setMode('practise');}});
@@ -1514,7 +1560,7 @@ function unitIcon(u){const UICON={sing:'mic',tap:'hand',today:'sun',weak:'target
 function goUnit(i){if(sprintOn)endSprint(true);h2h=null;if(examOn&&!UNITS[i].exam&&!confirm('Leave the exam? Your marks so far will be lost.'))return;examOn=false;clearInterval(examTick);
   if(mode!=='practise'){mode='practise';document.getElementById('mPr').classList.add('on');document.getElementById('mRe').classList.remove('on');document.getElementById('mRec').classList.remove('on');document.getElementById('dots').style.display='flex';document.getElementById('tabs').style.display='flex';}
   ui=i;BlitzUI.showHome(false);openUnit();}
-function goHome(){if(examOn&&!confirm('Leave the '+(UNITS[ui]&&UNITS[ui].test?'test':'exam')+'? Your answers so far will be lost.'))return;if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(window.AUDIO)AUDIO.stop();
+function goHome(){dropPark();if(examOn&&!confirm('Leave the '+(UNITS[ui]&&UNITS[ui].test?'test':'exam')+'? Your answers so far will be lost.'))return;if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(window.AUDIO)AUDIO.stop();
   if(mode!=='practise')setMode('practise');document.body.classList.remove('paper','testmode','testing');BlitzUI.showHome(true);}
 const BPATH={7:['met','tap','rd','ivl','sing','pd','scl','ton','dyn','tmp','tim','tex'],8:['met','tap','rd','ivl','sing','pd','scl','ton','chd','prog','dyn','tmp','tim','tex','form'],9:['rd','tap','ivl','sing','pd','scl','ton','chd','prog','cad','tex','form','dyn','tim','dev'],10:['rd','ivl','pd','dis','scl','ton','chd','prog','cad','tex','form','dev','tim'],11:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met'],12:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met']};
 function homeSetName(v){currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();try{avatar=BlitzUI.loadAvatar(v);paintAvatar();}catch(e){}paintScore();}
@@ -1534,7 +1580,7 @@ BlitzUI.init({
     out.push({i:-1,name:'Class task',group:'test',icon:'task',sub:'from your teacher'});return out;},
   open:i=>{if(i===-1){TaskKit.openStudentEntry();return;}goUnit(i);},
   home:goHome,
-  tab:t=>{if(t==='learn'){goHome();}else if(t==='ref'){BlitzUI.showHome(false);setMode('reference');}else if(t==='rec'){BlitzUI.showHome(false);setMode('record');}else openAvatar();BlitzUI.paintTabbar();},
+  tab:t=>{if(t==='learn'){if(PARK&&mode!=='practise'){BlitzUI.showHome(false);setMode('practise');}else goHome();}else if(t==='ref'){parkPractice();BlitzUI.showHome(false);setMode('reference');}else if(t==='rec'){parkPractice();BlitzUI.showHome(false);setMode('record');}else openAvatar();BlitzUI.paintTabbar();},
   currentTab:()=>mode==='practise'?'learn':mode==='reference'?'ref':'rec',
   stats:()=>{const T=id=>{const e=document.getElementById(id);return e?e.textContent:'';};const xp=PROF?PROF.xp:0;const r=rankOf(xp);const pct=r.next?(xp-r.at)/(r.next[0]-r.at):1;
     return {name:currentName,rank:r.name,xp,xpPct:pct,streak:typeof streak!=='undefined'?streak:0,days:BlitzUI.daysStreak(PROF&&PROF.days),acc:T('scp'),mastered:PROF?REAL().filter(u=>(u=>mastery(u.key))(u).mastered).length:0};}});

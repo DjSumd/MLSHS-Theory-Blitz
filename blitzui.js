@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261029c";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261030e";
 // blitzui.js — the "Blitz" look shared by Aural Blitz and Theory Blitz (identical copy in both apps).
 // 1) a clean, rounded, app-icon home screen (tap an icon to open the exercise) with a bottom tab bar;
 // 2) a much richer avatar builder (face, hair, eyes, brows, mouth, extras, glasses, headwear, clothes, background, instrument).
@@ -411,6 +411,8 @@
   body.nui:not(.paper) .hud .stat:has(#scv),body.nui:not(.paper) .hud .stat:has(#scp),body.nui:not(.paper) .hud .stat:has(#snum),body.nui:not(.paper) .hud .rst{display:none}
   body.nui:not(.paper) header{padding-top:calc(6px + env(safe-area-inset-top,0))}
   body.nui :focus-visible{outline:3px solid #1cb0f6;outline-offset:2px}
+body.parked #card{padding-bottom:84px}
+.backq{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:60;border:0;border-radius:999px;padding:12px 20px;background:#58cc02;color:#fff;font:800 15px/1 Nunito,system-ui,sans-serif;box-shadow:0 4px 0 #3fa102,0 8px 20px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}.backq:active{transform:translateX(-50%) translateY(3px);box-shadow:0 1px 0 #3fa102}
 .tfb{margin-top:10px;padding:11px 14px;border-radius:14px;background:#e8f4ff;color:#1453a0;font-weight:800;font-size:15px;text-align:center}
   body.nui:not(.paper):not(.testing) .opts button.ok::after{content:'✓';margin-left:auto;font-weight:900;color:#3a7d00;font-size:18px}
   body.nui:not(.paper):not(.testing) .opts button.no::after{content:'✗';margin-left:auto;font-weight:900;color:#c4232b;font-size:18px}

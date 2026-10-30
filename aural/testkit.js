@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261029c";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261030e";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -55,6 +55,29 @@
     .tracks{font-size:10pt;margin:2mm 0 0;color:#333}
     @media screen{body{background:#666}.sheet{background:#fff;max-width:200mm;margin:8mm auto;padding:12mm 14mm;box-shadow:0 3px 18px rgba(0,0,0,.5)}.bar{position:sticky;top:0;background:#222;color:#fff;padding:8px 14px;font-family:Arial;display:flex;gap:10px;align-items:center;z-index:5}.bar button{font-size:14px;padding:6px 14px;cursor:pointer}}
     @media print{.bar{display:none}.sheet{padding:0;margin:0;box-shadow:none}}`;
+
+  // ---- answer sheet: the student's answers beside the correct answers, shown in the app (and printable) ----
+  TK.ANS_CSS=`.lead{font-size:10pt;color:#333;margin:0 0 5mm}.arow{margin:0 0 4mm;break-inside:avoid;page-break-inside:avoid}
+    .aq{display:flex;justify-content:space-between;gap:8px;font-size:10.5pt;margin:0 0 1.5mm}.aq .mk{font-weight:700;white-space:nowrap}
+    .acols{display:grid;grid-template-columns:1fr 1fr;gap:3mm;align-items:start}.acol{border:1.5px solid #ccc;border-radius:2.5mm;padding:2mm 3mm;min-width:0}
+    .acol .ah{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#555;margin-bottom:1mm}
+    .acol.you.ok{border-color:#1d6b2d;background:#f2f9f3}.acol.you.part{border-color:#b7791f;background:#fff8ea}.acol.you.no{border-color:#b3261e;background:#fdf2f1}
+    .acol.key{border-color:#1d6b2d}.acol.key .k,.acol.key .ans.k{color:#1d6b2d!important}.acol.key .opts .o.k{outline-color:#1d6b2d!important;color:#1d6b2d!important}
+    .acol .cell{min-width:0}.acol .cell .lbl{min-height:0}.acol .cell:not(.wide):has(>.ans){padding-bottom:0}.acol .cell:not(.wide)>.ans{position:static}
+    .boxes .b.ok{color:#1d6b2d;border-color:#1d6b2d}.boxes .b.no{color:#b3261e;border-color:#b3261e}
+    .na{color:#b3261e;font-style:italic}.yv{font-weight:700}.yv.ok{color:#1d6b2d}.yv.no{color:#b3261e}.yv.ok:after{content:' ✓'}.yv.no:after{content:' ✗'}
+    .sumt{border-collapse:collapse;margin:0 0 5mm;font-size:10.5pt}.sumt td{padding:1mm 4mm 1mm 0}.sumt td.r{text-align:right;font-weight:700}
+    @media screen and (max-width:720px){body{background:#fff}.sheet{margin:0;padding:4mm 3.5mm;box-shadow:none}.acols{grid-template-columns:1fr}}`;
+  TK.answerSheet=function(o){let w=document.getElementById('anssheet');if(w)w.remove();w=document.createElement('div');w.id='anssheet';
+    w.style.cssText='position:fixed;inset:0;z-index:9999;background:#555;display:flex;flex-direction:column';
+    w.innerHTML='<div style="display:flex;gap:8px;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:#1b1a18;color:#fff;font:700 15px/1.2 system-ui,sans-serif"><span style="flex:1">'+esc(o.title)+'</span><button id="asprint" style="font:700 14px system-ui;padding:8px 14px;border-radius:10px;border:0;cursor:pointer">Print</button><button id="asclose" style="font:700 14px system-ui;padding:8px 14px;border-radius:10px;border:0;background:#58cc02;color:#fff;cursor:pointer">Close</button></div><iframe title="Answer sheet" style="flex:1;border:0;width:100%;background:#fff"></iframe>';
+    document.body.appendChild(w);const f=w.querySelector('iframe');
+    f.srcdoc='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(o.title)+'</title><style>'+TK.printCSS+TK.ANS_CSS+'</style></head><body><div class="sheet">'+(o.y?TK.header(o.y,o.sem):'')+
+      '<div class="tstname">Name:<span>'+esc(o.name||'')+'</span></div>'+(o.summary||'')+'<p class="lead"><b>Your answer</b> is on the left and the <b>correct answer</b> on the right. Green is right, red is wrong.</p>'+o.body+'</div></body></html>';
+    w.querySelector('#asclose').onclick=()=>w.remove();w.querySelector('#asprint').onclick=()=>{try{f.contentWindow.focus();f.contentWindow.print();}catch(e){}};return w;};
+  TK.GOOD='#1d6b2d';TK.BAD='#b3261e';
+  TK.ansRow=function(label,got,max,you,key){const cls=got>=max?'ok':got>0?'part':'no';
+    return '<div class="arow"><div class="aq"><span>'+label+'</span><span class="mk">'+got+' / '+max+'</span></div><div class="acols"><div class="acol you '+cls+'"><div class="ah">Your answer</div>'+you+'</div><div class="acol key"><div class="ah">Correct answer</div>'+String(key).replace(/#b3261e/gi,'#1d6b2d')+'</div></div></div>';};
   TK.openPrint=function(title){const w=window.open('','_blank');if(!w)return null;w.document.write('<!doctype html><meta charset="utf-8"><title>'+esc(title)+'</title><body style="font-family:Arial;padding:30px">Preparing the test…</body>');return w;};
   TK.fillPrint=function(w,o){const doc=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(o.title)}</title><style>${TK.printCSS}</style></head><body>
     <div class="bar"><b>${esc(o.title)}</b><span style="flex:1"></span><button onclick="print()">Print</button></div>

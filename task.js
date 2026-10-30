@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261029c";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261030e";
 // task.js — Class tasks for Aural Blitz and Theory Blitz (shared, identical in both apps).
 // A teacher builds a task (sections, counts, settings) and shares it as a link / QR / code.
 // Students complete it in a locked mode. The result is a sealed receipt: compressed JSON encrypted
@@ -99,10 +99,10 @@
       <div class="controls"><button class="btn-ghost" id="tkcopy">Copy result code</button><button class="btn-ghost" id="tkback2">Back to practice</button></div>`
       :`<p class="sub"><b>Copy your result code and paste it where your teacher asks</b> (for example your Connect submission).</p>
       <div class="controls"><button class="btn-check" id="tkcopy">Copy result code</button><button class="btn-ghost" id="tkback2">Back to practice</button></div>`}
-      <p class="sub">The code is sealed: only your teacher's device can open it, so it can't be changed.</p></div>`;};
+      <p class="sub">The code is sealed: only your teacher's device can open it, so it can't be changed.</p>${R.task.tt&&R.task.ans!==0&&A.answerSheet?'<div class="controls"><button class="btn-ghost" id="tkans2">📝 See my answer sheet</button></div>':''}</div>`;};
   function mailParts(){const R=TK.run;const subj='Blitz result · '+(R.task.ti||'Class task')+(R.task.cl?' · '+R.task.cl:'')+' · '+R.name;
     const body='Result for '+R.name+(R.task.cl?' ('+R.task.cl+')':'')+' — '+(R.task.ti||'Class task')+'.\n\nSealed result code (please don\'t change it):\n[['+R.state.receipt+']]\n';return {to:R.task.em,subj,body};}
-  TK.wireFinish=function(){const R=TK.run;
+  TK.wireFinish=function(){const R=TK.run;const as=document.getElementById('tkans2');if(as)as.onclick=()=>A.answerSheet();
     const m1=document.getElementById('tkmail');if(m1)m1.onclick=()=>{const m=mailParts();const u='https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(m.to)+'&subject='+encodeURIComponent(m.subj)+'&body='+encodeURIComponent(m.body);window.open(u,'_blank','noopener');R.state.mailed=Date.now();saveRun();};
     const m2=document.getElementById('tkmail2');if(m2)m2.onclick=()=>{const m=mailParts();location.href='mailto:'+encodeURIComponent(m.to)+'?subject='+encodeURIComponent(m.subj)+'&body='+encodeURIComponent(m.body);R.state.mailed=Date.now();saveRun();};const c=document.getElementById('tkcopy');if(c)c.onclick=()=>copy(R.state.receipt,'Result code copied');const box=document.getElementById('tkcode');if(box)box.onfocus=()=>box.select();const b=document.getElementById('tkback2');if(b)b.onclick=()=>TK.leave();};
 
@@ -198,17 +198,17 @@
         ${s.notate?`<select class="tkm"><option value="choice">Listen &amp; pick</option><option value="notate">Listen &amp; write</option></select>`:''}
         ${s.diff?`<select class="tkd"><option value="easy">Easy</option><option value="med">Medium</option><option value="hard">Hard</option></select>`:''}
         <span class="tkn"><button data-d="-1">−</button><b>0</b><button data-d="1">+</button></span></div>`).join('')}</div>
-      <div class="setgrp"><div class="setchips"><button class="chip on" id="tkps">Different questions for each student</button><button class="chip on tksecbits" id="tkh">Allow "How do I work this out?"</button></div></div>
+      <div class="setgrp"><div class="setchips"><button class="chip on" id="tkps">Different questions for each student</button><button class="chip on tksecbits" id="tkh">Allow "How do I work this out?"</button><button class="chip on" id="tkans" style="display:none">Show students their answer sheet when they finish</button></div></div>
       <div class="controls"><button class="btn-check" id="tkmake2">Create task</button><span class="sub" id="tktot" style="align-self:center;margin:0">0 questions</span></div>`,true);wireTabs();
     const tot=()=>{let n=0;document.querySelectorAll('.tksec b').forEach(b=>n+=+b.textContent);document.getElementById('tktot').textContent=n+' question'+(n===1?'':'s');return n;};
     document.querySelectorAll('.tksec .tkn button').forEach(b=>b.onclick=()=>{const v=b.parentNode.querySelector('b');v.textContent=Math.max(0,Math.min(20,+v.textContent+(+b.dataset.d)));b.closest('.tksec').classList.toggle('on',+v.textContent>0);tot();});
-    ['tkps','tkh'].forEach(id=>document.getElementById(id).onclick=e=>e.target.classList.toggle('on'));
+    ['tkps','tkh','tkans'].forEach(id=>document.getElementById(id).onclick=e=>e.target.classList.toggle('on'));
     let isTest=false;const setTy=t=>{isTest=t==='test';document.querySelectorAll('[data-ty]').forEach(b=>b.classList.toggle('on',b.dataset.ty===t));document.querySelectorAll('.tksecbits').forEach(e=>e.style.display=isTest?'none':'');
-      document.getElementById('tksecnote').style.display=isTest?'none':'';document.getElementById('tktestnote').style.display=isTest?'':'none';document.getElementById('tksemg').style.display=isTest?'':'none';
+      document.getElementById('tksecnote').style.display=isTest?'none':'';document.getElementById('tktestnote').style.display=isTest?'':'none';document.getElementById('tksemg').style.display=isTest?'':'none';document.getElementById('tkans').style.display=isTest?'':'none';
       const sel=document.getElementById('tky');[...sel.options].forEach(o=>{o.disabled=isTest&&+o.value>10;});if(isTest&&+sel.value>10)sel.value='10';document.getElementById('tktot').textContent=isTest?'Year test':tot()+' questions';};
     document.querySelectorAll('[data-ty]').forEach(b=>b.onclick=()=>setTy(b.dataset.ty));
     document.getElementById('tkmake2').onclick=async()=>{if(isTest){const yv=+document.getElementById('tky').value;const em=document.getElementById('tkem').value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Check the email address');return;}LS.set(K_EMAIL,em);
-        const ti=document.getElementById('tkti').value.trim()||('Year '+yv+' test');const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti,cl:document.getElementById('tkcl').value.trim(),y:yv,tt:1,sem:document.getElementById('tksem').value,ps:document.getElementById('tkps').classList.contains('on')?1:0,h:0,pk:teacher().pub,s:[],at:Date.now()};
+        const ti=document.getElementById('tkti').value.trim()||('Year '+yv+' test');const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti,cl:document.getElementById('tkcl').value.trim(),y:yv,tt:1,sem:document.getElementById('tksem').value,ps:document.getElementById('tkps').classList.contains('on')?1:0,ans:document.getElementById('tkans').classList.contains('on')?1:0,h:0,pk:teacher().pub,s:[],at:Date.now()};
         const code=await encodeTask(task);const th=(await sha(code)).slice(0,16);const list=LS.get(K_TASKS,[]);list.unshift({id:task.id,ti:task.ti,cl:task.cl,y:task.y,a:task.a,n:'test',at:task.at,code,th});LS.set(K_TASKS,list.slice(0,80));showTask(list[0]);return;}
       const n=tot();if(!n){toast('Add some questions first');return;}if(n>60){toast('Keep a task to 60 questions or fewer');return;}
       const chosen=[...document.querySelectorAll('.tksec')].filter(r=>+r.querySelector('b').textContent>0).map(r=>({u:r.dataset.u,n:+r.querySelector('b').textContent,m:r.querySelector('.tkm')?r.querySelector('.tkm').value:'',d:r.querySelector('.tkd')?r.querySelector('.tkd').value:''}));

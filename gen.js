@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261029c";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261030e";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
