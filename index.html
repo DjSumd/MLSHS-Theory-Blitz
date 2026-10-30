@@ -327,7 +327,7 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <script src="task.js"></script>
 <script src="testkit.js"></script>
 <script src="blitzui.js"></script>
-<script>/*blitz-check*/(function(){var S="20261030e";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-check*/(function(){var S="20261030h";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
 <script>
 const APP='theoryAll';
 // ---- Exam: Section One Part B in the WACE shape (two score-based theory questions, ~9 marks each) ----
@@ -801,6 +801,9 @@ function sfReveal(q){const S=q&&q._sf;if(!S)return;S.got=S.ans.slice();S.checked
 function sfReset(q){if(q)delete q._sf;}
 // ---------- practise ----------
 // ---- the companion section lives in its own card that is kept, never rebuilt, so going back to it keeps the student's work ----
+
+window.BLITZ_REFS=REFS;
+function openTestRef(){let list=REFS.slice();try{const f=typeof embedFrame==='function'?embedFrame():null;const C=f&&f.contentWindow&&f.contentWindow.BLITZ_REFS;if(C)list=list.concat(C.filter(r=>r.id!=='kbd').map(r=>({id:r.id,name:'Aural: '+r.name,render:r.render})));}catch(e){}BlitzUI.openRefSheet(list);}
 function showEmbed(key,top,bot,src,doc){const c=document.getElementById('card');let w=document.getElementById('embedwrap');
   if(w&&w.dataset.key!==key){w.remove();w=null;}
   if(!w){w=document.createElement('section');w.id='embedwrap';w.className='card';w.dataset.key=key;w.innerHTML='<div class="ewtop"></div><iframe class="embedframe" id="embedframe" allow="autoplay"></iframe><div class="ewbot"></div>';c.parentNode.insertBefore(w,c.nextSibling);const f=w.querySelector('iframe');if(src)f.src=src;else f.srcdoc=doc;}
@@ -825,7 +828,7 @@ function load(){document.body.classList.toggle('testing',TESTING());const q=curQ
   let body='';
   if(q.t==='notate'){q.items.forEach(it=>{if(it.k==='slot'){if(it.given){it.p=it.p||[];}else if(!it._p)it._p=[];}});
     const needsKs=!!q.keysigEdit;
-    body=showHtml+`<div class="toolbar"${q.sfOnly?' style="display:none"':''}><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${GEN.getSet().dbl&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove an accidental':'Remove a note'}">⌫ erase</button></div>
+    body=showHtml+`<div class="toolbar"${q.sfOnly?' style="display:none"':''}><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${(GEN.getSet().dbl||(GEN.hasDbl&&GEN.hasDbl(q)))&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove an accidental':'Remove a note'}">⌫ erase</button></div>
       ${needsKs?`<span class="lab">Key signature</span><div class="ksb"><button id="ksflat">♭</button><span class="ksv" id="ksv"></span><button id="kssharp">♯</button></div>`:''}</div>
       <div class="staveWrap" id="sw"${q.sfOnly?' style="display:none"':''}></div>${q.solfa&&sfOK(q)?'<div class="solfarow" id="solfarow"></div>':''}
       <p class="hint"${q.sfOnly?' style="display:none"':''}>${q.solfa&&sfOK(q)?'Then name each degree in sol-fa in the boxes. ':''}${q.ksPlace?'Tap ♯ or ♭, then tap the stave where the next accidental goes: it is added at the next position, on the line or space you tap. ⌫ erase then tap an accidental to remove it. Keys: # b, Backspace removes the last.':q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it); ⌫ erase then tap a note to remove it. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Tap a placed note to select it (change its accidental, or drag it). Keys: # b n 0, Backspace.'}</p>
@@ -841,10 +844,16 @@ function load(){document.body.classList.toggle('testing',TESTING());const q=curQ
   wire(q);if(UNITS[ui].task){TaskKit.wireBanner();const nx=document.getElementById('next');if(nx)nx.disabled=false;if(scored[qid()]!==undefined&&results[qid()]&&q.t!=='choice'&&q.t!=='match')feedback('Answered earlier — your first answer counts.',scored[qid()]?'ok':'no');}if(q.t==='notate'){drawStave();if(q.solfa&&sfOK(q)){sfInit(q,q.solfa,q.sfPal||[...new Set(q.solfa)],q.sfOnly?0:1);sfRender(q);}}
   const r=results[qid()];if(r&&q.t==='choice'){answered=true;document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===(''+q.answer))b.classList.add('ok');if(b.dataset.o===q._picked&&q._picked!==q.answer)b.classList.add('no');});feedback(r==='ok'?'Correct.':'Answered.',r,q.why);}
   if(r&&q.t==='match'){document.querySelectorAll('#match .mrow').forEach((row,i)=>{row.querySelector('select').value=q.pairs[i][1];row.className='mrow ok';});feedback(r==='ok'?'Correct.':'Answered.',r,q.why);}}
-function goPrev(){if(mode!=='practise')return;if(qi>0){qi--;load();}}
+function hasWork(){const q=curQ();if(!q)return false;if(q.t==='notate'){if((q.items||[]).some(it=>it.k==='slot'&&!it.given&&it._p&&it._p.length))return true;if(q._ksp&&q._ksp.length)return true;if(q.keysigEdit&&ksBuilt)return true;}if(q.t==='match')return [...document.querySelectorAll('#match select')].some(x=>x.value);if(q._sf)return q._sf.got.some((g,i)=>i>=(q._sf.given||0)&&g);return false;}
+// in a test, moving on from an answer that wasn't locked in asks first (students forget to press the button)
+function lockGuard(){if(!TESTING())return false;const q=curQ();if(!q||q.kind==='embed'||q.t==='embed')return false;if(qid() in scored)return false;let w=false;try{w=hasWork();}catch(e){}if(!w)return false;
+  if(!confirm("You haven't locked in your answer to this question.\n\nOK: lock it in now.\nCancel: move on without it (you can come back)."))return false;
+  const ck=document.getElementById('check');if(ck)ck.click();return !(qid() in scored);}
+function lockLabel(){if(!TESTING())return;const ck=document.getElementById('check');if(ck&&!/Lock in/.test(ck.textContent))ck.textContent='🔒 Lock in my answer';}
+function goPrev(){if(mode!=='practise')return;if(lockGuard())return;if(qi>0){qi--;load();}}
 function taskNext(){if(qi<SETQ.length-1){qi++;load();}else if(TaskKit.isDone())showTaskFinish();else{const f=TaskKit.firstOpen();toast('Question '+(f+1)+' still needs an answer');qi=f;load();}}
-function goNext(){if(mode!=='practise'||sprintOn)return;if(UNITS[ui].task){taskNext();return;}if(UNITS[ui].exam&&qi>=SETQ.length-1){finishExam();return;}if(qi<SETQ.length-1){qi++;load();}else{let j=ui+1;while(j<UNITS.length&&!unitOn(j))j++;if(j<UNITS.length){ui=j;openUnit();}}}
-function wire(q){document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;
+function goNext(){if(mode!=='practise'||sprintOn)return;if(lockGuard())return;if(UNITS[ui].task){taskNext();return;}if(UNITS[ui].exam&&qi>=SETQ.length-1){finishExam();return;}if(qi<SETQ.length-1){qi++;load();}else{let j=ui+1;while(j<UNITS.length&&!unitOn(j))j++;if(j<UNITS.length){ui=j;openUnit();}}}
+function wire(q){setTimeout(lockLabel,0);document.getElementById('prev').onclick=goPrev;document.getElementById('next').onclick=goNext;
   document.getElementById('prev').disabled=(qi===0);const lastUnit=!UNITS.some((u,j)=>j>ui&&unitOn(j));document.getElementById('next').disabled=(lastUnit&&qi===SETQ.length-1);
   const hb=document.getElementById('howbtn');if(hb)hb.onclick=openGuide;const gb=document.getElementById('gearbtn');if(gb)gb.onclick=()=>openSettings(fromUnit(q));
   const hs=document.getElementById('hearshown');if(hs)hs.onclick=()=>hearShown(q,hs);
@@ -1040,7 +1049,7 @@ TaskKit.init({app:'theory',label:'Theory Blitz',years:[7,8,9,10,11,12],test:true
   snapshot:()=>{const st=JSON.parse(JSON.stringify(GEN.getSet()));delete st.level;return {global:{set:st,gs:JSON.parse(JSON.stringify(GENSEL||{}))}};},
   year:()=>+LEVEL(),getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_AURAL_DIR!=='undefined'&&HAS_AURAL_DIR&&/^https?:/.test(location.protocol))?'aural/index.html':'',
   setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();paintScore();},
-  answerSheet:()=>openAnswerSheet(),start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
+  answerSheet:()=>openAnswerSheet(),openRef:()=>openTestRef(),start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
     if(!taskPrev)taskPrev={ui,set:JSON.parse(JSON.stringify(GEN.getSet())),gs:JSON.parse(JSON.stringify(GENSEL||{}))};
     GEN.setLevel(String(run.task.y));if(run.task.tt){GENSEL={};GEN.setGensel(GENSEL);paintLevel();testRun={y:run.task.y,sem:run.task.sem||TestKit.semester(),seed:TaskKit.testSeed()};ui=UNITS.indexOf(TEST);SETQ=[];setMode('practise');taskTestSync();return;}
     if(run.task.g&&run.task.g.set)GEN.applySet(run.task.g.set);GENSEL=(run.task.g&&run.task.g.gs)||{};GEN.setGensel(GENSEL);paintLevel();ui=TASKI();SETQ=[];setMode('practise');},

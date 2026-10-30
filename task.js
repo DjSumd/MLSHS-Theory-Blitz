@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261030e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261030h";
 // task.js — Class tasks for Aural Blitz and Theory Blitz (shared, identical in both apps).
 // A teacher builds a task (sections, counts, settings) and shares it as a link / QR / code.
 // Students complete it in a locked mode. The result is a sealed receipt: compressed JSON encrypted
@@ -71,7 +71,7 @@
     const seen=LS.get('blitzTaskSeen:'+task.id,[]);const nk=nameKey(name);if(!seen.includes(nk)){seen.push(nk);LS.set('blitzTaskSeen:'+task.id,seen);}
     run.th=(await sha(code)).slice(0,16);
     TK.run={task,code,name,items:task.tt?[]:expandItems(task,name),total:task.tt?0:task.s.reduce((a,s)=>a+s.n,0),state:run};saveRun();
-    closeModal();document.body.classList.add('tasking');document.body.classList.toggle('nohints',!task.h);A.start(TK.run);}
+    closeModal();document.body.classList.add('tasking');{let rb=document.getElementById('refbtn');if(rb)rb.remove();if(task.tt&&task.rf&&A.openRef){rb=document.createElement('button');rb.id='refbtn';rb.textContent='📖 Reference';rb.onclick=()=>A.openRef();document.body.appendChild(rb);}}document.body.classList.toggle('nohints',!task.h);A.start(TK.run);}
   function saveRun(){if(TK.run)LS.set(runKey(TK.run.task.id,TK.run.name),TK.run.state);}
   TK.record=function(pos,ok,frac,secs,plays){const R=TK.run;if(!R||R.state.rec[pos])return;
     const f=Math.max(0,Math.min(1,frac===undefined||frac===null||isNaN(frac)?(ok?1:0):frac));R.state.rec[pos]=[Math.round(f*100),Math.min(65535,Math.round(secs||0)),Math.min(255,Math.round((plays||0)*2)),ok?1:0];saveRun();};
@@ -84,7 +84,7 @@
   TK.score=()=>{const R=TK.run;if(!R)return {got:0,max:0};const w=i=>R.mk?R.mk[i]:1;let g=0;Object.entries(R.state.rec).forEach(([i,r])=>g+=r[0]/100*w(+i));return {got:Math.round(g*2)/2,max:R.mk?R.mk.reduce((a,b)=>a+b,0):R.total};};
   TK.banner=function(){const R=TK.run;if(!R)return '';const n=TK.answered();return `<div class="tkbar"><span><b>Class task</b> · ${esc(R.task.ti||'')}${R.task.cl?' · '+esc(R.task.cl):''}</span><span>${esc(R.name)} · ${n} / ${R.total} answered <button class="tkleave" id="tkleave">Leave task</button></span></div>`;};
   TK.wireBanner=function(){const b=document.getElementById('tkleave');if(b)b.onclick=()=>{if(TK.isDone()||confirm('Leave the task? Your answers so far are saved on this device; open the task link again to carry on.'))TK.leave();};};
-  TK.leave=function(){TK.run=null;document.body.classList.remove('tasking','nohints');try{if(/#task=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);}catch(e){}A.exit();};
+  TK.leave=function(){TK.run=null;{const rb=document.getElementById('refbtn');if(rb)rb.remove();const rs=document.getElementById('refsheet');if(rs)rs.remove();}document.body.classList.remove('tasking','nohints');try{if(/#task=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);}catch(e){}A.exit();};
   async function receipt(){const R=TK.run,S=R.state;if(S.receipt)return S.receipt;if(!S.fn){S.fn=Date.now();}
     const payload={v:1,a:A.app,k:R.task.id,ti:R.task.ti||'',cl:R.task.cl||'',nm:R.name,y:R.task.y,n:R.total,st:Math.round(S.st/1000),fn:Math.round(S.fn/1000),th:S.th,
       s:R.task.tt?(R.groups||[]):R.task.s.map(x=>[x.u,x.n]),mk:R.task.tt?R.mk:undefined,tt:R.task.tt?1:undefined,q:Array.from({length:R.total},(_,i)=>S.rec[i]||[0,0,0,0]),u:Array.from({length:R.total},(_,i)=>i).filter(i=>!S.rec[i]),rl:S.reloads||0,
@@ -198,17 +198,17 @@
         ${s.notate?`<select class="tkm"><option value="choice">Listen &amp; pick</option><option value="notate">Listen &amp; write</option></select>`:''}
         ${s.diff?`<select class="tkd"><option value="easy">Easy</option><option value="med">Medium</option><option value="hard">Hard</option></select>`:''}
         <span class="tkn"><button data-d="-1">−</button><b>0</b><button data-d="1">+</button></span></div>`).join('')}</div>
-      <div class="setgrp"><div class="setchips"><button class="chip on" id="tkps">Different questions for each student</button><button class="chip on tksecbits" id="tkh">Allow "How do I work this out?"</button><button class="chip on" id="tkans" style="display:none">Show students their answer sheet when they finish</button></div></div>
+      <div class="setgrp"><div class="setchips"><button class="chip on" id="tkps">Different questions for each student</button><button class="chip on tksecbits" id="tkh">Allow "How do I work this out?"</button><button class="chip on" id="tkans" style="display:none">Show students their answer sheet when they finish</button><button class="chip" id="tkrf" style="display:none">Let students open the reference sheets during the test</button></div></div>
       <div class="controls"><button class="btn-check" id="tkmake2">Create task</button><span class="sub" id="tktot" style="align-self:center;margin:0">0 questions</span></div>`,true);wireTabs();
     const tot=()=>{let n=0;document.querySelectorAll('.tksec b').forEach(b=>n+=+b.textContent);document.getElementById('tktot').textContent=n+' question'+(n===1?'':'s');return n;};
     document.querySelectorAll('.tksec .tkn button').forEach(b=>b.onclick=()=>{const v=b.parentNode.querySelector('b');v.textContent=Math.max(0,Math.min(20,+v.textContent+(+b.dataset.d)));b.closest('.tksec').classList.toggle('on',+v.textContent>0);tot();});
-    ['tkps','tkh','tkans'].forEach(id=>document.getElementById(id).onclick=e=>e.target.classList.toggle('on'));
+    ['tkps','tkh','tkans','tkrf'].forEach(id=>document.getElementById(id).onclick=e=>e.target.classList.toggle('on'));
     let isTest=false;const setTy=t=>{isTest=t==='test';document.querySelectorAll('[data-ty]').forEach(b=>b.classList.toggle('on',b.dataset.ty===t));document.querySelectorAll('.tksecbits').forEach(e=>e.style.display=isTest?'none':'');
-      document.getElementById('tksecnote').style.display=isTest?'none':'';document.getElementById('tktestnote').style.display=isTest?'':'none';document.getElementById('tksemg').style.display=isTest?'':'none';document.getElementById('tkans').style.display=isTest?'':'none';
+      document.getElementById('tksecnote').style.display=isTest?'none':'';document.getElementById('tktestnote').style.display=isTest?'':'none';document.getElementById('tksemg').style.display=isTest?'':'none';document.getElementById('tkans').style.display=isTest?'':'none';document.getElementById('tkrf').style.display=isTest?'':'none';
       const sel=document.getElementById('tky');[...sel.options].forEach(o=>{o.disabled=isTest&&+o.value>10;});if(isTest&&+sel.value>10)sel.value='10';document.getElementById('tktot').textContent=isTest?'Year test':tot()+' questions';};
     document.querySelectorAll('[data-ty]').forEach(b=>b.onclick=()=>setTy(b.dataset.ty));
     document.getElementById('tkmake2').onclick=async()=>{if(isTest){const yv=+document.getElementById('tky').value;const em=document.getElementById('tkem').value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Check the email address');return;}LS.set(K_EMAIL,em);
-        const ti=document.getElementById('tkti').value.trim()||('Year '+yv+' test');const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti,cl:document.getElementById('tkcl').value.trim(),y:yv,tt:1,sem:document.getElementById('tksem').value,ps:document.getElementById('tkps').classList.contains('on')?1:0,ans:document.getElementById('tkans').classList.contains('on')?1:0,h:0,pk:teacher().pub,s:[],at:Date.now()};
+        const ti=document.getElementById('tkti').value.trim()||('Year '+yv+' test');const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti,cl:document.getElementById('tkcl').value.trim(),y:yv,tt:1,sem:document.getElementById('tksem').value,ps:document.getElementById('tkps').classList.contains('on')?1:0,ans:document.getElementById('tkans').classList.contains('on')?1:0,rf:document.getElementById('tkrf').classList.contains('on')?1:0,h:0,pk:teacher().pub,s:[],at:Date.now()};
         const code=await encodeTask(task);const th=(await sha(code)).slice(0,16);const list=LS.get(K_TASKS,[]);list.unshift({id:task.id,ti:task.ti,cl:task.cl,y:task.y,a:task.a,n:'test',at:task.at,code,th});LS.set(K_TASKS,list.slice(0,80));showTask(list[0]);return;}
       const n=tot();if(!n){toast('Add some questions first');return;}if(n>60){toast('Keep a task to 60 questions or fewer');return;}
       const chosen=[...document.querySelectorAll('.tksec')].filter(r=>+r.querySelector('b').textContent>0).map(r=>({u:r.dataset.u,n:+r.querySelector('b').textContent,m:r.querySelector('.tkm')?r.querySelector('.tkm').value:'',d:r.querySelector('.tkd')?r.querySelector('.tkd').value:''}));

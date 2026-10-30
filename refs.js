@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261030e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261030h";
 // refs.js — Reference tabs for ATAR Music Theory Blitz (engraved with the same engine as the questions).
 const REFS=(()=>{
 const p=s=>T.parse(s);const n=(ps,dur,x)=>Object.assign({k:'n',p:ps.map(p),dur:dur||'w'},x||{});const r=(d,x)=>Object.assign({k:'r',dur:d},x||{});
@@ -74,6 +74,7 @@ return [
   {id:'keys',name:'Key Signatures',render:refKeys},
   {id:'scl',name:'Scales & Modes',render:refScales},
   {id:'ivl',name:'Intervals',render:refIntervals},
+  {id:'kbd',name:'Keyboard',render:()=>window.BlitzUI?BlitzUI.keyboardHtml():'',wire:r=>{if(window.BlitzUI)BlitzUI.wireKeyboard(r);}},
   {id:'chd',name:'Chords & Symbols',render:refChords},
   {id:'harm',name:'Harmony',render:refHarmony},
   {id:'rhy',name:'Rhythm & Metre',render:refRhythm},

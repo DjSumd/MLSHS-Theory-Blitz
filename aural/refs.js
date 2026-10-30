@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261030e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261030h";
 // refs.js — reference tabs for Aural Blitz Years 7–12.
 const _tbl=(heads,rows)=>`<div class="reftable"><table><tr>${heads.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
 const _y=y=>`<span class="ytag">Y${y}</span>`;
@@ -107,6 +107,7 @@ const REFS=[
   {id:'how',  name:'How to listen', render:refStrategy},
   {id:'rhy',  name:'Rhythm & tempo', render:refRhythm},
   {id:'pit',  name:'Pitch & scales', render:refPitch},
+  {id:'kbd',  name:'Keyboard', render:()=>window.BlitzUI?BlitzUI.keyboardHtml():'', wire:r=>{if(window.BlitzUI)BlitzUI.wireKeyboard(r);}},
   {id:'chd',  name:'Chords',        render:refChords},
   {id:'chda', name:'Chords (ATAR)', render:refChordsATAR},
   {id:'prga', name:'Progressions & cadences', render:refProgressions},

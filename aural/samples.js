@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["samples.js"]="20261030e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["samples.js"]="20261030h";
 // samples.js — bundled instrument samples for the Timbre unit.
 // Source: tonejs-instruments (CC-BY 3.0); samples from VSCO2, Freesound, Karoryfer, Univ. of Iowa.
 // Each file trimmed to ~2.2s mono. midi = the pitch recorded; the engine pitch-shifts to any note.

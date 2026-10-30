@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261030e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261030h";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -832,8 +832,13 @@ function studyQ(part,st){const k=st.key,I=st.info,b=st.bars;const sh=show(stStav
   return choice('?',['a'],'a');}
 function studyItems(st){if(st.kind==='study')return [['solfa',3,1],['letters',1],['tempo',1],['dyn',1],['transpose',2]];
   return st.asks.map(a=>[{tempo:'tempoV',dyn:'dynV'}[a]||a,1]);}
-const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=chordRnQ;BYNAME.notateRnQ=notateRnQ;BYNAME.semitoneQ=semitoneQ;
+// Double sharps and flats are only asked for when the year's settings include them (Year 12, or switched on in Customise):
+// any generated question whose notes need one is made again.
+function hasDbl(q){if(!q)return false;const pts=[];const add=it=>{if(!it)return;if(it.target)pts.push(...it.target);if(it.p)pts.push(...[].concat(it.p));};(q.items||[]).forEach(add);if(q.show&&q.show.spec&&q.show.spec.items)q.show.spec.items.forEach(add);return pts.some(p=>p&&typeof p==='object'&&Math.abs(p.a||0)>=2);}
+function noDbl(f){const w=function(){let q=null;for(let i=0;i<40;i++){q=f.apply(this,arguments);if(!q||S('dbl')||!hasDbl(q))return q;}return q;};Object.defineProperty(w,'name',{value:f.name});return w;}
+UNITS.forEach(u=>u.gens.forEach(g=>{g[0]=noDbl(g[0]);}));
+const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=noDbl(chordRnQ);BYNAME.notateRnQ=noDbl(notateRnQ);BYNAME.semitoneQ=semitoneQ;
 function defaultWhy(q){if(q.why)return;if(q.t==='match'&&q.pairs)q.why=q.pairs.map(p=>'<b>'+p[0]+'</b> — '+p[1]).join(' · ');}
 function one(name){let q=null;for(let i=0;i<20&&!q;i++)q=BYNAME[name]();const u=UNITS.find(u=>u.gens.some(g=>g[0].name===name))||UNITS.find(u=>u.id==='chords');q.unit=u.id;q.gen=name;defaultWhy(q);return q;}
-return {UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one,makeStudy,studyQ,studyItems};
+return {hasDbl,UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one,makeStudy,studyQ,studyItems};
 })();

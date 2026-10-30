@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261030e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261030h";
 // blitzui.js — the "Blitz" look shared by Aural Blitz and Theory Blitz (identical copy in both apps).
 // 1) a clean, rounded, app-icon home screen (tap an icon to open the exercise) with a bottom tab bar;
 // 2) a much richer avatar builder (face, hair, eyes, brows, mouth, extras, glasses, headwear, clothes, background, instrument).
@@ -272,8 +272,38 @@
       if(!t){t=document.createElement('div');t.id='tfb';t.className='tfb';t.setAttribute('role','status');}
       if(fb.nextElementSibling!==t)fb.insertAdjacentElement('afterend',t);
       let sc=false;try{sc=o.scored();}catch(e){}const txt=(fb.textContent||'').trim();
-      const msg=sc?'✓ Answer saved. Press Next ›':txt;if(t.textContent!==msg)t.textContent=msg;t.style.display=msg?'':'none';};
+      const msg=sc?'🔒 Answer locked in. Press Next ›':txt;if(t.textContent!==msg)t.textContent=msg;t.style.display=msg?'':'none';};
     new MutationObserver(()=>{if(!busy){busy=true;setTimeout(run,40);}}).observe(card,{childList:true,subtree:true,characterData:true});};
+
+  // ---- reference: an interactive keyboard for working out tones and semitones ----
+  const KB_IV=['unison','semitone (minor 2nd)','tone (major 2nd)','minor 3rd','major 3rd','perfect 4th','tritone','perfect 5th','minor 6th','major 6th','minor 7th','major 7th','octave'];
+  const KB_N=['C','C♯/D♭','D','D♯/E♭','E','F','F♯/G♭','G','G♯/A♭','A','A♯/B♭','B'];
+  UI.keyboardHtml=function(){const W=40,H=150,BW=24,BH=94,start=60,whites=[];let x=0;for(let m=start;m<start+25;m++){if([1,3,6,8,10].includes(m%12))continue;whites.push({m,x});x+=W;}
+    const blacks=[];whites.forEach((w,i)=>{if(i<whites.length-1&&[0,2,5,7,9].includes(w.m%12))blacks.push({m:w.m+1,x:w.x+W-BW/2});});
+    const sMarks=whites.filter((w,i)=>i<whites.length-1&&(w.m%12===4||w.m%12===11)).map(w=>`<text x="${w.x+W}" y="${H+16}" text-anchor="middle" class="kbs">S</text>`).join('');
+    const svg=`<svg viewBox="-1 -1 ${x+2} ${H+22}" class="kbsvg" role="img" aria-label="Piano keyboard, two octaves from middle C">`+
+      whites.map(w=>`<g class="kk w" data-m="${w.m}"><rect x="${w.x}" y="0" width="${W}" height="${H}" rx="4"/><text x="${w.x+W/2}" y="${H-12}" text-anchor="middle">${KB_N[w.m%12]}${w.m===60?'<tspan font-size="9" dx="1">4</tspan>':''}</text></g>`).join('')+
+      blacks.map(b=>`<g class="kk b" data-m="${b.m}"><rect x="${b.x}" y="0" width="${BW}" height="${BH}" rx="3"/></g>`).join('')+sMarks+`</svg>`;
+    return `<div class="kbref" id="kbref"><h2 style="margin-top:0">Keyboard</h2><p class="sub">Tap keys in order to see the tones (T) and semitones (S) between them. A <b>semitone</b> is the very next key, black or white. A <b>tone</b> is two semitones. Between two white keys it's a tone, except <b>E–F</b> and <b>B–C</b>, which are semitones (marked S).</p>
+      <div class="kbwrap">${svg}</div><div class="kbbtns"><button class="btn-ghost" id="kbclear">Clear</button><label class="kbsnd"><input type="checkbox" id="kbsound" checked> Sound</label></div><div class="kbout" id="kbout"><span class="sub">Tap a key to start.</span></div>
+      <div class="kbhelp"><b>Scale patterns</b><div>Major: T T S T T T S</div><div>Natural minor: T S T T S T T</div><div>Harmonic minor: T S T T S T+S S</div><div>Major pentatonic: T T T+S T T+S</div></div></div>`;};
+  UI.wireKeyboard=function(root){root=root||document;const box=root.querySelector?root.querySelector('#kbref'):null;if(!box)return;let seq=[];
+    const paint=()=>{box.querySelectorAll('.kk').forEach(g=>{const m=+g.dataset.m;const k=seq.indexOf(m);g.classList.toggle('on',k>=0);});
+      const out=box.querySelector('#kbout');if(!seq.length){out.innerHTML='<span class="sub">Tap a key to start.</span>';return;}
+      const step=d=>d===1?'S':d===2?'T':d===3?'T+S':d+' semitones';
+      const steps=seq.slice(1).map((m,i)=>{const d=Math.abs(m-seq[i]);return {a:seq[i],b:m,d};});
+      const tot=Math.abs(seq[seq.length-1]-seq[0]);
+      out.innerHTML=`<div class="kbseq">${seq.map((m,i)=>`<span class="kn">${KB_N[m%12]}</span>${i<steps.length?`<span class="ks">${step(steps[i].d)}</span>`:''}`).join('')}</div>`+
+        (steps.length?`<div class="kbtot">${steps.length>1?'Pattern: <b>'+steps.map(s=>step(s.d)).join(' ')+'</b> · ':''}${KB_N[seq[0]%12]} to ${KB_N[seq[seq.length-1]%12]}: <b>${tot} semitone${tot===1?'':'s'}</b>${tot<=12?' = '+KB_IV[tot]:''}</div><p class="sub" style="margin:4px 0 0">The interval name also depends on the letter names: count letters too (C to E is a 3rd, C to F♭ is a 4th).</p>`:'');};
+    box.querySelectorAll('.kk').forEach(g=>g.addEventListener('click',()=>{const m=+g.dataset.m;if(seq[seq.length-1]===m)seq.pop();else if(seq.length<14)seq.push(m);paint();
+      const snd=box.querySelector('#kbsound');if(snd&&snd.checked&&window.AUDIO){try{AUDIO.melody([m],[1],0.45);}catch(e){}}}));
+    const c=box.querySelector('#kbclear');if(c)c.onclick=()=>{seq=[];paint();};paint();};
+  // ---- reference sheets during a class test (when the teacher allows it): an overlay, so the test is never left ----
+  UI.openRefSheet=function(sections){let w=document.getElementById('refsheet');if(w)w.remove();w=document.createElement('div');w.id='refsheet';
+    w.innerHTML=`<div class="rsbar"><b>Reference</b><span style="flex:1"></span><button class="rsx" id="rsclose">Back to the test</button></div><div class="rschips">${sections.map((r,i)=>`<button data-i="${i}">${esc(r.name)}</button>`).join('')}</div><div class="rsbody" id="rsbody"></div>`;
+    document.body.appendChild(w);const show=i=>{w.querySelectorAll('.rschips button').forEach((b,j)=>b.classList.toggle('on',j===i));const body=w.querySelector('#rsbody');try{body.innerHTML=sections[i].render();if(sections[i].wire)sections[i].wire(body);}catch(e){body.innerHTML='<p class="sub">This section could not be shown.</p>';}body.scrollTop=0;UI._refI=i;};
+    w.querySelectorAll('.rschips button').forEach(b=>b.onclick=()=>show(+b.dataset.i));w.querySelector('#rsclose').onclick=()=>w.remove();show(Math.min(UI._refI||0,sections.length-1));};
+  UI.refSection={id:'kbd',name:'Keyboard',render:()=>UI.keyboardHtml(),wire:r=>UI.wireKeyboard(r&&r.querySelector?r:document)};
   // ---- overlay sheet ----
   function sheet(html,wide){let w=document.getElementById('bsheet');if(!w){w=document.createElement('div');w.id='bsheet';w.innerHTML='<div class="bsback"></div><div class="bsbox"><button class="gclose bsx">✕</button><div class="bsbody"></div></div>';document.body.appendChild(w);
       w.querySelector('.bsback').onclick=UI.closeSheet;w.querySelector('.bsx').onclick=UI.closeSheet;}
@@ -412,6 +442,18 @@
   body.nui:not(.paper) header{padding-top:calc(6px + env(safe-area-inset-top,0))}
   body.nui :focus-visible{outline:3px solid #1cb0f6;outline-offset:2px}
 body.parked #card{padding-bottom:84px}
+.kbref .kbwrap{overflow-x:auto;margin:10px 0 6px}.kbsvg{width:100%;min-width:300px;max-width:760px;display:block;user-select:none;-webkit-user-select:none}
+.kbsvg .kk{cursor:pointer}.kbsvg .kk.w rect{fill:#fff;stroke:#333;stroke-width:1.2}.kbsvg .kk.b rect{fill:#1b1a18;stroke:#000}.kbsvg .kk text{font:700 12px Nunito,system-ui,sans-serif;fill:#555;pointer-events:none}
+.kbsvg .kk.w.on rect{fill:#bfe6ff;stroke:#1482d1;stroke-width:2}.kbsvg .kk.b.on rect{fill:#1cb0f6;stroke:#1482d1}.kbsvg .kbs{font:800 12px Nunito,system-ui,sans-serif;fill:#e52f4f}
+.kbbtns{display:flex;gap:12px;align-items:center}.kbbtns #kbclear{border:2px solid #e5e5e5;background:#fff;border-radius:999px;padding:7px 16px;font:800 14px Nunito,system-ui,sans-serif;cursor:pointer}.kbsnd{font-size:14px;font-weight:700;display:flex;gap:6px;align-items:center}
+.kbout{margin:10px 0;padding:12px;border-radius:14px;background:#f4f8fb;min-height:48px}.kbseq{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.kbseq .kn{font-weight:800;font-size:17px;background:#fff;border:2px solid #1cb0f6;border-radius:10px;padding:3px 9px}.kbseq .ks{font-weight:800;color:#e5539d;font-size:15px}
+.kbtot{margin-top:8px;font-size:15px}.kbhelp{font-size:14px;line-height:1.6;margin-top:6px}
+#refsheet{position:fixed;inset:0;z-index:9000;background:#fff;display:flex;flex-direction:column}#refsheet .rsbar{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;background:#1b1a18;color:#fff;font:800 16px Nunito,system-ui,sans-serif}
+#refsheet .rsx{border:0;border-radius:999px;padding:9px 16px;background:#58cc02;color:#fff;font:800 14px Nunito,system-ui,sans-serif;cursor:pointer}
+#refsheet .rschips{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid #e5e5e5;flex:none}#refsheet .rschips button{flex:none;border:2px solid #e5e5e5;background:#fff;border-radius:999px;padding:7px 13px;font:800 13px Nunito,system-ui,sans-serif;cursor:pointer}#refsheet .rschips button.on{background:#1cb0f6;border-color:#1cb0f6;color:#fff}
+#refsheet .rsbody{flex:1;overflow:auto;padding:14px 16px 40px;color:#1b1a18}
+#refbtn{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:70;border:0;border-radius:999px;padding:11px 16px;background:#1cb0f6;color:#fff;font:800 14px Nunito,system-ui,sans-serif;box-shadow:0 4px 0 #1482d1,0 8px 18px rgba(0,0,0,.2);cursor:pointer}
+body:not(.tasking) #refbtn{display:none}
 .backq{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:60;border:0;border-radius:999px;padding:12px 20px;background:#58cc02;color:#fff;font:800 15px/1 Nunito,system-ui,sans-serif;box-shadow:0 4px 0 #3fa102,0 8px 20px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}.backq:active{transform:translateX(-50%) translateY(3px);box-shadow:0 1px 0 #3fa102}
 .tfb{margin-top:10px;padding:11px 14px;border-radius:14px;background:#e8f4ff;color:#1453a0;font-weight:800;font-size:15px;text-align:center}
   body.nui:not(.paper):not(.testing) .opts button.ok::after{content:'✓';margin-left:auto;font-weight:900;color:#3a7d00;font-size:18px}
