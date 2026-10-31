@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261030h";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261031a";
 // blitzui.js — the "Blitz" look shared by Aural Blitz and Theory Blitz (identical copy in both apps).
 // 1) a clean, rounded, app-icon home screen (tap an icon to open the exercise) with a bottom tab bar;
 // 2) a much richer avatar builder (face, hair, eyes, brows, mouth, extras, glasses, headwear, clothes, background, instrument).
@@ -247,6 +247,11 @@
   UI.daysStreak=function(days){if(!days||!days.length)return 0;const set=new Set(days);let d=new Date();const key=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
     if(!set.has(key(d)))d.setDate(d.getDate()-1);let n=0;while(set.has(key(d))){n++;d.setDate(d.getDate()-1);}return n;};
   UI.level=m=>!m||!m.n?0:m.mastered?5:(m.n>=15&&m.acc>=0.85)?4:(m.n>=10&&m.acc>=0.75)?3:m.acc>=0.6?2:1;
+  // Checkpoints: a reward chest after every third unit on the path. It unlocks when each unit in that
+  // group has reached level 2 (60%+ recently); tapping it pays 25 bonus XP once per name, year and chest.
+  UI.CHEST_XP=25;
+  UI.chests=function(name,year,path){const out=[];const got=LSg('blitzChests:'+nk(name),{})||{};for(let n=1;n*3<=path.length;n++){const grp=path.slice((n-1)*3,n*3);const need=grp.filter(p=>UI.level(p.m)<2).map(p=>p.name);const key=year+':'+n;const state=got[key]?'open':need.length?'locked':'ready';const tip=state==='open'?'Checkpoint opened: +'+UI.CHEST_XP+' XP':state==='ready'?'Checkpoint reached: tap for +'+UI.CHEST_XP+' XP':'Reach level 2 in '+need.join(', ')+' to open this checkpoint';out.push({n,after:n*3-1,state,tip});}return out;};
+  UI.openChest=function(name,year,n){const k='blitzChests:'+nk(name);const got=LSg(k,{})||{};const key=year+':'+n;if(got[key])return;got[key]=Date.now();LSs(k,got);if(H.bonusXP)H.bonusXP(UI.CHEST_XP);if(H.burst)H.burst();if(H.toast)H.toast('🎁 Checkpoint '+n+' opened: +'+UI.CHEST_XP+' XP');UI.renderHome();};
 
   // ---- profiles: merge on save so two open copies (Aural + Theory, two tabs, the test's companion section) never wipe each other's progress ----
   UI.mergeDelta=function(st,base,mine){const J=JSON.stringify,out={};base=base||{};const keys=new Set(Object.keys(st||{}).concat(Object.keys(mine||{})));
@@ -360,9 +365,10 @@
         <div class="htools"><button class="hchip" id="hbackup">💾 Back up</button>${H.customise?'<button class="hchip" id="hcust">⚙ Customise</button>':''}</div></div>
       <div class="hstats"><div><span>🔥</span><b>${st.days||0}</b><small>day streak</small></div><div><span>⚡</span><b>${st.streak||0}</b><small>in a row</small></div><div><span>🎯</span><b>${st.acc||'—'}</b><small>accuracy</small></div><div><span>👑</span><b>${st.mastered||0}</b><small>mastered</small></div></div>
       ${up?`<button class="upnext" id="upnext">${UI.icon(up.icon,up.hue||1)}<span class="uptxt"><small>${esc(up.why)}</small><b>${esc(up.name)}</b></span><span class="upgo">START</span></button>`:''}
-      ${path.length?`<div class="hsec">Your Year ${H.year()} path</div><div class="path">${path.map((p,k)=>{const l=UI.level(p.m);return `<button class="pnode${k===pcur?' cur':''}${l>=5?' done':''}" data-i="${p.i}" style="--off:${[0,1,2,1,0,-1,-2,-1][k%8]*38}px" aria-label="${esc(p.name)}, level ${l} of 5">${k===pcur?'<span class="pstart">START</span>':''}${UI.icon(p.icon,p.hue||k)}<span class="nm">${esc(p.name)}</span>${crowns(l)}</button>`;}).join('')}</div>`:''}
+      ${path.length?`<div class="hsec ph">Your Year ${H.year()} path</div><div class="path">${(()=>{let out='',slot=0;const chests=UI.chests(st.name,H.year(),path);path.forEach((p,k)=>{const l=UI.level(p.m);out+=`<button class="pnode${k===pcur?' cur':''}${l>=5?' done':''}${l===0?' fresh':''}" data-i="${p.i}" style="--off:${[0,1,2,1,0,-1,-2,-1][slot%8]*38}px" aria-label="${esc(p.name)}, level ${l} of 5">${k===pcur?'<span class="pstart">START</span>':''}${UI.icon(p.icon,p.hue||k)}${l>=5?'<span class="ptick">✓</span>':''}<span class="nm">${esc(p.name)}</span>${crowns(l)}</button>`;slot++;const c=chests.find(c=>c.after===k);if(c){out+=`<div class="pchest ${c.state}" data-ck="${c.n}" style="--off:${[0,1,2,1,0,-1,-2,-1][slot%8]*38}px" title="${esc(c.tip)}"><span class="cb">${c.state==='open'?'🎉':c.state==='ready'?'🎁':'🔒'}</span><small>${c.state==='open'?'Opened':c.state==='ready'?'Tap to open':'Checkpoint'}</small></div>`;slot++;}});return out;})()}</div>`:''}
       ${groups.map(([g,t])=>{const items=list.filter(u=>u.group===g);if(!items.length)return '';return `<div class="hsec">${t}</div><div class="igrid">${items.map((u,k)=>`<button class="itile" data-i="${u.i}" aria-label="${esc(u.name)}${u.m&&u.m.n?', '+Math.round(u.m.acc*100)+'% recently'+(u.m.mastered?', mastered':''):''}">${UI.icon(u.icon,u.hue!==undefined?u.hue:k+(g==='daily'?6:g==='test'?3:0))}${ring(u.m)}<span class="nm">${esc(u.name)}</span>${u.sub?`<span class="sb">${esc(u.sub)}</span>`:''}</button>`).join('')}</div>`;}).join('')}`;
     el.querySelectorAll('.itile,.pnode').forEach(b=>b.onclick=()=>H.open(+b.dataset.i));
+    el.querySelectorAll('.pchest.ready').forEach(b=>b.onclick=()=>UI.openChest(st.name,H.year(),+b.dataset.ck));
     const on=(id,f)=>{const x=document.getElementById(id);if(x)x.onclick=f;};
     on('hav',()=>H.tab('me'));on('hswitch',()=>UI.pickProfile(false));on('hgoal',()=>UI.chooseGoal());on('hbackup',()=>UI.backup());on('hcust',()=>H.customise());if(up)on('upnext',()=>H.open(up.i));
     el.querySelectorAll('.hyears button').forEach(b=>b.onclick=()=>H.setYear(+b.dataset.y));};
@@ -489,10 +495,16 @@ body:not(.tasking) #refbtn{display:none}
   .upnext:active{transform:translateY(3px);box-shadow:0 1px 0 #2f7d01}.upnext .ic{width:56px;height:56px;border-radius:16px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
   .uptxt{flex:1}.uptxt small{display:block;font-weight:800;opacity:.9;font-size:12px;text-transform:uppercase;letter-spacing:1px}.uptxt b{font-size:20px;font-weight:900}
   .upgo{background:#fff;color:#3fa102;font-weight:900;border-radius:14px;padding:8px 14px;font-size:14px;letter-spacing:.6px}
-  .path{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 8px}
-  .pnode{position:relative;transform:translateX(var(--off));display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;cursor:pointer;font-family:var(--nfont);color:var(--nink);padding:6px}
-  .pnode .ic{width:64px;height:64px;border-radius:50%;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18),0 4px 0 rgba(0,0,0,.12)}
-  .pnode.cur .ic{width:78px;height:78px;outline:5px solid rgba(88,204,2,.35)}.pnode.done .ic{filter:saturate(1.1)}
+  .path{display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 0 8px}
+  .ptick{position:absolute;top:2px;right:calc(50% - 38px);width:22px;height:22px;border-radius:50%;background:#ffc800;color:#1f2328;font-size:13px;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .pchest{position:relative;transform:translateX(var(--off));display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:transparent;cursor:default;font-family:var(--nfont);color:var(--nmut);padding:4px 6px 18px}
+  .pchest .cb{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:#e9ecf2;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08);filter:grayscale(1);opacity:.75}
+  .pchest small{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+  .pchest.ready{cursor:pointer;color:#1f2328}.pchest.ready .cb{filter:none;opacity:1;background:linear-gradient(160deg,#ffe082,#ffb300);animation:bob 1.2s ease-in-out infinite;box-shadow:inset 0 -4px 0 rgba(0,0,0,.14),0 0 0 6px rgba(255,200,0,.25)}
+  .pchest.open .cb{filter:none;opacity:1;background:#eaffd9}.pchest.open{color:var(--ngreenD)}
+  .pnode{position:relative;transform:translateX(var(--off));display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:transparent;cursor:pointer;font-family:var(--nfont);color:var(--nink);padding:3px 6px}
+  .pnode .ic{width:60px;height:60px;border-radius:50%;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18),0 4px 0 rgba(0,0,0,.12)}
+  .pnode.cur .ic{width:72px;height:72px;outline:5px solid rgba(88,204,2,.35)}.pnode.done .ic{filter:saturate(1.1)}.pnode.fresh .ic{filter:saturate(.55) brightness(1.05)}
   .pnode .nm{font-weight:800;font-size:12.5px}.pnode .pstart{position:absolute;top:-16px;background:#fff;color:#3fa102;border:2px solid var(--nline);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:900;letter-spacing:.6px;animation:bob 1.4s ease-in-out infinite}
   @keyframes bob{50%{transform:translateY(-3px)}}
   .lv{display:flex;gap:3px}.lv i{width:9px;height:9px;border-radius:50%;background:#e5e7eb}.lv i.on{background:#ffc800}
@@ -511,7 +523,7 @@ body:not(.tasking) #refbtn{display:none}
   .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:4px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--nline);padding:6px 10px calc(6px + env(safe-area-inset-bottom,0))}
   .tabbar button{flex:1;max-width:140px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:var(--nfont);font-weight:800;font-size:11px;color:var(--nmut);cursor:pointer;border-radius:12px;padding:4px 0}
   .tabbar button span{font-size:21px;filter:grayscale(.7);opacity:.75}.tabbar button.on{color:var(--nblue);background:#eaf7fe}.tabbar button.on span{filter:none;opacity:1}
-  body.nui:not(.paper) main{padding-bottom:70px}
+  body.nui:not(.paper) main{padding-bottom:70px} body.nui.home:not(.paper) main{padding-bottom:0}
   body.nui:not(.paper) footer{display:none}
   /* avatar builder */
   .avb .avhead{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.avbig svg{display:block;border-radius:30px;box-shadow:0 6px 18px rgba(0,0,0,.15)}
@@ -525,6 +537,9 @@ body:not(.tasking) #refbtn{display:none}
   .avt svg{border-radius:14px}.avt.on{border-color:var(--ngreen);background:#eaffd9}.avt.locked{opacity:.5}
   .swrow{display:flex;flex-wrap:wrap;gap:7px}.swc{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--nline);cursor:pointer}.swc.on{box-shadow:0 0 0 3px var(--nblue)}
   .avnote{font-size:12px;color:var(--nmut);margin:8px 2px 0}
+  @media (min-width:900px){body.nui.home:not(.paper) main{max-width:1120px}
+    .home{display:grid;grid-template-columns:minmax(0,1fr) 360px;column-gap:22px;align-content:start}
+    .home>*{grid-column:1}.home>.hsec.ph{grid-column:2;grid-row:1;margin-top:4px}.home>.path{grid-column:2;grid-row:2/span 40;align-self:start;background:#fff;border-radius:24px;box-shadow:0 2px 0 var(--nline),0 8px 24px rgba(20,30,60,.06);padding:10px 0 14px}}
   @media (max-width:620px){body.nui:not(.paper) .hud .rst{display:none}body.nui:not(.paper) .avbtn>span:last-child{display:none}body.nui:not(.paper) header h1{font-size:22px}body.nui:not(.paper) .hud .stat:not(:has(#snum)):not(:has(#xptxt)){display:none}.hstats small{font-size:9px}.igrid{grid-template-columns:repeat(4,1fr)}.itile .ic{width:58px;height:58px;border-radius:16px}body.nui:not(.paper) header .eye{display:none}}
   `;
   const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);

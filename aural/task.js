@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261030h";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261031a";
 // task.js — Class tasks for Aural Blitz and Theory Blitz (shared, identical in both apps).
 // A teacher builds a task (sections, counts, settings) and shares it as a link / QR / code.
 // Students complete it in a locked mode. The result is a sealed receipt: compressed JSON encrypted

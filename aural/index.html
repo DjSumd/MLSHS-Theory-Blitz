@@ -9,8 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@600;700;800;900&display=swap">
+<link rel="stylesheet" href="../fonts/fonts.css">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -96,6 +95,9 @@
   .pp.sub{background:transparent;color:var(--ink);border:1px solid var(--ink)}
   .tempotog,.difftog{display:flex;align-items:center;gap:8px;justify-content:center;width:100%;margin-top:8px}
   .difftog{margin:0 0 10px}
+  .dictopts{margin:-6px 0 12px;font-size:13px}.dictopts summary{cursor:pointer;list-style:none;display:inline-block;border:1px solid var(--rule);border-radius:999px;padding:5px 12px;font-weight:700;color:var(--muted);background:#fff;user-select:none}
+  .dictopts summary::-webkit-details-marker{display:none}.dictopts[open] summary{color:var(--ink)}.dictopts[open]>div{margin-top:10px}.dictopts .difftog,.dictopts .tempotog{justify-content:flex-start}
+  body.paper .dictopts{display:none!important}
   .tlab{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
   .tgrp{display:inline-flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden;background:#fff}
   .tgrp button{border:0;background:transparent;color:#4d463c;font-weight:600;font-size:12px;padding:6px 13px;cursor:pointer;font-family:var(--sans)}
@@ -148,7 +150,7 @@
   .step.on{background:var(--ink);color:var(--cream);border-color:var(--ink)} .step.done{color:var(--green);border-color:var(--green)}
   .asplayed{margin-top:10px;font-size:11px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700}
   footer{flex:none;max-width:900px;margin:0 auto;padding:5px 16px 7px;color:#8f877a;font-size:11px;text-align:center}
-  #toast{position:fixed;left:50%;top:84px;transform:translateX(-50%) translateY(-10px);z-index:60;opacity:0;background:var(--cream);color:var(--ink);font-family:var(--serif);font-weight:600;font-size:20px;padding:10px 24px;border-radius:999px;box-shadow:0 12px 34px rgba(0,0,0,.45);transition:opacity .25s,transform .3s;pointer-events:none;border:1px solid var(--brass);white-space:nowrap}
+  #toast{position:fixed;left:50%;top:84px;transform:translateX(-50%) translateY(-10px);z-index:60;opacity:0;background:var(--cream);color:var(--ink);font-family:var(--serif);font-weight:600;font-size:20px;padding:10px 24px;border-radius:999px;box-shadow:0 12px 34px rgba(0,0,0,.45);transition:opacity .25s,transform .3s;pointer-events:none;border:1px solid var(--brass);white-space:normal;width:max-content;max-width:min(92vw,560px);text-align:center;line-height:1.25;border-radius:22px}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
   .shake{animation:shake .4s}
@@ -207,7 +209,7 @@
   .examtable{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0} .examtable td,.examtable th{padding:7px 10px;border-bottom:1px solid var(--rule);text-align:left} .examtable th{background:var(--ink);color:var(--cream);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600} .examtable td.r{text-align:right;font-weight:700}
   .examtotal{font-family:var(--serif);font-size:34px;font-weight:600;margin:6px 0}
   .tabs button.exam{border-color:var(--brass);color:var(--brass)} .tabs button.exam.on{background:var(--brass);color:var(--ink)}
-  body.embed header,body.embed .topbar,body.embed .tabs,body.embed footer,body.embed #musicfx{display:none!important} body.embed main{padding-top:6px}
+  body.embed header,body.embed .topbar,body.embed .tabs,body.embed footer,body.embed #musicfx{display:none!important} body.embed main{padding-top:6px} body.embed .dots{background:#f3f3f3;border:1px dashed #999;border-radius:4px;padding:4px 8px} .embedlab{font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;color:#333;margin-right:8px;white-space:nowrap}
   .embedframe{width:100%;height:min(78vh,820px);border:1px solid var(--rule);border-radius:6px;background:#1b1a18}
   .dots .finishbtn{border:1px solid var(--brass);background:transparent;color:var(--brass);border-radius:999px;font-size:11px;font-weight:600;padding:5px 11px;cursor:pointer;font-family:var(--sans)}
   @media (max-width:560px){.avgrid{grid-template-columns:1fr}.avgrid .prev svg{width:110px;height:110px;margin:0 auto}
@@ -292,6 +294,7 @@ header h1{font-size:27px}header .eye{font-size:9.5px;letter-spacing:1.8px}.hud{g
 .taptl svg{width:100%;height:40px}.tapkey{font-size:11.5px;color:var(--muted)}
 .barset{display:flex;flex-wrap:wrap;gap:10px}.barset .bcell{flex:1 1 200px;max-width:calc(50% - 5px);border:1px solid var(--rule,#bbb);padding:4px 6px;background:#fff}.barset .bcell b{font-family:Arial,sans-serif}.barset svg{max-width:100%;height:auto;max-height:110px}.tstscore svg{max-width:100%;height:auto}
 body.testing #fb,body.testing .btn-ans,body.testing #names,body.testing .hearbtn{display:none!important}
+body.todayset .btn-ans{display:none!important}
 body.testing #opts button.ok,body.testing #opts button.no{background:var(--paper,#fff)!important;color:inherit!important;border-color:var(--rule,#999)!important;box-shadow:none!important}
 body.testing #opts button.picked{background:#1b1a18!important;color:#fff!important;border-color:#1b1a18!important}
 body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.testing #dots .d.no{background:#555!important;border-color:#555!important}
@@ -345,7 +348,7 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <script src="testkit.js"></script>
 <script src="blitzui.js"></script>
 <script src="live.js"></script>
-<script>/*blitz-check*/(function(){var S="20261030h";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-check*/(function(){var S="20261031a";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
 <script>
 const ACCSYM={'':'',s:'♯',f:'♭',n:'♮',ss:'𝄪',ff:'♭♭'};
 const UCOL=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#5b5fc7','#c2185b','#0e7c86','#b2862f','#2e7d32','#6a3df0','#d35400','#3f5f7a'];
@@ -724,7 +727,7 @@ const SING={name:'Sing it',key:'sing',live:true,ask:'Sing it.',guide:`<p class="
     const tonicMidi=A_pick([57,58,59,60,62]);const minor=/minor/.test(type);const ch=[tonicMidi,tonicMidi+(minor?3:4),tonicMidi+7];
     return {kind:'sing',syl,pcs,tonicMidi,scaleType:type,scaleName:KEYNAME_SING(tonicMidi)+' '+type,
       play:()=>AUDIO.melody(pcs.map(x=>tonicMidi+x),pcs.map(()=>1),0.75,0,undefined,{cue:{chord:ch}}),
-      playDo:()=>AUDIO.melody([tonicMidi],[2],0.75,0,undefined,{cue:{chord:ch}}),why:'The pattern: '+syl.join(' ')+'.'};}};
+      playDo:()=>AUDIO.melody([tonicMidi],[2],0.75,0,undefined,{cue:{chord:ch}}),why:'The pattern: '+syl.map(s=>s.endsWith('′')?s.slice(0,-1)+'↑':s.endsWith(',')?s.slice(0,-1)+'↓':s).join(' ')+'.'+(syl.some(s=>/[′,]$/.test(s))?' (↓ = the octave below, ↑ = the octave above.)':'')};}};
 const KEYNAME_SING=m=>['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][((m%12)+12)%12];
 const TAP={name:'Tap it',key:'tap',live:true,ask:'Tap it.',guide:`<p class="prompt">Tap it</p><ul><li>Read the rhythm. Press <b>Start</b>: you hear a one-bar count-in, then tap the rhythm on the big pad (or press the space bar), one tap for each note.</li><li>Taps close to the beat count. Extra taps cost half a mark. Turn the metronome off for a harder challenge.</li></ul>`,
   gen(ctx){const y=YEAR;const met=A_pick(y<=7?['2/4','4/4']:['2/4','3/4','4/4']);const dict=ENGRAVE.buildDictation({diff:y<=7?'easy':y<=9?'med':'hard',scaleNames:['major'],bars:2,clef:'treble',metre:met,maxKs:0,rests:y>=8,ties:false,anacrusis:false,triplets:false});
@@ -735,7 +738,7 @@ function liveScore(q,frac,msg){q._frac=frac;const ok=frac>=0.999;scoreOnce(ok);c
 function renderLive(q){renderTabs();renderDots();const c=document.getElementById('card');const U=UNITS[ui];const nav=`<div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Next ›</button></div>`;
   const head=`<div class="qnum">${esc(U.name)} · Question ${qi+1} of ${order.length}</div>`;const answered=qid() in scored;
   if(q.kind==='sing'){c.innerHTML=head+`<p class="prompt">Sing this pattern</p><p class="sub">Key: ${esc(q.scaleName)}${/minor/.test(q.scaleType)?' (la is the tonic)':''}. Sing in any comfortable octave and hold each note until it turns green.</p>
-      <div class="singrow">${q.syl.map((x,i)=>`<span class="sgc" id="sgc${i}">${esc(x)}</span>`).join('')}</div>
+      <div class="singrow">${q.syl.map((x,i)=>`<span class="sgc" id="sgc${i}">${x.endsWith('′')?esc(x.slice(0,-1))+'<sup>↑</sup>':x.endsWith(',')?esc(x.slice(0,-1))+'<sub>↓</sub>':esc(x)}</span>`).join('')}</div>
       <div class="singmeter"><div class="sgnow" id="sgnow">—</div><div class="sgbar"><span class="sgmid"></span><i id="sgneedle"></i></div><div class="sgtip" id="sgtip">Low ← in tune → high</div></div>
       <div class="controls"><button class="btn-ghost" id="sgdo">▶ Hear do</button><button class="btn-ghost" id="sghear">▶ Hear the pattern</button><button class="btn-check" id="sggo">🎤 Start singing</button></div><div class="feedback" id="fb"></div>${nav}`;
     document.getElementById('sgdo').onclick=()=>{audioUnlocked=true;q.playDo();};document.getElementById('sghear').onclick=()=>{audioUnlocked=true;q._plays=(q._plays||0)+1;q.play();};
@@ -793,6 +796,8 @@ let dayAnswers=0;
 // ---- achievements (unlock avatar gear) ----
 const ACH=[
   {id:'first',ic:'🎧',t:'First note',d:'Get your first answer right'},
+  {id:'streak3',ic:'⚡',t:'Warming up',d:'3 correct in a row'},
+  {id:'firstset',ic:'🎯',t:'Set complete',d:'Finish a full set of 10'},
   {id:'perfect',ic:'💯',t:'Clean sheet',d:'A full set of 10 with none wrong',unlock:'bow'},
   {id:'streak10',ic:'🔥',t:'On fire',d:'10 correct in a row'},
   {id:'streak25',ic:'🌋',t:'Unstoppable',d:'25 correct in a row'},
@@ -809,8 +814,9 @@ const ACC_LOCK={headphones:'hundred',glasses:'master1',beanie:'days5',bow:'perfe
 function unlocked(acc){const need=ACC_LOCK[acc];return !need||(PROF&&PROF.ach&&PROF.ach[need])||avatar.hat===acc||avatar.glasses===acc;}
 function badgesUnlocked(){const m=REAL().filter(u=>mastery(u.key).mastered).length;return m;}
 function grant(id){if(!PROF.ach[id]){PROF.ach[id]=Date.now();saveProfiles();const a=ACH.find(x=>x.id===id);setTimeout(()=>{toast(a.ic+' Achievement: '+a.t+(a.unlock?' — '+a.unlock+' unlocked for your avatar':''));burst('win',innerWidth/2,120,true);},700);}}
-function checkAch(ctx){if(!PROF)return;if(PROF.correct>=1)grant('first');if(streak>=10)grant('streak10');if(streak>=25)grant('streak25');if(PROF.correct>=100)grant('hundred');if(dayStreak()>=5)grant('days5');
+function checkAch(ctx){if(!PROF)return;if(PROF.correct>=1)grant('first');if(streak>=3)grant('streak3');if(streak>=10)grant('streak10');if(streak>=25)grant('streak25');if(PROF.correct>=100)grant('hundred');if(dayStreak()>=5)grant('days5');
   if((PROF.oneListen||0)>=10)grant('oneListen');const m=REAL().filter(u=>mastery(u.key).mastered).length;if(m>=1)grant('master1');if(m>=5)grant('master5');if(rankOf(PROF.xp).at>=2200)grant('concert');if((PROF.todayDone||0)>=7)grant('today7');}
+let dictOptsOpen=false;
 let pd=[], me=[], meCursor=0, meSelDur=1, meRest=false, meTieNext=false, scoreMeta=null, pdDrag=null;
 let rn=[], rnCur=1, disMarks={}, disPhase='locate', disWork=[], disRewrite=null, disCursor=0, disLocOk=null;
 let dictSPB=0.55; try{const _t=parseFloat(localStorage.getItem('blitzAuralTempo'));if(_t>0)dictSPB=_t;}catch(e){}
@@ -842,7 +848,7 @@ function logComplete(section,pct){const name=currentName||'(no name)',at=Date.no
   LOG=LOG.filter(e=>!(e.name===name&&e.section===section));LOG.push({name,section,pct,at,av:Object.assign({},avatar)});saveLog();}
 function finishSection(u){const us=uStat[u],pct=Math.round(us.cor/N*100);
   logComplete(UNITS[u].name,pct);toast('🎉 '+UNITS[u].name+' complete — '+pct+'%');burst('win',innerWidth/2,140,true);
-  if(PROF){if(pct===100)grant('perfect');if(UNITS[u].key==='today'){PROF.todayDone=(PROF.todayDone||0)+1;saveProfiles();}checkAch();}}
+  if(PROF){grant('firstset');if(pct===100)grant('perfect');if(UNITS[u].key==='today'){PROF.todayDone=(PROF.todayDone||0)+1;saveProfiles();}checkAch();}}
 const qid=()=>ui+'.'+order[qi];
 function curQ(){const pos=order[qi];if(!runQs[ui])runQs[ui]=[];if(!runQs[ui][pos])runQs[ui][pos]=UNITS[ui].gen({level,diff:dictDiff,mode:resolveMode(ui),year:YEAR,pos,cfg:(gk)=>cfgGet(ui,gk)});return runQs[ui][pos];}
 
@@ -884,7 +890,7 @@ paintAvatar();
 function shakeCard(){const c=document.getElementById('card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');}
 function glowCard(){const c=document.getElementById('card');c.classList.remove('winglow');void c.offsetWidth;c.classList.add('winglow');}
 let toastT=null;
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='';void t.offsetWidth;t.className='show';clearTimeout(toastT);toastT=setTimeout(()=>t.className='',1900);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='';void t.offsetWidth;t.className='show';clearTimeout(toastT);toastT=setTimeout(()=>t.className='',Math.min(4200,1900+Math.max(0,msg.length-40)*28));}
 
 // scoring
 function scoreOnce(ok){const k=qid();if(k in scored)return;try{const q1=curQ();if(q1&&q1._exam&&!q1._resp){q1._resp=snapWork();q1._resp.sf=q1._sf?q1._sf.got.slice():null;q1._resp.picked=q1._picked;}}catch(e){}scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)try{BlitzUI.answered(currentName);}catch(e){}if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
@@ -979,7 +985,7 @@ function renderDots(){const d=document.getElementById('dots');d.innerHTML='';
   order.slice(0,UNITS[ui].exam||UNITS[ui].task?order.length:N).forEach((actual,pos)=>{const s=document.createElement('div');const r=results[ui+'.'+actual];
     s.className='d'+(pos===qi?' cur':'')+(r?(' '+r):'');s.onclick=()=>{qi=pos;load();};d.appendChild(s);});
   const right=document.createElement('div');right.className='right';
-  if(UNITS[ui].exam){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent=examOn?(UNITS[ui].test?'Finish test':'Finish exam'):'Back to results';fb.onclick=()=>examOn?finishExam():finishExam();right.appendChild(fb);d.appendChild(right);return;}
+  if(UNITS[ui].exam){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent=examOn?(UNITS[ui].test?(EMBED?'Finish Part A':'Finish test'):(EMBED?'Finish Part A':'Finish exam')):'Back to results';fb.onclick=()=>examOn?finishExam():finishExam();if(EMBED){const lab=document.createElement('span');lab.className='embedlab';lab.textContent='Part A · '+(qi+1)+' of '+order.length;d.insertBefore(lab,d.firstChild);}right.appendChild(fb);d.appendChild(right);return;}
   if(UNITS[ui].task){if(TaskKit.isDone()){const fb=document.createElement('button');fb.className='finishbtn';fb.textContent='Get my result code';fb.onclick=showTaskFinish;right.appendChild(fb);}d.appendChild(right);return;}
   if(SPRINTABLE(UNITS[ui])&&!h2h){const sb=document.createElement('button');sb.className='sprintbtn';const best=PROF&&PROF.sprint&&PROF.sprint[UNITS[ui].key];sb.textContent='⚡ 60s Sprint'+(best?' · best '+best:'');sb.onclick=startSprint;right.appendChild(sb);}
   if(!UNITS[ui].special&&!h2h){const hb=document.createElement('button');hb.className='h2hbtn';hb.textContent='⚔ Head-to-head';hb.onclick=askH2H;right.appendChild(hb);}
@@ -1097,7 +1103,7 @@ function restoreWork(q){const w=q._work||q._resp;if(w){
     else if(q.kind==='numerals'&&w.rn){rn=w.rn.slice();rnCur=w.rnCur;}
     else if(q.kind==='notate'&&w.slots)slots=w.slots.map(x=>x?Object.assign({},x):null);}
   if(q._picked!==undefined&&document.getElementById('opts')){answered=true;const T=TESTING();document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===q._picked)b.classList.add('picked');if(!T&&b.dataset.o===''+q.answer)b.classList.add('ok');if(!T&&b.dataset.o===q._picked&&q._picked!==''+q.answer)b.classList.add('no');});}}
-function load(){document.body.classList.toggle('testing',TESTING());{const q0=curQ();if(LASTQ&&LASTQ!==q0&&LASTQ._exam){try{LASTQ._work=snapWork();}catch(e){}}LASTQ=null;}if(AUDIO)AUDIO.stop();liveStop();
+function load(){document.body.classList.toggle('testing',TESTING());document.body.classList.toggle('todayset',!!(UNITS[ui]&&UNITS[ui].key==='today'));{const q0=curQ();if(LASTQ&&LASTQ!==q0&&LASTQ._exam){try{LASTQ._work=snapWork();}catch(e){}}LASTQ=null;}if(AUDIO)AUDIO.stop();liveStop();
   const q=curQ();if(q&&q.kind==='embed'&&UNITS[ui].test){renderTabs();renderDots();const c=document.getElementById('card');const S=THEORY_TEST_SRC('testB',false);
     showEmbed('T'+EMBKEY+':'+testRun.y+':'+testRun.seed,`${testBar()}<p class="sub">Work through the theory questions below and press <b>Finish</b> inside the frame when done; the marks come back into this test.${embedRes.B?' <b>Finished: '+embedRes.B.tot+' / '+embedRes.B.max+'</b>':''}</p>
     `,`${TestKit.totalLine({a:testAMarks(),t:q._exam.marks})}<div class="nav"><button id="prev">‹ Prev</button><span class="pos">${qi+1} / ${order.length}</span><button id="next">Finish ›</button></div>`,S.src,S.src?'':S.doc);return;}
@@ -1116,16 +1122,19 @@ function load(){document.body.classList.toggle('testing',TESTING());{const q0=cu
          <button class="pp" data-pt="whole">▶ ${UNITS[ui].exam&&q._exam?'Listen to Track '+q._exam.track:'Whole'}</button>
          <button class="pp sub" data-pt="h1">1st half</button>
          <button class="pp sub" data-pt="h2">2nd half</button></div>
-       <span class="plabel">${(q.dict&&q.dict.bars)||4} bars in ${(q.dict&&q.dict.metre&&q.dict.metre.id)||'4/4'} · ${esc(q.scaleName)}${q.cue?' · tonic chord and starting note, then a count-in':' · one-bar count-in'}</span>
-       <div class="tempotog" id="tempotog"><span class="tlab">Tempo</span><div class="tgrp">${tempos.map(t=>`<button data-spb="${t[0]}" class="${Math.abs(dictSPB-parseFloat(t[0]))<1e-6?'on':''}">${t[1]}</button>`).join('')}</div></div></div>`
+       <span class="plabel">${(q.dict&&q.dict.bars)||4} bars in ${(q.dict&&q.dict.metre&&q.dict.metre.id)||'4/4'}${(()=>{const s=q.rhythmOnly?(q.scaleName||'').split('·').slice(1).join('·').trim():q.scaleName;return s?' · '+esc(s):'';})()}${q.cue?' · tonic chord and starting note, then a count-in':' · one-bar count-in'}</span>
+       </div>`
     : `<div class="playpanel"><button class="playbtn" id="play">▶ ${UNITS[ui].exam&&q._exam?'Listen to Track '+q._exam.track+(q._exam.excerpt?' (excerpt '+q._exam.excerpt+')':''):'Play'}</button><button class="replaybtn" id="replay">Replay</button><span class="plabel">${UNITS[ui].exam&&q._exam?'':(q.playLabel||'')}</span></div>`;
-  const diffrow = (q.kind==='pitchdict'||q.kind==='melodydict'||q.kind==='rhythmdict'||q.kind==='discrep')
-    ? `<div class="difftog" id="difftog"><span class="tlab">Difficulty</span><div class="tgrp">${[['easy','Easy'],['med','Medium'],['hard','Hard']].map(d=>`<button data-diff="${d[0]}" class="${dictDiff===d[0]?'on':''}">${d[1]}</button>`).join('')}</div></div>` : '';
+  const hasDiff=(q.kind==='pitchdict'||q.kind==='melodydict'||q.kind==='rhythmdict'||q.kind==='discrep');
+  const difftog = hasDiff ? `<div class="difftog" id="difftog"><span class="tlab">Difficulty</span><div class="tgrp">${[['easy','Easy'],['med','Medium'],['hard','Hard']].map(d=>`<button data-diff="${d[0]}" class="${dictDiff===d[0]?'on':''}">${d[1]}</button>`).join('')}</div></div>` : '';
+  const tempotog = q.multiPlay ? `<div class="tempotog" id="tempotog"><span class="tlab">Tempo</span><div class="tgrp">${tempos.map(t=>`<button data-spb="${t[0]}" class="${Math.abs(dictSPB-parseFloat(t[0]))<1e-6?'on':''}">${t[1]}</button>`).join('')}</div></div>` : '';
+  const tempoName=(tempos.find(t=>Math.abs(dictSPB-parseFloat(t[0]))<1e-6)||[0,'Normal'])[1];
+  const diffrow = (difftog||tempotog) ? `<details class="dictopts" id="dictopts"${dictOptsOpen?' open':''}><summary>⚙ ${hasDiff?({easy:'Easy',med:'Medium',hard:'Hard'}[dictDiff]||'Easy')+' · ':''}${tempoName} tempo</summary>${difftog}${tempotog}</details>` : '';
   const qlabel=UNITS[ui].exam?examBar():sprintOn?`<div class="sprintbar"><span><span class="sp">Sprint</span> ${esc(FU.name)}</span><span class="clock" id="sprintclock">60s</span><span>${sprintCor} ✓</span></div>`:h2h?h2hBar():'';
   const head=UNITS[ui].exam&&q._exam?`<div class="qnum">Exam practice · Section One · Part A · Question ${qi+1} of ${order.length}</div>${qlabel}${playpanel}<p class="prompt">${esc(UNITS[ui].test?(q._exam.subn>1?'':(q._exam.text||'')):(q._exam.text||q.prompt))}</p>`:`<div class="qnum">${UNITS[ui].exam?'Exam practice · Section One · Part A':esc(UNITS[ui].name)+(UNITS[ui].special?' · '+esc(FU.name):'')} · ${sprintOn?'Question '+(sprintN+1):h2h?esc(h2h.names[h2h.turn])+"'s turn":'Question '+(qi+1)+' of '+order.length}</div>${qlabel}
     <p class="prompt">${q.prompt||FU.ask}</p>
     ${sprintOn?'':`<button class="howbtn" id="howbtn">How do I work this out?</button><button class="howbtn" id="gearbtn">⚙ Customise</button>`}${toggle}
-    ${sprintOn?'':diffrow}${playpanel}`;
+    ${playpanel}${sprintOn?'':diffrow}`;
   const accbar=`<div class="toolbar"><span class="lab">Accidental</span><div class="acc" id="acc"><button data-acc="" title="As key signature">○</button><button data-acc="s">♯</button><button data-acc="f">♭</button><button data-acc="n">♮</button></div></div>`;
   let body='';
   if(q.kind==='pitchdict'){pd=[];
@@ -1137,10 +1146,10 @@ function load(){document.body.classList.toggle('testing',TESTING());{const q0=cu
   } else if(q.kind==='melodydict'||q.kind==='rhythmdict'){resetMD(q);
     const vals=[[4,'Semibreve'],[3,'Dotted minim'],[2,'Minim'],[1.5,'Dotted crotchet'],[1,'Crotchet'],[0.75,'Dotted quaver'],[0.5,'Quaver'],[0.25,'Semiquaver'],[T3,'Triplet quaver']];
     body=`<div class="scalebadge">${q.rhythmOnly?esc(q.scaleName):'Key: '+esc(q.scaleName)+solfaCue(q)}</div>
+      <div class="scoreWrap" id="scoreWrap"></div>
       <div class="toolbar"><span class="lab">Value</span><div class="mpal" id="mpal">${vals.map(v=>`<button data-d="${v[0]}" class="${eq(v[0],1)?'on':''}">${v[1]}</button>`).join('')}
         <button class="tool" id="restbtn">Rest</button><button class="tool" id="tiebtn">Tie to next</button></div></div>
-      ${q.rhythmOnly?'':accbar}
-      <div class="scoreWrap" id="scoreWrap"></div>${q.rhythmOnly?'':sfRow(q)}
+      ${q.rhythmOnly?'':accbar}${q.rhythmOnly?'':sfRow(q)}
       <p class="hint">${q.rhythmOnly?'Choose a value (or Rest), then tap the stave to enter it at the cursor. "Tie to next" ties the last note into the next one you enter. ✕ removes a note and leaves its space empty; the next value you enter fills that space. Undo takes back the last note.':'Choose a value and accidental, then click the stave at the pitch. "Tie to next" ties the last note into the next one you enter. ✕ removes a note and leaves its space empty; the next value you enter fills that space. Undo takes back the last note.'+(sfRow(q)?' One sol-fa box per note you hear: name each in sol-fa too.':'')}</p>
       <div class="names" id="names"></div>
       <div class="controls"><button class="btn-check" id="check">Check</button><button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="undo">Undo</button><button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
@@ -1398,6 +1407,7 @@ function wire(q){setTimeout(lockLabel,0);
   document.querySelectorAll('.pp').forEach(b=>b.onclick=()=>playPart(b.dataset.pt));
   document.querySelectorAll('#tempotog button').forEach(b=>b.onclick=()=>{dictSPB=parseFloat(b.dataset.spb);try{localStorage.setItem('blitzAuralTempo',dictSPB);}catch(e){}
     document.querySelectorAll('#tempotog button').forEach(x=>x.classList.toggle('on',x===b));});
+  {const dopt=document.getElementById('dictopts');if(dopt)dopt.ontoggle=()=>{dictOptsOpen=dopt.open;};}
   document.querySelectorAll('#difftog button').forEach(b=>b.onclick=()=>{dictDiff=b.dataset.diff;try{localStorage.setItem('blitzAuralDiff',dictDiff);}catch(e){}runQs[ui]=[];load();});
   const mt=document.getElementById('mtog');if(mt)mt.querySelectorAll('button').forEach(b=>b.onclick=()=>{forceMode=b.dataset.m;runQs[ui]=[];load();});
   if(q.kind==='notate'){wireAcc();
@@ -1542,7 +1552,7 @@ function closeSettings(){document.getElementById('setmodal').classList.remove('o
 document.getElementById('setclose').onclick=closeSettings;document.getElementById('setback').onclick=closeSettings;
 
 cfgInit();loadProfile();paintYear();paintScore();ui=2;openUnit();
-try{ if(!localStorage.getItem('blitzAuralYear')) askYear(); }catch(e){}
+try{ if(!localStorage.getItem('blitzAuralYear')){ if(currentName)askYear(); else window.PENDING_YEAR=true; } }catch(e){}
 try{ if(window.AUDIO&&AUDIO.preloadPiano) AUDIO.preloadPiano(); }catch(e){}
 if(EMBED==='partA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR&&EMBED_YEAR!==YEAR){const ok=document.querySelector('#yearbar button[data-y="'+EMBED_YEAR+'"]');if(ok)setYear(EMBED_YEAR);}ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
 else if(EMBED==='testA'||EMBED==='printA'||EMBED==='tracksA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR)YEAR=+EMBED_YEAR;paintYear();testRun={y:YEAR,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two')};ui=UNITS.indexOf(TEST);
@@ -1571,12 +1581,12 @@ function goUnit(i){if(sprintOn)endSprint(true);h2h=null;if(examOn&&!UNITS[i].exa
   ui=i;BlitzUI.showHome(false);openUnit();}
 function goHome(){dropPark();if(examOn&&!confirm('Leave the '+(UNITS[ui]&&UNITS[ui].test?'test':'exam')+'? Your answers so far will be lost.'))return;if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(window.AUDIO)AUDIO.stop();
   if(mode!=='practise')setMode('practise');document.body.classList.remove('paper','testmode','testing');BlitzUI.showHome(true);}
-const BPATH={7:['met','tap','rd','ivl','sing','pd','scl','ton','dyn','tmp','tim','tex'],8:['met','tap','rd','ivl','sing','pd','scl','ton','chd','prog','dyn','tmp','tim','tex','form'],9:['rd','tap','ivl','sing','pd','scl','ton','chd','prog','cad','tex','form','dyn','tim','dev'],10:['rd','ivl','pd','dis','scl','ton','chd','prog','cad','tex','form','dev','tim'],11:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met'],12:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met']};
-function homeSetName(v){currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();try{avatar=BlitzUI.loadAvatar(v);paintAvatar();}catch(e){}paintScore();}
+const BPATH={7:['met','tap','rd','ivl','sing','pd','scl','ton','dyn','tmp','tim','tex'],8:['met','tap','rd','ivl','sing','pd','scl','ton','chd','prog','dyn','tmp','tim','tex','form'],9:['met','rd','tap','ivl','sing','pd','scl','ton','chd','prog','cad','tex','form','dyn','tim','dev'],10:['met','rd','ivl','pd','dis','scl','ton','chd','prog','cad','tex','form','dev','tim'],11:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met'],12:['rd','pd','ivl','dis','prog','chd','cad','ton','scl','tex','form','dev','tim','dyn','tmp','met']};
+function homeSetName(v){currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();try{avatar=BlitzUI.loadAvatar(v);paintAvatar();}catch(e){}paintScore();if(window.PENDING_YEAR){window.PENDING_YEAR=false;setTimeout(askYear,350);}}
 if(window.BlitzUI&&BlitzUI.testAck)BlitzUI.testAck({testing:TESTING,scored:()=>qid() in scored});
 BlitzUI.init({
   years:()=>[7,8,9,10,11,12],year:()=>YEAR,setYear:y=>{setYear(y);},setName:homeSetName,customise:null,
-  toast:t=>toast(t),burst:()=>burst('win',innerWidth/2,innerHeight/2,true),
+  toast:t=>toast(t),burst:()=>burst('win',innerWidth/2,innerHeight/2,true),bonusXP:n=>{if(!PROF)return;const before=rankOf(PROF.xp).name;PROF.xp+=n;saveProfiles();paintScore();const after=rankOf(PROF.xp).name;if(after!==before)setTimeout(()=>rankUp(after),900);},
   reloadProfiles:()=>{try{PROFS=JSON.parse(localStorage.getItem('blitzAuralProfiles')||'{}');}catch(e){}loadProfile();},
   path:()=>{const kf=u=>u.key;const order=BPATH[YEAR]||BPATH[12];const out=[];order.forEach((k,n)=>{const i=UNITS.findIndex(u=>kf(u)===k);if(i<0||UNITS[i].special)return;if(typeof unitOn==='function'&&!unitOn(i))return;const u=UNITS[i];out.push({i,name:u.short||u.name,icon:unitIcon(u),hue:i,m:PROF?mastery(kf(u)):null});});return out;},
   upNext:()=>{const kf=u=>u.key;const order=BPATH[YEAR]||BPATH[12];let best=null;

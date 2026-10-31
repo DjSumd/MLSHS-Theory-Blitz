@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261030h";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261031a";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -120,7 +120,7 @@ function vocabFrom(v){return {vocab:{semis:v.includes('semis'),mixedSemis:v.incl
   ties:v.includes('ties'),syncopation:v.includes('synco'),anacrusis:v.includes('anac'),triplets:v.includes('trip')};}
 const RHYTHM_VOCAB=[Y('semis','Four semiquavers',7),Y('rest1','Crotchet & minim rests',7),Y('mixed','Quaver–semiquaver mixes',8),Y('dotted','Dotted notes',8),Y('sixsemis','Six-semiquaver groups (6/8)',8),Y('rest4','Semibreve rest',8),Y('anac','Anacrusis',8),Y('ties','Ties',8),
   Y('qc','Quaver–crotchet (6/8)',9),Y('synco','Syncopation',9),Y('rest05','Quaver rest',9),Y('trip','Triplets',9),Y('cdq','Crotchet–dotted crotchet–quaver (6/8)',10)];
-const METRE_ITEMS=[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',7),Y('12/8','12/8',9),Y('9/8','9/8',10),Y('5/4','5/4',10),Y('7/8','7/8',10)];
+const METRE_ITEMS=[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',7),Y('9/8','9/8',10),Y('12/8','12/8',9),Y('5/4','5/4',10),Y('7/8','7/8',10)];
 // a scale-based tune that resolves on the tonic, for tonality/texture/form
 const TUNE=(root,steps,len)=>colourMelody(root,steps.concat([12]),steps.includes(3)?[3]:steps.includes(4)?[4]:[],len||10);
 
@@ -153,9 +153,11 @@ var UNITS=[
     const compound=['6/8','9/8','12/8'].indexOf(metre)>=0,swing=!compound&&ctx.cfg('swing')==='on';
     const vo=vocabFrom(v); if(swing)vo.triplets=false;
     const ofMel=ctx.cfg('source')==='melody';
-    const dict=ENGRAVE.buildDictation(Object.assign({diff:ctx.diff,bars,metre,maxKs:maxKsFor(ctx.year)},vo));
+    const yrScales=ctx.year<=7?['major','major pentatonic','minor pentatonic']:ctx.year===8?['major','major pentatonic','minor pentatonic','natural minor']:ctx.year===9?['major','major pentatonic','minor pentatonic','natural minor','harmonic minor']:null;
+    const dict=ENGRAVE.buildDictation(Object.assign({diff:ctx.diff,bars,metre,maxKs:maxKsFor(ctx.year)},yrScales?{scaleNames:yrScales}:{},vo));
     const MID=34; dict.notes.forEach(n=>{ if(!ofMel&&!n.rest)n.midi=74; n.d=MID; n.acc=''; n.letter='B'; }); dict.ks=0;
-    return {kind:'rhythmdict',dict,rhythmOnly:true,swing,given:1,multiPlay:true,scaleName:metre+(dict.pickup?' · starts with an upbeat (anacrusis)':'')+(ofMel?' · rhythm of a '+dict.scaleName+' melody':''),
+    const melLabel=ofMel?' · the rhythm of a melody in '+dict.scaleName:'';
+    return {kind:'rhythmdict',dict,rhythmOnly:true,swing,given:1,multiPlay:true,scaleName:metre+(dict.pickup?' · starts with an upbeat (anacrusis)':'')+melLabel,
       prompt:'Notate the rhythm you hear in '+metre+(swing?' (swing)':''),why:(compound?'Compound time — each beat is a dotted crotchet that splits into three quavers.':'Simple time — each beat splits into two quavers.')+' Count the beats first, then the splits.'};}},
 
  {name:'Intervals', key:'ivl', ask:'Listen — which interval?', canNotate:true,
@@ -396,7 +398,7 @@ var UNITS=[
   guide:`<p class="prompt">Tempo</p><ul><li>Tempo terms are Italian words for speed: <b>largo</b> (very slow) · <b>adagio</b> (slow) · <b>moderato</b> (medium) · <b>allegro</b> (fast) · <b>presto</b> (very fast).</li>
    <li>Year 8: <b>rallentando / ritardando</b> = getting slower; <b>accelerando</b> = getting faster. Year 9 adds <b>andante</b> (walking pace) and <b>allegretto</b>. Year 10: <b>rubato</b> (flexible, pushed and pulled) and <b>a tempo</b> (back to the original speed).</li></ul>`,
   cfg:[ G('qtype','Question type',[Y('term','Name the tempo',7),Y('change','Does the tempo change?',8),Y('rub','Strict time or rubato?',10)]),
-        G('terms','Tempo terms',[Y('Largo','Largo (very slow, ~45)',7),Y('Adagio','Adagio (slow, ~65)',7),Y('Moderato','Moderato (medium, ~105)',7),Y('Allegro','Allegro (fast, ~140)',7),Y('Presto','Presto (very fast, ~180)',7),Y('Andante','Andante (walking, ~85)',9),Y('Allegretto','Allegretto (fairly fast, ~120)',9)]) ],
+        G('terms','Tempo terms',[Y('Largo','Largo (very slow, ~45)',7),Y('Adagio','Adagio (slow, ~65)',7),Y('Andante','Andante (walking, ~85)',9),Y('Moderato','Moderato (medium, ~105)',7),Y('Allegretto','Allegretto (fairly fast, ~120)',9),Y('Allegro','Allegro (fast, ~140)',7),Y('Presto','Presto (very fast, ~180)',7)]) ],
   gen(ctx){const qt=A_pick(ctx.cfg('qtype')),root=A_root(57,64);const BPM={Largo:45,Adagio:65,Andante:85,Moderato:105,Allegretto:120,Allegro:140,Presto:180};
     const seq=genProgression(PROGSET.Major.filter(e=>e[4]<=9),4);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,MAJ);
     if(qt==='term'){const terms=ctx.cfg('terms'),t=A_pick(terms);return {kind:'choice',options:A_keep(terms),answer:t,play:()=>AUDIO.progMelody(prog.concat(prog),mel.mids.concat(mel.mids),mel.durs.concat(mel.durs),60/BPM[t],2),playLabel:'A phrase — tap along and judge the speed',why:`${t} — about ${BPM[t]} beats per minute.`};}

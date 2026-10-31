@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261030h";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261031a";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -322,9 +322,10 @@
     const xs=[], sysOf=[], ys=[], upOf=[];
     // ---- per-system furniture ----
     systems.forEach((sy,si)=>{ const oy=si*sysH;
-      for(let k=0;k<5;k++){const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);}
+      (spec.rhythmOnly?[2]:[0,1,2,3,4]).forEach(k=>{const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);});
       track(oy+TOPK*SS-SS*2.6); track(oy+TOPK*SS+4*SS+SS*2.6);
-      E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
+      if(spec.rhythmOnly){const px=SS*0.5+cd.clefW*SS*0.5,py=oy+TOPK*SS+SS;E.push(`<rect x="${(px-SS*0.55).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/><rect x="${(px+SS*0.17).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/>`);}
+      else E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
       let kx=SS*0.5+cd.clefW*SS+SS*0.5; const pos=KS_POS[spec.clef==='bass'?'bass':'treble'][ks>0?'s':'f'];
       for(let k=0;k<Math.abs(ks);k++){E.push(gEl(ks>0?'sharp':'flat',kx,oy+yOf(top,pos[k]),'var(--ink)'));kx+=SS*0.62;}
       if(si===0&&!spec.noTime){const tsx=kx+(ks?SS*0.3:0)+tsW*0.5;
@@ -333,7 +334,7 @@
       // barlines
       for(let s=sy.segA;s<=sy.segB;s++){const bx=sy.mapX(barX[s])+barPad*sy.scale*0.5*(s===sy.segB?0:1); const last=(s===nSeg-1);
         const X=last?sy.endX-SS*0.1:bx;
-        E.push(`<line x1="${X.toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${X.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="${last?3.2:1.4}"/>`);
+        E.push(`<line x1="${X.toFixed(1)}" y1="${(oy+TOPK*SS+(spec.rhythmOnly?SS:0)).toFixed(1)}" x2="${X.toFixed(1)}" y2="${(oy+TOPK*SS+(spec.rhythmOnly?3*SS:4*SS)).toFixed(1)}" stroke="var(--ink)" stroke-width="${last?3.2:1.4}"/>`);
         if(last)E.push(`<line x1="${(X-SS*0.55).toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${(X-SS*0.55).toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.3"/>`);
         if(s===sy.segB&&!last)E.push(`<line x1="${sy.endX.toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.4"/>`);
       }
@@ -347,7 +348,7 @@
     const groups=[]; let cur=null;
     notes.forEach((n,i)=>{ if(n.dur<1-1e-6&&!n.rest){const k=grpKey(n.onset); if(cur&&cur.k===k&&sysOf[i]===cur.sys)cur.idx.push(i); else {cur={k,idx:[i],sys:sysOf[i]};groups.push(cur);} } else cur=null; });
     const beamed=groups.filter(gp=>gp.idx.length>1), inGroup={}; beamed.forEach((gp,gi)=>gp.idx.forEach(k=>inGroup[k]=gi));
-    const groupDir=beamed.map(gp=>{const avg=gp.idx.reduce((s,k)=>s+dd[k],0)/gp.idx.length;return avg<top-4?'up':'down';});
+    const groupDir=beamed.map(gp=>{if(spec.rhythmOnly)return 'up';const avg=gp.idx.reduce((s,k)=>s+dd[k],0)/gp.idx.length;return avg<top-4?'up':'down';});
     const headCol=n=>n.state==='empty'?'#b9b3a6':(n.color||'var(--ink)');
     const onLine=d=>((top-d)%2===0);
     const dotEl=(x,y,d,col)=>`<circle cx="${(x+rx+SS*0.42).toFixed(1)}" cy="${(onLine(d)?y-SS*0.5:y).toFixed(1)}" r="${(SS*0.17).toFixed(1)}" fill="${col}"/>`;
@@ -379,7 +380,7 @@
         E.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" transform="rotate(-18 ${x.toFixed(1)} ${y.toFixed(1)})" fill="none" stroke="#b9b3a6" stroke-width="1.2" stroke-dasharray="3 2"/>`);
         if(isDotted(n.dur))E.push(dotEl(x,y,d,'#b9b3a6'));
         if(n.dur>=4-1e-6)return;
-        const gi=inGroup[i]; const up=(gi!==undefined)?groupDir[gi]==='up':false; const sx=up?x+rx*0.88:x-rx*0.88;
+        const gi=inGroup[i]; const up=spec.rhythmOnly?true:(gi!==undefined)?groupDir[gi]==='up':false; const sx=up?x+rx*0.88:x-rx*0.88;
         if(gi===undefined){ const sy2=up?y-stemLen:y+stemLen;
           E.push(`<line x1="${sx.toFixed(2)}" y1="${y.toFixed(2)}" x2="${sx.toFixed(2)}" y2="${sy2.toFixed(2)}" stroke="#b9b3a6" stroke-width="1.6"/>`); track(up?sy2-SS*2.4:sy2+SS*2.4);
           if(n.dur<1-1e-6){ const nf=(n.dur<0.5-1e-6&&!n.trip)?2:1; for(let f=0;f<nf;f++)E.push(flagPath(sx,sy2+(up?1:-1)*f*SS*0.8,up,'#b9b3a6')); } }
@@ -394,7 +395,7 @@
       if(n.clearable){const cyc=oy+TOPK*SS+4*SS+SS*1.75;
         E.push(`<g class="sclr" data-i="${i}"><circle cx="${x.toFixed(1)}" cy="${cyc.toFixed(1)}" r="${(SS*0.55).toFixed(1)}" fill="var(--paper)" stroke="var(--rule)"/><text x="${x.toFixed(1)}" y="${(cyc+SS*0.22).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);track(cyc+SS*0.9);}
       if(n.dur>=4-1e-6)return;
-      const gi=inGroup[i]; const up=(gi!==undefined)?groupDir[gi]==='up':(d<top-4); upOf[i]=up;
+      const gi=inGroup[i]; const up=spec.rhythmOnly?true:(gi!==undefined)?groupDir[gi]==='up':(d<top-4); upOf[i]=up;
       const sx=up?x+rx*0.88:x-rx*0.88;
       if(gi===undefined){ const sy2=up?y-stemLen:y+stemLen;
         E.push(`<line x1="${sx.toFixed(2)}" y1="${y.toFixed(2)}" x2="${sx.toFixed(2)}" y2="${sy2.toFixed(2)}" stroke="${col}" stroke-width="1.6"/>`); track(up?sy2-SS*2.4:sy2+SS*2.4);

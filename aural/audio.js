@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261030h";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261031a";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.

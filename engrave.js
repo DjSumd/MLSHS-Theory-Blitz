@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261030h";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261031a";
 // engrave.js — SVG music engraving for ATAR Music Theory Blitz (Bravura glyphs, SMuFL metrics).
 // Durations are in units of 1/48 of a semibreve: w=48 h=24 q=12 e=6 s=3 (dotted ×1.5, triplet ×2/3).
 const E=(()=>{
