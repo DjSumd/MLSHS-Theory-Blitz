@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261102d">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -339,19 +339,42 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js"></script>
-<script src="audio.js"></script>
-<script src="samples.js"></script>
-<script src="engrave.js"></script>
-<script src="content.js"></script>
-<script src="refs.js"></script>
-<script src="embed.js"></script>
-<script src="qr.js"></script>
-<script src="task.js"></script>
-<script src="testkit.js"></script>
-<script src="blitzui.js"></script>
-<script src="live.js"></script>
-<script>/*blitz-check*/(function(){var S="20261102c";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop()]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script src="glyphs.js?v=20261102d"></script>
+<script src="audio.js?v=20261102d"></script>
+<script src="samples.js?v=20261102d"></script>
+<script src="engrave.js?v=20261102d"></script>
+<script src="content.js?v=20261102d"></script>
+<script src="refs.js?v=20261102d"></script>
+<script src="embed.js?v=20261102d"></script>
+<script src="qr.js?v=20261102d"></script>
+<script src="task.js?v=20261102d"></script>
+<script src="testkit.js?v=20261102d"></script>
+<script src="blitzui.js?v=20261102d"></script>
+<script src="live.js?v=20261102d"></script>
+<script>/*blitz-check*/(function(){var S="20261102d";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261102d",P="blitz-aural-all-",APP="Aural Blitz";
+if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
+var t0=Date.now(),pending=null,bar=null;
+try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
+function busy(){try{return typeof window.BLITZ_BUSY==='function'&&!!window.BLITZ_BUSY();}catch(e){return false;}}
+function home(){try{return !!(window.BlitzUI&&BlitzUI.inHome&&BlitzUI.inHome());}catch(e){return false;}}
+function go(v){try{sessionStorage.setItem('blitzUpdTried',v);}catch(e){}
+  var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf(P)===0;}).map(function(k){return caches.delete(k);}));}):Promise.resolve();
+  clr.catch(function(){}).then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){return r&&r.update();}):null;}).catch(function(){})
+    .then(function(){var u=new URL(location.href);u.searchParams.set('u',v);location.replace(u.toString());});}
+function show(v){if(!bar){bar=document.createElement('div');bar.id='blitzupd';bar.setAttribute('role','status');bar.innerHTML='<span></span><button type="button">Update now</button>';document.body.appendChild(bar);}
+  bar.querySelector('span').textContent=busy()?'A new version of '+APP+' is ready. Finish what you are doing, then update.':'A new version of '+APP+' is ready.';bar.querySelector('button').onclick=function(){go(v);};}
+function ready(v){pending=v;var tried=null;try{tried=sessionStorage.getItem('blitzUpdTried');}catch(e){}
+  if(tried===v){show(v);return;}
+  if(!busy()&&(document.visibilityState==='hidden'||home()||Date.now()-t0<15000)){go(v);return;}show(v);}
+function check(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){if(j&&j.v&&j.v!==S)ready(j.v);}).catch(function(){});}catch(e){}
+  try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration)navigator.serviceWorker.getRegistration().then(function(r){if(r)r.update().catch(function(){});}).catch(function(){});}catch(e){}}
+setTimeout(check,1500);setInterval(check,5*60*1000);
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check();else if(pending&&!busy())go(pending);});
+addEventListener('pageshow',function(e){if(e.persisted)check();});addEventListener('focus',check);
+if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',function(e){var d=e.data;if(d&&d.type==='blitz-sw-activated'){try{if(e.source&&e.source.postMessage)e.source.postMessage('blitz-ack');}catch(x){}check();}});
+var st=document.createElement('style');st.textContent='#blitzupd{position:fixed;left:8px;right:8px;top:8px;margin:0 auto;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:560px;box-sizing:border-box;background:#1b1a18;color:#f6f1e7;border:1px solid #b2862f;border-radius:14px;padding:10px 12px 10px 16px;font:600 14px/1.35 Nunito,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)}#blitzupd button{flex:none;border:0;border-radius:10px;background:#b2862f;color:#1b1a18;font:800 13px Nunito,system-ui,sans-serif;padding:8px 12px;cursor:pointer}';document.head.appendChild(st);
+})();</script>
 <script>
 const ACCSYM={'':'',s:'♯',f:'♭',n:'♮',ss:'𝄪',ff:'♭♭'};
 const UCOL=['#c0392b','#d4a017','#2e86c1','#27ae60','#8e44ad','#16a085','#e67e22','#5b5fc7','#c2185b','#0e7c86','#b2862f','#2e7d32','#6a3df0','#d35400','#3f5f7a'];
@@ -1146,7 +1169,7 @@ function playPart(which){const q=curQ();if(!q||!q.dict)return;q._plays=(q._plays
   if(which==='whole'&&q.cue){const tm=q.dict.tonicMidi, minor=/minor|dorian/.test(q.dict.scaleName); const first=sel.find(n=>n.midi!=null);
     opts.cue={chord:[tm,tm+(minor?3:4),tm+7,tm+12],first:first?first.midi:null};}
   // anacrusis: shorten the count-in so the pickup falls at the end of the count-in bar
-  if(q.dict.pickup&&which!=='h2'){const beatsIn=opts.countIn.n*opts.countIn.beat-q.dict.pickup;opts.countIn={n:Math.max(1,Math.round(beatsIn/opts.countIn.beat)),beat:opts.countIn.beat,accents:opts.countIn.accents};}
+  if(q.dict.pickup&&which!=='h2'){const bar=opts.countIn.n*opts.countIn.beat;opts.countIn=Object.assign({},opts.countIn,{len:Math.max(0.5,bar-q.dict.pickup)});}
   let r;try{r=AUDIO.melody(sel.map(n=>n.midi),sel.map(n=>n.dur),spb,q.swing,amps,opts);}catch(e){r=3;}armPartsTimer(r||3);}
 
 // ---- sol-fa cues (moveable do, la-based minor) for the four class scales ----
@@ -1665,7 +1688,8 @@ else if(EMBED==='testA'||EMBED==='printA'||EMBED==='tracksA'){document.body.clas
   else{buildExamPlan();order=[...Array(examPlan.length).keys()];
     if(EMBED==='printA'){try{parent.postMessage({type:'blitz-test-print',part:'A',html:testPaperA(+EMBED_P('key',0)===1),marks:testAMarks()},'*');}catch(e){}}
     else{renderTabs();testTracks(true);}}}
-else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));}
+window.BLITZ_BUSY=()=>{try{return !!(examOn||(window.TaskKit&&TaskKit.run))}catch(e){return false}};
 // ---- class tasks: adapter for task.js ----
 TaskKit.init({app:'aural',label:'Aural Blitz',years:[7,8,9,10,11,12],
   sections:()=>REAL().map(u=>({key:u.key,name:u.name,notate:!!u.canNotate,diff:['rd','pd','dis'].includes(u.key)})),

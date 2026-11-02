@@ -1,17 +1,24 @@
 // Bump VERSION whenever any cached file changes so devices fetch fresh copies.
 // Caches are namespaced with PREFIX so this app never clears another app's cache on the shared github.io origin.
 const PREFIX = 'blitz-theory-all-';
-const VERSION = PREFIX + 'v33';
+const VERSION = PREFIX + 'v34';
 const ASSETS = ['./','./index.html','./glyphs.js','./theory.js','./engrave.js','./gen.js','./refs.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png',
   './aural/index.html','./aural/audio.js','./aural/samples.js','./aural/engrave.js','./aural/content.js','./aural/refs.js','./aural/glyphs.js','./aural/embed.js','./aural/samples/cello_C3.mp3','./aural/samples/cello_G3.mp3','./aural/samples/clarinet_As4.mp3','./aural/samples/clarinet_D4.mp3','./aural/samples/flute_C5.mp3','./aural/samples/flute_E5.mp3','./aural/samples/guitar_B3.mp3','./aural/samples/guitar_E3.mp3','./aural/samples/piano_A2.mp3','./aural/samples/piano_A3.mp3','./aural/samples/piano_A4.mp3','./aural/samples/piano_A5.mp3','./aural/samples/piano_C2.mp3','./aural/samples/piano_C3.mp3','./aural/samples/piano_C4.mp3','./aural/samples/piano_C5.mp3','./aural/samples/piano_C6.mp3','./aural/samples/piano_Ds2.mp3','./aural/samples/piano_Ds3.mp3','./aural/samples/piano_Ds4.mp3','./aural/samples/piano_Ds5.mp3','./aural/samples/piano_Fs2.mp3','./aural/samples/piano_Fs3.mp3','./aural/samples/piano_Fs4.mp3','./aural/samples/piano_Fs5.mp3','./aural/samples/saxophone_C4.mp3','./aural/samples/saxophone_G4.mp3','./aural/samples/trombone_C3.mp3','./aural/samples/trombone_F3.mp3','./aural/samples/trumpet_C4.mp3','./aural/samples/trumpet_G4.mp3','./aural/samples/violin_A4.mp3','./aural/samples/violin_E5.mp3','./aural/samples/xylophone_C6.mp3','./aural/samples/xylophone_G5.mp3','./embed.js','./qr.js','./task.js','./aural/qr.js','./aural/task.js','./testkit.js','./aural/testkit.js','./blitzui.js','./aural/blitzui.js','./aural/live.js','./fonts/fonts.css','./fonts/nunito-latin-600-normal.woff2','./fonts/nunito-latin-700-normal.woff2','./fonts/nunito-latin-800-normal.woff2','./fonts/nunito-latin-900-normal.woff2','./fonts/cormorant-garamond-latin-500-normal.woff2','./fonts/cormorant-garamond-latin-600-normal.woff2','./fonts/cormorant-garamond-latin-700-normal.woff2','./fonts/cormorant-garamond-latin-500-italic.woff2','./lib/pdf.min.js','./lib/pdf.worker.min.js'];
 // Install: fetch every file fresh from the server (never from the browser's HTTP cache), so one version is cached as a set.
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
+// Pages running this version answer 'blitz-ack' and update themselves; an older page left open in the
+// background (which has no update check of its own) is reloaded so the student comes back to the new version.
+const ACK = new Set();
+self.addEventListener('message', e => { if (e.data === 'blitz-ack' && e.source) ACK.add(e.source.id); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks =>
     Promise.all(ks.filter(k => k.startsWith(PREFIX) && k !== VERSION).map(k => caches.delete(k)))
-  ).then(() => self.clients.claim()));
+  ).then(() => self.clients.claim()).then(() => self.clients.matchAll({ type: 'window' })).then(cs => {
+    cs.forEach(c => { try { c.postMessage({ type: 'blitz-sw-activated', v: VERSION }); } catch (x) {} });
+    return new Promise(r => setTimeout(r, 4000)).then(() => Promise.all(cs.filter(c => c.frameType !== 'nested' && !ACK.has(c.id) && c.visibilityState === 'hidden' && c.navigate).map(c => c.navigate(c.url).catch(() => {}))));
+  }).catch(() => {}));
 });
 // Pages and scripts: network first (always the newest matching set when online), cached copy when offline or the network stalls.
 // Audio samples: cache first (they never change).
@@ -20,6 +27,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (/\/version\.json$/.test(url.pathname)) return;
   const key = url.origin + url.pathname;
   if (/\.mp3$/i.test(url.pathname)) {
     e.respondWith(caches.match(key, { ignoreSearch: true }).then(r => r || fetch(req).then(res => { if (res && res.ok && res.status === 200) { const copy = res.clone(); caches.open(VERSION).then(c => c.put(key, copy)).catch(() => {}); } return res; })));

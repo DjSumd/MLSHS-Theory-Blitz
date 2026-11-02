@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261102c";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261102d";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.
@@ -145,7 +145,7 @@
     melody(midis,durs,spb,swing,amps,opts){ const a=arm(); const bp=spb||SPB; opts=opts||{}; let t=a.currentTime+0.06;
       if(opts.cue){ const c=opts.cue; if(c.chord&&c.chord.length){ c.chord.forEach(m=>padNote(m,t,1.25,0.9)); t+=1.45; }
         if(c.first!=null){ synthNote(c.first,t,0.75,1.0); t+=1.05; } }
-      if(opts.countIn&&opts.countIn.n){ const ci=opts.countIn, acc=ci.accents||[0]; for(let i=0;i<ci.n;i++){ click(t,acc.indexOf(i)>=0,0.8); t+=(ci.beat||1)*bp; } }
+      if(opts.countIn&&opts.countIn.n){ const ci=opts.countIn, acc=ci.accents||[0], bt=ci.beat||1, len=ci.len!=null?ci.len:ci.n*bt, c0=t; for(let i=0;i*bt<len-1e-6;i++) click(c0+i*bt*bp,acc.indexOf(i)>=0,0.8); t=c0+len*bp; }
       const t0=t; let beat=0;
       for(let i=0;i<midis.length;i++){ const d=durs?durs[i]:1, len=(opts.lens&&opts.lens[i]!=null)?opts.lens[i]:0.95;
         if(midis[i]!=null) synthNote(midis[i],t0+swungBeat(beat,swing)*bp,d*bp*len,amps?amps[i]:undefined);
@@ -209,7 +209,7 @@
     // several lines at once with an optional key cue (tonic chord) and count-in: parts=[{mids,durs,amp}]
     parts(parts,spb,opts){const a=arm();const bp=spb||SPB;opts=opts||{};let t=a.currentTime+0.06;
       if(opts.cue&&opts.cue.chord){opts.cue.chord.forEach(m=>padNote(m,t,1.25,0.9));t+=1.45;}
-      if(opts.countIn&&opts.countIn.n){const ci=opts.countIn,acc=ci.accents||[0];for(let i=0;i<ci.n;i++){click(t,acc.indexOf(i)>=0,0.8);t+=(ci.beat||1)*bp;}}
+      if(opts.countIn&&opts.countIn.n){const ci=opts.countIn,acc=ci.accents||[0],bt=ci.beat||1,len=ci.len!=null?ci.len:ci.n*bt,c0=t;for(let i=0;i*bt<len-1e-6;i++)click(c0+i*bt*bp,acc.indexOf(i)>=0,0.8);t=c0+len*bp;}
       let end=0;parts.forEach(p=>{let beat=0;for(let i=0;i<p.mids.length;i++){const d=p.durs[i];if(p.mids[i]!=null){if(pianoReady)pianoVoice(p.mids[i],t+beat*bp,d*bp*0.95,p.amp==null?0.9:p.amp);else synthNote(p.mids[i],t+beat*bp,d*bp*0.93,p.amp==null?1:p.amp);}beat+=d;}if(beat>end)end=beat;});
       return (t-a.currentTime)+end*bp+0.3;},
     tonalityCue(root,steps,chord){ const a=arm(); let t=a.currentTime+0.06;
