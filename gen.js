@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261031a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261102a";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -686,12 +686,14 @@ function degreeNotateQ(){const k=randKey();const clef=clefPick();const d=rand(7)
   const useSig=Math.random()<0.5;
   return {t:'notate',prompt:'Write the '+T.DEG_NAMES[d]+' of '+keyName(k)+'.',sub:clefWord(clef)+'. '+(useSig?'Key signature given.':'No key signature: add any accidental the note needs.')+' Any octave.'+(k.mode==='minor'&&d===6?' (Minor keys: the leading note is raised.)':''),clef,sig:useSig?k.sig:0,items:[slot(0,[p],'w',{anyOctave:true})],
     why:'Degree '+(d+1)+' of '+keyName(k)+' is '+name(sc[d])+'.'+(k.mode==='minor'&&d===6?' In a minor key the leading note is the raised 7th (harmonic minor).':'')+' Sol-fa: '+(k.mode==='minor'?(d===6?'si (the raised so)':SOLFA_MIN[d]+' (la-based minor)'):SOLFA_MAJ[d])+'.'};}
-function transposeKeyQ(){const t=pick(keyTonics(Math.min(S('keysMax'),4)));const clef=clefPick();const iv=pick([['M2','up'],['m3','up'],['P4','up'],['P5','up'],['M2','down'],['m3','down'],['P4','down'],['M3','up'],['m3','down']]);
-  const t2=iv[1]==='up'?T.transposeUp(t,iv[0]):T.transposeDown(t,iv[0]);const sig2=T.sigOf(P(t2.l,t2.a,4),'major');if(sig2===null||Math.abs(sig2)>S('keysMax'))return transposeKeyQ();
+function transposeKeyQ(depth){const O=SET.ct||{};const fixed=!!(O.from||O.iv)&&!(depth>3);const t=O.from&&fixed?PK(O.from):pick(keyTonics(Math.min(S('keysMax'),4)));const clef=O.clef&&O.clef!=='mix'?O.clef:clefPick();
+  const iv=O.iv&&fixed?((s)=>{const [d,i]=s.split(' ');return [i,d];})(O.iv):pick([['M2','up'],['m3','up'],['P4','up'],['P5','up'],['M2','down'],['m3','down'],['P4','down'],['M3','up'],['m3','down']]);
+  const t2=iv[1]==='up'?T.transposeUp(t,iv[0]):T.transposeDown(t,iv[0]);const sig2=T.sigOf(P(t2.l,t2.a,4),'major');if(sig2===null||Math.abs(sig2)>(fixed?7:S('keysMax')))return transposeKeyQ((depth||0)+1);
+  const ts=O.metre||'3/4',nb=+O.bars||2;
   const key={tonic:t,mode:'major'};const sig=T.sigOf(t,'major');const mid=MIDD[clef];const steps=T.parseIv(iv[0]).n-1;
-  const given=melody(key,clef,'3/4',2,iv[1]==='up'?{lo:mid-6,hi:mid+6-steps}:{lo:mid-6+steps,hi:mid+6});
+  const given=melody(key,clef,ts,nb,iv[1]==='up'?{lo:mid-6,hi:mid+6-steps}:{lo:mid-6+steps,hi:mid+6});
   const items=[];let si=0;given.forEach(it=>{if(it.k==='n'){const tp=iv[1]==='up'?T.transposeUp(it.p[0],iv[0]):T.transposeDown(it.p[0],iv[0]);items.push(slot(si++,[tp],it.dur,{dots:it.dots,beam:it.beam,tie:it.tie}));}else items.push(Object.assign({},it));});
-  return {t:'notate',prompt:'Transpose this melody '+iv[1]+' '+an(T.ivWord(iv[0]))+' into '+name(t2)+' major.',sub:clefWord(clef)+'. Build the new key signature with the ♯/♭ buttons, then place each note the same interval '+iv[1]+'. Rhythm is given.',clef,sig:0,time:[3,4],keysigEdit:true,sigTarget:sig2,items,show:show(stave(clef,sig,[3,4],given)),
+  return {t:'notate',prompt:'Transpose this melody '+iv[1]+' '+an(T.ivWord(iv[0]))+' into '+name(t2)+' major.',sub:clefWord(clef)+'. Build the new key signature with the ♯/♭ buttons, then place each note the same interval '+iv[1]+'. Rhythm is given.',clef,sig:0,time:METRE(ts),keysigEdit:true,sigTarget:sig2,items,show:show(stave(clef,sig,METRE(ts),given)),
     why:name(t)+' major '+iv[1]+' '+an(T.ivWord(iv[0]))+' = '+name(t2)+' major ('+T.sigWord(sig2)+'). Every note moves the same interval, so the letter names all shift by '+steps+'.'};}
 function ornamentQ(){const kinds=[['trill','trill: rapid alternation with the note above'],['mordent','mordent: a quick turn to the note below (or above) and back'],['turn','turn: the note above, the note, the note below, the note'],['grace','acciaccatura: a crushed grace note before the main note']];
   const kind=pick(S('ext')?kinds:kinds.slice(0,3));const items=[n([parse('G4')],'q'),{k:'gap',w:kind[0]==='grace'?1.4:0.3},n([parse('A4')],'q',{art:[kind[0]]}),n([parse('B4')],'h'),fin()];
@@ -792,7 +794,7 @@ function semitoneQ(){const y=UPTO();const type=pick(['major','natminor'].concat(
     why:T.scaleName(t,type)+': semitones between '+ans+'. '+(type==='major'?'Major: T T S T T T S.':type==='natminor'?'Natural minor: T S T T S T T.':'Harmonic minor: T S T T S (T+S) S.')});}
 function stSyl(p,key){const k=(T.LETTERS.indexOf(p.l)-T.LETTERS.indexOf(key.tonic.l)+7)%7;return (key.mode==='minor'?SOLFA_MIN:SOLFA_MAJ)[k];}
 function stLower(a,b){return dia(a)<=dia(b)?[a,b]:[b,a];}
-function makeStudy(kind){const y=UPTO();let key;
+function makeStudy(kind){if(kind==='ivkey'||kind==='ivmel')return makeIvStudy(kind);const y=UPTO();let key;
   if(kind==='study'){const t=pick(keyTonics(Math.min(S('keysMax')||1,y<=7?1:2)));key={tonic:t,mode:'major',sig:T.sigOf(t,'major')};}else key=testKey();
   const clef=(kind==='study'||y<=8)?'treble':pick(['treble','bass']);const ts=pick(y<=7?['2/4','3/4','4/4']:['2/4','3/4','4/4','6/8']);
   const mid=MIDD[clef];let items=null,bars=null;
@@ -811,7 +813,7 @@ function makeStudy(kind){const y=UPTO();let key;
     st.asks=pool.filter(a=>vis.includes(a)||rest.includes(a));st.noTime=st.asks.includes('time');}
   return st;}
 function stStave(st,extra){return stave(st.clef,st.key.sig,st.noTime?null:METRE(st.ts),st.items.map(it=>Object.assign({},it)),Object.assign({barNums:true},extra||{}));}
-function studyQ(part,st){const k=st.key,I=st.info,b=st.bars;const sh=show(stStave(st));const base={_sharedShow:true};
+function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2),st);const k=st.key,I=st.info,b=st.bars;const sh=show(stStave(st));const base={_sharedShow:true};
   const tonicDo=name(k.tonic)+' = '+(k.mode==='minor'?'la':'do');
   if(part==='solfa'){const ns=b[0].concat(b[1]);const items=stStave(st).items;
     return Object.assign(base,{t:'notate',prompt:'Write the sol-fa under each note in bars 1 and 2 ('+tonicDo+').',sub:'One box for each note, in order.',clef:st.clef,sig:k.sig,time:METRE(st.ts),items,barNums:true,show:sh,sfOnly:true,solfa:ns.map(n=>stSyl(n.p[0],k)),sfPal:k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ,why:'Bars 1–2: '+ns.map(n=>name(n.p[0])+' = '+stSyl(n.p[0],k)).join(', ')+'.'});}
@@ -843,14 +845,65 @@ function studyQ(part,st){const k=st.key,I=st.info,b=st.bars;const sh=show(stStav
   if(part==='iv'){const ans=T.ivWord(I.iv.iv);const pool=[2,3,4,5,6,7,8].flatMap(nn=>T.isPerfClass(nn)?[T.ivWord({q:'P',n:nn})]:[T.ivWord({q:'M',n:nn}),T.ivWord({q:'m',n:nn})]);
     return Object.assign(base,choice('Name the interval marked *1 in bar '+I.iv.bar+'.',optsFrom(ans,pool,4),ans,{show:sh,why:'*1 = '+ans+'.'}));}
   return choice('?',['a'],'a');}
-function studyItems(st){if(st.kind==='study')return [['solfa',3,1],['letters',1],['tempo',1],['dyn',1],['transpose',2]];
+function studyItems(st){if(st.kind==='ivkey'||st.kind==='ivmel')return st.asks.map((a,i)=>['ci'+i,1]);if(st.kind==='study')return [['solfa',3,1],['letters',1],['tempo',1],['dyn',1],['transpose',2]];
   return st.asks.map(a=>[{tempo:'tempoV',dyn:'dynV'}[a]||a,1]);}
 // Double sharps and flats are only asked for when the year's settings include them (Year 12, or switched on in Customise):
 // any generated question whose notes need one is made again.
 function hasDbl(q){if(!q)return false;const pts=[];const add=it=>{if(!it)return;if(it.target)pts.push(...it.target);if(it.p)pts.push(...[].concat(it.p));};(q.items||[]).forEach(add);if(q.show&&q.show.spec&&q.show.spec.items)q.show.spec.items.forEach(add);return pts.some(p=>p&&typeof p==='object'&&Math.abs(p.a||0)>=2);}
 function noDbl(f){const w=function(){let q=null;for(let i=0;i<40;i++){q=f.apply(this,arguments);if(!q||S('dbl')||!hasDbl(q))return q;}return q;};Object.defineProperty(w,'name',{value:f.name});return w;}
 UNITS.forEach(u=>u.gens.forEach(g=>{g[0]=noDbl(g[0]);}));
-const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=noDbl(chordRnQ);BYNAME.notateRnQ=noDbl(notateRnQ);BYNAME.semitoneQ=semitoneQ;
+// ===================== custom-test generators (options arrive in SET.ct) =====================
+const PK=s=>{const m=String(s).match(/^([A-G])(#|b)?$/);return m?P(m[1],m[2]==='#'?1:m[2]==='b'?-1:0,4):P('C',0,4);};
+const ROMAN=['i','ii','iii','iv','v','vi','vii','viii'];
+const IV_ORDER=['m2','M2','m3','M3','P4','P5','m6','M6','m7','M7','P8'];
+const SHARP_GRID={cols:['C','G','D','A','E','B','F♯','C♯'],add:['–','F♯','C♯','G♯','D♯','A♯','E♯','B♯'],rel:['A','E','B','F♯','C♯','G♯','D♯','A♯']};
+const FLAT_GRID={cols:['C','F','B♭','E♭','A♭','D♭','G♭','C♭'],add:['–','B♭','E♭','A♭','D♭','G♭','C♭','F♭'],rel:['A','D','G','C','F','B♭','E♭','A♭']};
+const REL_ALL=['A','E','B','F♯','C♯','G♯','D♯','A♯','D','G','C','F','B♭','E♭','A♭'];
+function keySigGridQ(){const O=SET.ct||{};const side=O.side==='flat'?'flat':'sharp';const Gd=side==='flat'?FLAT_GRID:SHARP_GRID;const giv=O.given||'last4';
+  const isG=c=>giv==='last4'?c>=4:giv==='first4'?c<4:false;const sym=side==='flat'?'♭':'♯';
+  const rows=[{label:'Major keys',cells:Gd.cols},{label:sym+"'s needed (cumulative)",cells:Gd.add},{label:'Relative minor',cells:Gd.rel}];
+  const blanks=[],pairs=[];[1,2].forEach(ri=>Gd.cols.forEach((k,c)=>{if(isG(c))return;blanks.push({r:ri,c});pairs.push([k+' major: '+(ri===1?sym+' added':'relative minor'),rows[ri].cells[c]]);}));
+  return {t:'match',grid:{rows,blanks,given:Gd.cols.map((_,c)=>isG(c))},gridOpts:{1:Gd.add.slice(),2:REL_ALL.slice()},pairs,prompt:'Complete the '+(side==='flat'?'flat':'sharp')+' keys table (major and minor).',
+    why:'Each key round the circle adds one '+(side==='flat'?'flat (B♭ E♭ A♭ D♭ G♭ C♭ F♭)':'sharp (F♯ C♯ G♯ D♯ A♯ E♯ B♯)')+'; the relative minor is a minor 3rd below the major tonic and shares its key signature.'};}
+function keySigWriteCtQ(){const O=SET.ct||{};const t=O.key?PK(O.key):pick(keyTonics(S('keysMax')));const clef=O.clef||clefPick();const sig=T.sigOf(t,'major');const mi=T.relMinor(t);
+  const label=name(t)+' major'+(O.names==='major'?'':' / '+name(mi)+' minor');
+  return {t:'notate',prompt:'Write the key signature of '+label+'.',sub:clefWord(clef)+'. Pick ♯ or ♭, then tap the line or space for each accidental in order (first one at position 1). For C major / A minor, leave it empty and Check.',clef,sig:0,ksPlace:true,sigTarget:sig,items:[{k:'ksig',n:7}],
+    why:label+' has '+T.sigWord(sig)+(sig?' ('+T.sigList(sig)+')':'')+'.'};}
+function keyMelodyQ(){const O=SET.ct||{};const types=(O.types&&O.types.length)?O.types:['major','harmonic minor'];const type=pick(types);
+  const clef=O.clef==='treble'||O.clef==='bass'?O.clef:pick(['treble','bass']);const maj=pick(keyTonics(Math.min(4,S('keysMax')||3)));const minT=T.relMinor(maj);const isMin=type!=='major';
+  const key=isMin?{tonic:minT,mode:'minor',sig:T.sigOf(maj,'major')}:{tonic:maj,mode:'major',sig:T.sigOf(maj,'major')};
+  const okM=['2/4','3/4','4/4','6/8'].filter(x=>(S('metres')||[]).includes(x));const ts=pick(okM.length?okM:['4/4']);const mid=MIDD[clef];const lt=T.transposeUp(key.tonic,'M7');let items=null;
+  for(let t=0;t<40;t++){items=melody(key,clef,ts,4,{lo:mid-4,hi:mid+5});const ns=items.filter(i=>i.k==='n');const sev=ns.filter(it=>it.p[0].l===lt.l);
+    if(type==='harmonic minor'){if(!sev.length)continue;sev.forEach(it=>{it.p[0]=P(lt.l,lt.a,it.p[0].o);});}
+    else if(type==='natural minor'&&!sev.length)continue;break;}
+  const nm=(t,ty)=>name(t)+' '+(ty==='major'?'Major':ty==='natural minor'?'Natural Minor':'Harmonic Minor');
+  const opts=type==='major'?[nm(maj,'major'),nm(minT,'harmonic minor'),nm(maj,'natural minor')]:type==='harmonic minor'?[nm(minT,'harmonic minor'),nm(maj,'major'),nm(maj,'harmonic minor')]:[nm(minT,'natural minor'),nm(maj,'major'),nm(minT,'harmonic minor')];
+  const ans=opts[0];const why=type==='major'?'The key signature fits '+name(maj)+' major or '+name(minT)+' minor; the melody centres on '+name(maj)+' and has no raised 7th, so it is '+ans+'.'
+    :type==='harmonic minor'?'The key signature fits '+name(maj)+' major or '+name(minT)+' minor; the melody centres on '+name(minT)+' and raises the 7th to '+name(lt)+' (si), so it is '+ans+'.'
+    :'The melody centres on '+name(minT)+' and keeps the 7th unraised ('+name(T.transposeUp(minT,'m7'))+'), so it is '+ans+'.';
+  return Object.assign(choice('Which key is this melody in?',opts.slice().sort(),ans,{show:show(stave(clef,key.sig,METRE(ts),items)),why}),{fixed:true,paperOpts:true});}
+function makeIvStudy(kind){const O=SET.ct||{};const cnt=Math.max(1,Math.min(8,+O.n||(kind==='ivkey'?6:2)));const qs=(O.q&&O.q.length)?O.q:['M','m','P'];
+  const cand=IV_ORDER.filter(x=>qs.includes(x[0]));
+  if(kind==='ivkey'){const t=PK(O.tonic||'G');const clef='treble';const lower=P(t.l,t.a,['A','B'].includes(t.l)?3:4);const sig=T.sigOf(t,'major');
+    const pool=shuffle(cand.filter(x=>x!=='P8'));const asks=[];for(let i=0;i<cnt;i++)asks.push(pool.length?pool[i%pool.length]:'M3');
+    const items=[n([lower,up8(lower)],'w')];asks.forEach(iv=>{items.push(bar());items.push(n([lower,T.transposeUp(lower,iv)],'w'));});items.push(fin());
+    return {kind,key:{tonic:t,mode:'major',sig},clef,ts:null,items,asks,noTime:true,info:{tonic:t},bars:[]};}
+  // intervals in a melody
+  const clef=O.clef==='treble'?'treble':'bass';const tk=pick(keyTonics(Math.min(3,S('keysMax')||2)));const key={tonic:tk,mode:'major',sig:T.sigOf(tk,'major')};const ts=pick(['2/4','3/4','4/4']);
+  let items=null,pairs=[];
+  for(let t=0;t<40;t++){items=melody(key,clef,ts,ts==='2/4'?8:4,{lo:MIDD[clef]-5,hi:MIDD[clef]+5});const ns=items.filter(i=>i.k==='n');pairs=[];
+    for(let i=0;i+1<ns.length;i++){const [lo,hi]=stLower(ns[i].p[0],ns[i+1].p[0]);if(dia(lo)===dia(hi))continue;const iv=T.interval(lo,hi);if(!iv||iv.n>8)continue;const s=T.ivShort(iv);if(!cand.includes(s))continue;pairs.push([i,s]);}
+    if(pairs.length>=cnt*2)break;}
+  const ns=items.filter(i=>i.k==='n');const chosen=[];
+  for(let k=0;k<cnt&&pairs.length;k++){const want=Math.floor((k+0.5)*pairs.length/cnt);let pr=null;for(let d=0;d<pairs.length&&!pr;d++){for(const j of [want+d,want-d]){const c=pairs[j];if(c&&!chosen.some(x=>Math.abs(x[0]-c[0])<2)){pr=c;break;}}}if(pr)chosen.push(pr);}
+  chosen.sort((a,b)=>a[0]-b[0]);chosen.forEach(([i],k)=>{ns[i].mk=Object.assign(ns[i].mk||{},{br:'('+ROMAN[k]+')'});ns[i+1].mk=Object.assign(ns[i+1].mk||{},{brEnd:1});});
+  return {kind,key,clef,ts,items,asks:chosen.map(c=>c[1]),info:{},bars:[]};}
+function ivStudyQ(i,st){const iv=st.asks[i];const ans=T.ivWord(iv);const qs=[...new Set(IV_ORDER.map(T.ivWord))];
+  const sh=show(stave(st.clef,st.key.sig,st.ts?METRE(st.ts):null,st.items.map(it=>Object.assign({},it)),{barNums:st.kind==='ivkey'}));
+  const prompt=st.kind==='ivkey'?'Name the interval in bar '+(i+2)+'.':'Name the bracketed interval ('+ROMAN[i]+').';
+  const why=st.kind==='ivkey'?'Count up from '+name(st.key.tonic)+': '+ans+'. '+(iv[0]==='m'?'The top note is a semitone below the major interval, so it is minor.':'The top note is in '+name(st.key.tonic)+' major, so it is '+(iv[0]==='P'?'perfect':'major')+'.'):'Count the letter names for the number and the semitones for the quality: '+ans+'.';
+  return Object.assign(choice(prompt,qs,ans,{show:sh,why}),{_sharedShow:true,fixed:true,paperLine:true});}
+const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=noDbl(chordRnQ);BYNAME.notateRnQ=noDbl(notateRnQ);BYNAME.semitoneQ=semitoneQ;BYNAME.keySigGridQ=keySigGridQ;BYNAME.keySigWriteCtQ=keySigWriteCtQ;BYNAME.keyMelodyQ=keyMelodyQ;
 function defaultWhy(q){if(q.why)return;if(q.t==='match'&&q.pairs)q.why=q.pairs.map(p=>'<b>'+p[0]+'</b> — '+p[1]).join(' · ');}
 function one(name){let q=null;for(let i=0;i<20&&!q;i++)q=BYNAME[name]();const u=UNITS.find(u=>u.gens.some(g=>g[0].name===name))||UNITS.find(u=>u.id==='chords');q.unit=u.id;q.gen=name;defaultWhy(q);return q;}
 return {hasDbl,UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one,makeStudy,studyQ,studyItems};

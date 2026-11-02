@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261031a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261102a";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.
@@ -49,6 +49,16 @@
     g.gain.exponentialRampToValueAtTime(0.0001,t0+0.07);
     o.connect(g); g.connect(getBus()); o.start(t0); o.stop(t0+0.09);
   }
+
+  // ---- synthesised drum kit (drum dictation) ----
+  let NOISE=null;function noise(){const a=ac();if(!NOISE){NOISE=a.createBuffer(1,a.sampleRate*0.5,a.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}return NOISE;}
+  function kick(t){const a=ac(),o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(42,t+0.16);
+    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(1.0,t+0.004);g.gain.exponentialRampToValueAtTime(0.0001,t+0.34);o.connect(g);g.connect(getBus());o.start(t);o.stop(t+0.36);}
+  function snare(t){const a=ac(),s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=noise();f.type='highpass';f.frequency.value=1400;
+    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(0.55,t+0.003);g.gain.exponentialRampToValueAtTime(0.0001,t+0.19);s.connect(f);f.connect(g);g.connect(getBus());s.start(t);s.stop(t+0.22);
+    const o=a.createOscillator(),g2=a.createGain();o.type='triangle';o.frequency.setValueAtTime(220,t);o.frequency.exponentialRampToValueAtTime(160,t+0.08);g2.gain.setValueAtTime(0.0001,t);g2.gain.linearRampToValueAtTime(0.45,t+0.003);g2.gain.exponentialRampToValueAtTime(0.0001,t+0.11);o.connect(g2);g2.connect(getBus());o.start(t);o.stop(t+0.13);}
+  function hat(t,acc){const a=ac(),s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=noise();f.type='highpass';f.frequency.value=7200;
+    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(acc?0.32:0.2,t+0.002);g.gain.exponentialRampToValueAtTime(0.0001,t+0.055);s.connect(f);f.connect(g);g.connect(getBus());s.start(t);s.stop(t+0.07);}
 
   // ---- sampled instruments (timbre) ----
   const SBUF={};           // instr -> [{midi,buffer}]
@@ -192,6 +202,16 @@
       let beat=0; for(let i=0;i<melMids.length;i++){ if(melMids[i]!=null) synthNote(melMids[i],t0+beat*bp,melDurs[i]*bp*0.95,1.05); beat+=melDurs[i]; }
       return Math.max(ct,t0+beat*bp)-a.currentTime+0.2; },
     // establish a tonality: tonic triad, then the scale ascending
+    // drum groove: pat = {hh,sn,bd} strings of 0/1 at quaver steps (4/4); one-bar count-in on clicks
+    drums(pat,bars,spb,countIn){const a=arm();const bp=spb||0.5;let t=a.currentTime+0.08;if(countIn!==false){for(let i=0;i<4;i++){click(t,i===0,0.8);t+=bp;}}
+      const steps=8*(bars||1);for(let i=0;i<steps;i++){const at=t+i*bp/2;if((pat.hh||'')[i]==='1')hat(at,i%2===0);if((pat.sn||'')[i]==='1')snare(at);if((pat.bd||'')[i]==='1')kick(at);}
+      return (t-a.currentTime)+steps*bp/2+0.4;},
+    // several lines at once with an optional key cue (tonic chord) and count-in: parts=[{mids,durs,amp}]
+    parts(parts,spb,opts){const a=arm();const bp=spb||SPB;opts=opts||{};let t=a.currentTime+0.06;
+      if(opts.cue&&opts.cue.chord){opts.cue.chord.forEach(m=>padNote(m,t,1.25,0.9));t+=1.45;}
+      if(opts.countIn&&opts.countIn.n){const ci=opts.countIn,acc=ci.accents||[0];for(let i=0;i<ci.n;i++){click(t,acc.indexOf(i)>=0,0.8);t+=(ci.beat||1)*bp;}}
+      let end=0;parts.forEach(p=>{let beat=0;for(let i=0;i<p.mids.length;i++){const d=p.durs[i];if(p.mids[i]!=null){if(pianoReady)pianoVoice(p.mids[i],t+beat*bp,d*bp*0.95,p.amp==null?0.9:p.amp);else synthNote(p.mids[i],t+beat*bp,d*bp*0.93,p.amp==null?1:p.amp);}beat+=d;}if(beat>end)end=beat;});
+      return (t-a.currentTime)+end*bp+0.3;},
     tonalityCue(root,steps,chord){ const a=arm(); let t=a.currentTime+0.06;
       chord.forEach(c=>synthNote(root+c,t,0.95)); t+=1.05;
       steps.forEach(s=>{ synthNote(root+s,t,0.34); t+=0.3; }); return t-a.currentTime+0.1; },

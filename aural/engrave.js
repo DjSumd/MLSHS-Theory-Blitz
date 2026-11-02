@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261031a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261102a";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -472,7 +472,7 @@
   // exports
   Object.assign(window,{SS,GS,TOPK,dia,clefData,yOf,gEl,ledgerYs,accW,NW,drawWholeNote,midiOf,letterOf,ACCOFF});
   // sol-fa: moveable do, la-based minor. Only the four scales sung in class get syllables.
-  const SOLFA_SET={'major':['do','re','mi','fa','so','la','ti'],'major pentatonic':['do','re','mi','so','la'],'natural minor':['la','ti','do','re','mi','fa','so'],'minor pentatonic':['la','do','re','mi','so']};
+  const SOLFA_SET={'major':['do','re','mi','fa','so','la','ti'],'major pentatonic':['do','re','mi','so','la'],'natural minor':['la','ti','do','re','mi','fa','so'],'harmonic minor':['la','ti','do','re','mi','fa','si'],'minor pentatonic':['la','do','re','mi','so']};
   const CHROM_SOLFA={0:'do',1:'di',2:'re',3:'me',4:'mi',5:'fa',6:'fi',7:'so',8:'si',9:'la',10:'te',11:'ti'};
   function solfaFor(scaleType){return SOLFA_SET[scaleType]||null;}
   function solfaOf(midi,tonicMidi,scaleType){const sc=SCALES.find(s=>s.name===scaleType),syl=SOLFA_SET[scaleType];if(!sc||!syl)return '';const off=((midi-tonicMidi)%12+12)%12;const k=sc.deg.findIndex(d=>d[0]===off);if(k>=0)return syl[k];return CHROM_SOLFA[/minor/.test(scaleType)?(off+9)%12:off]||'';}

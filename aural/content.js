@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261031a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261102a";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -254,7 +254,7 @@ var UNITS=[
    <li>Year 9: does the music <b>modulate</b> (change key) to its relative major or minor? ATAR adds the dominant and subdominant — listen for the new leading note. Year 10: <b>consonant</b> or <b>dissonant</b>?</li>
    <li>ATAR: <b>modal</b> (a clear centre but a ♭7 or a raised 6th) and <b>atonal</b> (no centre at all).</li></ul>`,
   cfg:[ G('qtype','Question type',[Y('tone','Major, minor or pentatonic',7),Y('mod','Modulation',9),Y('cd','Consonant or dissonant',10)]),
-        G('tons','Tonalities',[Y('Major','Major',7),Y('Minor','Minor',7),Y('Pentatonic','Pentatonic',7),Y('Modal','Modal',11),Y('Atonal','Atonal',12)]),
+        G('tons','Tonalities',[Y('Major','Major',7),Y('Minor','Minor',7),Y('Natural minor','Natural minor',9),Y('Harmonic minor','Harmonic minor',9),Y('Pentatonic','Pentatonic',7),Y('Modal','Modal',11),Y('Atonal','Atonal',12)]),
         G('dests','Modulation destinations',[Y('Relative','Relative major / minor',9),Y('Dominant','Dominant',11),Y('Subdominant','Subdominant',12),Y('None','No modulation',9)]),
         SG('play','Play as',[{id:'melody',label:'Melody'},{id:'harm',label:'Melody with chords'}],{7:'melody',8:'harm'}) ],
   gen(ctx){const qt=A_pick(ctx.cfg('qtype')),root=A_root(57,64);
@@ -269,8 +269,9 @@ var UNITS=[
       const opts=dests.map(d=>d==='Relative'?rel:d==='None'?'No modulation':d);const vc=voiceProg(seq,root);const mel=chordMelody(vc,2,root,[]);
       return {kind:'choice',options:A_keep(opts),answer:ans,startTonality:isMin?'Minor':'Major',play:()=>ctx.cfg('play')==='harm'?AUDIO.progMelody(vc,mel.mids,mel.durs,0.5,2):AUDIO.progression(vc,1.1),playLabel:(isMin?'Minor':'Major')+' home key established first — where does it go?',why:`${ans}: ${desc}`};}
     const tons=ctx.cfg('tons'),id=A_pick(tons);const modal=A_pick([{n:'dorian',steps:[0,2,3,5,7,9,10],col:[3,9,10]},{n:'mixolydian',steps:[0,2,4,5,7,9,10],col:[4,10]}]);
-    const T={'Major':{steps:MAJ,col:[4,11],set:PROGSET.Major},'Minor':{steps:MINH,col:[3,11],set:PROGSET.Minor},'Pentatonic':{steps:PENT,col:[4,9],set:PROGSET.Major},'Modal':{steps:modal.steps,col:modal.col,fixed:modal.n==='dorian'?[['i',0,'mi'],['IV',5,''],['i',0,'mi'],['VII',10,''],['i',0,'mi']]:[['I',0,''],['bVII',10,''],['IV',5,''],['bVII',10,''],['I',0,'']]},'Atonal':{}};
-    const WHY={'Major':'bright — a major 3rd above the tonic and a leading note pulling home.','Minor':'darker — the 3rd is lowered.','Pentatonic':'five notes only, no semitones — open and folky.','Modal':'a clear centre but a modal colour — '+modal.n+' ('+(modal.n==='dorian'?'minor 3rd with a raised 6th':'major 3rd with a ♭7')+').','Atonal':'no tonal centre — nothing feels like home.'};
+    const NATP=A_pick([[['i',0,'mi'],['VI',8,''],['VII',10,''],['i',0,'mi']],[['i',0,'mi'],['iv',5,'mi'],['v',7,'mi'],['i',0,'mi']],[['i',0,'mi'],['VII',10,''],['VI',8,''],['v',7,'mi'],['i',0,'mi']],[['i',0,'mi'],['iv',5,'mi'],['VII',10,''],['III',3,''],['v',7,'mi'],['i',0,'mi']]]);
+    const T={'Major':{steps:MAJ,col:[4,11],set:PROGSET.Major},'Minor':{steps:MINH,col:[3,11],set:PROGSET.Minor},'Natural minor':{steps:MINN,col:[3,8,10],fixed:NATP},'Harmonic minor':{steps:MINH,col:[3,8,11],set:PROGSET.Minor},'Pentatonic':{steps:PENT,col:[4,9],set:PROGSET.Major},'Modal':{steps:modal.steps,col:modal.col,fixed:modal.n==='dorian'?[['i',0,'mi'],['IV',5,''],['i',0,'mi'],['VII',10,''],['i',0,'mi']]:[['I',0,''],['bVII',10,''],['IV',5,''],['bVII',10,''],['I',0,'']]},'Atonal':{}};
+    const WHY={'Major':'bright — a major 3rd above the tonic and a leading note pulling home.','Minor':'darker — the 3rd is lowered.','Natural minor':'minor with a lowered 7th: no leading note, so the dominant chord is minor and the music sounds modal and gentle.','Harmonic minor':'minor with a raised 7th (si): a leading note pulling home and the exotic augmented 2nd between the 6th and 7th.','Pentatonic':'five notes only, no semitones — open and folky.','Modal':'a clear centre but a modal colour — '+modal.n+' ('+(modal.n==='dorian'?'minor 3rd with a raised 6th':'major 3rd with a ♭7')+').','Atonal':'no tonal centre — nothing feels like home.'};
     let play; if(id==='Atonal'){const mids=[];let m=root+5;for(let i=0;i<11;i++){m+=A_pick([-7,-5,-4,-2,-1,1,2,4,5,7,-10,10]);m=Math.max(52,Math.min(84,m));mids.push(m);}play=()=>AUDIO.melody(mids,mids.map(()=>A_pick([1,0.5,1,1.5])),0.4);}
     else if(ctx.cfg('play')==='harm'){const seq=T[id].fixed||genProgression(T[id].set,5);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,T[id].steps);play=()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.42,2);}
     else {const ex=colourMelody(root,T[id].steps.concat([12]),T[id].col,12);play=()=>AUDIO.melody(ex.mids,ex.durs,0.42);}

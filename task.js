@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261031a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261102a";
 // task.js — Class tasks for Aural Blitz and Theory Blitz (shared, identical in both apps).
 // A teacher builds a task (sections, counts, settings) and shares it as a link / QR / code.
 // Students complete it in a locked mode. The result is a sealed receipt: compressed JSON encrypted
@@ -77,7 +77,7 @@
     const f=Math.max(0,Math.min(1,frac===undefined||frac===null||isNaN(frac)?(ok?1:0):frac));R.state.rec[pos]=[Math.round(f*100),Math.min(65535,Math.round(secs||0)),Math.min(255,Math.round((plays||0)*2)),ok?1:0];saveRun();};
   // tests (Years 7–10): the shell sets the plan once it has built the test. mk = marks for each position, groups = [[label,count],…]
   TK.setPlan=function(mk,groups){const R=TK.run;if(!R)return;R.total=mk.length;R.mk=mk;R.groups=groups;const S=R.state;if(S.done&&!(S.n>0)&&!Object.keys(S.rec||{}).length){S.done=false;delete S.receipt;delete S.fn;saveRun();}};
-  TK.testSeed=function(){const R=TK.run;return R?hashStr(R.task.id+'|test|'+(R.task.ps?nameKey(R.name):''))%33554432:0;};
+  TK.testSeed=function(){const R=TK.run;if(R&&!R.task.ps&&R.task.sd!=null)return R.task.sd>>>0;return R?hashStr(R.task.id+'|test|'+(R.task.ps?nameKey(R.name):''))%33554432:0;};
   TK.answered=()=>TK.run?Object.keys(TK.run.state.rec).length:0;
   TK.isDone=()=>!!(TK.run&&TK.run.total>0&&TK.answered()>=TK.run.total);
   TK.firstOpen=()=>{if(!TK.run)return 0;for(let i=0;i<TK.run.total;i++)if(!TK.run.state.rec[i])return i;return -1;};
@@ -113,7 +113,7 @@
     const nm=A.getName();const existing=nm&&LS.get(runKey(task.id,nm),null);
     if(existing&&fromLink){begin(task,code,nm);return;}
     const tot=task.s.reduce((a,s)=>a+s.n,0);
-    modal(`<p class="prompt">${esc(task.ti||'Class task')}</p><p class="sub">${task.cl?esc(task.cl)+' · ':''}${task.tt?'Year '+task.y+' test (aural and theory) · use headphones':tot+' questions · Year '+task.y}. Type your full name as your teacher knows it. Once you start, the first answer you give to each question is the one that counts${task.ps?', and your questions are different from the person next to you':''}.</p>
+    modal(`<p class="prompt">${esc(task.ti||'Class task')}</p><p class="sub">${task.cl?esc(task.cl)+' · ':''}${task.tt?(task.ct?esc(task.ct.ti)+' · use headphones':'Year '+task.y+' test (aural and theory) · use headphones'):tot+' questions · Year '+task.y}. Type your full name as your teacher knows it. Once you start, the first answer you give to each question is the one that counts${task.ps?', and your questions are different from the person next to you':''}.</p>
       <div class="setgrp"><div class="setlabel">Your name</div><input id="tkname" maxlength="28" value="${esc(nm||'')}" placeholder="First and last name" style="padding:10px 12px;border:1px solid var(--rule);border-radius:6px;font-family:var(--sans);font-size:15px;width:100%"></div>
       <div class="controls"><button class="btn-check" id="tkstart">${existing?'Carry on':'Start the task'}</button><button class="btn-ghost" id="tkcancel">Not now</button></div>`);
     document.getElementById('tkcancel').onclick=closeModal;
@@ -185,7 +185,7 @@
 
   function builder(){const secs=A.sections();const yrs=A.years;const y=A.year();
     modal(`<p class="prompt">Set a class task — ${esc(A.label)}</p>${tabsHtml('new')}
-      ${A.test?`<div class="setgrp"><div class="setlabel">Task type</div><div class="setchips"><button class="chip on" data-ty="sec">Practice sections</button><button class="chip" data-ty="test">Test (Years 7–10, aural and theory)</button></div></div>`:''}
+      ${A.test||A.customTests?`<div class="setgrp"><div class="setlabel">Task type</div><div class="setchips"><button class="chip on" data-ty="sec">Practice sections</button>${A.test?'<button class="chip" data-ty="test">Test (Years 7–10, aural and theory)</button>':''}${A.customTests?'<button class="chip" data-ty="ct">Custom test</button>':''}</div></div>`:''}
       <p class="sub" id="tksecnote">Each section uses the settings in its own ⚙ Customise on this device (set those first). Students can't change anything once they start.</p>
       <p class="sub" id="tktestnote" style="display:none">Students sit the Year test on their own device with headphones: the aural section plays on their device and the theory section follows on the same page. The test is marked like the printed test (marks per question), and the sealed result comes back to you as usual.</p>
       <div class="tkgrid"><div class="setgrp"><div class="setlabel">Title</div><input id="tkti" class="tkin" maxlength="60" placeholder="e.g. Intervals and melodic dictation"></div>
@@ -206,7 +206,7 @@
     let isTest=false;const setTy=t=>{isTest=t==='test';document.querySelectorAll('[data-ty]').forEach(b=>b.classList.toggle('on',b.dataset.ty===t));document.querySelectorAll('.tksecbits').forEach(e=>e.style.display=isTest?'none':'');
       document.getElementById('tksecnote').style.display=isTest?'none':'';document.getElementById('tktestnote').style.display=isTest?'':'none';document.getElementById('tksemg').style.display=isTest?'':'none';document.getElementById('tkans').style.display=isTest?'':'none';document.getElementById('tkrf').style.display=isTest?'':'none';
       const sel=document.getElementById('tky');[...sel.options].forEach(o=>{o.disabled=isTest&&+o.value>10;});if(isTest&&+sel.value>10)sel.value='10';document.getElementById('tktot').textContent=isTest?'Year test':tot()+' questions';};
-    document.querySelectorAll('[data-ty]').forEach(b=>b.onclick=()=>setTy(b.dataset.ty));
+    document.querySelectorAll('[data-ty]').forEach(b=>b.onclick=()=>{if(b.dataset.ty==='ct'){A.customTests();return;}setTy(b.dataset.ty);});
     document.getElementById('tkmake2').onclick=async()=>{if(isTest){const yv=+document.getElementById('tky').value;const em=document.getElementById('tkem').value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Check the email address');return;}LS.set(K_EMAIL,em);
         const ti=document.getElementById('tkti').value.trim()||('Year '+yv+' test');const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti,cl:document.getElementById('tkcl').value.trim(),y:yv,tt:1,sem:document.getElementById('tksem').value,ps:document.getElementById('tkps').classList.contains('on')?1:0,ans:document.getElementById('tkans').classList.contains('on')?1:0,rf:document.getElementById('tkrf').classList.contains('on')?1:0,h:0,pk:teacher().pub,s:[],at:Date.now()};
         const code=await encodeTask(task);const th=(await sha(code)).slice(0,16);const list=LS.get(K_TASKS,[]);list.unshift({id:task.id,ti:task.ti,cl:task.cl,y:task.y,a:task.a,n:'test',at:task.at,code,th});LS.set(K_TASKS,list.slice(0,80));showTask(list[0]);return;}
@@ -218,6 +218,20 @@
         s:chosen.map(c=>Object.assign({u:c.u,n:c.n},c.m?{m:c.m}:{},c.d?{d:c.d}:{},snap.per&&snap.per[c.u]?{cfg:snap.per[c.u]}:{})),g:snap.global||null,at:Date.now()};
       const code=await encodeTask(task);const th=(await sha(code)).slice(0,16);const list=LS.get(K_TASKS,[]);list.unshift({id:task.id,ti:task.ti,cl:task.cl,y:task.y,a:task.a,n,at:task.at,code,th});LS.set(K_TASKS,list.slice(0,80));
       showTask(list[0]);};}
+  TK.modal=modal;TK.closeModal=closeModal;
+  TK.pushCustomTest=function(ct,seed){TK.openTeacher(()=>{const mk=(window.TestKit?TestKit.ctMarks(ct,'A')+TestKit.ctMarks(ct,'T'):0);
+    modal(`<p class="prompt">Push "${esc(ct.ti)}" to a class</p><p class="sub">Year ${ct.y} · ${mk} marks. Students open the link on their own device with headphones, type their name and sit it. It is marked as they finish, and the sealed result comes back to you as usual.</p>
+      <div class="tkgrid"><div class="setgrp"><div class="setlabel">Title</div><input id="pcti" class="tkin" maxlength="60" value="${esc(ct.ti)}"></div><div class="setgrp"><div class="setlabel">Class</div><input id="pccl" class="tkin" maxlength="24" placeholder="e.g. 9A"></div></div>
+      <div class="setgrp"><div class="setlabel">Your email for results</div><input id="pcem" class="tkin" type="email" maxlength="80" value="${esc(LS.get(K_EMAIL,''))}" placeholder="e.g. firstname.lastname@education.wa.edu.au"></div>
+      <div class="setgrp"><div class="setchips"><button class="chip" id="pcps">Different questions for each student</button><button class="chip on" id="pcans">Show students their answer sheet when they finish</button><button class="chip" id="pcrf">Let students open the reference sheets</button></div>
+        <p class="sub" style="margin:6px 0 0" id="pcpsn">Every student gets the version you printed, so your answer key matches.</p></div>
+      <div class="controls"><button class="btn-check" id="pcgo">Create the link</button><button class="btn-ghost" id="pcback">Back to the test</button></div>`,true);
+    ['pcps','pcans','pcrf'].forEach(id=>document.getElementById(id).onclick=e=>{e.target.classList.toggle('on');if(id==='pcps')document.getElementById('pcpsn').textContent=e.target.classList.contains('on')?'Each student gets their own version of the same blueprint (same question types and marks, different notes).':'Every student gets the version you printed, so your answer key matches.';});
+    document.getElementById('pcback').onclick=()=>{if(A.customTests)A.customTests();};
+    document.getElementById('pcgo').onclick=async()=>{const em=document.getElementById('pcem').value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Check the email address');return;}LS.set(K_EMAIL,em);
+      const on=id=>document.getElementById(id).classList.contains('on');
+      const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti:document.getElementById('pcti').value.trim()||ct.ti,cl:document.getElementById('pccl').value.trim(),y:ct.y,tt:1,ct,sd:seed>>>0,sem:'',ps:on('pcps')?1:0,ans:on('pcans')?1:0,rf:on('pcrf')?1:0,h:0,pk:teacher().pub,s:[],at:Date.now()};
+      const code=await encodeTask(task);const th=(await sha(code)).slice(0,16);const list=LS.get(K_TASKS,[]);list.unshift({id:task.id,ti:task.ti,cl:task.cl,y:task.y,a:task.a,n:'test',at:task.at,code,th});LS.set(K_TASKS,list.slice(0,80));showTask(list[0]);};});};
   function showTask(t){const link=taskLink(t.code);
     modal(`<p class="prompt">${esc(t.ti)}${t.cl?' · '+esc(t.cl):''}</p>${tabsHtml('tasks')}
       <p class="sub">${t.n==='test'?'Test':t.n+' questions'} · Year ${t.y} · ${t.a==='theory'?'Theory Blitz':'Aural Blitz'}. Post the link in Connect (or Teams or email). Students click it, type their name and start. When they finish, they copy their result code into their Connect submission, and you paste the codes into <b>Results</b>.</p>
