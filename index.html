@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261102d">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261102e">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -241,11 +241,11 @@
   .sfpal{display:flex;gap:5px;flex-wrap:wrap} .sfpal button{border:1px solid var(--rule);background:#fff;border-radius:999px;padding:7px 13px;font-family:var(--serif);font-size:17px;font-weight:600;cursor:pointer;color:var(--ink)}
   .sfpal button:hover{border-color:var(--ink)}
   body.paper .solfarow{display:none}body.paper.testmode .solfarow{display:flex}
-body.testing #fb,body.testing .btn-ans,body.testing #names,body.testing .hearbtn{display:none!important}
+body.testing .btn-ans,body.testing .hearbtn,body.hidefb #fb,body.hidefb .btn-ans,body.hidefb #names,body.hidefb .hearbtn{display:none!important}
 body.todayset .btn-ans{display:none!important}
-body.testing #opts button.ok,body.testing #opts button.no{background:var(--paper,#fff)!important;color:inherit!important;border-color:var(--rule,#999)!important;box-shadow:none!important}
-body.testing #opts button.picked{background:#1b1a18!important;color:#fff!important;border-color:#1b1a18!important}
-body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.testing #dots .d.no{background:#555!important;border-color:#555!important}
+body.hidefb #opts button.ok,body.hidefb #opts button.no{background:var(--paper,#fff)!important;color:inherit!important;border-color:var(--rule,#999)!important;box-shadow:none!important}
+body.hidefb #opts button.picked{background:#1b1a18!important;color:#fff!important;border-color:#1b1a18!important}
+body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hidefb #dots .d.no{background:#555!important;border-color:#555!important}
 
   .tabs button .ring{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-left:6px}
   .tabs button .ring circle{fill:none;stroke-width:3}
@@ -317,20 +317,20 @@ body.testing .dots .d.ok,body.testing .dots .d.no,body.testing #dots .d.ok,body.
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261102d"></script>
-<script src="aural/samples.js?v=20261102d"></script>
-<script src="glyphs.js?v=20261102d"></script>
-<script src="theory.js?v=20261102d"></script>
-<script src="engrave.js?v=20261102d"></script>
-<script src="gen.js?v=20261102d"></script>
-<script src="refs.js?v=20261102d"></script>
-<script src="embed.js?v=20261102d"></script>
-<script src="qr.js?v=20261102d"></script>
-<script src="task.js?v=20261102d"></script>
-<script src="testkit.js?v=20261102d"></script>
-<script src="blitzui.js?v=20261102d"></script>
-<script>/*blitz-check*/(function(){var S="20261102d";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261102d",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261102e"></script>
+<script src="aural/samples.js?v=20261102e"></script>
+<script src="glyphs.js?v=20261102e"></script>
+<script src="theory.js?v=20261102e"></script>
+<script src="engrave.js?v=20261102e"></script>
+<script src="gen.js?v=20261102e"></script>
+<script src="refs.js?v=20261102e"></script>
+<script src="embed.js?v=20261102e"></script>
+<script src="qr.js?v=20261102e"></script>
+<script src="task.js?v=20261102e"></script>
+<script src="testkit.js?v=20261102e"></script>
+<script src="blitzui.js?v=20261102e"></script>
+<script>/*blitz-check*/(function(){var S="20261102e";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261102e",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -480,9 +480,9 @@ function testCover(){const y=testRun.y,CT=testRun.ct,t=testTMarks(),a=HAS_AURAL(
   return `<div class="tstcover">${TestKit.header(y,testRun.sem)}<div class="tstname">Name:<span>${esc(currentName||'')}</span></div>
     <p class="prompt" style="font-weight:700;font-size:17px">${esc(TestKit.title(y))}</p>
     <table><tr><th>Section</th><th>Questions</th><th>Marks</th></tr>${a?`<tr><td>Aural section</td><td>—</td><td>/${a}</td></tr>`:''}<tr><td>Theory section</td><td>${testGroups.length}</td><td>/${t}</td></tr><tr><th colspan="2">Total</th><th>/${a+t}</th></tr></table>
-    <ol class="sub" style="padding-left:20px"><li>Answer every question.${a?' The aural section comes first; press the track button to hear each excerpt.':''}</li><li>Your first answer to each question is the one that counts. Marks and correct answers are shown when you finish, not during the test.</li><li>Move with Prev, Next or the markers above the page; press <b>Finish test</b> when you are done.</li><li>${CT?'This test was set by your teacher.':'The test follows the Year '+y+' curriculum. A new test is different every time.'}</li></ol>
-    <div class="controls"><button class="btn-check" id="examgo">Start the test</button>${CT?'':'<button class="btn-ghost" id="examnew">New test</button>'}<button class="btn-ghost tstteach" id="tstteach">${CT?'Teacher: back to the builder':'Teacher: print or play this test'}</button></div></div>`;}
-const AURAL_TEST_SRC=(mode,key)=>{const ctq=testRun.ct?TestKit.ctEncode(testRun.ct):'';const qs='year='+testRun.y+'&seed='+testRun.seed+'&sem='+testRun.sem+(key?'&key=1':'')+(ctq?'&ct='+ctq:'');if(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partA)return {doc:EMBED_DOC.partA.replace('<head>','<head><script>window.__EMBED="'+mode+'";window.__EMBED_YEAR='+testRun.y+';window.__EMBED_SEED='+testRun.seed+';window.__EMBED_SEM="'+testRun.sem+'";window.__EMBED_KEY='+(key?1:0)+';window.__EMBED_CT="'+ctq+'";<\/script>')};return {src:'aural/index.html?embed='+mode+'&'+qs};};
+    <ol class="sub" style="padding-left:20px"><li>Answer every question.${a?' The aural section comes first; press the track button to hear each excerpt.':''}</li><li>Your first answer to each question is the one that counts. ${testRun.ck?'You see whether each answer is right straight after you answer it.':'Marks and correct answers are shown when you finish, not during the test.'}</li><li>Move with Prev, Next or the markers above the page; press <b>Finish test</b> when you are done.</li><li>${CT?'This test was set by your teacher.':'The test follows the Year '+y+' curriculum. A new test is different every time.'}</li></ol>
+    ${window.TaskKit&&TaskKit.run?'':`<div class="setchips" style="margin:6px 0"><button class="chip${testRun.ck?' on':''}" id="tstck">Check my answers as I go</button></div>`}<div class="controls"><button class="btn-check" id="examgo">Start the test</button>${CT?'':'<button class="btn-ghost" id="examnew">New test</button>'}<button class="btn-ghost tstteach" id="tstteach">${CT?'Teacher: back to the builder':'Teacher: print or play this test'}</button></div></div>`;}
+const AURAL_TEST_SRC=(mode,key)=>{const ctq=testRun.ct?TestKit.ctEncode(testRun.ct):'';const qs='year='+testRun.y+'&seed='+testRun.seed+'&sem='+testRun.sem+(key?'&key=1':'')+(ctq?'&ct='+ctq:'')+(testRun.ck?'&ck=1':'');if(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partA)return {doc:EMBED_DOC.partA.replace('<head>','<head><script>window.__EMBED="'+mode+'";window.__EMBED_YEAR='+testRun.y+';window.__EMBED_SEED='+testRun.seed+';window.__EMBED_SEM="'+testRun.sem+'";window.__EMBED_KEY='+(key?1:0)+';window.__EMBED_CT="'+ctq+'";window.__EMBED_CK='+(testRun.ck?1:0)+';<\/script>')};return {src:'aural/index.html?embed='+mode+'&'+qs};};
 function testTeacher(){if(testRun.ct){openCustomBuilder();return;}TaskKit.requireTeacher(()=>{const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<p class="prompt">Print or play this test</p>
   <p class="sub">Test code <b style="font-family:ui-monospace,Consolas,monospace">${testCode()}</b>. The same code always gives the same test, so keep it with your answer key. It is printed on the key, not on the students' paper.</p>
   <div class="setgrp"><div class="setlabel">Semester (for the heading)</div><div class="setchips"><button class="chip${testRun.sem==='One'?' on':''}" data-sem="One">Semester One</button><button class="chip${testRun.sem==='Two'?' on':''}" data-sem="Two">Semester Two</button></div></div>
@@ -598,7 +598,7 @@ function examStartCard(){const c=document.getElementById('card');document.getEle
   c.innerHTML=UNITS[ui].test?testCover():examCover();c.scrollTop=0;
   document.getElementById('examgo').onclick=startExam;
   (document.getElementById('examnew')||{}).onclick=()=>{if(UNITS[ui].test)testRun.seed=TestKit.newSeed();openUnit(true);};
-  const tt=document.getElementById('tstteach');if(tt)tt.onclick=testTeacher;}
+  const tt=document.getElementById('tstteach');if(tt)tt.onclick=testTeacher;const tc=document.getElementById('tstck');if(tc)tc.onclick=()=>{testRun.ck=testRun.ck?0:1;examStartCard();};}
 function finishExam(){if(UNITS[ui]&&UNITS[ui].test){finishTest();return;}const wasOn=examOn;examOn=false;clearInterval(examTick);const m=examMarks();const tot=m.reduce((a,x)=>a+x.got,0),max=m.reduce((a,x)=>a+(x.max||x.it.m),0);const pct=Math.round(tot/max*100);
   if(wasOn){logComplete({id:'exam',name:HAS_AURAL()&&!EMBED?'Exam · Section One':'Exam · Part B'},pct);if(PROF){PROF.exams=PROF.exams||[];PROF.exams.push({at:Date.now(),tot,max,year:+LEVEL(),theory:true});saveProfiles();}}
   if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'B',tot,max},'*');}catch(e){}}
@@ -677,7 +677,7 @@ function rankUp(name){const g=document.getElementById('guide');document.getEleme
   g.classList.add('open','rank');document.getElementById('gback').classList.add('open');burst('win',innerWidth/2,innerHeight/2,true);document.getElementById('rankok').onclick=()=>{g.classList.remove('rank');closeGuide();};}
 // ---- sounds on check (musical, mutable) ----
 let SFX=true;try{SFX=localStorage.getItem('blitzTheorySfx')!=='0';}catch(e){}
-function sfx(ok){if(!SFX||!window.AUDIO||TESTING())return;try{if(ok)AUDIO.progression([[53,60,65,69],[48,60,64,67]],0.38);else AUDIO.chord(0,[50,53,56,60],'block');}catch(e){}}
+function sfx(ok){if(!SFX||!window.AUDIO||HIDEFB())return;try{if(ok)AUDIO.progression([[53,60,65,69],[48,60,64,67]],0.38);else AUDIO.chord(0,[50,53,56,60],'block');}catch(e){}}
 function paintSfx(){const b=document.getElementById('sfxbtn');b.classList.toggle('off',!SFX);b.textContent=SFX?'🔔':'🔕';b.title=SFX?'Sounds on (tap to mute)':'Sounds off';}
 document.getElementById('sfxbtn').onclick=()=>{SFX=!SFX;try{localStorage.setItem('blitzTheorySfx',SFX?'1':'0');}catch(e){}paintSfx();};paintSfx();
 // ---- hear it: play what is on the stave (the shown example, your answer, or the correct answer) ----
@@ -724,7 +724,8 @@ function glowCard(){const c=document.getElementById('card');c.classList.remove('
 let toastT=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='';void t.offsetWidth;t.className='show';clearTimeout(toastT);toastT=setTimeout(()=>t.className='',Math.min(4200,1900+Math.max(0,msg.length-40)*28));}
 const TESTING=()=>!!(UNITS[ui]&&UNITS[ui].test&&examOn);
-function celebrate(ok,el){if(TESTING())return;if(ok){glowCard();burstAt(el,'win');}else{shakeCard();burstAt(el,'miss');}}
+const HIDEFB=()=>{if(TESTING())return !testRun.ck;const R=window.TaskKit&&TaskKit.run;return !!(R&&!R.task.tt&&UNITS[ui]&&UNITS[ui]===UNITS[TASKI()]&&!TaskKit.checkGo());};
+function celebrate(ok,el){if(HIDEFB())return;if(ok){glowCard();burstAt(el,'win');}else{shakeCard();burstAt(el,'miss');}}
 // ---------- avatar ----------
 // ---- avatar (v2 builder in blitzui.js) ----
 const AV={acc:['none','headphones','glasses','beanie','bow','crown']};
@@ -744,7 +745,7 @@ paintAvatar();
 function scoreOnce(ok){const k=qid();if(k in scored)return;try{const q1=curQ();if(q1&&q1._exam&&!q1._resp){const J=x=>x==null?null:JSON.parse(JSON.stringify(x));q1._resp={picked:q1._picked,p:q1.items?q1.items.map(x=>x&&x._p?J(x._p):null):null,ks:ksBuilt,ksp:J(q1._ksp),sel:[...document.querySelectorAll('#match select')].map(x=>x.value),sf:q1._sf?q1._sf.got.slice():null};}}catch(e){}scored[k]=ok;total++;if(window.BlitzUI&&!EMBED)try{BlitzUI.answered(currentName);}catch(e){}if(UNITS[ui]&&UNITS[ui].test){const q0=curQ();setTimeout(()=>{if(q0&&q0._lock===undefined)q0._lock=q0._frac;},0);} // a test keeps the first answer
   const us=uStat[ui]||(uStat[ui]={ans:0,cor:0});us.ans++;if(ok)us.cor++;
   const q=curQ();let bonus=0;
-  if(ok){correct++;streak++;bonus=(sprintOn||h2h)?0:(streak>=5?5:0);const mile=[5,10,15,20,25,30,40,50].includes(streak);if(mile&&!TESTING()){toast('🔥 '+streak+' in a row!');burst('win',innerWidth/2,120,true);}}
+  if(ok){correct++;streak++;bonus=(sprintOn||h2h)?0:(streak>=5?5:0);const mile=[5,10,15,20,25,30,40,50].includes(streak);if(mile&&!HIDEFB()){toast('🔥 '+streak+' in a row!');burst('win',innerWidth/2,120,true);}}
   else streak=0;
   lastBonus=bonus;
   if(h2h){const who=h2h.turn;if(ok)h2h.score[who]++;h2h.turn=1-who;setTimeout(h2hCheck,900);}
@@ -889,7 +890,7 @@ function showEmbed(key,top,bot,src,doc){const c=document.getElementById('card');
 function embedFrame(){const w=document.getElementById('embedwrap');return w?w.querySelector('iframe'):null;}
 (function(){const c=document.getElementById('card');if(!c||!window.MutationObserver)return;new MutationObserver(()=>{if(!c.firstChild)return;c.style.display='';const w=document.getElementById('embedwrap');if(w)w.style.display='none';}).observe(c,{childList:true});})();
 let EMBKEY=0;
-function load(){document.body.classList.toggle('testing',TESTING());document.body.classList.toggle('todayset',!!(UNITS[ui]&&UNITS[ui].id==='today'));const q=curQ();if(!q)return;
+function load(){document.body.classList.toggle('testing',TESTING());document.body.classList.toggle('hidefb',HIDEFB());document.body.classList.toggle('todayset',!!(UNITS[ui]&&UNITS[ui].id==='today'));const q=curQ();if(!q)return;
   if(q.t==='embed'&&UNITS[ui].test){renderTabs();renderDots();const c=document.getElementById('card');const S=AURAL_TEST_SRC('testA',false);
     showEmbed('T'+EMBKEY+':'+testRun.y+':'+testRun.seed,`${testBar(q)}<p class="sub">Work through the aural questions below and press <b>Finish test</b> inside the frame when done; the marks come back into this test.${embedRes.A?' <b>Finished: '+embedRes.A.tot+' / '+embedRes.A.max+'</b>':''}</p>
     `,`<div class="nav"><button id="prev" disabled>‹ Prev</button><span class="pos">${qi+1} / ${SETQ.length}</span><button id="next">Theory ›</button></div>`,S.src,S.src?'':S.doc);return;}
@@ -1027,7 +1028,7 @@ function checkNotate(){const q=curQ();if(q.sfOnly){const S=q._sf;if(!S)return;co
     need=Math.max(1,t.length);right=sigOk?need:Math.min(match,need-(pl.length>t.length?1:0));
     if(!sigOk){ksMsg=t.length?' '+T.sigWord(q.sigTarget)+': '+T.sigList(q.sigTarget)+'.'+(pl.length>t.length?' Too many accidentals.':pl.length<t.length?' Only '+pl.length+' of '+t.length+' placed.':' Check the order and the lines/spaces.'):' '+keyName0(q)+' has no sharps or flats — the signature should be empty.';}}
   q._frac=(need+(q.keysigEdit?1:0))?((right+(q.keysigEdit&&sigOk?1:0))/(need+(q.keysigEdit?1:0))):(allOk?1:0);
-  nchecked=!TESTING();q._checked=true;drawStave();scoreOnce(allOk);celebrate(allOk,document.getElementById('sw'));{const ha=document.getElementById('hearans');if(ha)ha.disabled=false;}
+  nchecked=!HIDEFB();q._checked=true;drawStave();scoreOnce(allOk);celebrate(allOk,document.getElementById('sw'));{const ha=document.getElementById('hearans');if(ha)ha.disabled=false;}
   if(allOk){feedback(pick(WINMSG)+(q.ksPlace?' Key signature correct.':need?' All '+need+' right.':' Key signature correct.')+bonusTag(),'ok',q.why);results[qid()]='ok';}
   else{let m=pick(MISSMSG)+(need?' '+right+' / '+need+' correct.':'');if(empty)m+=' '+empty+' empty.';if(!sigOk&&q.keysigEdit)m+=' Key signature should be '+T.sigWord(q.sigTarget)+'.';
     if(ksMsg)m+=ksMsg;
@@ -1116,7 +1117,7 @@ function closeGuide(){document.getElementById('guide').classList.remove('open');
 document.getElementById('gclose').onclick=closeGuide;document.getElementById('gback').onclick=closeGuide;
 loadGensel();loadProfile();paintLevel();paintScore();ui=2;if(!unitOn(ui))ui=firstUnit();openUnit();if(FIRSTRUN&&!EMBED){if(currentName)askYear();else window.PENDING_YEAR=true;}try{if(window.AUDIO&&AUDIO.preloadPiano)AUDIO.preloadPiano();}catch(e){}
 if(EMBED==='partB'){document.body.classList.add('embed');const yr=String(Math.max(11,Math.min(12,EMBED_YEAR||11)));GEN.setLevel(yr);paintLevel();ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
-else if(EMBED==='testB'||EMBED==='printB'){document.body.classList.add('embed');closeGuide();const ctE=TestKit.ctDecode(EMBED_P('ct',''));const yr=String(ctE?ctE.y:Math.max(7,Math.min(10,+EMBED_YEAR||7)));GEN.setLevel(yr);paintLevel();testRun={y:+yr,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two'),ct:ctE};ctSync();ui=UNITS.indexOf(TEST);
+else if(EMBED==='testB'||EMBED==='printB'){document.body.classList.add('embed');closeGuide();const ctE=TestKit.ctDecode(EMBED_P('ct',''));const yr=String(ctE?ctE.y:Math.max(7,Math.min(10,+EMBED_YEAR||7)));GEN.setLevel(yr);paintLevel();testRun={y:+yr,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two'),ct:ctE,ck:+EMBED_P('ck',0)?1:0};ctSync();ui=UNITS.indexOf(TEST);
   if(EMBED==='testB'){openUnit();startExam();}
   else{buildExamPlan();testSetq();try{parent.postMessage({type:'blitz-test-print',part:'B',html:testPaperB(+EMBED_P('key',0)===1),marks:testTMarks()},'*');}catch(e){}}}
 else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));}
@@ -1129,8 +1130,9 @@ TaskKit.init({app:'theory',label:'Theory Blitz',years:[7,8,9,10,11,12],test:true
   year:()=>+LEVEL(),getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_AURAL_DIR!=='undefined'&&HAS_AURAL_DIR&&/^https?:/.test(location.protocol))?'aural/index.html':'',
   setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();paintScore();},
   answerSheet:()=>openAnswerSheet(),openRef:()=>openTestRef(),customTests:()=>openCustomBuilder(),start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
+    {const ps=[UNITS[TASKI()].id+'.',TEST.id+'.'];[scored,results].forEach(o=>Object.keys(o).forEach(k=>{if(ps.some(p=>k.startsWith(p)))delete o[k];}));}
     if(!taskPrev)taskPrev={ui,set:JSON.parse(JSON.stringify(GEN.getSet())),gs:JSON.parse(JSON.stringify(GENSEL||{}))};
-    GEN.setLevel(String(run.task.y));if(run.task.tt){GENSEL={};GEN.setGensel(GENSEL);paintLevel();const ct=run.task.ct?TestKit.ctDecode(run.task.ct):null;testRun={y:run.task.y,sem:ct?'':(run.task.sem||TestKit.semester()),seed:TaskKit.testSeed(),ct};ctSync();ui=UNITS.indexOf(TEST);SETQ=[];setMode('practise');taskTestSync();return;}
+    GEN.setLevel(String(run.task.y));if(run.task.tt){GENSEL={};GEN.setGensel(GENSEL);paintLevel();const ct=run.task.ct?TestKit.ctDecode(run.task.ct):null;testRun={y:run.task.y,sem:ct?'':(run.task.sem||TestKit.semester()),seed:TaskKit.testSeed(),ct,ck:TaskKit.checkGo()?1:0};ctSync();ui=UNITS.indexOf(TEST);SETQ=[];setMode('practise');taskTestSync();return;}
     if(run.task.g&&run.task.g.set)GEN.applySet(run.task.g.set);GENSEL=(run.task.g&&run.task.g.gs)||{};GEN.setGensel(GENSEL);paintLevel();ui=TASKI();SETQ=[];setMode('practise');},
   exit:()=>{setTimeout(()=>{if(window.BlitzUI)BlitzUI.showHome(true);},0);const pv=taskPrev;taskPrev=null;if(pv){GEN.setLevel(String(pv.set.level));GEN.applySet(pv.set);GENSEL=pv.gs;GEN.setGensel(GENSEL);}paintLevel();ui=pv&&pv.ui!==TASKI()?pv.ui:firstUnit();testRun={y:0,sem:'',seed:0};ctSync();SETQ=[];setMode('practise');}});
 document.getElementById('taskbtn').onclick=()=>TaskKit.openStudentEntry();

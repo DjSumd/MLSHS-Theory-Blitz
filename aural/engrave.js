@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261102d";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261102e";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -374,7 +374,8 @@
     const flagPath=(sx,sy,up,col)=>{ const k=up?1:-1;
       return `<path d="M${sx.toFixed(1)},${sy.toFixed(1)} c0,${(k*SS*1.0).toFixed(1)} ${(SS*1.15).toFixed(1)},${(k*SS*0.95).toFixed(1)} ${(SS*0.95).toFixed(1)},${(k*SS*2.35).toFixed(1)} c${(SS*0.15).toFixed(1)},${(k*-SS*1.0).toFixed(1)} ${(-SS*0.25).toFixed(1)},${(k*-SS*1.55).toFixed(1)} ${(-SS*0.95).toFixed(1)},${(k*-SS*1.75).toFixed(1)} z" fill="${col}"/>`; };
     notes.forEach((n,i)=>{ const si=sysOf[i], oy=si*sysH, x=xs[i], col=headCol(n); ys[i]=oy+yOf(top,dd[i]);
-      if(n.rest){E.push(restEl(n,i,oy)); if(isDotted(n.dur)&&n.dur<1){} return;}
+      if(n.rest){E.push(restEl(n,i,oy)); if(n.clearable){const cyc=oy+TOPK*SS+4*SS+SS*1.75;
+        E.push(`<g class="sclr" data-i="${i}"><circle cx="${x.toFixed(1)}" cy="${cyc.toFixed(1)}" r="${(SS*0.55).toFixed(1)}" fill="var(--paper)" stroke="var(--rule)"/><text x="${x.toFixed(1)}" y="${(cyc+SS*0.22).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);track(cyc+SS*0.9);} return;}
       const empty=(n.state==='empty'), d=dd[i], y=ys[i];
       if(empty){ // placeholder: dashed head on the middle line, but the rhythm (stem/flag/beam) is shown
         E.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" transform="rotate(-18 ${x.toFixed(1)} ${y.toFixed(1)})" fill="none" stroke="#b9b3a6" stroke-width="1.2" stroke-dasharray="3 2"/>`);

@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261102d";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261102e";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -348,14 +348,14 @@ var UNITS=[
  {name:'Texture', key:'tex', ask:'Listen — what texture?',
   guide:`<p class="prompt">Texture</p><ul><li><b>Unison / monophonic</b>: everyone plays the same tune (even in octaves) — one line.</li>
    <li><b>Homophonic</b>: a melody with accompaniment (chords or a bass line) underneath.</li>
-   <li>Year 8: a <b>counter-melody</b> or descant — a second tune that goes along with the first. Year 9: <b>polyphonic</b> — several independent tunes at once.</li></ul>`,
+   <li>Year 8: a <b>counter-melody</b> or descant — a second tune that goes along with the first. Year 9: <b>polyphonic</b> — three or more independent tunes at once, often entering one after another.</li></ul>`,
   cfg:[ G('texs','Textures',[Y('Unison / monophonic','Unison / monophonic',7),Y('Melody and accompaniment (homophonic)','Melody and accompaniment (homophonic)',7),Y('Melody with a counter-melody','Melody with a counter-melody',8),Y('Polyphonic','Polyphonic',9)]) ],
   gen(ctx){const texs=ctx.cfg('texs'),id=A_pick(texs),isMin=Math.random()<0.35,root=A_root(57,64),steps=isMin?MINH:MAJ;let play,sub='';
     if(id==='Unison / monophonic'){const ex=TUNE(root+12,steps,12);const v=A_pick(['solo','oct']);play=v==='solo'?()=>AUDIO.melody(ex.mids,ex.durs,0.4):()=>AUDIO.lines([{mids:ex.mids,durs:ex.durs,offset:0,amp:1},{mids:ex.mids.map(m=>m-12),durs:ex.durs,offset:0,amp:0.8}],0.4);sub=v==='solo'?'one tune on its own.':'one tune doubled in octaves — still a single line.';}
     else if(id==='Melody and accompaniment (homophonic)'){const seq=genProgression(isMin?PROGSET.Minor:PROGSET.Major,6);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,steps);const st=A_pick(['block','broken']);play=()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.42,2,st);sub='a tune on top with '+(st==='broken'?'broken-chord':'block-chord')+' accompaniment underneath.';}
     else if(id==='Melody with a counter-melody'){const seq=genProgression(isMin?PROGSET.Minor:PROGSET.Major,6);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,steps);const cm=chordMelody(prog,2,root-12,steps);cm.durs=cm.durs.map(d=>d<1?1:d);
       play=()=>AUDIO.lines([{mids:mel.mids,durs:mel.durs,offset:0,amp:1},{mids:cm.mids.map(m=>m),durs:cm.durs,offset:0,amp:0.75}],0.42);sub='the main tune with a second, slower tune (a counter-melody) running underneath it.';}
-    else {const subj=TUNE(root+12,steps,8);const cont=outlineMelody(root+12,steps.concat([12]),7,true);const v1={mids:subj.mids.concat(cont.mids),durs:subj.durs.concat(cont.durs),offset:0,amp:1};const ans={mids:subj.mids.map(m=>m-5).concat(cont.mids.map(m=>m-5)),durs:subj.durs.concat(cont.durs),offset:2,amp:0.9};play=()=>AUDIO.lines([v1,ans],0.4);sub='two independent tunes — the second copies the first a little later (imitation).';}
+    else {const subj=TUNE(root+12,steps,8);const cont=outlineMelody(root+12,steps.concat([12]),7,true);const v1={mids:subj.mids.concat(cont.mids),durs:subj.durs.concat(cont.durs),offset:0,amp:1};const vx=(sh,off,amp)=>({mids:v1.mids.map(m=>m+sh),durs:v1.durs.slice(),offset:off,amp});const nv=Math.random()<0.35?4:3;const vs=[v1,vx(-5,2,0.9),vx(-12,4,0.85)];if(nv===4)vs.push(vx(-17,6,0.8));play=()=>AUDIO.lines(vs,0.4);sub=(nv===4?'four':'three')+' independent tunes — each new voice enters with the same tune a little later (imitation), so they overlap.';}
     return {kind:'choice',options:A_keep(texs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${sub}`};}},
 
  {name:'Form', key:'form', ask:'Listen — what is the form?',

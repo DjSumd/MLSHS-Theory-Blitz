@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261102d";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261102e";
 // refs.js — reference tabs for Aural Blitz Years 7–12.
 const _tbl=(heads,rows)=>`<div class="reftable"><table><tr>${heads.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
 const _y=y=>`<span class="ytag">Y${y}</span>`;
@@ -57,7 +57,7 @@ function refChords(){
 }
 function refTextureForm(){
   return `<p class="prompt">Texture, form &amp; devices</p>
-   ${_tbl(['Texture','What you hear','Year'],[['Unison / monophonic','everyone plays the one tune (even in octaves)',_y(7)],['Homophonic','a tune with accompaniment (chords, bass) underneath',_y(7)],['Counter-melody / descant','a second tune running with the first',_y(8)],['Polyphonic','several independent tunes at once',_y(9)]])}
+   ${_tbl(['Texture','What you hear','Year'],[['Unison / monophonic','everyone plays the one tune (even in octaves)',_y(7)],['Homophonic','a tune with accompaniment (chords, bass) underneath',_y(7)],['Counter-melody / descant','a second tune running with the first',_y(8)],['Polyphonic','three or more independent tunes at once',_y(9)]])}
    <div class="refhd">Form</div>
    ${_tbl(['Form','Plan','Year'],[['Repetition and contrast','the same idea again (repetition) or something new (contrast)',_y(7)],['Call and response','a short phrase answered by another',_y(7)],['Binary','A B',_y(7)],['Ternary','A B A',_y(7)],['Verse–chorus','V C V C — the chorus is the hook',_y(7)],['Rondo','A B A C A',_y(7)],['Intro / outro, bridge, hook','the extras around the verses and choruses',_y(8)],['12-bar blues','I I I I · IV IV I I · V IV I I',_y(8)],['Theme and variations','A A¹ A² — the tune keeps its shape but changes dress',_y(8)],['Through-composed','A B C D — nothing returns',_y(10)],['Strophic','A A A — the same music for every verse',_y(10)]])}
    <div class="refhd">Devices</div>
