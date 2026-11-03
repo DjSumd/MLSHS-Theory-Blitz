@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261103a">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261103d">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -317,20 +317,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261103a"></script>
-<script src="aural/samples.js?v=20261103a"></script>
-<script src="glyphs.js?v=20261103a"></script>
-<script src="theory.js?v=20261103a"></script>
-<script src="engrave.js?v=20261103a"></script>
-<script src="gen.js?v=20261103a"></script>
-<script src="refs.js?v=20261103a"></script>
-<script src="embed.js?v=20261103a"></script>
-<script src="qr.js?v=20261103a"></script>
-<script src="task.js?v=20261103a"></script>
-<script src="testkit.js?v=20261103a"></script>
-<script src="blitzui.js?v=20261103a"></script>
-<script>/*blitz-check*/(function(){var S="20261103a";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103a",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261103d"></script>
+<script src="aural/samples.js?v=20261103d"></script>
+<script src="glyphs.js?v=20261103d"></script>
+<script src="theory.js?v=20261103d"></script>
+<script src="engrave.js?v=20261103d"></script>
+<script src="gen.js?v=20261103d"></script>
+<script src="refs.js?v=20261103d"></script>
+<script src="embed.js?v=20261103d"></script>
+<script src="qr.js?v=20261103d"></script>
+<script src="task.js?v=20261103d"></script>
+<script src="testkit.js?v=20261103d"></script>
+<script src="blitzui.js?v=20261103d"></script>
+<script>/*blitz-check*/(function(){var S="20261103d";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103d",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -426,7 +426,9 @@ const testTMarks=()=>testGroups.reduce((a,g)=>a+g.marks,0);
 function ctTheoryGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('T',k);const O=(b,k)=>TestKit.opt(Object.assign({sec:'T'},b),k);
   const keyStr=p=>p.l+(p.a>0?'#':p.a<0?'b':'');const KN=s=>TestKit.prettyKey(s);
   ct.T.forEach(b=>{const d=D(b.k);if(!d)return;const cnt=b.n||d.n||1,m=b.m;const title=b.t||d.title;let text='',items=[],grp=null;
-    const IT=(g,mm,ov,sf)=>({g,m:mm,ov:ov||null,sf:sf||0});const rep=(g,ov)=>Array.from({length:cnt},()=>IT(g,m,ov));const alt=(a,c)=>Array.from({length:cnt},(_,k)=>IT(k%2?c:a,m));
+    const SO={};d.opts.filter(od=>od.set).forEach(od=>{const v=b.o&&b.o[od.key];if(od.type==='multi'){if(Array.isArray(v)&&v.length)SO[od.set]=od.num?v.map(Number):v.slice();}else if(v!==undefined&&v!==null&&v!==''){SO[od.set]=od.kind==='bool'?v==='yes':od.kind==='num'?+v:v;}});
+    if(b.k==='tq')SO.upTo=12;const HAS=Object.keys(SO).length>0;
+    const IT=(g,mm,ov,sf)=>({g,m:mm,ov:(ov||HAS)?Object.assign({},SO,ov||{}):null,sf:sf||0});const rep=(g,ov)=>Array.from({length:cnt},()=>IT(g,m,ov));const alt=(a,c)=>Array.from({length:cnt},(_,k)=>IT(k%2?c:a,m));
     if(b.k==='ksgrid'){const giv=O(b,'given');const per=giv==='none'?16:8;text='Complete the key signature grids below: the '+(O(b,'sides').length>1?'sharp and flat keys':O(b,'sides')[0]+' keys')+', major and minor.';items=O(b,'sides').map(s=>IT('keySigGridQ',Math.round(per*m*4)/4,{ct:{side:s,given:giv}}));}
     else if(b.k==='kswrite'){const clef=O(b,'clef'),names=O(b,'names');let keys=O(b,'keys');const max=(GEN.DEFAULTS[String(y)]||GEN.DEFAULTS['9']).keysMax;
       const pool=T.majorKeys(max).map(keyStr).sort(()=>Math.random()-0.5);const pick=Array.from({length:cnt},(_,k)=>keys.length?keys[k%keys.length]:pool[k%pool.length]);
@@ -436,7 +438,7 @@ function ctTheoryGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('T',k);co
     else if(b.k==='transp'){text='Transpose the melody into the new key. Write the new key signature, then every note.';items=[IT('transposeKeyQ',m,{ct:{from:O(b,'from'),iv:O(b,'iv'),metre:O(b,'metre'),bars:O(b,'bars'),clef:O(b,'clef')}})];}
     else if(b.k==='keymel'){text='Choose the correct key for each melody.';items=rep('keyMelodyQ',{ct:{types:O(b,'types'),clef:O(b,'clef')}});}
     else if(b.k==='ivkey'){const t=O(b,'tonic');text='The root note of these intervals is '+KN(t)+', and the key signature is that of '+KN(t)+' major. If the top note is in '+KN(t)+' major, the interval is major or perfect. If the top note is one semitone lower than the major interval, it is a minor interval. Bar 1 is an example: a perfect octave.';
-      grp={make:'ivkey',ov:{ct:{tonic:t,q:O(b,'q'),n:cnt}},mEach:m,marks:cnt*m};}
+      grp={make:'ivkey',ov:Object.assign({},SO,{ct:{tonic:t,q:O(b,'q'),n:cnt}}),mEach:m,marks:cnt*m};}
     else if(b.k==='ivmel'){text='Name each bracketed interval in the melody below.';grp={make:'ivmel',ov:{ct:{clef:O(b,'clef'),n:cnt}},mEach:m,marks:cnt*m};}
     else if(b.k==='ivname'){text='Name each interval.';items=rep('nameIntervalQ');}
     else if(b.k==='ivwrite'){text='Notate the missing note of each interval.';items=rep('notateIntervalQ');}
@@ -450,6 +452,9 @@ function ctTheoryGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('T',k);co
     else if(b.k==='values'){text='Answer each question about note and rest values.';items=alt('valueQ','restQ');}
     else if(b.k==='terms'){text='Answer each question about musical terms and signs.';items=alt('termQ','artSymbolQ');}
     else if(b.k==='harm'){text='Answer the harmony questions.';items=alt('romanQ','cadenceIdQ');}
+    else if(b.k==='tq'){const gn=O(b,'gen');const lab=((TestKit.TQ||[]).find(x=>x[0]===gn)||[gn,'Answer each question'])[1];text=lab+': answer each question.';items=rep(gn);}
+    else if(b.k==='study'){text='Study the melody below and answer the questions.';grp={make:'study',ov:HAS?SO:null,mTot:m,marks:m};}
+    else if(b.k==='visual'){text='Look at the score below and answer the questions.';grp={make:'visual',ov:HAS?SO:null,mTot:m,marks:m};}
     const tx=b.x?esc(b.x):text;
     if(grp)out.push(Object.assign({title,text:tx,items:[]},grp));else if(items.length)out.push({title,text:tx,items,marks:Math.round(items.reduce((a,x)=>a+x.m,0)*4)/4});});
   return out;}
@@ -465,7 +470,7 @@ function withTestLevel(fn){const keep=JSON.parse(JSON.stringify(GEN.getSet())),k
 function ctSync(){TestKit.ctTitle=testRun.ct?testRun.ct.ti:null;}
 function buildTestPlan(){const CT=testRun.ct;const y=CT?CT.y:Math.max(7,Math.min(10,+LEVEL()));if(!testRun.seed)testRun.seed=TestKit.newSeed();testRun.y=y;testRun.sem=testRun.sem||(CT?'':TestKit.semester());ctSync();
   for(const k in embedRes)delete embedRes[k];testGroups=withSeed((testRun.seed*3+1)>>>0,()=>CT?ctTheoryGroups(CT,y):testTheoryGroups(y));examPlan=[];
-  testGroups.forEach((g,gi)=>{if(!g.make)return;g.st=withTestLevel(()=>{if(g.ov)GEN.applySet(g.ov);return withSeed((testRun.seed*977+gi*31)>>>0,()=>GEN.makeStudy(g.make));});g.items=GEN.studyItems(g.st).map(([part,m,sf])=>({g:'study:'+part,m:g.mEach||m,sf}));if(g.mEach)g.marks=g.items.reduce((a,x)=>a+x.m,0);});
+  testGroups.forEach((g,gi)=>{if(!g.make)return;g.st=withTestLevel(()=>{if(g.ov)GEN.applySet(g.ov);return withSeed((testRun.seed*977+gi*31)>>>0,()=>GEN.makeStudy(g.make));});g.items=GEN.studyItems(g.st).map(([part,m,sf])=>({g:'study:'+part,m:g.mEach||m,sf}));if(g.mEach)g.marks=g.items.reduce((a,x)=>a+x.m,0);if(g.mTot){const tot=g.items.reduce((a,x)=>a+x.m,0);if(tot>0)g.items.forEach(x=>x.m=Math.round(x.m*g.mTot/tot*4)/4);g.marks=g.items.reduce((a,x)=>a+x.m,0);}});
   if(!EMBED&&HAS_AURAL()&&(!CT||CT.A.length))examPlan.push({n:'A',t:'Aural section',m:CT?TestKit.ctMarks(CT,'A'):TEST_AURAL_MARKS[y],embed:'A'});
   testGroups.forEach((g,gi)=>g.items.forEach((it,k)=>examPlan.push({n:gi+1,gi,gl:TestKit.letter(gi),gt:g.title,gx:g.text,gm:g.marks,t:g.title,sub:k,subn:g.items.length,g:it.g,m:it.m,sf:it.sf,ov:it.ov||null,test:true})));}
 function testGen(it,pos){if(String(it.g).startsWith('study:')){const st=testGroups[it.gi].st;const q=withTestLevel(()=>withSeed((testRun.seed*31+pos*7919)>>>0,()=>GEN.studyQ(it.g.slice(6),st)));q.unit='pitch';q.gen=it.g;q._exam=it;return q;}
@@ -486,12 +491,13 @@ const AURAL_TEST_SRC=(mode,key)=>{const ctq=testRun.ct?TestKit.ctEncode(testRun.
 function testTeacher(){if(testRun.ct){openCustomBuilder();return;}TaskKit.requireTeacher(()=>{const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<p class="prompt">Print or play this test</p>
   <p class="sub">Test code <b style="font-family:ui-monospace,Consolas,monospace">${testCode()}</b>. The same code always gives the same test, so keep it with your answer key. It is printed on the key, not on the students' paper.</p>
   <div class="setgrp"><div class="setlabel">Semester (for the heading)</div><div class="setchips"><button class="chip${testRun.sem==='One'?' on':''}" data-sem="One">Semester One</button><button class="chip${testRun.sem==='Two'?' on':''}" data-sem="Two">Semester Two</button></div></div>
-  <div class="controls"><button class="btn-check" id="tstprint">Print the test</button><button class="btn-ghost" id="tstkey">Print the answer key</button>${HAS_AURAL()?'<button class="btn-ghost" id="tsttracks">Play the tracks</button>':''}<button class="btn-ghost" id="tstct">Build a custom test…</button></div>
+  <div class="controls"><button class="btn-check" id="tstprint">Print the test</button><button class="btn-ghost" id="tstkey">Print the answer key</button>${HAS_AURAL()?'<button class="btn-ghost" id="tsttracks">Play the tracks</button>':''}<button class="btn-ghost" id="tstedit">Edit this test (change any question)…</button><button class="btn-ghost" id="tstct">Build a custom test…</button></div>
   <div class="setgrp"><div class="setlabel">Open another test code</div><div style="display:flex;gap:8px"><input id="tstcode" class="tkin" style="max-width:180px;text-transform:uppercase" placeholder="e.g. Y9S2-K3F7Q"><button class="btn-ghost" id="tstopen">Open</button></div></div>`;
   g.classList.add('open');document.getElementById('gback').classList.add('open');
   g.querySelectorAll('[data-sem]').forEach(b=>b.onclick=()=>{testRun.sem=b.dataset.sem;closeGuide();examStartCard();testTeacher();});
   document.getElementById('tstprint').onclick=()=>testPrint(false);document.getElementById('tstkey').onclick=()=>testPrint(true);
   const tr=document.getElementById('tsttracks');if(tr)tr.onclick=()=>{closeGuide();testTracks();};document.getElementById('tstct').onclick=()=>{closeGuide();openCustomBuilder();};
+  document.getElementById('tstedit').onclick=()=>{closeGuide();TaskKit.requireTeacher(()=>TestKit.openPreset(ctHost(),'y'+Math.max(7,Math.min(10,testRun.y||+LEVEL()))+'test'));};
   document.getElementById('tstopen').onclick=()=>{const p=TestKit.parse(document.getElementById('tstcode').value);if(!p){toast('That isn\'t a test code');return;}if(String(p.y)!==LEVEL())setLevelUI(String(p.y),true);testRun={y:p.y,seed:p.seed,sem:p.sem};closeGuide();openUnit(true);toast('Test '+testCode()+' opened');};});}
 function testTracks(){const c=document.getElementById('card');document.getElementById('dots').innerHTML='';const S=AURAL_TEST_SRC('tracksA',false);
   c.innerHTML=`${TestKit.header(testRun.y,testRun.sem)}<iframe class="embedframe" id="tracksframe" ${S.src?`src="${S.src}"`:''} allow="autoplay" style="height:min(70vh,760px)"></iframe><div class="controls"><button class="btn-ghost" id="tstback">Back to the test</button></div>`;
@@ -593,12 +599,12 @@ function examCover(){const full=HAS_AURAL()&&!EMBED;const totB=examPlan.filter(x
     ${full?`<tr><td colspan="4" style="text-align:right;font-weight:700">Total</td><td>${totB+60}</td><td>55</td></tr>`:''}</table>
     <p class="fn">Section Two (Cultural and contextual knowledge, 45%) is not part of this practice paper. Marks are awarded in proportion to what is correct, as in the marking key.</p>
     <h3>Instructions to candidates</h3><ol><li>Answer all questions in the spaces provided on screen. Check each answer as you go, or move on and come back.</li>${full?'<li>Press the track button to hear each aural excerpt. You may replay tracks as often as you like in practice.</li>':''}<li>Move between parts with Prev, Next or the markers above the page. Press <b>Finish exam</b> when you have answered every part; the paper is marked immediately and logged to the class record.</li><li>A new paper is generated every time, following the Year ${LEVEL()} syllabus.</li></ol>
-    <div class="controls"><button class="btn-check" id="examgo">Start the examination</button><button class="btn-ghost" id="examnew">New paper</button></div></div>`;}
+    <div class="controls"><button class="btn-check" id="examgo">Start the examination</button><button class="btn-ghost" id="examnew">New paper</button><button class="btn-ghost tstteach" id="exedit">Teacher: edit this exam</button></div></div>`;}
 function examStartCard(){const c=document.getElementById('card');document.getElementById('dots').innerHTML='';renderTabs();document.documentElement.style.setProperty('--accent','#b2862f');
   c.innerHTML=UNITS[ui].test?testCover():examCover();c.scrollTop=0;
   document.getElementById('examgo').onclick=startExam;
   (document.getElementById('examnew')||{}).onclick=()=>{if(UNITS[ui].test)testRun.seed=TestKit.newSeed();openUnit(true);};
-  const tt=document.getElementById('tstteach');if(tt)tt.onclick=testTeacher;const tc=document.getElementById('tstck');if(tc)tc.onclick=()=>{testRun.ck=testRun.ck?0:1;examStartCard();};}
+  const ee=document.getElementById('exedit');if(ee)ee.onclick=()=>TaskKit.requireTeacher(()=>TestKit.openPreset(ctHost(),'atarex'));const tt=document.getElementById('tstteach');if(tt)tt.onclick=testTeacher;const tc=document.getElementById('tstck');if(tc)tc.onclick=()=>{testRun.ck=testRun.ck?0:1;examStartCard();};}
 function finishExam(){if(UNITS[ui]&&UNITS[ui].test){finishTest();return;}const wasOn=examOn;examOn=false;clearInterval(examTick);const m=examMarks();const tot=m.reduce((a,x)=>a+x.got,0),max=m.reduce((a,x)=>a+(x.max||x.it.m),0);const pct=Math.round(tot/max*100);
   if(wasOn){logComplete({id:'exam',name:HAS_AURAL()&&!EMBED?'Exam · Section One':'Exam · Part B'},pct);if(PROF){PROF.exams=PROF.exams||[];PROF.exams.push({at:Date.now(),tot,max,year:+LEVEL(),theory:true});saveProfiles();}}
   if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'B',tot,max},'*');}catch(e){}}
@@ -1129,6 +1135,11 @@ TaskKit.init({app:'theory',label:'Theory Blitz',years:[7,8,9,10,11,12],test:true
   snapshot:()=>{const st=JSON.parse(JSON.stringify(GEN.getSet()));delete st.level;return {global:{set:st,gs:JSON.parse(JSON.stringify(GENSEL||{}))}};},
   year:()=>+LEVEL(),getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_AURAL_DIR!=='undefined'&&HAS_AURAL_DIR&&/^https?:/.test(location.protocol))?'aural/index.html':'',
   setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;LS.set('name',v);loadProfile();paintScore();},
+  secPanel:(k,ty)=>{const u=GEN.UNITS.find(x=>x.id===k)||UNITS.find(x=>x.id===k);if(!u||!u.gens)return '<p class="sub">This section has no settings.</p>';const cur=GEN.getSet();
+    return `<div class="setgrp"><div class="setlabel">Question types</div><div class="setchips">${u.gens.map(([fn,w,yr])=>`<button class="chip${genOnNow(fn,yr)?' on':''}" data-g="${fn.name}">${GEN_LABELS[fn.name]||fn.name}${ytag(yr)}</button>`).join('')}</div></div>`+groupsHtml(cur,UNIT_KEYS[k]||[]);},
+  secWire:el=>wireChips(el),
+  secRead:(k,el)=>{const u=GEN.UNITS.find(x=>x.id===k)||UNITS.find(x=>x.id===k);const gs={};(u&&u.gens||[]).forEach(([fn])=>{const c=el.querySelector(`.chip[data-g="${fn.name}"]`);if(c)gs[fn.name]=c.classList.contains('on');});return {set:readGroups(el),gs};},
+  secMerge:(g,list)=>{list.forEach(e=>{if(!e)return;Object.assign(g.set,e.set||{});g.gs=Object.assign({},g.gs||{},e.gs||{});});},
   answerSheet:()=>openAnswerSheet(),openRef:()=>openTestRef(),customTests:()=>openCustomBuilder(),start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);
     {const ps=[UNITS[TASKI()].id+'.',TEST.id+'.'];[scored,results].forEach(o=>Object.keys(o).forEach(k=>{if(ps.some(p=>k.startsWith(p)))delete o[k];}));}
     if(!taskPrev)taskPrev={ui,set:JSON.parse(JSON.stringify(GEN.getSet())),gs:JSON.parse(JSON.stringify(GENSEL||{}))};

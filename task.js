@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261103a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["task.js"]="20261103d";
 // task.js — Class tasks for Aural Blitz and Theory Blitz (shared, identical in both apps).
 // A teacher builds a task (sections, counts, settings) and shares it as a link / QR / code.
 // Students complete it in a locked mode. The result is a sealed receipt: compressed JSON encrypted
@@ -197,7 +197,7 @@
   function builder(){const secs=A.sections();const yrs=A.years;const y=A.year();
     modal(`<p class="prompt">Set a class task — ${esc(A.label)}</p>${tabsHtml('new')}
       ${A.test||A.customTests?`<div class="setgrp"><div class="setlabel">Task type</div><div class="setchips"><button class="chip on" data-ty="sec">Practice sections</button>${A.test?'<button class="chip" data-ty="test">Test (Years 7–10, aural and theory)</button>':''}${A.customTests?'<button class="chip" data-ty="ct">Custom test</button>':''}</div></div>`:''}
-      <p class="sub" id="tksecnote">Each section uses the settings in its own ⚙ Customise on this device (set those first). Students can't change anything once they start.</p>
+      <p class="sub" id="tksecnote">${A.secPanel?'Tap ⚙ on a section to choose its settings for this task (scales, time signatures, question types…). Sections you leave alone use your ⚙ Customise settings on this device.':'Each section uses the settings in its own ⚙ Customise on this device (set those first).'} Students can't change anything once they start.</p>
       <p class="sub" id="tktestnote" style="display:none">Students sit the Year test on their own device with headphones: the aural section plays on their device and the theory section follows on the same page. The test is marked like the printed test (marks per question), and the sealed result comes back to you as usual.</p>
       <div class="tkgrid"><div class="setgrp"><div class="setlabel">Title</div><input id="tkti" class="tkin" maxlength="60" placeholder="e.g. Intervals and melodic dictation"></div>
         <div class="setgrp"><div class="setlabel">Class</div><input id="tkcl" class="tkin" maxlength="24" placeholder="e.g. 8B"></div>
@@ -208,13 +208,15 @@
       <div class="tksecs tksecbits">${secs.map(s=>`<div class="tksec" data-u="${s.key}"><span class="nm">${esc(s.name)}</span>
         ${s.notate?`<select class="tkm"><option value="choice">Listen &amp; pick</option><option value="notate">Listen &amp; write</option></select>`:''}
         ${s.diff?`<select class="tkd"><option value="easy">Easy</option><option value="med">Medium</option><option value="hard">Hard</option></select>`:''}
-        <span class="tkn"><button data-d="-1">−</button><b>0</b><button data-d="1">+</button></span></div>`).join('')}</div>
+        ${A.secPanel?`<button class="tkgear" data-g="${s.key}" title="Settings for this section" aria-label="Settings for ${esc(s.name)}">⚙</button>`:''}<span class="tkn"><button data-d="-1">−</button><b>0</b><button data-d="1">+</button></span></div>${A.secPanel?`<div class="tkcfg" data-p="${s.key}" style="display:none"></div>`:''}`).join('')}</div>
       <div class="setgrp"><div class="setchips"><button class="chip on" id="tkps">Different questions for each student</button><button class="chip on tksecbits" id="tkh">Allow "How do I work this out?"</button><button class="chip on" id="tkans" style="display:none">Show students their answer sheet when they finish</button><button class="chip" id="tkrf" style="display:none">Let students open the reference sheets during the test</button><button class="chip on" id="tkck">Students can check their answers as they go</button></div><p class="sub" style="margin:4px 0 0" id="tkckn">Students see right/wrong (and the answer) straight after each question. Their first answer still counts.</p></div>
       <div class="setgrp"><div class="setlabel">Resits</div><select id="tkrs" class="setsel" style="max-width:260px"><option value="0">No resits</option><option value="1">1 resit (2 attempts)</option><option value="2">2 resits</option><option value="3">3 resits</option><option value="99">Unlimited resits</option></select><p class="sub" style="margin:4px 0 0">A resit gives fresh questions of the same kind. Every attempt's result comes back to you; Results shows each student's best.</p></div>
       <div class="controls"><button class="btn-check" id="tkmake2">Create task</button><span class="sub" id="tktot" style="align-self:center;margin:0">0 questions</span></div>`,true);wireTabs();
     const tot=()=>{let n=0;document.querySelectorAll('.tksec b').forEach(b=>n+=+b.textContent);document.getElementById('tktot').textContent=n+' question'+(n===1?'':'s');return n;};
     document.querySelectorAll('.tksec .tkn button').forEach(b=>b.onclick=()=>{const v=b.parentNode.querySelector('b');v.textContent=Math.max(0,Math.min(20,+v.textContent+(+b.dataset.d)));b.closest('.tksec').classList.toggle('on',+v.textContent>0);tot();});
     ['tkps','tkh','tkans','tkrf'].forEach(id=>document.getElementById(id).onclick=e=>e.target.classList.toggle('on'));
+    document.querySelectorAll('.tkgear').forEach(b=>b.onclick=()=>{const k=b.dataset.g;const p=document.querySelector(`.tkcfg[data-p="${k}"]`);if(!p)return;
+      if(p.style.display==='none'){if(!p.dataset.ready){p.innerHTML=`<div class="tkcfgh"><b>${esc((secs.find(x=>x.key===k)||{}).name||'')}</b> · settings for this task</div>`+A.secPanel(k,+document.getElementById('tky').value);if(A.secWire)A.secWire(p);p.dataset.ready='1';}p.style.display='';b.classList.add('on');}else{p.style.display='none';b.classList.toggle('on',!!p.dataset.ready);}});
     const ckNote=()=>{document.getElementById('tkckn').textContent=document.getElementById('tkck').classList.contains('on')?'Students see right/wrong (and the answer) straight after each question. Their first answer still counts.':'Students see no marks or answers until they finish.';};
     document.getElementById('tkck').onclick=e=>{e.target.classList.toggle('on');ckNote();};
     let isTest=false;const setTy=t=>{isTest=t==='test';document.querySelectorAll('[data-ty]').forEach(b=>b.classList.toggle('on',b.dataset.ty===t));document.querySelectorAll('.tksecbits').forEach(e=>e.style.display=isTest?'none':'');
@@ -227,6 +229,9 @@
       const n=tot();if(!n){toast('Add some questions first');return;}if(n>60){toast('Keep a task to 60 questions or fewer');return;}
       const chosen=[...document.querySelectorAll('.tksec')].filter(r=>+r.querySelector('b').textContent>0).map(r=>({u:r.dataset.u,n:+r.querySelector('b').textContent,m:r.querySelector('.tkm')?r.querySelector('.tkm').value:'',d:r.querySelector('.tkd')?r.querySelector('.tkd').value:''}));
       const yv=+document.getElementById('tky').value;const snap=A.snapshot(chosen.map(c=>c.u),yv);
+      const edits={};if(A.secRead)chosen.forEach(c=>{const p=document.querySelector(`.tkcfg[data-p="${c.u}"]`);if(p&&p.dataset.ready)edits[c.u]=A.secRead(c.u,p);});
+      if(snap.per)Object.keys(edits).forEach(u=>{snap.per[u]=Object.assign({},snap.per[u]||{},edits[u]);});
+      if(snap.global&&A.secMerge)A.secMerge(snap.global,Object.values(edits));
       const em=document.getElementById('tkem').value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Check the email address');return;}LS.set(K_EMAIL,em);
       const task={v:1,a:A.app,id:rid(8),em:em||undefined,ti:document.getElementById('tkti').value.trim()||'Class task',cl:document.getElementById('tkcl').value.trim(),y:yv,ps:document.getElementById('tkps').classList.contains('on')?1:0,h:document.getElementById('tkh').classList.contains('on')?1:0,ck:document.getElementById('tkck').classList.contains('on')?1:0,rs:+document.getElementById('tkrs').value||0,pk:teacher().pub,
         s:chosen.map(c=>Object.assign({u:c.u,n:c.n},c.m?{m:c.m}:{},c.d?{d:c.d}:{},snap.per&&snap.per[c.u]?{cfg:snap.per[c.u]}:{})),g:snap.global||null,at:Date.now()};
@@ -387,7 +392,9 @@
   .tktabs{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0 10px}.tktabs button{border:1px solid var(--rule);background:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--sans)}.tktabs button.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
   .tksecs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;margin:6px 0 10px}
   .tksec{display:flex;align-items:center;gap:6px;border:1px solid var(--rule);border-radius:6px;padding:6px 8px;background:#fff;font-size:13px}.tksec.on{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--brass)}
-  .tksec .nm{flex:1}.tksec select{font-size:11.5px;padding:3px;border:1px solid var(--rule);border-radius:4px;background:#fff}
+  .tksec .nm{flex:1}
+  .tksec .tkgear{border:1px solid var(--rule);background:#fff;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;line-height:1;padding:0;color:var(--muted)}.tksec .tkgear.on{border-color:var(--ink);color:var(--ink);background:#f3f0ea}
+  .tkcfg{grid-column:1/-1;border:1px solid var(--ink);border-radius:8px;padding:8px 10px;background:#fbfaf7;margin:-2px 0 4px}.tkcfg .tkcfgh{font-size:13px;margin-bottom:4px}.tkcfg .setgrp{margin:6px 0}.tkcfg .setlabel{font-size:11px}.tksec select{font-size:11.5px;padding:3px;border:1px solid var(--rule);border-radius:4px;background:#fff}
   .tkn{display:inline-flex;align-items:center;gap:6px}.tkn button{width:26px;height:26px;border:1px solid var(--rule);background:var(--paper2);border-radius:50%;cursor:pointer;font-size:15px;line-height:1}.tkn b{min-width:18px;text-align:center;font-family:var(--serif);font-size:18px}
   .tkflag{display:inline-block;background:#f6e1df;color:#7d2a23;border:1px solid #e3b7b2;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:600;margin:2px 2px 0 0}.tkflag.info{background:var(--shade);color:#4d463c;border-color:var(--rule)}
   .tkbarv{display:inline-block;width:120px;height:10px;border-radius:5px;background:#e5e7eb;overflow:hidden;vertical-align:middle}.tkbarv i{display:block;height:100%}

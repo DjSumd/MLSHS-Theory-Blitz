@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103d";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -218,6 +218,88 @@
        {k:'keymel',n:2,m:1,t:'Visual Recognition of Key',o:{types:['major','harmonic minor'],clef:'mix'}},
        {k:'ivkey',n:6,m:1,t:'Intervals',o:{tonic:'G',q:['M','m','P']}},
        {k:'ivmel',n:2,m:1,t:'Intervals',o:{clef:'bass'}}]}}];
+  // ---- fuller settings for every block ("More settings"), plus the blocks the Year tests and the exam use ----
+  (function(){const ADV=o=>Object.assign(o,{adv:true});const add=(sec,k,list)=>{const d=TK.blockDef(sec,k);if(d)d.opts=d.opts.concat(list);};
+    const USUAL=" (leave empty for the Year's usual)";
+    const SETM=(set,label,ch,num)=>Object.assign(M('s_'+set,label+USUAL,ch,[]),{adv:true,set,num:!!num});
+    const SETO=(set,label,ch,kind)=>Object.assign(O1('s_'+set,label,[['',"The Year's usual"]].concat(ch),''),{adv:true,set,kind:kind||''});
+    const DIFF=def=>ADV(O1('diff','Rhythm difficulty',[['easy','Easy'],['med','Medium'],['hard','Hard']],def||'med'));
+    const RV=[['semis','Four semiquavers'],['rest1','Crotchet & minim rests'],['mixed','Quaver–semiquaver mixes'],['dotted','Dotted notes'],['sixsemis','Six semiquavers (6/8)'],['cmpsemi','6/8 semiquaver patterns (ti tika tika, timka ti…)'],['rest4','Semibreve rest'],['anac','Anacrusis'],['ties','Ties'],['qc','Quaver–crotchet (6/8)'],['synco','Syncopation'],['rest05','Quaver rest'],['trip','Triplets'],['cdq','Crotchet–dotted crotchet–quaver (6/8)']];
+    const VOCAB=()=>ADV(M('vocab','Rhythm vocabulary'+USUAL,RV,[]));
+    // aural
+    add('A','pd',[DIFF()]);add('A','md',[DIFF(),ADV(O1('sf','Sol-fa boxes',[['yes','Yes'],['no','No']],'yes'))]);add('A','sfd',[DIFF('easy')]);add('A','bord',[DIFF()]);
+    add('A','rdh',[DIFF(),VOCAB()]);add('A','rd',[DIFF(),VOCAB(),ADV(O1('swing','Feel',[['off','Straight'],['on','Swing']],'off'))]);
+    {const d=TK.blockDef('A','prog');const ch=d.opts.find(o=>o.key==='chords');ch.ch=ch.ch.concat([['V7','V7'],['iii','iii'],['minor','Minor keys (i iv V)']]);const ln=d.opts.find(o=>o.key==='length');ln.ch=ln.ch.concat([['6','6 chords'],['8','8 chords']]);
+      d.opts.push(ADV(O1('labels','Students label chords with',[['rn','Roman numerals'],['names','Chord names'],['both','Both']],'rn')));}
+    add('A','cad',[ADV(O1('key','Key',[['Major','Major'],['Minor','Minor']],'Major')),ADV(O1('format','Played as',[['chords','Chords only'],['context','In context'],['two','Two phrases']],'chords'))]);
+    add('A','met',[ADV(O1('style','Played as',[['music','A groove'],['pulse','A click pulse']],'music'))]);
+    add('A','tim',[O1('qtype','Students',[['Instrument','Name the instrument'],['Family','Name the instrument family'],['AE','Acoustic or electronic?'],['Two','Two instruments together']],'Instrument')]);
+    {const d=TK.blockDef('A','anal');d.nMax=5;d.desc='One excerpt; students answer the parts you choose (tonality, texture, time signature, cadence, scale).';
+      d.opts.push(M('asks','Parts (in this order)',[['tonality','Tonality'],['texture','Texture'],['metre','Time signature'],['cadence','Cadence'],['scale','Scale']],['tonality','texture','metre']));}
+    const IDX=k=>TK.BLOCKS.A.findIndex(b=>b.k===k);
+    TK.BLOCKS.A.splice(IDX('ivl')+1,0,
+      {k:'steps',label:'Steps and leaps',title:'Steps and Leaps',desc:'Pairs of notes: does the second move by step, leap or repeat, or is it a semitone or a tone?',n:4,m:1,
+        opts:[M('qtype','Questions',[['move','Step, leap or repeat?'],['st','Semitone or tone?']],['move','st'])]},
+      {k:'xiv',label:'Intervals in a melody (exam Q1)',title:'Interval Recognition',desc:'A melody is played with three bracketed intervals on the score; the second note of each is not printed. Students name each interval.',n:null,m:3,opts:[]},
+      {k:'tmod',label:'Tonality and modulation (exam Q2)',title:'Recognition of Tonality and Modulation',desc:'Students name the opening tonality, then the key it modulates to (or no modulation).',n:null,m:4,opts:[]});
+    TK.BLOCKS.A.splice(IDX('rd')+1,0,
+      {k:'dis',label:'Discrepancies',title:'Discrepancies',desc:'The printed score differs from the performance; students find each difference (pitch or rhythm), then correct the score.',n:null,m:7,
+        opts:[O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4'),O1('count','Differences',[['1','1'],['2','2'],['3','3']],'3'),DIFF()]});
+    TK.BLOCKS.A.push({k:'sanal',label:'Aural analysis with a printed score',title:'Aural Analysis',desc:'Students listen while they read a printed score, then answer four questions on it (tonality, texture, intervals, chords, dynamics, tempo and so on, by Year).',n:null,m:4,opts:[]});
+    // theory: settings that feed the question generators
+    const CLEFS=SETM('clefs','Clefs',[['treble','Treble'],['bass','Bass'],['alto','Alto'],['tenor','Tenor']]);
+    const KEYS=SETO('keysMax','Key signatures up to',[['1','1♯ / 1♭'],['2','2♯ / 2♭'],['3','3♯ / 3♭'],['4','4♯ / 4♭'],['5','5♯ / 5♭'],['6','6♯ / 6♭'],['7','7♯ / 7♭']],'num');
+    const MINK=SETO('minorKeys','Minor keys',[['yes','Include minor keys'],['no','Major keys only']],'bool');
+    const IVN=SETM('ivNums','Interval sizes',[['2','2nds'],['3','3rds'],['4','4ths'],['5','5ths'],['6','6ths'],['7','7ths'],['8','Octaves']],true);
+    const IVQ=SETM('ivQ','Interval qualities',[['M','Major'],['m','Minor'],['P','Perfect'],['A','Augmented'],['d','Diminished']]);
+    const IVB=SETO('ivBelow','Intervals below a note',[['yes','Yes, some below'],['no','No, all above']],'bool');
+    const CH=SETM('chords','Chord types',[['maj','Major'],['min','Minor'],['dom7','Dominant 7th'],['min7','Minor 7th'],['maj7','Major 7th'],['sus4','sus4'],['dim','Diminished'],['aug','Augmented']]);
+    const INV=SETM('invs','Inversions',[['0','Root position'],['1','1st inversion'],['2','2nd inversion'],['3','3rd inversion (7ths)']],true);
+    const SCL=SETM('scales','Scales',[['major','Major'],['majpent','Major pentatonic'],['natminor','Natural minor'],['minpent','Minor pentatonic'],['harmminor','Harmonic minor'],['melminor','Melodic minor'],['blues','Blues'],['chromatic','Chromatic'],['mixolydian','Mixolydian'],['dorian','Dorian']]);
+    const MET=SETM('metres','Time signatures',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8'],['5/4','5/4'],['7/8','7/8']]);
+    const RHY=SETM('rhythm','Rhythm vocabulary',[['basic','Whole beats, quaver pairs, four semiquavers'],['semis','Quaver–semiquaver mixes'],['dotted','Dotted notes'],['ties','Ties and anacrusis'],['syncop','Syncopation'],['qrest','Quaver rests'],['triplet','Triplets'],['duplet','Duplets']]);
+    const PRG=SETM('progs','Chords in progressions',[['I','I'],['ii','ii'],['iii','iii'],['IV','IV'],['V','V'],['vi','vi'],['V7','V7']]);
+    const CAD=SETM('cadences','Cadences',[['perfect','Perfect'],['plagal','Plagal'],['imperfect','Imperfect'],['interrupted','Interrupted']]);
+    add('T','ksid',[KEYS,MINK,CLEFS]);add('T','keymel',[KEYS]);add('T','ivname',[IVN,IVQ,IVB,CLEFS]);add('T','ivwrite',[IVN,IVQ,IVB,CLEFS]);add('T','notes',[CLEFS]);
+    add('T','scale',[CLEFS]);add('T','scaleid',[SCL,CLEFS]);add('T','chordid',[CH,INV,CLEFS,KEYS]);add('T','chordw',[CH,INV,CLEFS,KEYS]);add('T','chordrn',[MINK,KEYS,CLEFS]);
+    add('T','rhythm',[MET,RHY]);add('T','values',[RHY]);add('T','harm',[PRG,CAD,MINK,KEYS]);
+    const TQ=[['noteNameQ','Name notes'],['notateNoteQ','Write notes'],['enharmonicQ','Enharmonic equivalents'],['accidentalQ','Accidentals'],['tabQ','Read guitar TAB'],['timeSigQ','Time signatures'],['completeBarQ','Complete the bar'],['groupingQ','Rhythm grouping'],['valueQ','Note values'],['restQ','Rest values'],
+      ['termQ','Musical terms'],['artSymbolQ','Symbols and articulations'],['ornamentQ','Ornaments'],['signRenderQ','Signs in a score'],['deviceRenderQ','Compositional devices in a score'],['formQ','Form'],
+      ['keySigIdQ','Name key signatures'],['keySigWriteQ','Write key signatures'],['degreeNotateQ','Write scale degrees'],['notateScaleQ','Write a scale'],['nameScaleQ','Name the scale'],['solfaQ','Sol-fa'],['semitoneQ','Semitones in a scale'],
+      ['notateIntervalQ','Write intervals'],['nameIntervalQ','Name intervals'],['notateChordQ','Write chords'],['notateChordSigQ','Write chords in a key'],['nameChordQ','Name chords'],['guitarChordQ','Guitar chord diagrams'],
+      ['chordRnQ','Name a chord and its Roman numeral'],['notateRnQ','Write a chord from its Roman numeral'],['romanQ','Roman numerals'],['cadenceIdQ','Name the cadence'],['writeCadenceQ','Write a cadence'],['writeProgQ','Write a progression'],
+      ['transposeMelodyQ','Transpose for an instrument'],['transposeKeyQ','Transpose to a new key'],['clefTransposeQ','Rewrite in another clef']];
+    TK.TQ=TQ;
+    TK.BLOCKS.T.push(
+      {k:'tq',label:'Any theory question type',title:'Theory',desc:'Pick any one theory question type (chords, intervals, terms, TAB, devices, transposition…) and how many.',n:2,m:1,
+        opts:[O1('gen','Question type',TQ,'nameChordQ'),CLEFS,KEYS,MINK,IVN,IVQ,CH,INV,SCL,MET,RHY,PRG,CAD]},
+      {k:'study',label:'Melody study',title:'Melody Study',desc:'A printed melody with a set of questions on it (key, intervals, rhythm, terms…), by Year.',n:null,m:8,opts:[]},
+      {k:'visual',label:'Score analysis',title:'Score Analysis',desc:'A printed score with questions on what students can see in it.',n:null,m:4,opts:[]});
+  })();
+  // ---- the Year tests and the exam as editable starting points ----
+  (function(){const A=(k,o,extra)=>Object.assign({k,o:o||{}},extra||{});const SC7=['major pentatonic','major'],SC8=['major','natural minor','major pentatonic','minor pentatonic'],M3=['2/4','3/4','4/4'],M4=['2/4','3/4','4/4','6/8'];
+    const anal=(n)=>[A('anal',{asks:['tonality','texture','metre']},{n:n||3,m:1,t:'Aural Analysis'}),A('tim',{qtype:'Instrument'},{n:1,m:1,t:'Instruments'})];
+    const tq=(gen,n,m,t,o)=>A('tq',Object.assign({gen},o||{}),{n,m,t});
+    TK.PRESETS.push(
+      {id:'y7test',label:'Year 7 Test',ct:{v:1,ti:'Year 7 Aural and Theory Test',y:7,
+        A:[A('rd',{metres:M3,bars:'2',source:'pitch',diff:'easy'},{m:6}),A('pd',{scales:SC7,metres:M3,bars:'2',given:'note',sf:'yes',clef:'treble',diff:'easy'},{m:6,t:'Pitch Dictation'}),A('steps',{qtype:['move','st']},{n:4,m:1})].concat(anal()),
+        T:[A('notes',{mode:'name'},{n:4,m:1}),A('values',{},{n:4,m:1,t:'Note and Rest Values'}),A('rhythm',{},{n:4,m:1}),A('ksid',{},{n:2,m:1}),A('chordrn',{},{n:1,m:2}),A('scale',{scales:['major','majpent'],sf:'yes'},{n:1,m:4})]}},
+      {id:'y8test',label:'Year 8 Test',ct:{v:1,ti:'Year 8 Aural and Theory Test',y:8,
+        A:[A('rd',{metres:M4,bars:'2',source:'pitch',diff:'easy'},{m:8}),A('pd',{scales:SC8,metres:M4,bars:'2',given:'note',sf:'yes',clef:'treble',diff:'easy'},{m:8,t:'Pitch Dictation'}),A('ivl',{ivls:['m2','M2','m3','M3','P4','P5','P8'],dir:'up'},{n:4,m:1,t:'Intervals'}),A('prog',{chords:['I','IV','V'],length:'3'},{m:2,t:'Chords'})].concat(anal()),
+        T:[A('ivname',{},{n:4,m:1}),A('ksid',{},{n:4,m:1}),tq('keySigWriteQ',2,2,'Writing Key Signatures'),A('chordrn',{},{n:2,m:2}),A('chordw',{},{n:2,m:1,t:'Notating Chords'}),tq('notateRnQ',2,1,'Notating Chords'),A('scale',{scales:['major','natminor'],sf:'yes'},{n:1,m:4}),A('scaleid',{},{n:1,m:2,t:'Identify the Scale'})]}},
+      {id:'y9test',label:'Year 9 Test',ct:{v:1,ti:'Year 9 Aural and Theory Test',y:9,
+        A:[A('rd',{metres:M4,bars:'4',source:'melody',diff:'med'},{m:9}),A('pd',{scales:SC8,metres:M4,bars:'2',given:'note',sf:'yes',clef:'treble',diff:'med'},{m:9,t:'Pitch Dictation'}),A('ivl',{ivls:['m2','M2','m3','M3','P4','P5','m6','M6','m7','M7','P8'],dir:'both'},{n:4,m:1,t:'Intervals'})].concat(anal()),
+        T:[A('ivwrite',{},{n:4,m:1}),A('ksid',{},{n:4,m:1}),A('chordid',{},{n:2,m:1,t:'Chords'}),A('chordrn',{},{n:1,m:2}),A('chordw',{},{n:2,m:1,t:'Notating Chords'}),tq('notateRnQ',2,1,'Notating Chords'),A('scale',{scales:['major','harmminor'],sf:'yes'},{n:2,m:4}),A('scaleid',{},{n:1,m:2,t:'Identify the Scale'})]}},
+      {id:'y10test',label:'Year 10 Test',ct:{v:1,ti:'Year 10 Aural and Theory Test',y:10,
+        A:[A('rd',{metres:M4,bars:'4',source:'melody',diff:'med'},{m:9}),A('md',{scales:['major','natural minor'],metres:M4,bars:'2',clef:'treble',diff:'med'},{m:9}),A('ivl',{ivls:['m2','M2','m3','M3','P4','P5','m6','M6','m7','M7','P8'],dir:'both'},{n:4,m:1,t:'Intervals'}),A('bord',{bars:'4',given:'1',scales:['major','natural minor'],metres:['3/4','4/4']},{m:3})].concat(anal()),
+        T:[A('ivwrite',{},{n:2,m:1}),A('ivname',{},{n:2,m:1}),tq('keySigWriteQ',2,2,'Key Signatures'),A('chordid',{},{n:1,m:1,t:'Chords'}),A('chordrn',{},{n:1,m:2}),tq('notateRnQ',1,1,'Chords'),A('harm',{},{n:2,m:1}),A('scale',{scales:['major','harmminor'],sf:'yes'},{n:1,m:4}),A('scaleid',{},{n:1,m:2,t:'Identify the Scale'}),A('transp',{bars:'2'},{m:4})]}},
+      {id:'atarex',label:'ATAR practice exam (Section One)',ct:{v:1,ti:'ATAR Music Practice Examination – Section One',y:11,
+        A:[A('xiv',{},{m:3,t:'Interval Recognition'}),A('tmod',{},{m:4}),A('rd',{metres:['2/4','3/4','4/4','6/8'],bars:'4',source:'melody',diff:'med'},{m:11}),A('dis',{bars:'4',count:'3',diff:'med'},{m:7}),A('prog',{chords:['I','ii','IV','V','vi','V7'],length:'8',labels:'names'},{m:10,t:'Chord Progressions'}),
+           A('md',{scales:['major','natural minor','harmonic minor'],metres:['2/4','3/4','4/4','6/8'],bars:'4',clef:'treble',diff:'med',sf:'no'},{m:15}),A('anal',{asks:['tonality','texture','metre']},{n:3,m:2,t:'Aural Analysis – Excerpt 1'}),A('anal',{asks:['cadence','scale']},{n:2,m:2,t:'Aural Analysis – Excerpt 2'})],
+        T:[tq('nameChordQ',2,1,'Chords in the Score'),tq('nameIntervalQ',3,1,'Intervals in the Score'),tq('timeSigQ',1,1,'Time Signature'),tq('artSymbolQ',2,1,'Symbols and Articulations'),tq('tabQ',1,1,'TAB'),tq('deviceRenderQ',1,1,'Compositional Devices'),tq('termQ',1,1,'Terms'),
+           tq('notateChordQ',3,1,'Writing Chords',{s_clefs:['treble','bass']}),A('transp',{bars:'2'},{m:4})]}});
+  })();
+
 
   // ---- drum grid (4/4, quaver steps): screen entry, results, paper and key ----
   TK.drumSteps=bars=>8*(+bars||1);
@@ -260,6 +342,8 @@
   let BH=null,CUR=null;
   const half=v=>{const r=Math.round(v*4)/4;return (r%1===0?String(r):r%1===0.5?(Math.floor(r)?Math.floor(r)+'½':'½'):String(r));};
   TK.half=half;
+  // open a Year test or the exam as a new, editable custom test
+  TK.openPreset=function(H,id){BH=H;const p=TK.PRESETS.find(x=>x.id===id);if(!p){TK.openBuilder(H);return;}CUR={id:rid(),seed:TK.newSeed(),ct:TK.ctClean(p.ct)};saveTest(CUR);edit();};
   TK.openBuilder=function(H){BH=H;const last=lsGet('blitzCustomTestOpen','');const t=last&&TK.savedTests().find(x=>x.id===last);if(t){CUR=JSON.parse(JSON.stringify(t));edit();}else home();};
   function home(){const L=TK.savedTests();lsSet('blitzCustomTestOpen','');
     BH.modal(`<p class="prompt">Custom tests</p><p class="sub">Build a test from question blocks, print it with its answer key, play its tracks to the class, or push it out as a class-task link. Tests are saved on this device.</p>
@@ -277,13 +361,15 @@
     if(od.type==='text')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><input class="tkin" maxlength="80" data-ot="${sec}|${bi}|${od.key}" value="${esc(v||'')}" placeholder="${esc(od.ph||'')}"></div>`;
     if(od.type==='drum'){const rows=TK.opt(Object.assign({sec},b),'rows'),bars=TK.opt(Object.assign({sec},b),'bars');return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><div data-dg="${sec}|${bi}">${TK.drumGridHtml({bars,rows,state:Object.assign({},(b.o&&b.o.pat)||{}),mode:'edit'})}</div></div>`;}
     return '';}
+  const OPENADV=new Set();
   function blockHtml(sec,b,bi){const d=TK.blockDef(sec,b.k);const mk=TK.blockMarks(sec,b);const letter=TK.letter(bi);
     return `<div class="ctblk"><div class="ctbh"><span class="ctl">(${letter})</span><input class="tkin ctti" data-tt="${sec}|${bi}" value="${esc(b.t||d.title)}" maxlength="60" aria-label="Heading"><span class="ctmk">${half(mk)} mark${mk===1?'':'s'}</span>
         <button class="ctib" data-mv="${sec}|${bi}|-1" title="Move up" aria-label="Move up">↑</button><button class="ctib" data-mv="${sec}|${bi}|1" title="Move down" aria-label="Move down">↓</button><button class="ctib" data-rm="${sec}|${bi}" title="Remove" aria-label="Remove">✕</button></div>
       <div class="ctkind">${esc(d.label)}</div>${b.nt?`<div class="ctflag">⚠ ${esc(b.nt)}<button data-ntd="${sec}|${bi}">Done</button></div>`:''}
       <div class="ctnums">${d.n!==null?`<span class="ctnum"><span>Questions</span><button data-nn="${sec}|${bi}|-1">−</button><b>${b.n}</b><button data-nn="${sec}|${bi}|1">+</button></span>`:''}
         <span class="ctnum"><span>${d.perCell?'Marks per box':d.n===null?'Marks':'Marks each'}</span><button data-mm="${sec}|${bi}|-1">−</button><b>${half(b.m)}</b><button data-mm="${sec}|${bi}|1">+</button></span></div>
-      ${d.opts.map(od=>optHtml(sec,bi,b,od)).join('')}
+      ${d.opts.filter(od=>!od.adv).map(od=>optHtml(sec,bi,b,od)).join('')}
+      ${d.opts.some(od=>od.adv)?`<details class="ctx ctmore" data-adv="${sec}|${bi}"${OPENADV.has(sec+'|'+bi)?' open':''}><summary>More settings</summary>${d.opts.filter(od=>od.adv).map(od=>optHtml(sec,bi,b,od)).join('')}</details>`:''}
       <details class="ctx"${b.x?' open':''}><summary>Wording for students</summary><textarea class="tkin" rows="2" maxlength="400" data-tx="${sec}|${bi}" placeholder="Leave empty to use the standard instruction">${esc(b.x||'')}</textarea></details></div>`;}
   function edit(){const t=CUR,ct=t.ct;lsSet('blitzCustomTestOpen',t.id);const a=TK.ctMarks(ct,'A'),th=TK.ctMarks(ct,'T');
     const sec=(s,name)=>`<div class="ctsec"><div class="ctsh"><span>${name} SECTION</span><span>/${half(TK.ctMarks(ct,s))}</span></div>${ct[s].map((b,i)=>blockHtml(s,b,i)).join('')||'<p class="sub">No questions yet.</p>'}
@@ -298,7 +384,7 @@
     wire();}
   function save(){CUR.ct=TK.ctClean(CUR.ct);saveTest(CUR);}
   function rerender(){const m=document.getElementById('tkmodal');const st=m?m.scrollTop:0;save();edit();const m2=document.getElementById('tkmodal');if(m2)m2.scrollTop=st;}
-  function wire(){const m=document.getElementById('tkmodal')||document,ct=CUR.ct;const P=s=>{const [sec,bi,k,v]=s.split('|');return {sec,bi:+bi,k,v,b:ct[sec][+bi]};};
+  function wire(){const m=document.getElementById('tkmodal')||document,ct=CUR.ct;m.querySelectorAll('[data-adv]').forEach(d=>d.ontoggle=()=>{if(d.open)OPENADV.add(d.dataset.adv);else OPENADV.delete(d.dataset.adv);});const P=s=>{const [sec,bi,k,v]=s.split('|');return {sec,bi:+bi,k,v,b:ct[sec][+bi]};};
     m.querySelector('#ctback').onclick=()=>{save();home();};
     m.querySelector('#ctti').onchange=e=>{ct.ti=e.target.value.trim()||'Untitled test';rerender();};
     m.querySelector('#cty').onchange=e=>{ct.y=+e.target.value;rerender();};
@@ -394,7 +480,7 @@
     return NORM(keep.join(' ').replace(/^\d+[.)]\s*/,'')).replace(/:\s*$/,'.').replace(/\bWrite what you hear:\s*/i,'Write what you hear. ').trim().replace(/([^.?!:])$/,'$1.');};
   const isHeading=l=>{const m=l.match(/^(?:\([a-z]\)\s*)?(.*?[A-Za-z].*?)\s*(?:\/\s*(\d+(?:\.\d+)?)|\(\s*(\d+(?:\.\d+)?)\s*marks?\s*\))\s*$/i);if(!m)return null;const t=m[1].replace(/[:–\-\s]+$/,'').trim();
     if(/total|^name\b/i.test(t)||/^\d+[.)]/.test(t)||t.length>90)return null;return {title:t,marks:+(m[2]||m[3])};};
-  const AURAL_K=['drumT','drum','two','bord','rdh','pd','md','sfd','rd','ivl','ton','cad','prog','met','tim','anal'];
+  const AURAL_K=['drumT','drum','two','bord','rdh','pd','md','sfd','rd','dis','ivl','steps','xiv','tmod','ton','cad','prog','met','tim','anal','sanal'];
   // rules: first match wins; each returns {k, n?, o, nt?}
   function classify(q,g,sec){const head=g.title,body=q.lines.join(' '),ctx=NORM(head+' | '+body),low=ctx.toLowerCase(),first=NORM(q.lines.slice(0,3).join(' '));
     const scl=scalesIn(head)||[];const S=(a,b)=>a.length?a:b;

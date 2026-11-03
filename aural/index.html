@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css?v=20261103a">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261103d">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -349,20 +349,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js?v=20261103a"></script>
-<script src="audio.js?v=20261103a"></script>
-<script src="samples.js?v=20261103a"></script>
-<script src="engrave.js?v=20261103a"></script>
-<script src="content.js?v=20261103a"></script>
-<script src="refs.js?v=20261103a"></script>
-<script src="embed.js?v=20261103a"></script>
-<script src="qr.js?v=20261103a"></script>
-<script src="task.js?v=20261103a"></script>
-<script src="testkit.js?v=20261103a"></script>
-<script src="blitzui.js?v=20261103a"></script>
-<script src="live.js?v=20261103a"></script>
-<script>/*blitz-check*/(function(){var S="20261103a";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103a",P="blitz-aural-all-",APP="Aural Blitz";
+<script src="glyphs.js?v=20261103d"></script>
+<script src="audio.js?v=20261103d"></script>
+<script src="samples.js?v=20261103d"></script>
+<script src="engrave.js?v=20261103d"></script>
+<script src="content.js?v=20261103d"></script>
+<script src="refs.js?v=20261103d"></script>
+<script src="embed.js?v=20261103d"></script>
+<script src="qr.js?v=20261103d"></script>
+<script src="task.js?v=20261103d"></script>
+<script src="testkit.js?v=20261103d"></script>
+<script src="blitzui.js?v=20261103d"></script>
+<script src="live.js?v=20261103d"></script>
+<script>/*blitz-check*/(function(){var S="20261103d";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103d",P="blitz-aural-all-",APP="Aural Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -541,10 +541,10 @@ function testAuralGroups(y){const metS=['2/4','3/4','4/4'],metC=['2/4','3/4','4/
 function ctSync(){TestKit.ctTitle=testRun.ct?testRun.ct.ti:null;}
 // ---- custom tests: aural blocks -> test groups (same shape as testAuralGroups) ----
 const CT_SOLFA=sc=>{const s=ENGRAVE.solfaFor(sc);return s?[...new Set(s)]:[];};
-function ctPd(o,qt){return function(ctx,u,r){const q=u.gen(Object.assign({},ctx,{diff:'med',mode:'choice',year:testRun.y,cfg:gk=>({qtype:[qt],scales:o.scales,bars:o.bars,metres:o.metres,clef:o.clef||'treble'})[gk]}));
+function ctPd(o,qt){return function(ctx,u,r){const q=u.gen(Object.assign({},ctx,{diff:o.diff||'med',mode:'choice',year:testRun.y,cfg:gk=>({qtype:[qt],scales:o.scales,bars:o.bars,metres:o.metres,clef:o.clef||'treble'})[gk]}));
   if(!q||!q.dict)return q;const d=q.dict;if(o.given==='bar'){const end=(d.pickup||0)+d.metre.bpb;q.given=Math.max(1,d.notes.filter(n=>n.onset<end-1e-6).length);}
   if(o.sf==='no')q.noSolfa=true;return q;};}
-function ctSolfaDictQ(o){return function(){const sc=A_pick(o.scales||['major pentatonic']);const dict=ENGRAVE.buildDictation({diff:'easy',scaleNames:[sc],bars:+o.bars||2,clef:'treble',metre:A_pick(o.metres||['4/4']),maxKs:2,rests:false,ties:false,anacrusis:false,triplets:false});
+function ctSolfaDictQ(o){return function(){const sc=A_pick(o.scales||['major pentatonic']);const dict=ENGRAVE.buildDictation({diff:o.diff||'easy',scaleNames:[sc],bars:+o.bars||2,clef:'treble',metre:A_pick(o.metres||['4/4']),maxKs:2,rests:false,ties:false,anacrusis:false,triplets:false});
   const M=dict.metre;const sn=dict.notes.filter(n=>!n.rest);const ans=sn.map(n=>ENGRAVE.solfaOf(n.midi,dict.tonicMidi,dict.scaleType));
   const svg=ENGRAVE.drawScore({clef:'treble',ks:0,bpb:M.bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars:dict.bars,notes:dict.notes.map(n=>({onset:n.onset,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:Math.min(4,dict.bars),mode:'raw'}).svg;
   const ev=soundingOf(dict.notes);const tm=dict.tonicMidi;const minor=/minor/.test(dict.scaleType);const ci=M.denom===8?{n:M.numer/3,beat:1.5,accents:[0]}:{n:Math.round(M.bpb),beat:1,accents:[0]};
@@ -641,23 +641,49 @@ function playMine2(q){audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();const M=
   if(q.kind==='barorder'){bo.forEach(b=>barNotesOf(q.dict,b).forEach(n=>{mids.push(n.rest?null:n.midi);durs.push(n.dur);}));}
   else{q.dict.notes.forEach((n,i)=>{mids.push(n.midi);durs.push(rh[i]||0.5);});}
   const spb=q.kind==='barorder'?0.55:(M.compound?dictSPB*0.82:dictSPB);let r;try{r=AUDIO.melody(mids,durs,spb,0,null,{countIn:ciFor(M)});}catch(e){r=3;}armPartsTimer(r||3);}
+// ---- two-part dictation: the lower part is chosen note by note so that every sounding pair is consonant
+// (3rds, 5ths, 6ths, octaves above the bass) at every moment, with no parallel 5ths or octaves.
+// Questions that can't meet that are regenerated.
+const TP_CONS=[0,3,4,7,8,9];
+function tpCons(u,l){const d=u-l;return d>=3&&TP_CONS.includes(d%12);}
+function twoPartBuild(sc,metre,bars){const steps={'major':MAJ,'natural minor':MINN,'harmonic minor':MINH}[sc]||MINN;let fallback=null,fbHard=1e9;
+  for(let attempt=0;attempt<160;attempt++){
+    const dict=ENGRAVE.buildDictation({diff:'med',scaleNames:[sc],bars,clef:'treble',metre,maxKs:2,rests:false,ties:false,anacrusis:false,triplets:false});
+    const M=dict.metre,bpb=M.bpb,tm=dict.tonicMidi;stepLine(dict,steps,tm);
+    const up=soundingOf(dict.notes).reduce((a,n)=>{a.list.push({t:a.t,dur:n.dur,midi:n.midi});a.t+=n.dur;return a;},{t:0,list:[]}).list;
+    const onBeat=t=>{const p=((t%bpb)+bpb)%bpb;return M.g.some(g=>Math.abs(p-g)<1e-6);};
+    up.forEach((u,i)=>{const a=up[i-1],b=up[i+1];u.step=!!(a&&b&&Math.abs(u.midi-a.midi)<=2&&Math.abs(b.midi-u.midi)<=2&&u.midi!==a.midi);u.beat=onBeat(u.t);});
+    const pool=[];for(let o2=-2;o2<=0;o2++)steps.forEach(s=>pool.push(tm+12*o2+s));const cand=pool.filter(m=>m>=tm-20&&m<=tm-5);
+    const triad=cand.filter(c=>[0,steps[2],7].includes(((c-tm)%12+12)%12));
+    const clash=(c,t,d)=>{let hard=0,soft=0;up.forEach(u=>{if(u.t>=t+d-1e-6||u.t+u.dur<=t+1e-6)return;if(tpCons(u.midi,c))return;
+      hard++;});return {hard,soft};};
+    const upAt=t=>{const u=up.find(n=>t>=n.t-1e-6&&t<n.t+n.dur-1e-6);return u?u.midi:null;};
+    const pats=LOWPAT[metre]||LOWPAT['4/4'];const plan=[];
+    for(let b=0;b<bars;b++){const last=b===bars-1;let t=b*bpb;
+      if(last){const lu=up[up.length-1];if(lu.t>t+1e-6&&onBeat(lu.t)){plan.push({t,d:lu.t-t});plan.push({t:lu.t,d:(b+1)*bpb-lu.t,final:true});}else plan.push({t,d:bpb,final:true});continue;}
+      const pat=b===0?A_pick(pats.filter(p=>p.length<=2)):A_pick(pats);pat.forEach(d=>{plan.push({t,d});t+=d;});}
+    const low=[];let prev=null,hardTot=0,parTot=0;
+    plan.forEach((s,k)=>{const first=k===0,penult=k===plan.length-2;const opts=s.final?[tm-12]:first?triad:cand;
+      let best=null,bc=1e9,bh=0;opts.forEach(c=>{const cl=clash(c,s.t,s.d);let cost=cl.soft;
+        if(first)cost+=c===tm-12?0:1.5;
+        if(prev!=null){const mv=Math.abs(c-prev);cost+=mv===0?2.5:mv<=2?0:mv<=4?0.4:mv<=7?2.5:9;
+          const u0=upAt(s.t-1e-3),u1=upAt(s.t);if(u0!=null&&u1!=null&&u0!==u1&&c!==prev){const i0=((u0-prev)%12+12)%12,i1=((u1-c)%12+12)%12;if((i0===7&&i1===7)||(i0===0&&i1===0))cost+=40;}}
+        if(!first&&!s.final){const u1=upAt(s.t);if(u1!=null&&[0,7].includes(((u1-c)%12+12)%12))cost+=0.6;}
+        if(penult&&((c-tm)%12+12)%12===7)cost-=1.5;
+        cost+=cl.hard*1000+Math.random()*0.9;if(cost<bc){bc=cost;best=c;bh=cl.hard;}});
+      hardTot+=bh;if(prev!=null){const u0=upAt(s.t-1e-3),u1=upAt(s.t);if(u0!=null&&u1!=null&&u0!==u1&&best!==prev){const i0=((u0-prev)%12+12)%12,i1=((u1-best)%12+12)%12;if((i0===7&&i1===7)||(i0===0&&i1===0))parTot++;}}low.push({t:s.t,dur:s.d,midi:best});prev=best;});
+    if(!hardTot&&!parTot)return {dict,low,tm,M,bpb};
+    const sc2=hardTot*100+parTot;if(sc2<fbHard){fbHard=sc2;fallback={dict,low,tm,M,bpb};}}
+  return fallback;}
 function ctTwoPartQ(o){return function(){const sc=o.scale||'natural minor';const metre=o.metre||'6/8';const bars=+o.bars||4;
-  const dict=ENGRAVE.buildDictation({diff:'med',scaleNames:[sc],bars,clef:'treble',metre,maxKs:2,rests:false,ties:false,anacrusis:false,triplets:false});
-  const M=dict.metre,bpb=M.bpb,tm=dict.tonicMidi;const steps={'major':MAJ,'natural minor':MINN,'harmonic minor':MINH}[sc]||MINN;stepLine(dict,steps,tm);
-  const pool=[];for(let o2=-2;o2<=0;o2++)steps.forEach(s=>pool.push(tm+12*o2+s));const lo=tm-20,hi=tm-5;const cand=pool.filter(m=>m>=lo&&m<=hi);
-  const up=soundingOf(dict.notes).reduce((a,n)=>{a.list.push({t:a.t,dur:n.dur,midi:n.midi});a.t+=n.dur;return a;},{t:0,list:[]}).list;
-  const at=t=>{const u=up.find(n=>t>=n.t-1e-6&&t<n.t+n.dur-1e-6);return u&&u.midi!=null?u.midi:null;};
-  const low=[];let prev=tm-12;
-  for(let b=0;b<bars;b++){const last=b===bars-1;const pat=last?[bpb]:(b===0?A_pick((LOWPAT[metre]||LOWPAT['4/4']).filter(p=>p.length<=2)):A_pick(LOWPAT[metre]||LOWPAT['4/4']));let t=b*bpb;
-    pat.forEach((d,k)=>{let m;if(last||(b===0&&k===0))m=tm-12;else{const u=at(t);const ok=cand.filter(c=>u==null||[3,4,7,8,9,0].includes(((u-c)%12+12)%12)&&u-c>=3);const base=(ok.length?ok:cand).filter(c=>c!==prev||Math.random()<0.25);const near=(base.length?base:cand).slice().sort((x,y)=>Math.abs(x-prev)-Math.abs(y-prev));const ss=near.filter(c=>Math.abs(c-prev)<=4);m=A_pick((ss.length?ss:near).slice(0,2));}
-      low.push({t,dur:d,midi:m});prev=m;t+=d;});}
+  const B=twoPartBuild(sc,metre,bars);if(!B)throw new Error('two-part: no consonant lower part');const {dict,low,tm,M,bpb}=B;
   const uNotes=dict.notes.filter(n=>!n.rest);const uSyl=uNotes.map(n=>ENGRAVE.solfaOf(n.midi,tm,sc));const lSyl=low.map(n=>ENGRAVE.solfaOf(n.midi,tm,sc));
   const answer=uSyl.concat(lSyl);const givenMask=uNotes.map(n=>n.onset<bpb-1e-6).concat(low.map(n=>n.t<bpb-1e-6));
   const rr=(notes)=>ENGRAVE.drawScore({clef:'treble',ks:0,bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars,notes:notes.map(n=>({onset:n.onset!==undefined?n.onset:n.t,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:Math.min(4,bars),mode:'raw'}).svg;
   const svg=`<div class="twop"><div class="tpl">Upper part · treble clef</div>${rr(dict.notes)}<div class="tpl">Lower part · bass clef</div>${rr(low)}</div>`;
   const ci=M.denom===8?{n:M.numer/3,beat:1.5,accents:[0]}:{n:Math.round(bpb),beat:1,accents:[0]};const minor=/minor/.test(sc);
   const ev=soundingOf(dict.notes);
-  return {kind:'numerals',twoPart:true,fmt:x=>esc(x),palette:CT_SOLFA(sc),answer,givenMask,given:0,dict,solfaDict:true,rhythmOnly:true,scoreSvg:svg,
+  return {_low:low,kind:'numerals',twoPart:true,fmt:x=>esc(x),palette:CT_SOLFA(sc),answer,givenMask,given:0,dict,solfaDict:true,rhythmOnly:true,scoreSvg:svg,
     rows:[{label:'Upper part · treble clef',from:0,to:uSyl.length},{label:'Lower part · bass clef',from:uSyl.length,to:answer.length}],slotLabels:uSyl.map((_,i)=>String(i+1)).concat(lSyl.map((_,i)=>String(i+1))),scaleName:dict.scaleName,
     play:()=>AUDIO.parts([{mids:ev.map(n=>n.midi),durs:ev.map(n=>n.dur)},{mids:low.map(n=>n.midi),durs:low.map(n=>n.dur),amp:0.75}],0.55,{cue:{chord:[tm-12,tm+(minor?3:4)-12,tm+7-12]},countIn:ci}),
     playLabel:'The tonic chord, a count-in, then both parts together',why:'Upper: '+uSyl.join(' ')+'. Lower: '+lSyl.join(' ')+'.'};};}
@@ -684,21 +710,27 @@ function ctAuralGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('A',k);con
     else if(b.k==='ivl'){const iv=O(b,'ivls'),dir=O(b,'dir');const lab=iv.map(x=>(TestKit.IVS.find(z=>z[0]===x)||[x,x])[1]);
       text='Name the intervals you hear. Choose from: '+lab.join(', ')+'.';const aim=ctOrder(iv,n);items=Array.from({length:n},(_,k)=>({unit:'ivl',cfg:{qtype:['name'],ivls:iv,dir:dir==='both'?['up','down']:[dir]},build:ctAim(aim[k],(q,w)=>IVL[w]&&q.answer===IVL[w].n),marks:m,text:R(k)}));}
     else if(b.k==='ton'){const tons=O(b,'tons');text='Choose the tonality you hear: '+tons.join(', ')+'.';const aim=ctOrder(tons,n);items=Array.from({length:n},(_,k)=>({unit:'ton',cfg:{qtype:['tone'],tons,play:O(b,'play')},build:ctAim(aim[k],(q,w)=>q.answer===w),marks:m,text:'Example '+(k+1)}));}
-    else if(b.k==='pd'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),given:O(b,'given'),sf:O(b,'sf'),clef:O(b,'clef')};const sy=o.scales.length===1?CT_SOLFA(o.scales[0]):[];
+    else if(b.k==='pd'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),given:O(b,'given'),sf:O(b,'sf'),clef:O(b,'clef'),diff:O(b,'diff')};const sy=o.scales.length===1?CT_SOLFA(o.scales[0]):[];
       text='The rhythm is given. Listen to the melody'+(o.sf==='yes'?', write the sol-fa under each note'+(sy.length?' ('+sy.join(' ')+')':'')+', then':' and')+' write the notes on the stave. The first '+(o.given==='bar'?'bar is':'note is')+' given.';items=one({unit:'pd',build:ctPd(o,'pitch')});}
-    else if(b.k==='md'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),clef:O(b,'clef'),sf:'yes',given:'note'};text='Listen to the melody and write it on the stave, rhythm and pitch. Then write the sol-fa under each note (la is the tonic in minor). The first note is given.';items=one({unit:'pd',build:ctPd(o,'melody')});}
-    else if(b.k==='sfd'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars')};text='The rhythm is given. Listen to the melody and write its sol-fa, one box for each note. The first note is given.';items=one({unit:'pd',build:ctSolfaDictQ(o)});}
+    else if(b.k==='md'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),clef:O(b,'clef'),sf:O(b,'sf'),given:'note',diff:O(b,'diff')};text='Listen to the melody and write it on the stave, rhythm and pitch.'+(o.sf==='no'?'':' Then write the sol-fa under each note (la is the tonic in minor).')+' The first note is given.';items=one({unit:'pd',build:ctPd(o,'melody')});}
+    else if(b.k==='sfd'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),diff:O(b,'diff')};text='The rhythm is given. Listen to the melody and write its sol-fa, one box for each note. The first note is given.';items=one({unit:'pd',build:ctSolfaDictQ(o)});}
     else if(b.k==='two'){const o={scale:O(b,'scale'),metre:O(b,'metre'),bars:O(b,'bars')};text='Both rhythms are given. Listen to the two parts (upper in the treble, lower in the bass) and write the sol-fa of each part below its rhythm ('+CT_SOLFA(o.scale).join(' ')+'). The first bar of each part is given.';items=one({unit:'pd',build:ctTwoPartQ(o)});}
-    else if(b.k==='bord'){const o={bars:O(b,'bars'),scales:O(b,'scales'),metres:O(b,'metres'),given:O(b,'given'),clef:O(b,'clef')};text='The '+({4:'four',8:'eight'}[o.bars]||o.bars)+' bars of this melody are printed in the wrong order. Listen, then put them back in the correct order'+(+o.given?'. Bar 1 is given.':'.');items=one({unit:'pd',build:barOrderQ(o)});}
-    else if(b.k==='rdh'){const o={bars:O(b,'bars'),metres:O(b,'metres'),scales:O(b,'scales'),clef:O(b,'clef')};text='The noteheads and barlines are given. Listen, then add the rhythm to each notehead. The first note is given.';items=one({unit:'rd',build:()=>rhythmHeadsQ({bars:o.bars,metre:A_pick(o.metres),scales:o.scales,clef:o.clef,maxKs:3})});}
-    else if(b.k==='rd'){text='Listen to the excerpt and write its rhythm in the bars below. You will hear a one-bar count-in first.';items=one({unit:'rd',cfg:{bars:O(b,'bars'),source:O(b,'source'),metres:O(b,'metres'),swing:'off',qtype:['write']},diff:'med'});}
-    else if(b.k==='prog'){text='Listen to the chords. The first chord is given. Identify the others, using Roman numerals.';items=one({unit:'prog',cfg:{qtype:['write'],length:O(b,'length'),chords:O(b,'chords'),labels:'rn'}});}
-    else if(b.k==='cad'){text='Listen to each phrase ending and name the cadence.';const aim=ctOrder(O(b,'cads'),n);items=Array.from({length:n},(_,k)=>({unit:'cad',cfg:{cads:O(b,'cads'),key:'Major',format:'chords'},build:ctAim(aim[k],(q,w)=>String(q.answer).startsWith(w)),marks:m,text:R(k)}));}
-    else if(b.k==='met'){text='Listen to each groove and choose its time signature.';const aim=ctOrder(O(b,'metres'),n);items=Array.from({length:n},(_,k)=>({unit:'met',cfg:{metres:O(b,'metres')},build:ctAim(aim[k],(q,w)=>String(q.answer).startsWith(w+' ')),marks:m,text:R(k)}));}
-    else if(b.k==='tim'){text='Listen to each excerpt and name the instrument.';items=Array.from({length:n},(_,k)=>({unit:'tim',cfg:{qtype:['Instrument']},marks:m,text:R(k)}));}
-    else if(b.k==='anal'){const slot=nx++%2?'X2':'X1';const X=examExcerpt({scale:A_pick(['major','natural minor','harmonic minor']),metre:A_pick(['2/4','3/4','4/4','6/8']),texture:A_pick(['homophonic','homophonic','monophonic','polyphonic'])});examX[slot]=X;
-      text='Listen to this excerpt and answer the questions.';const parts=[{unit:'ton',build:examAnalysisQ({ask:'tonality',x:slot}),text:'1) Give the tonality of the work.'},{unit:'ton',build:examAnalysisQ({ask:'texture',x:slot}),text:'2) Which best describes the texture of this work?'},{unit:'ton',build:testMetreQ(X),text:'3) Which best describes the time signature?'}];
-      items=parts.slice(0,n).map(p=>Object.assign({marks:m,share:1},p));}
+    else if(b.k==='bord'){const o={bars:O(b,'bars'),scales:O(b,'scales'),metres:O(b,'metres'),given:O(b,'given'),clef:O(b,'clef'),diff:O(b,'diff')};text='The '+({4:'four',8:'eight'}[o.bars]||o.bars)+' bars of this melody are printed in the wrong order. Listen, then put them back in the correct order'+(+o.given?'. Bar 1 is given.':'.');items=one({unit:'pd',build:barOrderQ(o)});}
+    else if(b.k==='rdh'){const o={bars:O(b,'bars'),metres:O(b,'metres'),scales:O(b,'scales'),clef:O(b,'clef')};text='The noteheads and barlines are given. Listen, then add the rhythm to each notehead. The first note is given.';const vo=vocabFrom(O(b,'vocab').length?O(b,'vocab'):cfgDef(UNITS.findIndex(u=>u.key==='rd'),'vocab'));items=one({unit:'rd',build:()=>rhythmHeadsQ({bars:o.bars,metre:A_pick(o.metres),scales:o.scales,clef:o.clef,maxKs:3,diff:O(b,'diff'),vocab:{vocab:vo.vocab,vocabEasy:vo.vocabEasy,syncopation:vo.syncopation}})});}
+    else if(b.k==='rd'){text='Listen to the excerpt and write its rhythm in the bars below. You will hear a one-bar count-in first.';items=one({unit:'rd',cfg:Object.assign({bars:O(b,'bars'),source:O(b,'source'),metres:O(b,'metres'),swing:O(b,'swing')||'off',qtype:['write']},O(b,'vocab').length?{vocab:O(b,'vocab')}:{}),diff:O(b,'diff')||'med'});}
+    else if(b.k==='prog'){text='Listen to the chords. The first chord is given. Identify the others, using Roman numerals.';items=one({unit:'prog',cfg:{qtype:['write'],length:O(b,'length'),chords:O(b,'chords'),labels:O(b,'labels')||'rn'}});}
+    else if(b.k==='cad'){text='Listen to each phrase ending and name the cadence.';const aim=ctOrder(O(b,'cads'),n);items=Array.from({length:n},(_,k)=>({unit:'cad',cfg:{cads:O(b,'cads'),key:O(b,'key')||'Major',format:O(b,'format')||'chords'},build:ctAim(aim[k],(q,w)=>String(q.answer).startsWith(w)),marks:m,text:R(k)}));}
+    else if(b.k==='met'){text='Listen to each groove and choose its time signature.';const aim=ctOrder(O(b,'metres'),n);items=Array.from({length:n},(_,k)=>({unit:'met',cfg:{metres:O(b,'metres'),style:O(b,'style')||'music'},build:ctAim(aim[k],(q,w)=>String(q.answer).startsWith(w+' ')),marks:m,text:R(k)}));}
+    else if(b.k==='tim'){const qt=O(b,'qtype')||'Instrument';text=({Instrument:'Listen to each excerpt and name the instrument.',Family:'Listen to each excerpt and name the instrument family.',AE:'Listen to each excerpt: is it acoustic or electronic?',Two:'Listen to each excerpt and name the two instruments playing together.'})[qt]||'Listen to each excerpt.';items=Array.from({length:n},(_,k)=>({unit:'tim',cfg:{qtype:[qt]},marks:m,text:R(k)}));}
+    else if(b.k==='anal'){const slot=nx++%2?'X2':'X1';let asks=O(b,'asks');if(!asks.length)asks=['tonality','texture','metre'];const ALL=['tonality','texture','metre','cadence','scale'];while(asks.length<n)asks=asks.concat(ALL.filter(a=>!asks.includes(a)));asks=asks.slice(0,n);const cadAsk=asks.includes('cadence');
+      const X=examExcerpt(Object.assign({scale:A_pick(['major','natural minor','harmonic minor'].concat(y>=11?['mixolydian']:[])),metre:A_pick(['2/4','3/4','4/4','6/8']),texture:cadAsk?'homophonic':A_pick(['homophonic','homophonic','monophonic','polyphonic'])},cadAsk?{cadence:A_pick(y>=10?['perfect','plagal','imperfect','interrupted']:['perfect','plagal','imperfect'])}:{}));examX[slot]=X;
+      const LAB={tonality:'Give the tonality of the work.',texture:'Which best describes the texture of this work?',metre:'Which best describes the time signature?',cadence:'Name the cadence at the end of the excerpt.',scale:'Name the scale on which the melody is based.'};
+      text='Listen to this excerpt and answer the questions.';items=asks.map((a,k)=>({unit:'ton',build:a==='metre'?testMetreQ(X):examAnalysisQ({ask:a,x:slot}),text:(k+1)+') '+LAB[a],marks:m,share:1}));}
+    else if(b.k==='steps'){const qs=O(b,'qtype');text=qs.length>1?'Listen to each pair of notes. Does the second note move by step, leap or repeat, or is it a semitone or a tone?':qs[0]==='st'?'Listen to each pair of notes. Is it a semitone or a tone?':'Listen to each pair of notes. Does the second note move by step, leap, or repeat?';items=Array.from({length:n},(_,k)=>({unit:'ivl',cfg:{qtype:[qs[Math.floor(k*qs.length/n)]],dir:['up']},marks:m,text:R(k)}));}
+    else if(b.k==='xiv'){text='Listen to the melody. Three intervals are bracketed on the score below; the second note of each bracket is not printed. Name each bracketed interval (i), (ii) and (iii).';items=one({unit:'ivl',build:examIntervalsQ});}
+    else if(b.k==='tmod'){text='Listen to the excerpt. (a) Name the tonality at the beginning of the excerpt. (b) Name the key to which the excerpt has modulated by the end, or state that there is no modulation.';items=one({unit:'ton',build:examTonModQ});}
+    else if(b.k==='dis'){const c=O(b,'count');text='The score below differs from what you hear in '+({1:'one place',2:'two places',3:'three places'}[c]||c+' places')+' (pitch or rhythm). Locate each discrepancy, then correct the score to match the performance.';items=one({unit:'dis',cfg:{bars:O(b,'bars'),count:c},diff:O(b,'diff')||'med'});}
+    else if(b.k==='sanal'){let G=null;for(let t=0;t<12&&!G;t++)G=scoreAnalysisGroup(Math.max(7,Math.min(10,y)));if(G){const tot=G.items.reduce((a,x)=>a+(x.marks||1),0)||1;G.items.forEach(x=>x.marks=Math.round((x.marks||1)*m/tot*4)/4);out.push(Object.assign({},G,{title,text:b.x?esc(b.x):G.text,marks:G.items.reduce((a,x)=>a+x.marks,0)}));}return;}
     if(!items.length)return;out.push({title,text:b.x?esc(b.x):text,marks:items.reduce((a,it)=>a+it.marks,0),items});});
   return out;}
 function openCustomBuilder(){TaskKit.requireTeacher(()=>TestKit.openBuilder(ctHost()));}
@@ -730,12 +762,13 @@ function testCover(){const y=testRun.y,CT=testRun.ct,a=testAMarks(),t=HAS_THEORY
 function testTeacher(){if(testRun.ct){openCustomBuilder();return;}TaskKit.requireTeacher(()=>{const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<p class="prompt">Print or play this test</p>
   <p class="sub">Test code <b style="font-family:ui-monospace,Consolas,monospace">${testCode()}</b>. The same code always gives the same test, so keep it with your answer key. It is printed on the key, not on the students' paper.</p>
   <div class="setgrp"><div class="setlabel">Semester (for the heading)</div><div class="setchips"><button class="chip${testRun.sem==='One'?' on':''}" data-sem="One">Semester One</button><button class="chip${testRun.sem==='Two'?' on':''}" data-sem="Two">Semester Two</button></div></div>
-  <div class="controls"><button class="btn-check" id="tstprint">Print the test</button><button class="btn-ghost" id="tstkey">Print the answer key</button><button class="btn-ghost" id="tsttracks">Play the tracks</button><button class="btn-ghost" id="tstct">Build a custom test…</button></div>
+  <div class="controls"><button class="btn-check" id="tstprint">Print the test</button><button class="btn-ghost" id="tstkey">Print the answer key</button><button class="btn-ghost" id="tsttracks">Play the tracks</button><button class="btn-ghost" id="tstedit">Edit this test (change any question)…</button><button class="btn-ghost" id="tstct">Build a custom test…</button></div>
   <div class="setgrp"><div class="setlabel">Open another test code</div><div class="codebox" style="display:flex;gap:8px"><input id="tstcode" class="tkin" style="max-width:180px;text-transform:uppercase" placeholder="e.g. Y9S2-K3F7Q"><button class="btn-ghost" id="tstopen">Open</button></div></div>`;
   g.classList.add('open');document.getElementById('gback').classList.add('open');
   g.querySelectorAll('[data-sem]').forEach(b=>b.onclick=()=>{testRun.sem=b.dataset.sem;closeGuide();examStartCard();testTeacher();});
   document.getElementById('tstprint').onclick=()=>testPrint(false);document.getElementById('tstkey').onclick=()=>testPrint(true);
   document.getElementById('tsttracks').onclick=()=>{closeGuide();testTracks(false);};document.getElementById('tstct').onclick=()=>{closeGuide();openCustomBuilder();};
+  document.getElementById('tstedit').onclick=()=>{closeGuide();TaskKit.requireTeacher(()=>TestKit.openPreset(ctHost(),'y'+Math.max(7,Math.min(10,testRun.y||YEAR))+'test'));};
   document.getElementById('tstopen').onclick=()=>{const p=TestKit.parse(document.getElementById('tstcode').value);if(!p){toast('That isn\'t a test code');return;}if(p.y!==YEAR){YEAR=p.y;paintYear();}testRun={y:p.y,seed:p.seed,sem:p.sem};closeGuide();openUnit();toast('Test '+testCode()+' opened');};});}
 // paper versions of the aural questions
 function tq(pos){if(!runQs[ui])runQs[ui]=[];if(!runQs[ui][pos])runQs[ui][pos]=UNITS[ui].gen({level,diff:'easy',mode:'choice',year:YEAR,pos,cfg:()=>null});return runQs[ui][pos];}
@@ -894,7 +927,7 @@ function examStartCard(){const c=document.getElementById('card');document.getEle
   c.innerHTML=UNITS[ui].test?testCover():examCover();c.scrollTop=0;
   document.getElementById('examgo').onclick=startExam;
   (document.getElementById('examnew')||{}).onclick=()=>{if(UNITS[ui].test)testRun.seed=TestKit.newSeed();buildExamPlan();runQs[ui]=[];examStartCard();};
-  const tt=document.getElementById('tstteach');if(tt)tt.onclick=testTeacher;const tc=document.getElementById('tstck');if(tc)tc.onclick=()=>{testRun.ck=testRun.ck?0:1;examStartCard();};}
+  const ee=document.getElementById('exedit');if(ee)ee.onclick=()=>TaskKit.requireTeacher(()=>TestKit.openPreset(ctHost(),'atarex'));const tt=document.getElementById('tstteach');if(tt)tt.onclick=testTeacher;const tc=document.getElementById('tstck');if(tc)tc.onclick=()=>{testRun.ck=testRun.ck?0:1;examStartCard();};}
 function startExam(){examOn=true;examStart=Date.now();audioUnlocked=true;qi=0;load();clearInterval(examTick);examTick=setInterval(()=>{const t=document.getElementById('examclock');if(t)t.textContent=examClock();},1000);}
 function examClock(){const s=Math.floor((Date.now()-examStart)/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function examPartHead(it,pos){if(EMBED)return '';const first=examPlan.findIndex(x=>!!x.embed===!!it.embed)===pos;if(!first)return '';const full=HAS_THEORY()&&!EMBED;const totA=examPlan.filter(x=>!x.embed).reduce((a,b)=>a+b.marks,0);
@@ -915,7 +948,7 @@ function examCover(){const full=HAS_THEORY()&&!EMBED;const totA=examPlan.filter(
     ${full?`<tr><td>Part B: Theory</td><td>2</td><td>2</td><td>20</td><td>18</td><td>20</td></tr><tr><td colspan="4" style="text-align:right;font-weight:700">Total</td><td>${totA+18}</td><td>55</td></tr>`:''}</table>
     <p class="fn">Section Two (Cultural and contextual knowledge, 45%) is not part of this practice paper. Marks are awarded in proportion to what is correct, as in the marking key.</p>
     <h3>Instructions to candidates</h3><ol><li>Answer all questions in the spaces provided on screen. Check each answer as you go, or move on and come back.</li><li>Press the track button to hear each excerpt. You may replay tracks as often as you like in practice.</li><li>Move between questions with Prev, Next or the markers above the page. Press <b>Finish exam</b> when you have answered every question; the paper is marked immediately and logged to the class record.</li><li>A new paper is generated every time, following the Year ${YEAR} syllabus (${({easy:'easier',med:'medium',hard:'harder'})[examDiff()]} dictations).</li></ol>
-    <div class="controls"><button class="btn-check" id="examgo">Start the examination</button><button class="btn-ghost" id="examnew">New paper</button></div></div>`;}
+    <div class="controls"><button class="btn-check" id="examgo">Start the examination</button><button class="btn-ghost" id="examnew">New paper</button><button class="btn-ghost tstteach" id="exedit">Teacher: edit this exam</button></div></div>`;}
 function finishExam(){if(UNITS[ui]&&UNITS[ui].test){finishTest();return;}const wasOn=examOn;examOn=false;clearInterval(examTick);if(AUDIO)AUDIO.stop();const m=examMarks();const tot=m.reduce((a,x)=>a+x.got,0),max=m.reduce((a,x)=>a+(x.max||x.it.marks),0);const pct=Math.round(tot/max*100);
   if(wasOn){logComplete(HAS_THEORY()&&!EMBED?'Exam · Section One':'Exam · Part A',pct);if(PROF){PROF.exams=PROF.exams||[];PROF.exams.push({at:Date.now(),tot,max,year:YEAR});saveProfiles();}}
   const c=document.getElementById('card');document.getElementById('dots').innerHTML='';
@@ -1839,6 +1872,10 @@ TaskKit.init({app:'aural',label:'Aural Blitz',years:[7,8,9,10,11,12],
   snapshot:(keys)=>({per:Object.fromEntries(keys.map(k=>{const ri=UNITS.findIndex(u=>u.key===k);const u=UNITS[ri];return [k,Object.fromEntries((u.cfg||[]).map(g=>[g.key,cfgGet(ri,g.key)]))];}))}),
   year:()=>YEAR,getName:()=>currentName,toast:t=>toast(t),companion:(typeof HAS_THEORY_DIR!=='undefined'&&HAS_THEORY_DIR&&/^https?:/.test(location.protocol))?'theory/index.html':'',
   setName:v=>{currentName=v;const ni=document.getElementById('nameinput');if(ni)ni.value=v;try{localStorage.setItem('blitzName',v);}catch(e){}loadProfile();paintScore();},
+  secPanel:(k,ty)=>{const ri=UNITS.findIndex(u=>u.key===k);const u=UNITS[ri];if(!u||!(u.cfg||[]).length)return '<p class="sub">This section has no settings.</p>';
+    return u.cfg.map(g=>{const v=cfgGet(ri,g.key);const on=id=>g.type==='multi'?v.includes(id):v===id;return `<div class="setgrp tkcg" data-gk="${g.key}" data-t="${g.type}"><div class="setlabel">${esc(g.label)}</div><div class="setchips">${g.items.map(it=>`<button class="chip${on(it.id)?' on':''}" data-v="${esc(it.id)}">${esc(it.label)}${it.yr&&it.yr>(ty||YEAR)?` <span class="ytag">Y${it.yr}</span>`:''}</button>`).join('')}</div></div>`;}).join('');},
+  secWire:el=>{el.querySelectorAll('.tkcg').forEach(gr=>gr.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{if(gr.dataset.t==='multi'){c.classList.toggle('on');if(!gr.querySelector('.chip.on'))c.classList.add('on');}else{gr.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));}}));},
+  secRead:(k,el)=>{const o={};el.querySelectorAll('.tkcg').forEach(gr=>{const on=[...gr.querySelectorAll('.chip.on')].map(c=>c.dataset.v);if(!on.length)return;o[gr.dataset.gk]=gr.dataset.t==='multi'?on:on[0];});return o;},
   answerSheet:()=>openAnswerSheet(),openRef:()=>openTestRef(),test:true,customTests:()=>openCustomBuilder(),start:run=>{if(window.BlitzUI)BlitzUI.showHome(false);closeGuide();if(sprintOn)endSprint(true);h2h=null;examOn=false;clearInterval(examTick);if(!taskPrev)taskPrev={ui,year:YEAR};YEAR=run.task.y;paintYear();{const ps=[TASKI()+'.',UNITS.indexOf(TEST)+'.'];[scored,results].forEach(o=>Object.keys(o).forEach(k=>{if(ps.some(p=>k.startsWith(p)))delete o[k];}));}
     if(run.task.tt){const ct=run.task.ct?TestKit.ctDecode(run.task.ct):null;testRun={y:run.task.y,sem:ct?'':(run.task.sem||TestKit.semester()),seed:TaskKit.testSeed(),ct,ck:TaskKit.checkGo()?1:0};ctSync();ui=UNITS.indexOf(TEST);runQs[ui]=[];setMode('practise');taskTestSync();return;}
     ui=TASKI();setMode('practise');},

@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103d";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -115,10 +115,10 @@ function chordName(keyLetter,keyMidi,entry){const n=spellFrom(keyLetter,keyMidi,
 function keyDisplay(k){return k[0]+(KEY_ACC[k[1]]==='f'?'♭':'');}
 const maxKsFor=yr=>({7:1,8:2,9:3,10:4,11:5,12:7}[yr]||7);
 // rhythm vocabulary from ticked chips
-function vocabFrom(v){return {vocab:{semis:v.includes('semis'),mixedSemis:v.includes('mixed'),dotted:v.includes('dotted'),quaverCrotchet:v.includes('qc'),sixSemis:v.includes('sixsemis'),crotDotQuav:v.includes('cdq'),whole:true},
+function vocabFrom(v){return {vocab:{semis:v.includes('semis'),mixedSemis:v.includes('mixed'),dotted:v.includes('dotted'),quaverCrotchet:v.includes('qc'),sixSemis:v.includes('sixsemis'),crotDotQuav:v.includes('cdq'),cmpSemis:v.includes('cmpsemi'),whole:true},
   vocabEasy:true,rests:v.some(x=>x.indexOf('rest')===0),restDurs:[v.includes('rest1')?1:null,v.includes('rest1')?2:null,v.includes('rest4')?4:null,v.includes('rest05')?0.5:null].filter(x=>x!=null),
   ties:v.includes('ties'),syncopation:v.includes('synco'),anacrusis:v.includes('anac'),triplets:v.includes('trip')};}
-const RHYTHM_VOCAB=[Y('semis','Four semiquavers',7),Y('rest1','Crotchet & minim rests',7),Y('mixed','Quaver–semiquaver mixes',8),Y('dotted','Dotted notes',8),Y('sixsemis','Six-semiquaver groups (6/8)',8),Y('rest4','Semibreve rest',8),Y('anac','Anacrusis',8),Y('ties','Ties',8),
+const RHYTHM_VOCAB=[Y('semis','Four semiquavers',7),Y('rest1','Crotchet & minim rests',7),Y('mixed','Quaver–semiquaver mixes',8),Y('dotted','Dotted notes',8),Y('sixsemis','Six-semiquaver groups (6/8)',8),Y('cmpsemi','6/8 semiquaver patterns (ti tika tika, timka ti…)',8),Y('rest4','Semibreve rest',8),Y('anac','Anacrusis',8),Y('ties','Ties',8),
   Y('qc','Quaver–crotchet (6/8)',9),Y('synco','Syncopation',9),Y('rest05','Quaver rest',9),Y('trip','Triplets',9),Y('cdq','Crotchet–dotted crotchet–quaver (6/8)',10)];
 const METRE_ITEMS=[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',7),Y('9/8','9/8',10),Y('12/8','12/8',9),Y('5/4','5/4',10),Y('7/8','7/8',10)];
 // a scale-based tune that resolves on the tonic, for tonality/texture/form
@@ -147,7 +147,7 @@ var UNITS=[
   guide:`<p class="prompt">Rhythm patterns</p><ul><li>You get a one-bar count-in. Count the beats first, then work out how each beat is split.</li>
    <li>Tap a note value (or Rest), then tap the stave to write it at the cursor. ✕ removes a note. Check when the bars are full.</li>
    <li><b>Add the rhythm to given noteheads:</b> the noteheads and barlines are printed. Choose a value, tap a notehead, and make every bar add up.</li>
-   <li>Year 7 uses semibreves, minims, crotchets, quaver pairs and four semiquavers (plus dotted crotchets and three quavers in 6/8). ⚙ opens up dotted notes, ties, anacrusis, syncopation and more for Years 8–10.</li></ul>`,
+   <li>Year 7 uses semibreves, minims, crotchets, quaver pairs and four semiquavers (plus dotted crotchets and three quavers in 6/8). From Year 8, 6/8 adds semiquaver beats: ti tika tika, tika tika tika, tika ti tika, tika tika ti, timka ti, ti ti tika, tika ti ti, ti tika ti and timka tika. ⚙ opens up dotted notes, ties, anacrusis, syncopation and more for Years 8–10.</li></ul>`,
   cfg:[ G('qtype','Question type',[Y('write','Write the rhythm',7),Y('heads','Add the rhythm to given noteheads',7)]), G('metres','Time signatures',METRE_ITEMS.map(m=>m.id==='6/8'?Y('6/8','6/8',8):m)), SG('bars','Length',[{id:'1',label:'1 bar'},{id:'2',label:'2 bars'},{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],{7:'2',9:'4'}),
         G('vocab','Rhythm vocabulary',RHYTHM_VOCAB), SG('source','Dictate',[{id:'pitch',label:'Rhythm only (one pitch)'},{id:'melody',label:'Rhythm of a melody'}],{7:'pitch',9:'melody'}), SG('swing','Feel',[{id:'off',label:'Straight'},{id:'on',label:'Swing (Year 9)'}],'off') ],
   gen(ctx){const bars=parseInt(ctx.cfg('bars'),10)||2,v=ctx.cfg('vocab'),metre=A_pick(ctx.cfg('metres'));

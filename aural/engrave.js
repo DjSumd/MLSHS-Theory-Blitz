@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103a";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103d";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -93,7 +93,9 @@
   const eq=(a,b)=>Math.abs(a-b)<1e-6;
   const grpLens=M=>M.g.map((s,i)=>((M.g[i+1]!==undefined?M.g[i+1]:M.bpb)-s));
   const T3=1/3;
-  const VALL={semis:true,mixedSemis:true,dotted:true,quaverCrotchet:true,sixSemis:true,crotDotQuav:true,whole:true};
+  const VALL={semis:true,mixedSemis:true,dotted:true,quaverCrotchet:true,sixSemis:true,crotDotQuav:true,cmpSemis:true,whole:true};
+  // one dotted-crotchet beat in 6/8 with semiquavers: ti tika tika, tika tika tika, tika ti tika, tika tika ti, timka ti, ti ti tika, tika ti ti, ti tika ti, timka tika
+  const CMP_SEMIS=[[0.5,0.25,0.25,0.25,0.25],[0.25,0.25,0.25,0.25,0.25,0.25],[0.25,0.25,0.5,0.25,0.25],[0.25,0.25,0.25,0.25,0.5],[0.75,0.25,0.5],[0.5,0.5,0.25,0.25],[0.25,0.25,0.5,0.5],[0.5,0.25,0.25,0.5],[0.75,0.25,0.25,0.25]];
   function fills1(diff,o){ // one simple beat
     const w=o.vocab||VALL, v=[[1],[1]];
     if(diff!=='easy'||Math.random()<0.6)v.push([0.5,0.5]);
@@ -103,7 +105,7 @@
   function fills15(diff,o){ // one compound beat (dotted crotchet)
     const w=(o&&o.vocab)||VALL, v=[[1.5],[1,0.5],[0.5,0.5,0.5],[0.5,0.5,0.5]];
     if((diff!=='easy'||(o&&o.vocabEasy))&&w.quaverCrotchet)v.push([0.5,1]);
-    if(diff==='hard'||(o&&o.vocabEasy)){ if(w.mixedSemis)v.push([0.5,0.25,0.25,0.5],[0.25,0.25,0.5,0.5],[1,0.25,0.25]); if(w.sixSemis)v.push([0.25,0.25,0.25,0.25,0.25,0.25]); }
+    if(diff==='hard'||(o&&o.vocabEasy)){ if(w.mixedSemis)v.push([0.5,0.25,0.25,0.5],[0.25,0.25,0.5,0.5],[1,0.25,0.25]); if(w.sixSemis)v.push([0.25,0.25,0.25,0.25,0.25,0.25]); if(w.cmpSemis)for(let k=0;k<3;k++)v.push(CMP_SEMIS[Math.floor(Math.random()*CMP_SEMIS.length)]); }
     return v;}
   function fills2(diff,o){ // two simple beats as one unit
     const w=o.vocab||VALL, v=[[2],[2]]; if(w.dotted)v.push([1.5,0.5]);
