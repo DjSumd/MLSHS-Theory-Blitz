@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103f";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -292,6 +292,21 @@
     const ask=d.opts.find(o=>o.key==='asks');ask.label='Parts (in this order; "Questions" sets how many are used)';
     ask.ch=[['tonality','Tonality'],['texture','Texture'],['metre','Time name (simple duple…)'],['timesig','Time signature (2/4, 6/8…)'],['tempo','Tempo: Italian term (Adagio, Allegro…)'],['tempochg','Tempo change (accelerando, ritardando)'],['dyn','Dynamics (crescendo, diminuendo)'],['artic','Articulation (legato, staccato)'],['instr','Instrument playing the melody'],['family','Instrument family'],['cadence','Cadence'],['scale','Scale']];
     d.opts.push(QS('own','Your own questions about this excerpt (students write their answer)',[]));
+  })();
+  (function(){const add=(k,list)=>{const d=TK.blockDef('T',k);if(d)d.opts=d.opts.concat(list);};const USUAL=" (leave empty for the Year's usual)";
+    const SETM=(set,label,ch,num)=>Object.assign(M('s_'+set,label+USUAL,ch,[]),{adv:true,set,num:!!num});
+    const SETO=(set,label,ch,kind)=>Object.assign(O1('s_'+set,label,[['',"The Year's usual"]].concat(ch),''),{adv:true,set,kind:kind||''});
+    const KEYS=SETO('keysMax','Key signatures up to',[['1','1♯ / 1♭'],['2','2♯ / 2♭'],['3','3♯ / 3♭'],['4','4♯ / 4♭'],['5','5♯ / 5♭'],['6','6♯ / 6♭'],['7','7♯ / 7♭']],'num');
+    const MINK=SETO('minorKeys','Minor keys',[['yes','Include minor keys'],['no','Major keys only']],'bool');
+    const CLEFS=SETM('clefs','Clefs',[['treble','Treble'],['bass','Bass'],['alto','Alto'],['tenor','Tenor']]);
+    const MET=SETM('metres','Time signatures',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8'],['5/4','5/4'],['7/8','7/8']]);
+    const st=TK.blockDef('T','study');st.desc='A printed melody with questions on it. Choose the parts, and add your own written questions about the melody.';
+    st.opts.push(M('parts','Parts',[['solfa','Sol-fa of bars 1–2'],['letters','Letter names of bar 3'],['tempo','Tempo term'],['dyn','Dynamics marking'],['transpose','Transpose the melody']],['solfa','letters','tempo','dyn','transpose']),
+      QS('own','Your own questions about the melody (students write their answer)',[]),KEYS);
+    const vi=TK.blockDef('T','visual');vi.desc='A printed score with questions on what students can see. Choose the parts (or leave them for a random four), and add your own written questions about the score.';
+    vi.opts.push(M('parts','Parts (leave empty for a random four)',[['key','Key of the melody'],['time','The missing time signature'],['tempo','Tempo marking'],['dyn','Dynamic marking'],['hp','Hairpin: crescendo or diminuendo'],['art','Articulation marking'],['iv','Interval marked *1'],['semi','Two notes a semitone apart']],[]),
+      QS('own','Your own questions about the score (students write their answer)',[]),KEYS,MINK,CLEFS);
+    add('notes',[KEYS]);add('scale',[KEYS]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
   })();
   // ---- the Year tests and the exam as editable starting points ----
   (function(){const A=(k,o,extra)=>Object.assign({k,o:o||{}},extra||{});const SC7=['major pentatonic','major'],SC8=['major','natural minor','major pentatonic','minor pentatonic'],M3=['2/4','3/4','4/4'],M4=['2/4','3/4','4/4','6/8'];
