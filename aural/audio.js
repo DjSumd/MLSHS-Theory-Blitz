@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261103d";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261103e";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.
@@ -11,6 +11,10 @@
   const mtof = m => 440*Math.pow(2,(m-69)/12);
 
   // ---- synth voice: warm triangle stack with ADSR ----
+  function fxMap(parts,bp,fx){ const tot=fx.total||Math.max(1,...parts.map(p=>(p.offset||0)+p.durs.reduce((x,y)=>x+y,0)));
+    const T=b=>fx.chg==='rit'?bp*(b+0.45*b*b/tot):fx.chg==='accel'?bp*(b-0.25*b*b/tot):bp*b;
+    const G=b=>{const u=Math.max(0,Math.min(1,b/tot));return fx.dyn==='cresc'?0.28+0.97*u:fx.dyn==='dim'?1.25-0.97*u:(fx.level||1);};
+    return {T,G,L:fx.len||0.93}; }
   function synthNote(midi,t0,dur,amp){
     if(pianoReady && SBUF.piano){ return pianoVoice(midi,t0,dur,amp); }
     const a=ac(), f=mtof(midi), out=a.createGain(); out.connect(getBus());
@@ -160,10 +164,22 @@
         o.connect(f); f.connect(g); g.connect(getBus()); o.start(t); o.stop(t+len+0.05); }
       return beat*bp+0.3; },
     // several independent lines at once: parts = [{mids,durs,offset(beats),amp}]
-    lines(parts,spb){ const a=arm(); const bp=spb||SPB, t0=a.currentTime+0.06; let end=0;
+    // fx (optional): {t0: start time, chg:'accel'|'rit', dyn:'cresc'|'dim', level, len (note length factor, e.g. 0.35 staccato), total (beats)}
+    lines(parts,spb,fx){ const a=arm(); const bp=spb||SPB; fx=fx||{}; const t0=Math.max(a.currentTime+0.06,fx.t0||0); let end=0;
+      const M=fxMap(parts,bp,fx);
       parts.forEach(p=>{ let beat=p.offset||0; for(let i=0;i<p.mids.length;i++){ const d=p.durs[i];
-        if(p.mids[i]!=null) synthNote(p.mids[i],t0+beat*bp,d*bp*0.93,p.amp==null?1:p.amp); beat+=d; } if(beat>end)end=beat; });
-      return end*bp+0.3; },
+        if(p.mids[i]!=null){ const st=M.T(beat),en=M.T(beat+d); synthNote(p.mids[i],t0+st,(en-st)*M.L,(p.amp==null?1:p.amp)*M.G(beat)); } beat+=d; } if(beat>end)end=beat; });
+      return M.T(end)+0.3+(t0-a.currentTime); },
+    // a sampled instrument line that can share a start time (fx.t0) with lines()
+    async sampleLine(instr,midis,durs,spb,fx){ const arr=await loadInstrument(instr); arm(); const a=ac(); fx=fx||{}; const bp=spb||0.5; const t0=Math.max(a.currentTime+0.03,fx.t0||0);
+      const M=fxMap([{mids:midis,durs,offset:0}],bp,fx); let beat=0;
+      for(let i=0;i<midis.length;i++){ const midi=midis[i]; if(midi!=null){ let best=arr[0]; for(const e of arr) if(Math.abs(e.midi-midi)<Math.abs(best.midi-midi)) best=e;
+        const src=a.createBufferSource(), g=a.createGain(); src.buffer=best.buffer; src.playbackRate.value=Math.pow(2,(midi-best.midi)/12);
+        g.gain.value=0.85*M.G(beat); src.connect(g); g.connect(getBus()); const st=t0+M.T(beat), dur=Math.min((M.T(beat+durs[i])-M.T(beat))*M.L*1.05,best.buffer.duration/src.playbackRate.value);
+        src.start(st); try{src.stop(st+dur+0.05);}catch(e){} } beat+=durs[i]; }
+      return M.T(beat)+0.3+(t0-a.currentTime); },
+    loadInst(instr){ return loadInstrument(instr); },
+    now(){ return arm().currentTime; },
     // generic phrase with optional count-in clicks (used by rhythmic dictation). pitched line.
     phrase(midis,durs,spb,swing,countIn){ const a=arm(); const bp=spb||SPB; let t=a.currentTime+0.06;
       if(countIn){ for(let i=0;i<countIn;i++){ click(t,i===0); t+=bp; } }

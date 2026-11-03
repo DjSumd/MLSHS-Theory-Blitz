@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103d";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103e";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -34,7 +34,8 @@
     const h=e=>{const m=e.data;if(m&&m.type===want)fin(m);};addEventListener('message',h);
     if(src)f.src=src;else f.srcdoc=srcdoc;document.body.appendChild(f);setTimeout(()=>fin(new Error('timeout')),timeoutMs||20000);});};
   // ---- print document ----
-  TK.printCSS=`:root{--ink:#000;--line:#000;--paper:#fff;--paper2:#f4f4f4;--rule:#999;--muted:#555;--shade:#eee;--accent:#000;--ox:#b3261e;--red:#b3261e;--green:#1d6b2d;--brass:#000;--cream:#fff}
+  TK.printCSS=`.wlines div{border-bottom:1px solid #000;height:8.5mm}.wkey{color:#b3261e;font-weight:700;margin:2mm 0}.wyou{border:1px solid #999;padding:2mm 3mm;min-height:10mm;white-space:pre-wrap;margin:1mm 0}
+:root{--ink:#000;--line:#000;--paper:#fff;--paper2:#f4f4f4;--rule:#999;--muted:#555;--shade:#eee;--accent:#000;--ox:#b3261e;--red:#b3261e;--green:#1d6b2d;--brass:#000;--cream:#fff}
     *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#000;background:#fff}
     @page{size:A4;margin:12mm 14mm 14mm}
     table.pg{width:100%;border-collapse:collapse}table.pg>thead>tr>td{padding:0 0 4mm}table.pg>tbody>tr>td{padding:0}
@@ -124,6 +125,7 @@
   TK.prettyKey=pretty;
   const DRUM_ROWS=[['hh','Hi-hat'],['sn','Snare drum'],['bd','Bass drum']];TK.DRUM_ROWS=DRUM_ROWS;
   // option builders: multi (chips), one (single choice), text, drum (pattern editor)
+  const AR=(key,label,def,ph)=>({key,label,type:'area',def,ph}),QS=(key,label,def)=>({key,label,type:'qs',def});
   const M=(key,label,ch,def)=>({key,label,type:'multi',ch,def}),O1=(key,label,ch,def)=>({key,label,type:'one',ch,def}),TX=(key,label,def,ph)=>({key,label,type:'text',def,ph}),DR=(key,label)=>({key,label,type:'drum'});
   const BARS=[['1','1 bar'],['2','2 bars'],['4','4 bars']],METS=[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8']];
   const AS=[['major pentatonic','Major pentatonic'],['major','Major'],['minor pentatonic','Minor pentatonic'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']];
@@ -190,17 +192,23 @@
     {k:'terms',label:'Terms and signs',title:'Terms and Signs',desc:'Musical terms and signs.',n:4,m:1,opts:[]},
     {k:'harm',label:'Harmony',title:'Harmony',desc:'Roman numerals and cadences.',n:2,m:1,opts:[]},
    ]};
+  TK.writtenQ=(w)=>({kind:'written',t:'written',wq:String(w.q||'').trim()||'(No question written yet)',answer:String(w.a||''),lines:Math.max(1,+w.l||3),why:w.a?'Model answer: '+w.a:'Your teacher marks this answer.'});
+  TK.writtenBody=(q,done,noQ)=>`${noQ?'':`<p class="wqq">${esc(q.wq).replace(/\n/g,'<br>')}</p>`}<textarea id="wqta" class="tkin wqta" rows="${Math.max(2,Math.min(12,q.lines))}" maxlength="900" placeholder="Write your answer here"${done?' disabled':''}>${esc(q._text||'')}</textarea><p class="hint">Your teacher reads and marks this answer.</p><div class="controls"><button class="btn-check" id="check"${done?' disabled':''}>${done?'Answer saved':'Save my answer'}</button></div>`;
+  TK.writtenPaper=(q,key,label)=>`<div class="cell wide"><div class="qtext">${label?esc(label)+' ':''}${esc(q.wq).replace(/\n/g,'<br>')}</div>${key?`<div class="wkey">${q.answer?esc(q.answer):'Teacher-marked: no model answer given.'}</div>`:`<div class="wlines">${'<div></div>'.repeat(Math.max(1,q.lines))}</div>`}</div>`;
+  TK.writtenYou=(q)=>`<div class="cell wide"><div class="qtext">${esc(q.wq)}</div><div class="wyou">${q._text?esc(q._text).replace(/\n/g,'<br>'):'<i>Not answered</i>'}</div>${q.answer?`<div class="note">Model answer: ${esc(q.answer)}</div>`:''}<div class="note">Marked by your teacher.</div></div>`;
   TK.blockDef=(sec,k)=>(TK.BLOCKS[sec]||[]).find(b=>b.k===k);
   TK.opt=(b,key)=>{const d=TK.blockDef(b.sec||b._s,b.k)||TK.blockDef('A',b.k)||TK.blockDef('T',b.k);const od=d&&d.opts.find(o=>o.key===key);const v=b.o&&b.o[key];
     if(od&&od.type==='multi')return (v&&v.length)?v:(od.def||[]);if(v!==undefined&&v!==null&&v!=='')return v;return od?od.def:undefined;};
   TK.cellsOf=b=>{const sides=TK.opt(Object.assign({sec:'T'},b),'sides');const g=TK.opt(Object.assign({sec:'T'},b),'given');return sides.length*(g==='none'?16:8);};
-  TK.blockMarks=(sec,b)=>{const d=TK.blockDef(sec,b.k);if(!d)return 0;if(d.perCell)return Math.round(TK.cellsOf(b)*b.m*2)/2;const n=d.n===null?1:(b.n||d.n);return Math.round(n*b.m*4)/4;};
+  TK.qsMarks=(sec,b)=>{const d=TK.blockDef(sec,b.k);if(!d)return 0;return d.opts.filter(o=>o.type==='qs').reduce((a,od)=>a+((b.o&&Array.isArray(b.o[od.key]))?b.o[od.key]:(od.def||[])).reduce((s,w)=>s+(+w.m||0),0),0);};
+  TK.blockMarks=(sec,b)=>{const d=TK.blockDef(sec,b.k);if(!d)return 0;const ex=TK.qsMarks(sec,b);if(d.noBase)return ex;if(d.perCell)return Math.round(TK.cellsOf(b)*b.m*2)/2+ex;const n=d.n===null?1:(b.n||d.n);return Math.round(n*b.m*4)/4+ex;};
   TK.ctMarks=(ct,sec)=>ct?Math.round((ct[sec]||[]).reduce((a,b)=>a+TK.blockMarks(sec,b),0)*2)/2:0;
   TK.ctClean=function(o){if(!o||typeof o!=='object')return null;const y=Math.max(7,Math.min(12,parseInt(o.y,10)||9));const out={v:1,ti:String(o.ti||('Year '+y+' Test')).slice(0,80),y,A:[],T:[]};
     ['A','T'].forEach(sec=>(Array.isArray(o[sec])?o[sec]:[]).slice(0,20).forEach(b=>{const d=TK.blockDef(sec,b&&b.k);if(!d)return;
       const nb={k:d.k,m:Math.max(0.25,Math.min(30,Math.round((+b.m||d.m)*4)/4)),o:{}};if(d.n!==null)nb.n=Math.max(1,Math.min(d.nMax||12,parseInt(b.n,10)||d.n));
       if(b.t)nb.t=String(b.t).slice(0,60);if(b.x)nb.x=String(b.x).slice(0,400);if(b.nt)nb.nt=String(b.nt).slice(0,300);
-      d.opts.forEach(od=>{const v=b.o&&b.o[od.key];if(v===undefined)return;if(od.type==='multi'&&Array.isArray(v))nb.o[od.key]=v.filter(x=>od.ch.some(c=>c[0]===x));else if(od.type==='one'&&od.ch.some(c=>c[0]===v))nb.o[od.key]=v;else if(od.type==='text')nb.o[od.key]=String(v).slice(0,80);
+      d.opts.forEach(od=>{const v=b.o&&b.o[od.key];if(v===undefined)return;if(od.type==='multi'&&Array.isArray(v))nb.o[od.key]=v.filter(x=>od.ch.some(c=>c[0]===x));else if(od.type==='one'&&od.ch.some(c=>c[0]===v))nb.o[od.key]=v;else if(od.type==='text')nb.o[od.key]=String(v).slice(0,80);else if(od.type==='area')nb.o[od.key]=String(v).slice(0,600);
+        else if(od.type==='qs'&&Array.isArray(v))nb.o[od.key]=v.slice(0,10).map(w=>({q:String((w&&w.q)||'').slice(0,400),a:String((w&&w.a)||'').slice(0,300),m:Math.max(0.5,Math.min(20,Math.round((+(w&&w.m)||1)*2)/2)),l:Math.max(0,Math.min(12,parseInt(w&&w.l,10)||0))}));
         else if(od.type==='drum'&&v&&typeof v==='object'){const p={};DRUM_ROWS.forEach(([r])=>{p[r]=String(v[r]||'').replace(/[^01]/g,'').slice(0,16);});nb.o[od.key]=p;}});
       out[sec].push(nb);}));return out;};
   // ---- presets ----
@@ -276,6 +284,15 @@
       {k:'study',label:'Melody study',title:'Melody Study',desc:'A printed melody with a set of questions on it (key, intervals, rhythm, terms…), by Year.',n:null,m:8,opts:[]},
       {k:'visual',label:'Score analysis',title:'Score Analysis',desc:'A printed score with questions on what students can see in it.',n:null,m:4,opts:[]});
   })();
+  // ---- teacher-written questions, and a fuller aural analysis ----
+  (function(){const WQ=sec=>({k:'wq',label:'Your own written question',title:'Written Questions',desc:'Write your own questions, set the marks and the number of answer lines. Students type their answer on screen (or write on the lines on paper), and you mark it in Results.',n:null,m:1,noBase:true,
+      opts:[QS('qs','Questions',[{q:'',a:'',m:2,l:3}])]});
+    TK.BLOCKS.A.push(WQ('A'));TK.BLOCKS.T.push(WQ('T'));
+    const d=TK.blockDef('A','anal');d.nMax=10;d.desc='One excerpt; students answer the parts you choose: tonality, texture, time name, time signature, Italian tempo term, tempo change, dynamics, articulation, instrument, cadence, scale. Add your own written questions about it too.';
+    const ask=d.opts.find(o=>o.key==='asks');ask.label='Parts (in this order; "Questions" sets how many are used)';
+    ask.ch=[['tonality','Tonality'],['texture','Texture'],['metre','Time name (simple duple…)'],['timesig','Time signature (2/4, 6/8…)'],['tempo','Tempo: Italian term (Adagio, Allegro…)'],['tempochg','Tempo change (accelerando, ritardando)'],['dyn','Dynamics (crescendo, diminuendo)'],['artic','Articulation (legato, staccato)'],['instr','Instrument playing the melody'],['family','Instrument family'],['cadence','Cadence'],['scale','Scale']];
+    d.opts.push(QS('own','Your own questions about this excerpt (students write their answer)',[]));
+  })();
   // ---- the Year tests and the exam as editable starting points ----
   (function(){const A=(k,o,extra)=>Object.assign({k,o:o||{}},extra||{});const SC7=['major pentatonic','major'],SC8=['major','natural minor','major pentatonic','minor pentatonic'],M3=['2/4','3/4','4/4'],M4=['2/4','3/4','4/4','6/8'];
     const anal=(n)=>[A('anal',{asks:['tonality','texture','metre']},{n:n||3,m:1,t:'Aural Analysis'}),A('tim',{qtype:'Instrument'},{n:1,m:1,t:'Instruments'})];
@@ -343,6 +360,8 @@
   const half=v=>{const r=Math.round(v*4)/4;return (r%1===0?String(r):r%1===0.5?(Math.floor(r)?Math.floor(r)+'½':'½'):String(r));};
   TK.half=half;
   // open a Year test or the exam as a new, editable custom test
+  // open a test spec (e.g. one already pushed to a class) in the builder: reuse the saved copy if there is one
+  TK.openCt=function(H,ct,seed){BH=H;const c=TK.ctClean(ct);const key=JSON.stringify(c);let t=TK.savedTests().find(x=>JSON.stringify(TK.ctClean(x.ct))===key);if(!t){t={id:rid(),seed:(seed>>>0)||TK.newSeed(),ct:c};saveTest(t);}CUR=JSON.parse(JSON.stringify(t));edit();};
   TK.openPreset=function(H,id){BH=H;const p=TK.PRESETS.find(x=>x.id===id);if(!p){TK.openBuilder(H);return;}CUR={id:rid(),seed:TK.newSeed(),ct:TK.ctClean(p.ct)};saveTest(CUR);edit();};
   TK.openBuilder=function(H){BH=H;const last=lsGet('blitzCustomTestOpen','');const t=last&&TK.savedTests().find(x=>x.id===last);if(t){CUR=JSON.parse(JSON.stringify(t));edit();}else home();};
   function home(){const L=TK.savedTests();lsSet('blitzCustomTestOpen','');
@@ -358,6 +377,8 @@
   function optHtml(sec,bi,b,od){const id=`o_${sec}_${bi}_${od.key}`;const v=TK.opt(Object.assign({sec},b),od.key);
     if(od.type==='multi')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><div class="setchips">${od.ch.map(c=>`<button class="chip${v.includes(c[0])?' on':''}" data-ms="${sec}|${bi}|${od.key}|${esc(c[0])}">${esc(c[1])}</button>`).join('')}</div></div>`;
     if(od.type==='one')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><select class="setsel" data-os="${sec}|${bi}|${od.key}">${od.ch.map(c=>`<option value="${esc(c[0])}"${v===c[0]?' selected':''}>${esc(c[1])}</option>`).join('')}</select></div>`;
+    if(od.type==='area')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><textarea class="tkin" rows="3" maxlength="600" data-oa="${sec}|${bi}|${od.key}" placeholder="${esc(od.ph||'')}">${esc(v||'')}</textarea></div>`;
+    if(od.type==='qs'){const L=v||[];const id=i=>`${sec}|${bi}|${od.key}|${i}`;return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div>${L.map((w,i)=>`<div class="ctwq"><div class="ctwqh"><b>${i+1}.</b><span class="ctnum"><span>Marks</span><button data-qm="${id(i)}|-1">−</button><b>${half(w.m)}</b><button data-qm="${id(i)}|1">+</button></span><span class="ctnum"><span>Answer lines</span><button data-ql="${id(i)}|-1">−</button><b>${w.l}</b><button data-ql="${id(i)}|1">+</button></span><button class="ctib" data-qx="${id(i)}" title="Remove this question" aria-label="Remove this question">✕</button></div><textarea class="tkin" rows="2" maxlength="400" data-qq="${id(i)}" placeholder="Type the question students will answer">${esc(w.q||'')}</textarea><input class="tkin" maxlength="300" data-qa="${id(i)}" value="${esc(w.a||'')}" placeholder="Model answer or marking notes (printed on the answer key only)"></div>`).join('')}<button class="btn-ghost ctqadd" data-qadd="${sec}|${bi}|${od.key}">+ Add a question</button></div>`;}
     if(od.type==='text')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><input class="tkin" maxlength="80" data-ot="${sec}|${bi}|${od.key}" value="${esc(v||'')}" placeholder="${esc(od.ph||'')}"></div>`;
     if(od.type==='drum'){const rows=TK.opt(Object.assign({sec},b),'rows'),bars=TK.opt(Object.assign({sec},b),'bars');return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><div data-dg="${sec}|${bi}">${TK.drumGridHtml({bars,rows,state:Object.assign({},(b.o&&b.o.pat)||{}),mode:'edit'})}</div></div>`;}
     return '';}
@@ -367,7 +388,7 @@
         <button class="ctib" data-mv="${sec}|${bi}|-1" title="Move up" aria-label="Move up">↑</button><button class="ctib" data-mv="${sec}|${bi}|1" title="Move down" aria-label="Move down">↓</button><button class="ctib" data-rm="${sec}|${bi}" title="Remove" aria-label="Remove">✕</button></div>
       <div class="ctkind">${esc(d.label)}</div>${b.nt?`<div class="ctflag">⚠ ${esc(b.nt)}<button data-ntd="${sec}|${bi}">Done</button></div>`:''}
       <div class="ctnums">${d.n!==null?`<span class="ctnum"><span>Questions</span><button data-nn="${sec}|${bi}|-1">−</button><b>${b.n}</b><button data-nn="${sec}|${bi}|1">+</button></span>`:''}
-        <span class="ctnum"><span>${d.perCell?'Marks per box':d.n===null?'Marks':'Marks each'}</span><button data-mm="${sec}|${bi}|-1">−</button><b>${half(b.m)}</b><button data-mm="${sec}|${bi}|1">+</button></span></div>
+        ${d.noBase?'':`<span class="ctnum"><span>${d.perCell?'Marks per box':d.n===null?'Marks':'Marks each'}</span><button data-mm="${sec}|${bi}|-1">−</button><b>${half(b.m)}</b><button data-mm="${sec}|${bi}|1">+</button></span>`}</div>
       ${d.opts.filter(od=>!od.adv).map(od=>optHtml(sec,bi,b,od)).join('')}
       ${d.opts.some(od=>od.adv)?`<details class="ctx ctmore" data-adv="${sec}|${bi}"${OPENADV.has(sec+'|'+bi)?' open':''}><summary>More settings</summary>${d.opts.filter(od=>od.adv).map(od=>optHtml(sec,bi,b,od)).join('')}</details>`:''}
       <details class="ctx"${b.x?' open':''}><summary>Wording for students</summary><textarea class="tkin" rows="2" maxlength="400" data-tx="${sec}|${bi}" placeholder="Leave empty to use the standard instruction">${esc(b.x||'')}</textarea></details></div>`;}
@@ -378,11 +399,13 @@
       <div class="tkgrid ctg"><div class="setgrp"><div class="setlabel">Title (printed under the school name)</div><input id="ctti" class="tkin" maxlength="80" value="${esc(ct.ti)}"></div>
         <div class="setgrp"><div class="setlabel">Year (sets the level of content)</div><select id="cty" class="setsel">${[7,8,9,10,11,12].map(y=>`<option value="${y}"${y===ct.y?' selected':''}>Year ${y}</option>`).join('')}</select></div></div>
       ${sec('A','AURAL')}${sec('T','THEORY')}
-      <div class="cttot"><b>TOTAL MARK ${half(a+th)}</b><span>Aural ${half(a)} · Theory ${half(th)}</span><span class="sub" style="margin:0">Version ${TK.code(ct.y<=10?ct.y:10,t.seed,'Two').slice(-5)} <button class="linkbtn" id="ctnewv">New version</button></span></div>
+      <p class="sub ctsaved" id="ctsaved">✓ Saved on this device · ${new Date(t.at||Date.now()).toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}. Changes save as you make them; open it again any time from <b>All custom tests</b>.</p><div class="cttot"><b>TOTAL MARK ${half(a+th)}</b><span>Aural ${half(a)} · Theory ${half(th)}</span><span class="sub" style="margin:0">Version ${TK.code(ct.y<=10?ct.y:10,t.seed,'Two').slice(-5)} <button class="linkbtn" id="ctnewv">New version</button></span></div>
       <div class="controls ctact"><button class="btn-check" id="ctpush">Push to class…</button><button class="btn-ghost" id="ctprev">Try it as a student</button><button class="btn-ghost" id="ctprint">Print the test</button><button class="btn-ghost" id="ctkey">Print the answer key</button><button class="btn-ghost" id="cttracks">Play the tracks</button></div>
       <p class="sub">"Print", "Play the tracks" and "Try it" all use this version, so the printed key matches. A push with <i>different questions for each student</i> gives every student their own version of the same blueprint.</p>`,true);
     wire();}
-  function save(){CUR.ct=TK.ctClean(CUR.ct);saveTest(CUR);}
+  // clean in place, so handlers that hold the test object keep editing the live copy
+  function save(){const c=TK.ctClean(CUR.ct);Object.keys(CUR.ct).forEach(k=>delete CUR.ct[k]);Object.assign(CUR.ct,c);CUR.at=Date.now();saveTest(CUR);}
+  function markSaved(){const e=document.getElementById('ctsaved');if(e)e.firstChild.textContent='✓ Saved on this device · '+new Date().toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})+'. Changes save as you make them; open it again any time from ';}
   function rerender(){const m=document.getElementById('tkmodal');const st=m?m.scrollTop:0;save();edit();const m2=document.getElementById('tkmodal');if(m2)m2.scrollTop=st;}
   function wire(){const m=document.getElementById('tkmodal')||document,ct=CUR.ct;m.querySelectorAll('[data-adv]').forEach(d=>d.ontoggle=()=>{if(d.open)OPENADV.add(d.dataset.adv);else OPENADV.delete(d.dataset.adv);});const P=s=>{const [sec,bi,k,v]=s.split('|');return {sec,bi:+bi,k,v,b:ct[sec][+bi]};};
     m.querySelector('#ctback').onclick=()=>{save();home();};
@@ -399,6 +422,14 @@
       const od=TK.blockDef(sec,b.k).opts.find(o=>o.key===k);b.o[k]=od.ch.map(c=>c[0]).filter(c=>cur.includes(c));rerender();});
     m.querySelectorAll('[data-os]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.os);p.b.o=p.b.o||{};p.b.o[p.k]=x.value;rerender();});
     m.querySelectorAll('[data-ot]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.ot);p.b.o=p.b.o||{};p.b.o[p.k]=x.value.trim();save();});
+    m.querySelectorAll('[data-oa]').forEach(x=>x.oninput=()=>{const p=P(x.dataset.oa);p.b.o=p.b.o||{};p.b.o[p.k]=x.value;save();markSaved();});
+    const QL=s=>{const [sec,bi,k,i,d]=s.split('|');const b=ct[sec][+bi];b.o=b.o||{};if(!Array.isArray(b.o[k]))b.o[k]=JSON.parse(JSON.stringify(TK.opt(Object.assign({sec},b),k)||[]));return {b,L:b.o[k],i:+i,d:+d,k};};
+    m.querySelectorAll('[data-qadd]').forEach(x=>x.onclick=()=>{const [sec,bi,k]=x.dataset.qadd.split('|');const q=QL(sec+'|'+bi+'|'+k+'|0|0');q.L.push({q:'',a:'',m:sec==='A'&&q.b.k==='anal'?1:2,l:3});rerender();});
+    m.querySelectorAll('[data-qx]').forEach(x=>x.onclick=()=>{const q=QL(x.dataset.qx);q.L.splice(q.i,1);rerender();});
+    m.querySelectorAll('[data-qm]').forEach(x=>x.onclick=()=>{const q=QL(x.dataset.qm);const w=q.L[q.i];w.m=Math.max(0.5,Math.min(20,(+w.m||1)+q.d*0.5));rerender();});
+    m.querySelectorAll('[data-ql]').forEach(x=>x.onclick=()=>{const q=QL(x.dataset.ql);const w=q.L[q.i];w.l=Math.max(0,Math.min(12,(+w.l||0)+q.d));rerender();});
+    m.querySelectorAll('[data-qq]').forEach(x=>x.oninput=()=>{const q=QL(x.dataset.qq);q.L[q.i].q=x.value;save();markSaved();});
+    m.querySelectorAll('[data-qa]').forEach(x=>x.oninput=()=>{const q=QL(x.dataset.qa);q.L[q.i].a=x.value;save();markSaved();});
     m.querySelectorAll('[data-dg]').forEach(el=>{const p=P(el.dataset.dg+'|x');p.b.o=p.b.o||{};p.b.o.pat=p.b.o.pat||{};const o={bars:TK.opt(Object.assign({sec:p.sec},p.b),'bars'),state:p.b.o.pat};TK.wireDrumGrid(el,o,()=>save());});
     m.querySelectorAll('[data-add]').forEach(x=>x.onclick=()=>{const [sec,k]=x.dataset.add.split('|');const d=TK.blockDef(sec,k);const b={k,m:d.m,o:{}};if(d.n!==null)b.n=d.n;ct[sec].push(b);rerender();const mm=document.getElementById('tkmodal');if(mm){const blks=mm.querySelectorAll('.ctsec')[sec==='A'?0:1].querySelectorAll('.ctblk');const last=blks[blks.length-1];if(last)last.scrollIntoView({block:'center'});}});
     m.querySelector('#ctnewv').onclick=()=>{CUR.seed=TK.newSeed();rerender();BH.toast('New version: the same blueprint with new questions');};
