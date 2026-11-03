@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261103k";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261103l";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.
@@ -6,6 +6,8 @@
   let AC=null, bus=null; const timers=[];
   // REC: while set, every voice renders into an OfflineAudioContext on a virtual clock (for MP3 export)
   let REC=null;
+  // SPBO: a teacher-set tempo (seconds per crotchet) that overrides every phrase's own speed while set
+  let SPBO=null; const TS=s=>SPBO!=null?SPBO:s;
   function ac(){ if(REC) return REC.px; if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); }
     if(AC.state==='suspended') AC.resume(); return AC; }
   function getBus(){ if(REC) return REC.bus; const a=ac(); if(!bus){ bus=a.createGain(); bus.gain.value=1; bus.connect(a.destination); } return bus; }
@@ -112,8 +114,10 @@
     stop(){ if(REC) return; timers.forEach(t=>clearTimeout(t)); timers.length=0;
       if(bus){ const a=ac(), old=bus; bus=null; try{old.gain.cancelScheduledValues(a.currentTime); old.gain.setTargetAtTime(0,a.currentTime,0.012); setTimeout(()=>{try{old.disconnect();}catch(e){}},400);}catch(e){} } },
     // a delayed play that stop() cancels (for two-phrase questions)
-    later(fn,ms){ if(REC){ REC.q.push({at:REC.t+ms/1000,fn}); return 0; } const t=setTimeout(()=>{timers.splice(timers.indexOf(t),1);fn();},ms); timers.push(t); return t; },
+    later(fn,ms){ if(SPBO!=null){ const o=SPBO, f0=fn; fn=()=>{ const p=SPBO; SPBO=o; try{ return f0(); } finally{ SPBO=p; } }; } if(REC){ REC.q.push({at:REC.t+ms/1000,fn}); return 0; } const t=setTimeout(()=>{timers.splice(timers.indexOf(t),1);fn();},ms); timers.push(t); return t; },
     probeSamples,
+    // play fn() with every phrase at spb seconds per crotchet (null = each phrase's usual speed)
+    withSpb(spb,fn){ const p=SPBO; SPBO=(spb>0)?spb:null; try{ return fn(); } finally{ SPBO=p; } },
     // render whatever fn() plays into a mono buffer: fn may return seconds or a promise; AUDIO.later calls run on the virtual clock
     async record(fn,maxSecs){ const SR=44100, ctx=new OfflineAudioContext(1,Math.ceil((maxSecs||240)*SR),SR);
       const R={ctx,t:0,q:[],end:0}; R.px=new Proxy(ctx,{get(t,p){ if(p==='currentTime') return R.t; const v=t[p]; return typeof v==='function'?v.bind(t):v; }});
@@ -137,15 +141,15 @@
       ivls.forEach((iv,i)=>padNote(rootMidi+iv,t+(style==='roll'?i*0.10:0),2.1,0.95)); return 2.3; },
     scale(rootMidi,steps){ const a=arm(); let t=a.currentTime+0.06;
       steps.forEach(s=>{ synthNote(rootMidi+s,t,0.40); t+=0.36; }); return t-a.currentTime+0.1; },
-    cadence(chords){ const a=arm(); let t=a.currentTime+0.06; const bp=1.4;
+    cadence(chords){ const a=arm(); let t=a.currentTime+0.06; const bp=TS(1.4);
       chords.forEach(ch=>{ ch.forEach(m=>padNote(m,t,bp*1.08,0.85)); t+=bp; }); return t-a.currentTime+0.2; },
     // voice-led progression: each chord = [bass, upper...]; sustained & legato (overlapping into the next)
-    progression(chordsMidis,spb,gaps){ const a=arm(); const bp=spb||0.95, t0=a.currentTime+0.06; let t=t0;
+    progression(chordsMidis,spb,gaps){ spb=TS(spb); const a=arm(); const bp=spb||0.95, t0=a.currentTime+0.06; let t=t0;
       chordsMidis.forEach((ch,ci)=>{ ch.forEach((m,i)=>padNote(m,t,bp*1.10, i===0?1.25:0.82)); t+=bp; if(gaps&&gaps[ci])t+=gaps[ci]; });
       return (t-t0)+bp*0.2+0.3; },
     // metre groove at the eighth-pulse: 'S'=strong downbeat (low boom), 'M'=secondary beat (mid tone),
     // 'b'=beat tick, 's'=off-beat subdivision (soft). Plays 2 bars.
-    groove(pulses,spb){ const a=arm(); let t=a.currentTime+0.06; const sp=spb||0.30;
+    groove(pulses,spb){ const a=arm(); let t=a.currentTime+0.06; const sp=SPBO!=null?SPBO/2:(spb||0.30);
       for(let bar=0;bar<2;bar++){ pulses.forEach(p=>{
         if(p==='S'){ synthNote(40,t,0.28,1.25); click(t,true); }
         else if(p==='M'){ synthNote(52,t,0.22,0.8); click(t,false,0.9); }
@@ -153,12 +157,12 @@
         else { click(t,false,0.45); }
         t+=sp; }); }
       return t-a.currentTime+0.12; },
-    rhythm(durs,countIn){ const a=arm(); let t=a.currentTime+0.06;
+    rhythm(durs,countIn){ const a=arm(); let t=a.currentTime+0.06; const SPB=TS(0.52);
       if(countIn){ for(let i=0;i<countIn;i++){ click(t,i===0); t+=SPB; } }
       durs.forEach(d=>{ synthNote(74,t,Math.min(d*SPB*0.92,0.55)); t+=d*SPB; }); return t-a.currentTime+0.05; },
     // melody with rests (midi null), optional count-in clicks and key cue (tonic chord, then starting note).
     // opts: {countIn:{n,beat}, cue:{chord:[midis], first:midi}, accents:[...]}
-    melody(midis,durs,spb,swing,amps,opts){ const a=arm(); const bp=spb||SPB; opts=opts||{}; let t=a.currentTime+0.06;
+    melody(midis,durs,spb,swing,amps,opts){ spb=TS(spb); const a=arm(); const bp=spb||SPB; opts=opts||{}; let t=a.currentTime+0.06;
       if(opts.cue){ const c=opts.cue; if(c.chord&&c.chord.length){ c.chord.forEach(m=>padNote(m,t,1.25,0.9)); t+=1.45; }
         if(c.first!=null){ synthNote(c.first,t,0.75,1.0); t+=1.05; } }
       if(opts.countIn&&opts.countIn.n){ const ci=opts.countIn, acc=ci.accents||[0], bt=ci.beat||1, len=ci.len!=null?ci.len:ci.n*bt, c0=t; for(let i=0;i*bt<len-1e-6;i++) click(c0+i*bt*bp,acc.indexOf(i)>=0,0.8); t=c0+len*bp; }
@@ -168,7 +172,7 @@
         beat+=d; }
       return (t0-a.currentTime)+beat*bp+0.25; },
     // an unmistakably electronic voice (raw oscillator + filter sweep) for acoustic-vs-electronic questions
-    synthMelody(mids,durs,spb,wave){ const a=arm(); const bp=spb||0.45, t0=a.currentTime+0.06; let beat=0;
+    synthMelody(mids,durs,spb,wave){ spb=TS(spb); const a=arm(); const bp=spb||0.45, t0=a.currentTime+0.06; let beat=0;
       for(let i=0;i<mids.length;i++){ const d=durs[i], t=t0+beat*bp, len=d*bp*0.9; beat+=d; if(mids[i]==null)continue;
         const o=a.createOscillator(), f=a.createBiquadFilter(), g=a.createGain(); o.type=wave||'sawtooth'; o.frequency.value=mtof(mids[i]);
         f.type='lowpass'; f.frequency.setValueAtTime(3200,t); f.frequency.exponentialRampToValueAtTime(500,t+len); f.Q.value=6;
@@ -177,13 +181,13 @@
       return beat*bp+0.3; },
     // several independent lines at once: parts = [{mids,durs,offset(beats),amp}]
     // fx (optional): {t0: start time, chg:'accel'|'rit', dyn:'cresc'|'dim', level, len (note length factor, e.g. 0.35 staccato), total (beats)}
-    lines(parts,spb,fx){ const a=arm(); const bp=spb||SPB; fx=fx||{}; const t0=Math.max(a.currentTime+0.06,fx.t0||0); let end=0;
+    lines(parts,spb,fx){ spb=TS(spb); const a=arm(); const bp=spb||SPB; fx=fx||{}; const t0=Math.max(a.currentTime+0.06,fx.t0||0); let end=0;
       const M=fxMap(parts,bp,fx);
       parts.forEach(p=>{ let beat=p.offset||0; for(let i=0;i<p.mids.length;i++){ const d=p.durs[i];
         if(p.mids[i]!=null){ const st=M.T(beat),en=M.T(beat+d); synthNote(p.mids[i],t0+st,(en-st)*M.L,(p.amp==null?1:p.amp)*M.G(beat)); } beat+=d; } if(beat>end)end=beat; });
       return M.T(end)+0.3+(t0-a.currentTime); },
     // a sampled instrument line that can share a start time (fx.t0) with lines()
-    async sampleLine(instr,midis,durs,spb,fx){ const arr=await loadInstrument(instr); arm(); const a=ac(); fx=fx||{}; const bp=spb||0.5; const t0=Math.max(a.currentTime+0.03,fx.t0||0);
+    async sampleLine(instr,midis,durs,spb,fx){ spb=TS(spb); const arr=await loadInstrument(instr); arm(); const a=ac(); fx=fx||{}; const bp=spb||0.5; const t0=Math.max(a.currentTime+0.03,fx.t0||0);
       const M=fxMap([{mids:midis,durs,offset:0}],bp,fx); let beat=0;
       for(let i=0;i<midis.length;i++){ const midi=midis[i]; if(midi!=null){ let best=arr[0]; for(const e of arr) if(Math.abs(e.midi-midi)<Math.abs(best.midi-midi)) best=e;
         const src=a.createBufferSource(), g=a.createGain(); src.buffer=best.buffer; src.playbackRate.value=Math.pow(2,(midi-best.midi)/12);
@@ -193,13 +197,13 @@
     loadInst(instr){ return loadInstrument(instr); },
     now(){ return arm().currentTime; },
     // generic phrase with optional count-in clicks (used by rhythmic dictation). pitched line.
-    phrase(midis,durs,spb,swing,countIn){ const a=arm(); const bp=spb||SPB; let t=a.currentTime+0.06;
+    phrase(midis,durs,spb,swing,countIn){ spb=TS(spb); const a=arm(); const bp=spb||SPB; let t=a.currentTime+0.06;
       if(countIn){ for(let i=0;i<countIn;i++){ click(t,i===0); t+=bp; } }
       const t0=t; let beat=0;
       for(let i=0;i<midis.length;i++){ synthNote(midis[i],t0+swungBeat(beat,swing)*bp,Math.min(durs[i]*bp*0.92,2.0)); beat+=durs[i]; }
       return (t0-a.currentTime)+beat*bp+0.2; },
     // a melody played in a given timbre (sampled instrument) — a substantial excerpt
-    async sampleMelody(instr,midis,durs,spb,swing){ const arr=await loadInstrument(instr); arm(); const a=ac();
+    async sampleMelody(instr,midis,durs,spb,swing){ spb=TS(spb); const arr=await loadInstrument(instr); arm(); const a=ac();
       const bp=spb||0.5, t0=a.currentTime+0.06; let beat=0;
       for(let i=0;i<midis.length;i++){ const midi=midis[i]; let best=arr[0]; for(const e of arr) if(Math.abs(e.midi-midi)<Math.abs(best.midi-midi)) best=e;
         const src=a.createBufferSource(), g=a.createGain(); src.buffer=best.buffer; src.playbackRate.value=Math.pow(2,(midi-best.midi)/12);
@@ -211,7 +215,7 @@
     // pattern used by groove(), but rendered as pitched bass + light chord comp, repeated several
     // bars so the pulse and grouping are unmistakable. 'S'=downbeat (root bass, accent),
     // 'M'=secondary strong beat (fifth bass), 'b'=beat (chord), 's'=subdivision (soft comp).
-    metreGroove(pulses,spb){ const a=arm(); let t=a.currentTime+0.08; const sp=spb||0.26;
+    metreGroove(pulses,spb){ const a=arm(); let t=a.currentTime+0.08; const sp=SPBO!=null?SPBO/2:(spb||0.26);
       const bars = pulses.length>=9 ? 2 : 3;
       const ROOT=48, FIFTH=43, CH=[60,64,67], HI=67;  // static I chord — harmony never moves, so it reads as pulse
       for(let bar=0;bar<bars;bar++){ pulses.forEach(p=>{
@@ -222,7 +226,7 @@
         t+=sp; }); }
       return t-a.currentTime+0.25; },
     // chords (each lasting chordBeats) with an independent melody over the top — a phrase "in context"
-    progMelody(chords,melMids,melDurs,spb,chordBeats,style){ const a=arm(); const bp=spb||0.5, t0=a.currentTime+0.06, cb=chordBeats||2;
+    progMelody(chords,melMids,melDurs,spb,chordBeats,style){ spb=TS(spb); const a=arm(); const bp=spb||0.5, t0=a.currentTime+0.06, cb=chordBeats||2;
       let ct=t0; chords.forEach(ch=>{
         if(style==='broken'){ const up=ch.slice(1); let k=0; for(let b=0;b<cb*2;b++){ const m=(b%2===0&&b%4===0)?ch[0]:up[k++%up.length]; synthNote(m,ct+b*bp*0.5,bp*0.5*0.9,0.5); } }
         else ch.forEach(m=>padNote(m,ct,cb*bp*1.04,0.58));
@@ -231,11 +235,11 @@
       return Math.max(ct,t0+beat*bp)-a.currentTime+0.2; },
     // establish a tonality: tonic triad, then the scale ascending
     // drum groove: pat = {hh,sn,bd} strings of 0/1 at quaver steps (4/4); one-bar count-in on clicks
-    drums(pat,bars,spb,countIn){const a=arm();const bp=spb||0.5;let t=a.currentTime+0.08;if(countIn!==false){for(let i=0;i<4;i++){click(t,i===0,0.8);t+=bp;}}
+    drums(pat,bars,spb,countIn){spb=TS(spb);const a=arm();const bp=spb||0.5;let t=a.currentTime+0.08;if(countIn!==false){for(let i=0;i<4;i++){click(t,i===0,0.8);t+=bp;}}
       const steps=8*(bars||1);for(let i=0;i<steps;i++){const at=t+i*bp/2;if((pat.hh||'')[i]==='1')hat(at,i%2===0);if((pat.sn||'')[i]==='1')snare(at);if((pat.bd||'')[i]==='1')kick(at);}
       return (t-a.currentTime)+steps*bp/2+0.4;},
     // several lines at once with an optional key cue (tonic chord) and count-in: parts=[{mids,durs,amp}]
-    parts(parts,spb,opts){const a=arm();const bp=spb||SPB;opts=opts||{};let t=a.currentTime+0.06;
+    parts(parts,spb,opts){spb=TS(spb);const a=arm();const bp=spb||SPB;opts=opts||{};let t=a.currentTime+0.06;
       if(opts.cue&&opts.cue.chord){opts.cue.chord.forEach(m=>padNote(m,t,1.25,0.9));t+=1.45;}
       if(opts.countIn&&opts.countIn.n){const ci=opts.countIn,acc=ci.accents||[0],bt=ci.beat||1,len=ci.len!=null?ci.len:ci.n*bt,c0=t;for(let i=0;i*bt<len-1e-6;i++)click(c0+i*bt*bp,acc.indexOf(i)>=0,0.8);t=c0+len*bp;}
       let end=0;parts.forEach(p=>{let beat=0;for(let i=0;i<p.mids.length;i++){const d=p.durs[i];if(p.mids[i]!=null){if(pianoReady)pianoVoice(p.mids[i],t+beat*bp,d*bp*0.95,p.amp==null?0.9:p.amp);else synthNote(p.mids[i],t+beat*bp,d*bp*0.93,p.amp==null?1:p.amp);}beat+=d;}if(beat>end)end=beat;});

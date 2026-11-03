@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103k";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103l";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -310,6 +310,12 @@
       QS('own','Your own questions about the score (students write their answer)',[]),KEYS,MINK,CLEFS);
     add('notes',[KEYS]);add('scale',[KEYS]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
   })();
+  // ---- tempo (BPM) for every block whose examples have a speed ----
+  (function(){const BEAT='Tempo in BPM: crotchet beats (dotted crotchet in 6/8, 9/8, 12/8)';const CH='Tempo in BPM: one chord per beat';
+    const L={drum:['Tempo in BPM: crotchet beats','Usual ≈ 143'],two:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],bord:[BEAT,'Usual ≈ 109'],rdh:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],pd:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],md:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],
+      sfd:[BEAT,'Usual ≈ 109'],rd:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],dis:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],prog:[CH,'Usual ≈ 45–55'],cad:[CH,'Usual ≈ 40'],tmod:[CH,'Usual ≈ 55'],met:['Tempo in BPM: crotchet beats','Usual ≈ 100–115']};
+    Object.keys(L).forEach(k=>{const d=TK.blockDef('A',k);if(d&&!d.opts.some(o=>o.key==='bpm'))d.opts.push({key:'bpm',label:L[k][0]+' (leave empty for the usual speed)',type:'text',def:'',ph:L[k][1]+'. Type e.g. 72',bpm:true});});
+    TK.bpmOf=b=>{const v=parseInt(b&&b.o&&b.o.bpm,10);return v>=30&&v<=240?v:0;};})();
   // ---- the Year tests and the exam as editable starting points ----
   (function(){const A=(k,o,extra)=>Object.assign({k,o:o||{}},extra||{});const SC7=['major pentatonic','major'],SC8=['major','natural minor','major pentatonic','minor pentatonic'],M3=['2/4','3/4','4/4'],M4=['2/4','3/4','4/4','6/8'];
     const anal=(n)=>[A('anal',{asks:['tonality','texture','metre']},{n:n||3,m:1,t:'Aural Analysis'}),A('tim',{qtype:'Instrument'},{n:1,m:1,t:'Instruments'})];
@@ -447,6 +453,7 @@
         else{const s=DSTASH[key];if(s){if(s.song)p.b.o.song=s.song;if(s.section)p.b.o.section=s.section;if(s.x)p.b.x=s.x;}delete p.b.o.level;}p.b.k=to;}rerender();return;}
       p.b.o[p.k]=x.value;rerender();});
     m.querySelectorAll('[data-ot]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.ot);p.b.o=p.b.o||{};const old=TK.opt(Object.assign({sec:p.sec},p.b),p.k);p.b.o[p.k]=x.value.trim();
+      if(p.k==='bpm'){const v=parseInt(p.b.o.bpm,10);if(!v){delete p.b.o.bpm;}else{p.b.o.bpm=String(Math.max(30,Math.min(240,v)));if(String(v)!==p.b.o.bpm||x.value.trim()!==p.b.o.bpm)BH.toast('Tempo set to '+p.b.o.bpm+' BPM (30–240)');}x.value=p.b.o.bpm||'';save();return;}
       if(p.b.x&&(p.k==='song'||p.k==='section')&&old&&p.b.x.includes(old)){p.b.x=p.b.x.split(old).join(p.b.o[p.k]||(p.k==='song'?'the song':'section'));rerender();return;}save();});
     m.querySelectorAll('[data-oa]').forEach(x=>x.oninput=()=>{const p=P(x.dataset.oa);p.b.o=p.b.o||{};p.b.o[p.k]=x.value;save();markSaved();});
     const QL=s=>{const [sec,bi,k,i,d]=s.split('|');const b=ct[sec][+bi];b.o=b.o||{};if(!Array.isArray(b.o[k]))b.o[k]=JSON.parse(JSON.stringify(TK.opt(Object.assign({sec},b),k)||[]));return {b,L:b.o[k],i:+i,d:+d,k};};
