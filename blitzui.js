@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261103l";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261103q";
 // blitzui.js — the "Blitz" look shared by Aural Blitz and Theory Blitz (identical copy in both apps).
 // 1) a clean, rounded, app-icon home screen (tap an icon to open the exercise) with a bottom tab bar;
 // 2) a much richer avatar builder (face, hair, eyes, brows, mouth, extras, glasses, headwear, clothes, background, instrument).

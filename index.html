@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261103l">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261103q">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -318,20 +318,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261103l"></script>
-<script src="aural/samples.js?v=20261103l"></script>
-<script src="glyphs.js?v=20261103l"></script>
-<script src="theory.js?v=20261103l"></script>
-<script src="engrave.js?v=20261103l"></script>
-<script src="gen.js?v=20261103l"></script>
-<script src="refs.js?v=20261103l"></script>
-<script src="embed.js?v=20261103l"></script>
-<script src="qr.js?v=20261103l"></script>
-<script src="task.js?v=20261103l"></script>
-<script src="testkit.js?v=20261103l"></script>
-<script src="blitzui.js?v=20261103l"></script>
-<script>/*blitz-check*/(function(){var S="20261103l";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103l",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261103q"></script>
+<script src="aural/samples.js?v=20261103q"></script>
+<script src="glyphs.js?v=20261103q"></script>
+<script src="theory.js?v=20261103q"></script>
+<script src="engrave.js?v=20261103q"></script>
+<script src="gen.js?v=20261103q"></script>
+<script src="refs.js?v=20261103q"></script>
+<script src="embed.js?v=20261103q"></script>
+<script src="qr.js?v=20261103q"></script>
+<script src="task.js?v=20261103q"></script>
+<script src="testkit.js?v=20261103q"></script>
+<script src="blitzui.js?v=20261103q"></script>
+<script>/*blitz-check*/(function(){var S="20261103q";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103q",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -388,7 +388,7 @@ const EMBED=(()=>{if(window.__EMBED)return window.__EMBED;try{return new URL(loc
 const EMBED_YEAR=(()=>{if(window.__EMBED_YEAR)return window.__EMBED_YEAR;try{return parseInt(new URL(location.href).searchParams.get('year'),10)||0;}catch(e){return 0;}})();
 const HAS_AURAL=()=>(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partA)||(typeof HAS_AURAL_DIR!=='undefined'&&HAS_AURAL_DIR);
 const AURAL_SRC=()=>(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partA)?null:'aural/index.html?embed=partA&year='+LEVEL();
-addEventListener('message',e=>{const m=e.data;if(!m||m.type!=='blitz-exam-done')return;embedRes[m.part]=m;if(UNITS[ui]&&UNITS[ui].test&&window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){const pos=examPlan.findIndex(it=>it.embed===m.part);if(pos>=0)TaskKit.record(pos,m.tot>=m.max,m.max?m.tot/m.max:0,(Date.now()-examStart)/1000,0);}if(UNITS[ui]&&UNITS[ui].exam&&!examOn)finishExam();else if(UNITS[ui]&&UNITS[ui].exam){toast('Part '+m.part+' finished: '+m.tot+' / '+m.max);renderDots();}});
+addEventListener('message',e=>{const m=e.data;if(!m||m.type!=='blitz-exam-done')return;if(embedRes[m.part]&&embedRes[m.part]._final)return;embedRes[m.part]=m;if(UNITS[ui]&&UNITS[ui].test&&window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){const pos=examPlan.findIndex(it=>it.embed===m.part);if(pos>=0)TaskKit.record(pos,m.tot>=m.max,m.max?m.tot/m.max:0,(Date.now()-examStart)/1000,0);}if(UNITS[ui]&&UNITS[ui].exam&&!examOn)finishExam();else if(UNITS[ui]&&UNITS[ui].exam){toast('Part '+m.part+' finished: '+m.tot+' / '+m.max);renderDots();}});
 function buildExamPlan(){EMBKEY++;if(UNITS[ui]&&UNITS[ui].test){buildTestPlan();return;}const y12=LEVEL()==='12';const clefs=y12?['treble','bass','alto']:['treble','bass'];
   const q8=[
     {t:'Name the chord at the marked place',g:'nameChordQ',m:1},{t:'Name the chord at the marked place',g:'notateChordSigQ',m:1,alt:'nameChordQ'},
@@ -577,18 +577,34 @@ async function testPrint(key){closeGuide();const title=TestKit.title(testRun.y)+
   if(HAS_AURAL()){try{const S=AURAL_TEST_SRC('printA',key);const m=await TestKit.request(S.src,S.doc,'blitz-test-print',30000);secs.push({html:m.html});a=m.marks;}catch(e){secs.push({html:'<p>The aural section could not be prepared on this device.</p>'});}}
   secs.push({html:testPaperB(key)});
   TestKit.fillPrint(w,{title,y:testRun.y,sem:testRun.sem,code:testCode(),key,sections:secs,aMarks:a,tMarks:testTMarks()});}
-function finishTest(){if(examOn&&!finishTest._ok){const m=examMarks();const un=m.filter(x=>!x.it.embed&&!x.answered).length;const emb=m.find(x=>x.it.embed&&!x.answered);
+// ---- the companion section of a combined test: its marks are collected at Finish test, even if Finish Part A was never pressed ----
+function partRows(){const m=examMarks().filter(x=>!x.it.embed);return (typeof testGroups!=='undefined'?testGroups:[]).map((g,gi)=>{const its=m.filter(x=>x.it.gi===gi);return {l:TestKit.letter(gi),t:g.title,got:Math.round(its.reduce((a,x)=>a+x.got,0)*2)/2,m:g.marks,un:its.filter(x=>!x.answered).length};});}
+function partResult(){const m=examMarks();const mine=m.filter(x=>!x.it.embed);return {rows:partRows(),tot:Math.round(mine.reduce((a,x)=>a+x.got,0)*2)/2,max:testTMarks(),wt:writtenListT(),un:mine.filter(x=>!x.answered).length};}
+addEventListener('message',e=>{const m=e.data;if(!m||!EMBED)return;
+  if(m.type==='blitz-exam-peek'){let r=null;try{r=examPlan.length?partResult():null;}catch(_){r=null;}try{e.source.postMessage(Object.assign({type:'blitz-exam-peeked',part:'B',id:m.id,ok:!!r},r||{}),'*');}catch(_){}}
+  if(m.type==='blitz-exam-collect'&&examOn){finishTest._ok=true;try{finishTest();}catch(_){}}});
+function peekEmbed(){return new Promise(ok=>{const f=embedFrame();if(!f||!f.contentWindow){ok(null);return;}const id=Math.random().toString(36).slice(2);let done=false;
+  const h=e=>{const m=e.data;if(m&&m.type==='blitz-exam-peeked'&&m.id===id){done=true;removeEventListener('message',h);ok(m.ok?m:null);}};addEventListener('message',h);
+  try{f.contentWindow.postMessage({type:'blitz-exam-peek',id},'*');}catch(_){}setTimeout(()=>{if(!done){removeEventListener('message',h);ok(null);}},2500);});}
+function applyEmbed(part,r){const m={type:'blitz-exam-done',part,tot:r.tot,max:r.max,wt:r.wt||[],rows:r.rows||null,_final:true};embedRes[part]=m;
+  if(UNITS[ui]&&UNITS[ui].test&&window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){const pos=examPlan.findIndex(it=>it.embed===part);if(pos>=0)TaskKit.record(pos,m.tot>=m.max,m.max?m.tot/m.max:0,(Date.now()-examStart)/1000,0);}
+  const f=embedFrame();try{if(f&&f.contentWindow)f.contentWindow.postMessage({type:'blitz-exam-collect'},'*');}catch(_){}}
+function finishTest(){let peekUn=0;
+  if(examOn&&!EMBED&&!finishTest._peek){const it=examPlan.find(x=>x.embed&&!(embedRes[x.embed]));if(it&&embedFrame()){peekEmbed().then(r=>{finishTest._peek=r?{part:it.embed,r}:'none';finishTest();});return;}}
+  const PK=finishTest._peek&&finishTest._peek!=='none'?finishTest._peek:null;finishTest._peek=null;if(PK)peekUn=PK.r.un||0;
+  if(examOn&&!finishTest._ok){const m=examMarks();const un=m.filter(x=>!x.it.embed&&!x.answered).length+peekUn;const emb=PK?null:m.find(x=>x.it.embed&&!x.answered);
     if(un||emb){const msg=(un?'You have '+un+' unanswered question'+(un===1?'':'s')+'.':'')+(emb?(un?' ':'')+'The '+(emb.it.embed==='B'?'theory':'aural')+' section isn\'t finished.':'')+' Unanswered questions score 0, and you can\'t come back to the test once it is finished. Finish anyway?';
       if(!confirm(msg))return;}}
+  if(PK)applyEmbed(PK.part,PK.r);
   finishTest._ok=false;document.body.classList.remove('testing');const wasOn=examOn;examOn=false;clearInterval(examTick);const m=examMarks();const th=m.filter(x=>!x.it.embed),au=m.find(x=>x.it.embed);
   const tg=Math.round(th.reduce((a,x)=>a+x.got,0)*2)/2,tm=testTMarks(),ag=au&&embedRes.A?embedRes.A.tot:null,am=au?(embedRes.A?embedRes.A.max:au.it.m):0;const tot=tg+(ag||0),max=tm+am,pct=Math.round(tot/max*100);
-  if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'B',tot:tg,max:tm,wt:writtenListT()},'*');}catch(e){}}
+  if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'B',tot:tg,max:tm,wt:writtenListT(),rows:partRows()},'*');}catch(e){}}
   if(wasOn&&!EMBED){logComplete({id:'test',name:'Test · Year '+testRun.y},pct);if(PROF){PROF.exams=PROF.exams||[];PROF.exams.push({at:Date.now(),tot,max,year:testRun.y,test:true});saveProfiles();}}
   if(window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){if(TaskKit.setWritten)TaskKit.setWritten(writtenListT());showTaskFinish();return;}
   const c=document.getElementById('card');document.getElementById('dots').innerHTML='';
   const rows=testGroups.map((g,gi)=>{const its=th.filter(x=>x.it.gi===gi);const got=Math.round(its.reduce((a,x)=>a+x.got,0)*2)/2;const un=its.filter(x=>!x.answered).length;return `<tr><td>(${TestKit.letter(gi)})</td><td>${esc(g.title)}${un?' <span style="color:var(--muted);font-size:12px">· '+un+' unanswered</span>':''}</td><td class="r">${got} / ${g.marks}</td></tr>`;}).join('');
   c.innerHTML=`${TestKit.header(testRun.y,testRun.sem)}<div class="tstname">Name:<span>${esc(currentName||'')}</span></div><div class="examtotal">${tot} / ${max} <span style="font-size:18px;color:var(--muted)">(${pct}%)</span></div>
-    ${au?`${TestKit.sectionHead('AURAL',am)}<table class="examtable"><tr><td>Aural section</td><td class="r">${ag===null?'not finished':ag+' / '+am}</td></tr></table>`:''}
+    ${au?`${TestKit.sectionHead('AURAL',am)}<table class="examtable">${(embedRes.A&&embedRes.A.rows&&embedRes.A.rows.length)?'<tr><th></th><th>Question</th><th style="text-align:right">Marks</th></tr>'+embedRes.A.rows.map(r=>'<tr><td>('+r.l+')</td><td>'+esc(r.t)+(r.un?' <span style="color:var(--muted);font-size:12px">· '+r.un+' unanswered</span>':'')+'</td><td class="r">'+r.got+' / '+r.m+'</td></tr>').join(''):`<tr><td>Aural section</td><td class="r">${ag===null?'not finished':ag+' / '+am}</td></tr>`}</table>`:''}
     ${TestKit.sectionHead('THEORY',tm)}<table class="examtable"><tr><th></th><th>Question</th><th style="text-align:right">Marks</th></tr>${rows}</table>
     ${TestKit.totalLine({a:am,ag,t:tm,tg})}<p class="sub">Finished in ${examClock()}${EMBED?'':' · logged to the class record'}. Use the markers to review any question with its answer.</p>
     <div class="controls">${EMBED?'':'<button class="btn-check" id="examsheet">📝 Answer sheet</button>'}<button class="btn-ghost" id="examreview">Review answers</button><button class="btn-ghost" id="examagain">New test</button></div>`;

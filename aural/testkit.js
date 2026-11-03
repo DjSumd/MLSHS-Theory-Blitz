@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103l";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103q";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -149,7 +149,7 @@
     {k:'sfd',label:'Sol-fa dictation',title:'Melodic Dictation – Sol-fa',desc:'The rhythm is printed; students write only the sol-fa, one box per note.',n:null,m:6,
       opts:[M('scales','Scale',AS,['major pentatonic']),M('metres','Time signature',METS,['2/4','3/4','4/4']),O1('bars','Length',BARS,'2')]},
     {k:'two',label:'Two-part dictation (sol-fa)',title:'Two-Part Dictation',desc:'Two parts play together (upper in the treble, lower in the bass), moving mostly by step and skip. Both rhythms are printed and students write the sol-fa of each part. The first bar of each part is given.',n:null,m:5,
-      opts:[O1('scale','Scale',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],'natural minor'),O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4')]},
+      opts:[O1('scale','Scale',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],'natural minor'),O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4'),Object.assign(M('sep','Playback (tick to allow)',[['solo','Students may also play each part on its own']],['solo']),{empty:true})]},
     {k:'bord',label:'Bars in the wrong order',title:'Bars in the Wrong Order',desc:'The bars of a melody are printed out of order. Students listen, then drag the bars back into order (on paper they write the letter of each bar in its place). Marked in proportion to the bars in the right place.',n:null,m:8,
       opts:[O1('bars','Length',[['4','4 bars'],['8','8 bars']],'8'),M('scales','Scale',AS,['major','natural minor']),M('metres','Time signature',METS.slice(0,4),['3/4','4/4']),O1('given','Given',[['0','Nothing (every bar out of order)'],['1','Bar 1']],'0'),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
     {k:'rdh',label:'Rhythm on given noteheads',title:'Rhythmic Dictation',desc:'Stemless noteheads and the barlines are printed; students add the rhythm to each notehead. The first note is given.',n:null,m:8,
@@ -200,7 +200,7 @@
   TK.writtenYou=(q)=>`<div class="cell wide"><div class="qtext">${esc(q.wq)}</div><div class="wyou">${q._text?esc(q._text).replace(/\n/g,'<br>'):'<i>Not answered</i>'}</div>${q.answer?`<div class="note">Model answer: ${esc(q.answer)}</div>`:''}<div class="note">Marked by your teacher.</div></div>`;
   TK.blockDef=(sec,k)=>(TK.BLOCKS[sec]||[]).find(b=>b.k===k);
   TK.opt=(b,key)=>{const d=TK.blockDef(b.sec||b._s,b.k)||TK.blockDef('A',b.k)||TK.blockDef('T',b.k);const od=d&&d.opts.find(o=>o.key===key);const v=b.o&&b.o[key];
-    if(od&&od.type==='multi')return (v&&v.length)?v:(od.def||[]);if(v!==undefined&&v!==null&&v!=='')return v;return od?od.def:undefined;};
+    if(od&&od.type==='multi')return (v&&(v.length||od.empty))?v:(od.def||[]);if(v!==undefined&&v!==null&&v!=='')return v;return od?od.def:undefined;};
   TK.cellsOf=b=>{const sides=TK.opt(Object.assign({sec:'T'},b),'sides');const g=TK.opt(Object.assign({sec:'T'},b),'given');return sides.length*(g==='none'?16:8);};
   TK.qsMarks=(sec,b)=>{const d=TK.blockDef(sec,b.k);if(!d)return 0;return d.opts.filter(o=>o.type==='qs').reduce((a,od)=>a+((b.o&&Array.isArray(b.o[od.key]))?b.o[od.key]:(od.def||[])).reduce((s,w)=>s+(+w.m||0),0),0);};
   TK.blockMarks=(sec,b)=>{const d=TK.blockDef(sec,b.k);if(!d)return 0;const ex=TK.qsMarks(sec,b);if(d.noBase)return ex;if(d.perCell)return Math.round(TK.cellsOf(b)*b.m*2)/2+ex;const n=d.n===null?1:(b.n||d.n);return Math.round(n*b.m*4)/4+ex;};

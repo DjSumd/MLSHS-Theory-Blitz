@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css?v=20261103l">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261103q">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -350,20 +350,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js?v=20261103l"></script>
-<script src="audio.js?v=20261103l"></script>
-<script src="samples.js?v=20261103l"></script>
-<script src="engrave.js?v=20261103l"></script>
-<script src="content.js?v=20261103l"></script>
-<script src="refs.js?v=20261103l"></script>
-<script src="embed.js?v=20261103l"></script>
-<script src="qr.js?v=20261103l"></script>
-<script src="task.js?v=20261103l"></script>
-<script src="testkit.js?v=20261103l"></script>
-<script src="blitzui.js?v=20261103l"></script>
-<script src="live.js?v=20261103l"></script>
-<script>/*blitz-check*/(function(){var S="20261103l";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103l",P="blitz-aural-all-",APP="Aural Blitz";
+<script src="glyphs.js?v=20261103q"></script>
+<script src="audio.js?v=20261103q"></script>
+<script src="samples.js?v=20261103q"></script>
+<script src="engrave.js?v=20261103q"></script>
+<script src="content.js?v=20261103q"></script>
+<script src="refs.js?v=20261103q"></script>
+<script src="embed.js?v=20261103q"></script>
+<script src="qr.js?v=20261103q"></script>
+<script src="task.js?v=20261103q"></script>
+<script src="testkit.js?v=20261103q"></script>
+<script src="blitzui.js?v=20261103q"></script>
+<script src="live.js?v=20261103q"></script>
+<script>/*blitz-check*/(function(){var S="20261103q";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103q",P="blitz-aural-all-",APP="Aural Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -426,7 +426,7 @@ const EMBED=(()=>{if(window.__EMBED)return window.__EMBED;try{return new URL(loc
 const EMBED_YEAR=(()=>{if(window.__EMBED_YEAR)return window.__EMBED_YEAR;try{return parseInt(new URL(location.href).searchParams.get('year'),10)||0;}catch(e){return 0;}})();
 const THEORY_SRC=()=>(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partB)?null:'theory/index.html?embed=partB&year='+Math.max(11,YEAR);
 const HAS_THEORY=()=>(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partB)||(typeof HAS_THEORY_DIR!=='undefined'&&HAS_THEORY_DIR);
-addEventListener('message',e=>{const m=e.data;if(!m||m.type!=='blitz-exam-done')return;embedRes[m.part]=m;if(UNITS[ui]&&UNITS[ui].test&&window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){const pos=examPlan.findIndex(it=>it.embed===m.part);if(pos>=0)TaskKit.record(pos,m.tot>=m.max,m.max?m.tot/m.max:0,(Date.now()-examStart)/1000,0);}if(UNITS[ui]&&UNITS[ui].exam&&!examOn)finishExam();else if(UNITS[ui]&&UNITS[ui].exam){toast('Part '+m.part+' finished: '+m.tot+' / '+m.max);renderDots();}});
+addEventListener('message',e=>{const m=e.data;if(!m||m.type!=='blitz-exam-done')return;if(embedRes[m.part]&&embedRes[m.part]._final)return;embedRes[m.part]=m;if(UNITS[ui]&&UNITS[ui].test&&window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){const pos=examPlan.findIndex(it=>it.embed===m.part);if(pos>=0)TaskKit.record(pos,m.tot>=m.max,m.max?m.tot/m.max:0,(Date.now()-examStart)/1000,0);}if(UNITS[ui]&&UNITS[ui].exam&&!examOn)finishExam();else if(UNITS[ui]&&UNITS[ui].exam){toast('Part '+m.part+' finished: '+m.tot+' / '+m.max);renderDots();}});
 const examDiff=()=>YEAR>=12?'hard':YEAR>=10?'med':'easy';
 // ---- Years 7–10 Aural and Theory Test (runs on the Exam engine; look standardised by testkit.js) ----
 const TEST={name:'Test',key:'test',special:true,exam:true,test:true,ask:'Listen.',guide:`<p class="prompt">Aural and Theory Test</p><ul><li>A full test in the school's standard format: an Aural section, then a Theory section, with the marks for each part shown.</li><li>Questions follow your year's curriculum. Every new test is different; your teacher can print the same test, with an answer key, from its test code.</li><li>Press Finish test when you are done: it is marked straight away.</li></ul>`,
@@ -718,11 +718,13 @@ function ctTwoPartQ(o){return function(){const sc=o.scale||'natural minor';const
   const B=twoPartBuild(sc,metre,bars);if(!B)throw new Error('two-part: no consonant lower part');const {dict,low,tm,M,bpb}=B;
   const uNotes=dict.notes.filter(n=>!n.rest);const uSyl=uNotes.map(n=>ENGRAVE.solfaOf(n.midi,tm,sc));const lSyl=low.map(n=>ENGRAVE.solfaOf(n.midi,tm,sc));
   const answer=uSyl.concat(lSyl);const givenMask=uNotes.map(n=>n.onset<bpb-1e-6).concat(low.map(n=>n.t<bpb-1e-6));
-  const rr=(notes)=>ENGRAVE.drawScore({clef:'treble',ks:0,bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars,notes:notes.map(n=>({onset:n.onset!==undefined?n.onset:n.t,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:Math.min(4,bars),mode:'raw'}).svg;
+  const AL=dict.notes.map(n=>n.onset).concat(low.map(n=>n.onset!==undefined?n.onset:n.t));
+  const rr=(notes)=>ENGRAVE.drawScore({clef:'treble',ks:0,bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars,alignOnsets:AL,notes:notes.map(n=>({onset:n.onset!==undefined?n.onset:n.t,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:Math.min(4,bars),mode:'raw'}).svg;
   const svg=`<div class="twop"><div class="tpl">Upper part · treble clef</div>${rr(dict.notes)}<div class="tpl">Lower part · bass clef</div>${rr(low)}</div>`;
   const ci=M.denom===8?{n:M.numer/3,beat:1.5,accents:[0]}:{n:Math.round(bpb),beat:1,accents:[0]};const minor=/minor/.test(sc);
-  const ev=soundingOf(dict.notes);
-  return {_low:low,kind:'numerals',twoPart:true,fmt:x=>esc(x),palette:CT_SOLFA(sc),answer,givenMask,given:0,dict,solfaDict:true,rhythmOnly:true,scoreSvg:svg,
+  const ev=soundingOf(dict.notes);const cue={chord:[tm-12,tm+(minor?3:4)-12,tm+7-12]};
+  const UP={mids:ev.map(n=>n.midi),durs:ev.map(n=>n.dur)},LO={mids:low.map(n=>n.midi),durs:low.map(n=>n.dur),amp:0.75};
+  return {_low:low,kind:'numerals',twoPart:true,sepOK:o.sep!==false,playPart2:w=>AUDIO.parts([w==='l'?Object.assign({},LO,{amp:0.95}):UP],0.55,{cue,countIn:ci}),fmt:x=>esc(x),palette:CT_SOLFA(sc),answer,givenMask,given:0,dict,solfaDict:true,rhythmOnly:true,scoreSvg:svg,
     rows:[{label:'Upper part · treble clef',from:0,to:uSyl.length},{label:'Lower part · bass clef',from:uSyl.length,to:answer.length}],slotLabels:uSyl.map((_,i)=>String(i+1)).concat(lSyl.map((_,i)=>String(i+1))),scaleName:dict.scaleName,
     play:()=>AUDIO.parts([{mids:ev.map(n=>n.midi),durs:ev.map(n=>n.dur)},{mids:low.map(n=>n.midi),durs:low.map(n=>n.dur),amp:0.75}],0.55,{cue:{chord:[tm-12,tm+(minor?3:4)-12,tm+7-12]},countIn:ci}),
     playLabel:'The tonic chord, a count-in, then both parts together',why:'Upper: '+uSyl.join(' ')+'. Lower: '+lSyl.join(' ')+'.'};};}
@@ -753,7 +755,7 @@ function ctAuralGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('A',k);con
       text='The rhythm is given. Listen to the melody'+(o.sf==='yes'?', write the sol-fa under each note'+(sy.length?' ('+sy.join(' ')+')':'')+', then':' and')+' write the notes on the stave. The first '+(o.given==='bar'?'bar is':'note is')+' given.';items=one({unit:'pd',build:ctPd(o,'pitch')});}
     else if(b.k==='md'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),clef:O(b,'clef'),sf:O(b,'sf'),given:'note',diff:O(b,'diff')};text='Listen to the melody and write it on the stave, rhythm and pitch.'+(o.sf==='no'?'':' Then write the sol-fa under each note (la is the tonic in minor).')+' The first note is given.';items=one({unit:'pd',build:ctPd(o,'melody')});}
     else if(b.k==='sfd'){const o={scales:O(b,'scales'),metres:O(b,'metres'),bars:O(b,'bars'),diff:O(b,'diff')};text='The rhythm is given. Listen to the melody and write its sol-fa, one box for each note. The first note is given.';items=one({unit:'pd',build:ctSolfaDictQ(o)});}
-    else if(b.k==='two'){const o={scale:O(b,'scale'),metre:O(b,'metre'),bars:O(b,'bars')};text='Both rhythms are given. Listen to the two parts (upper in the treble, lower in the bass) and write the sol-fa of each part below its rhythm ('+CT_SOLFA(o.scale).join(' ')+'). The first bar of each part is given.';items=one({unit:'pd',build:ctTwoPartQ(o)});}
+    else if(b.k==='two'){const o={scale:O(b,'scale'),metre:O(b,'metre'),bars:O(b,'bars'),sep:(O(b,'sep')||[]).includes('solo')};text='Both rhythms are given. Listen to the two parts (upper in the treble, lower in the bass) and write the sol-fa of each part below its rhythm ('+CT_SOLFA(o.scale).join(' ')+'). The first bar of each part is given.';items=one({unit:'pd',build:ctTwoPartQ(o)});}
     else if(b.k==='bord'){const o={bars:O(b,'bars'),scales:O(b,'scales'),metres:O(b,'metres'),given:O(b,'given'),clef:O(b,'clef'),diff:O(b,'diff')};text='The '+({4:'four',8:'eight'}[o.bars]||o.bars)+' bars of this melody are printed in the wrong order. Listen, then put them back in the correct order'+(+o.given?'. Bar 1 is given.':'.');items=one({unit:'pd',build:barOrderQ(o)});}
     else if(b.k==='rdh'){const o={bars:O(b,'bars'),metres:O(b,'metres'),scales:O(b,'scales'),clef:O(b,'clef')};text='The noteheads and barlines are given. Listen, then add the rhythm to each notehead. The first note is given.';const vo=vocabFrom(O(b,'vocab').length?O(b,'vocab'):cfgDef(UNITS.findIndex(u=>u.key==='rd'),'vocab'));items=one({unit:'rd',build:()=>rhythmHeadsQ({bars:o.bars,metre:A_pick(o.metres),scales:o.scales,clef:o.clef,maxKs:3,diff:O(b,'diff'),vocab:{vocab:vo.vocab,vocabEasy:vo.vocabEasy,syncopation:vo.syncopation}})});}
     else if(b.k==='rd'){text='Listen to the excerpt and write its rhythm in the bars below. You will hear a one-bar count-in first.';items=one({unit:'rd',cfg:Object.assign({bars:O(b,'bars'),source:O(b,'source'),metres:O(b,'metres'),swing:O(b,'swing')||'off',qtype:['write']},O(b,'vocab').length?{vocab:O(b,'vocab')}:{}),diff:O(b,'diff')||'med'});}
@@ -825,7 +827,7 @@ function paperSolfa(q,key){const d=q.dict;if(!d||q.rhythmOnly||q.noSolfa||!ENGRA
   return `<div class="lbl" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${ns.map((n,i)=>{const sy=ENGRAVE.solfaOf(n.midi,d.tonicMidi,d.scaleType);return i<g?`<span class="b g">${sy}</span>`:`<span class="b${key?' k':''}">${key?sy:''}</span>`;}).join('')}</div>`;}
 function paperItem(q,it,key){const K=s=>key?`<span class="ans k">${esc(s)}</span>`:'<span class="ans"></span>';const opts=(list,ans,cols)=>`<div class="opts${cols?' cols':''}">${list.map(o=>`<span class="o${key&&o===ans?' k':''}">${q.fmt?q.fmt(o):esc(o)}</span>`).join('')}</div>`;
   if(q.kind==='rhythmdict'||q.kind==='melodydict'){const notes=key?keyNotes(q):(q.kind==='rhythmdict'?[]:keyNotes(q).slice(0,1).map(n=>Object.assign(n,{color:'#000'})));return `<div class="cell wide">${paperScore(q,notes)}${q.scaleName&&!q.rhythmOnly?`<div class="note">Key: ${esc(q.scaleName)}</div>`:''}${q.kind==='melodydict'?paperSolfa(q,key):''}</div>`;}
-  if(q.kind==='pitchdict'){const kn=keyNotes(q);const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>n.rest?{onset:n.onset,dur:n.dur,rest:true}:i<q.given?{onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie}:key?kn[i]:{onset:n.onset,dur:n.dur,state:'empty'});return `<div class="cell wide">${paperScore(q,notes)}<div class="note">Key: ${esc(q.scaleName)}</div>${paperSolfa(q,key)}</div>`;}
+  if(q.kind==='pitchdict'){const kn=keyNotes(q);const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>n.rest?{onset:n.onset,dur:n.dur,rest:true}:i<q.given?{onset:n.onset,dur:n.dur,d:n.d,acc:givenAt(q,i),tie:n.tie}:key?kn[i]:{onset:n.onset,dur:n.dur,state:'empty'});return `<div class="cell wide">${paperScore(q,notes)}<div class="note">Key: ${esc(q.scaleName)}</div>${paperSolfa(q,key)}</div>`;}
   if(q.kind==='numerals'&&q.twoPart){return `<div class="cell wide">${q.scoreSvg}${q.rows.map(r=>`<div class="lbl" style="margin-top:2mm">${esc(r.label)}</div><div class="boxes sf">${q.answer.slice(r.from,r.to).map((a,k)=>GV(q,r.from+k)?`<span class="b g">${esc(a)}</span>`:`<span class="b${key?' k':''}">${key?esc(a):''}</span>`).join('')}</div>`).join('')}</div>`;}
   if(q.kind==='drum')return `<div class="cell wide">${TestKit.drumPaper({bars:q.bars,rows:q.rows,pat:q.pat},key)}</div>`;
   if(q.kind==='written'){const tx=it.text||'';return TestKit.writtenPaper(tx.length>4?Object.assign({},q,{wq:tx}):q,key,tx.length&&tx.length<=4?tx:'');}
@@ -853,7 +855,7 @@ function ansYou(q,it){const r=q&&q._resp;if(!r)return '<div class="na">Not answe
     let midi=[];try{midi=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'})).midi||[];}catch(e){}
     notes.forEach((n,k)=>{const hit=q.dict.notes.some(a=>eq(a.onset,n.onset)&&eq(a.dur,n.dur)&&!!a.rest===!!n.rest&&(q.rhythmOnly||n.rest||a.midi===midi[k]));n.color=k===0?'#000':hit?G:B;});
     return `<div class="cell wide">${paperScore(q,notes)}${q.kind==='melodydict'?sfY():''}</div>`;}
-  if(q.kind==='pitchdict'&&r.pd){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie};const v=r.pd[i];return v?{onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,idx:i}:{onset:n.onset,dur:n.dur,state:'empty',idx:i};});
+  if(q.kind==='pitchdict'&&r.pd){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenAt(q,i),tie:n.tie};const v=r.pd[i];return v?{onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,idx:i}:{onset:n.onset,dur:n.dur,state:'empty',idx:i};});
     const ok={};try{const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));meta.order.forEach((n,k)=>{if(n.idx!==undefined&&n.state!=='empty')ok[n.idx]=meta.midi[k]===q.dict.notes[n.idx].midi;});}catch(e){}
     notes.forEach((n,i)=>{if(n.idx!==undefined&&n.state!=='empty')n.color=ok[i]?G:B;});return `<div class="cell wide">${paperScore(q,notes)}${sfY()}</div>`;}
   if(q.kind==='written')return TestKit.writtenYou(q);
@@ -891,12 +893,12 @@ async function testPrint(key){closeGuide();const title=TestKit.title(testRun.y)+
 function testTracks(embedded){const c=document.getElementById('card');document.getElementById('dots').innerHTML='';const seen=new Set();const rows=[];
   examPlan.forEach((it,pos)=>{const tk=it.track||('tp'+pos);if(it.embed||it.na||seen.has(tk))return;seen.add(tk);rows.push({it,pos});});
   c.innerHTML=`${TestKit.header(testRun.y,testRun.sem)}<p class="prompt" style="font-weight:700;font-size:16px">Tracks for test ${testCode()}</p><p class="sub">Play each track for the class when they reach that question. Dictations play the tonic and starting note first where the question gives them.</p>
-    <div class="tsttracks">${rows.map(({it,pos})=>`<div class="trk"><b>${it.track?'Track '+it.track:'You play'}</b><span>(${it.gl}) ${esc(it.gtitle)}${it.subn>1&&!it.share?' '+esc(it.text):''}</span>${(tq(pos)||{}).teacherPlays?`<i>You play: ${esc(tq(pos).teacherPlays)}</i>`:(tq(pos)||{}).multiPlay?`<button data-p="${pos}" data-w="whole">▶ Play</button><button data-p="${pos}" data-w="h1">1st half</button><button data-p="${pos}" data-w="h2">2nd half</button>`:`<button data-p="${pos}" data-w="">▶ Play</button>`}${(tq(pos)||{}).teacherPlays?'':'<button data-stop="1">■ Stop</button>'}</div>`).join('')}</div>
+    <div class="tsttracks">${rows.map(({it,pos})=>`<div class="trk"><b>${it.track?'Track '+it.track:'You play'}</b><span>(${it.gl}) ${esc(it.gtitle)}${it.subn>1&&!it.share?' '+esc(it.text):''}</span>${(tq(pos)||{}).teacherPlays?`<i>You play: ${esc(tq(pos).teacherPlays)}</i>`:(tq(pos)||{}).multiPlay?`<button data-p="${pos}" data-w="whole">▶ Play</button><button data-p="${pos}" data-w="h1">1st half</button><button data-p="${pos}" data-w="h2">2nd half</button>`:`<button data-p="${pos}" data-w="">▶ Play</button>${(tq(pos)||{}).twoPart&&(tq(pos)||{}).sepOK?`<button data-solo="u" data-p="${pos}">Upper only</button><button data-solo="l" data-p="${pos}">Lower only</button>`:''}`}${(tq(pos)||{}).teacherPlays?'':'<button data-stop="1">■ Stop</button>'}</div>`).join('')}</div>
     <div class="mp3box"><button class="btn-check" id="mp3all">⬇ Download all tracks as MP3s</button><span class="sub" id="mp3msg">For a paper test: print this version, then play these files yourself. One .zip with a numbered MP3 for each track and a track list.</span></div>
     ${embedded?'':'<div class="controls"><button class="btn-ghost" id="tstback">Back to the test</button></div>'}`;
   c.querySelectorAll('.trk').forEach((r,i)=>{const it=rows[i];if((tq(it.pos)||{}).teacherPlays)return;const d=document.createElement('button');d.className='mp3one';d.textContent='⬇ MP3';d.onclick=()=>exportTracks(rows,[i]);r.appendChild(d);});
   document.getElementById('mp3all').onclick=()=>exportTracks(rows,null);
-  c.querySelectorAll('.tsttracks button:not(.mp3one)').forEach(b=>b.onclick=()=>{if(b.dataset.stop){if(AUDIO)AUDIO.stop();return;}const pos=+b.dataset.p;qi=order.indexOf(pos);if(qi<0){order=[...Array(examPlan.length).keys()];qi=pos;}audioUnlocked=true;const q=tq(pos);
+  c.querySelectorAll('.tsttracks button:not(.mp3one)').forEach(b=>b.onclick=()=>{if(b.dataset.stop){if(AUDIO)AUDIO.stop();return;}if(b.dataset.solo){playSolo(b.dataset.solo,+b.dataset.p);return;}const pos=+b.dataset.p;qi=order.indexOf(pos);if(qi<0){order=[...Array(examPlan.length).keys()];qi=pos;}audioUnlocked=true;const q=tq(pos);
     if(q.multiPlay)playPart(b.dataset.w||'whole');else playCurrent();});
   const bk=document.getElementById('tstback');if(bk)bk.onclick=()=>examStartCard();}
 // ---- MP3 export of the tracks (paper tests) ----
@@ -925,7 +927,9 @@ async function exportTracks(rows,only){if(mp3Busy)return;if(!window.OfflineAudio
     const vc=String(testCode()).replace(/^version\s*/i,'');const pick=only?only:rows.map((_,i)=>i),files=[],list=['Tracks for version '+vc+(testRun.ct&&testRun.ct.ti?' – '+testRun.ct.ti:''),''];let n=0;
     for(const i of pick){const {it,pos}=rows[i];const q=tq(pos)||{};n++;if(q.teacherPlays){list.push('('+it.gl+') '+it.gtitle+': you play '+q.teacherPlays);continue;}
       say('Recording '+(it.track?'track '+it.track:'('+it.gl+')')+' ('+n+' of '+pick.length+')…');const r=await recordTrack(pos);if(!r)continue;await new Promise(ok=>setTimeout(ok,0));
-      const name=trackFileName(it,n),blob=mp3Encode(L,r.data,r.rate);files.push({name,data:blob});list.push(name.replace(/\.mp3$/,'')+'  ('+Math.round(r.secs)+' s)');}
+      const name=trackFileName(it,n),blob=mp3Encode(L,r.data,r.rate);files.push({name,data:blob});list.push(name.replace(/\.mp3$/,'')+'  ('+Math.round(r.secs)+' s)');
+      if(q.twoPart&&q.sepOK&&q.playPart2)for(const w of ['u','l']){say('Recording '+(w==='u'?'the upper':'the lower')+' part of '+(it.track?'track '+it.track:'('+it.gl+')')+'…');const s=bpmSPB(q);const rr=await AUDIO.record(()=>s?AUDIO.withSpb(s,()=>q.playPart2(w)):q.playPart2(w),300);
+        const nm=name.replace(/\.mp3$/,'')+(w==='u'?' - upper part only':' - lower part only')+'.mp3';files.push({name:nm,data:mp3Encode(L,rr.data,rr.rate)});list.push(nm.replace(/\.mp3$/,'')+'  ('+Math.round(rr.secs)+' s)');}}
     if(!files.length){say('Nothing to record: you play every track in this test yourself.');return;}
     const code=vc.replace(/[^A-Za-z0-9-]/g,'');
     if(only&&files.length===1)saveBlob(files[0].data,files[0].name);
@@ -933,19 +937,35 @@ async function exportTracks(rows,only){if(mp3Busy)return;if(!window.OfflineAudio
     const nm=files.filter(f=>/\.mp3$/.test(f.name)).length;say('✓ Downloaded '+nm+' MP3'+(nm===1?'':'s')+' for version '+vc+'. They match the printed test and answer key for this version.');}
   catch(e){say('Couldn\'t make the MP3s ('+(e&&e.message||e)+'). Open the app online once so the encoder and samples cache, then try again.');}
   finally{mp3Busy=false;if(all)all.disabled=false;}}
-function finishTest(){if(examOn&&!finishTest._ok){const m=examMarks();const un=m.filter(x=>!x.it.embed&&!x.answered).length;const emb=m.find(x=>x.it.embed&&!x.answered);
+// ---- the companion section of a combined test: its marks are collected at Finish test, even if Finish Part B was never pressed ----
+function partRows(){const m=examMarks().filter(x=>!x.it.embed);return (typeof testGroups!=='undefined'?testGroups:[]).map((g,gi)=>{const its=m.filter(x=>x.it.gi===gi);return {l:TestKit.letter(gi),t:g.title,got:Math.round(its.reduce((a,x)=>a+x.got,0)*2)/2,m:g.marks,un:its.filter(x=>!x.answered).length};});}
+function partResult(){const m=examMarks();const mine=m.filter(x=>!x.it.embed);return {rows:partRows(),tot:Math.round(mine.reduce((a,x)=>a+x.got,0)*2)/2,max:testAMarks(),wt:writtenList(),un:mine.filter(x=>!x.answered).length};}
+addEventListener('message',e=>{const m=e.data;if(!m||!EMBED)return;
+  if(m.type==='blitz-exam-peek'){let r=null;try{r=examPlan.length?partResult():null;}catch(_){r=null;}try{e.source.postMessage(Object.assign({type:'blitz-exam-peeked',part:'A',id:m.id,ok:!!r},r||{}),'*');}catch(_){}}
+  if(m.type==='blitz-exam-collect'&&examOn){finishTest._ok=true;try{finishTest();}catch(_){}}});
+function peekEmbed(){return new Promise(ok=>{const f=embedFrame();if(!f||!f.contentWindow){ok(null);return;}const id=Math.random().toString(36).slice(2);let done=false;
+  const h=e=>{const m=e.data;if(m&&m.type==='blitz-exam-peeked'&&m.id===id){done=true;removeEventListener('message',h);ok(m.ok?m:null);}};addEventListener('message',h);
+  try{f.contentWindow.postMessage({type:'blitz-exam-peek',id},'*');}catch(_){}setTimeout(()=>{if(!done){removeEventListener('message',h);ok(null);}},2500);});}
+function applyEmbed(part,r){const m={type:'blitz-exam-done',part,tot:r.tot,max:r.max,wt:r.wt||[],rows:r.rows||null,_final:true};embedRes[part]=m;
+  if(UNITS[ui]&&UNITS[ui].test&&window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){const pos=examPlan.findIndex(it=>it.embed===part);if(pos>=0)TaskKit.record(pos,m.tot>=m.max,m.max?m.tot/m.max:0,(Date.now()-examStart)/1000,0);}
+  const f=embedFrame();try{if(f&&f.contentWindow)f.contentWindow.postMessage({type:'blitz-exam-collect'},'*');}catch(_){}}
+function finishTest(){let peekUn=0;
+  if(examOn&&!EMBED&&!finishTest._peek){const it=examPlan.find(x=>x.embed&&!(embedRes[x.embed]));if(it&&embedFrame()){peekEmbed().then(r=>{finishTest._peek=r?{part:it.embed,r}:'none';finishTest();});return;}}
+  const PK=finishTest._peek&&finishTest._peek!=='none'?finishTest._peek:null;finishTest._peek=null;if(PK)peekUn=PK.r.un||0;
+  if(examOn&&!finishTest._ok){const m=examMarks();const un=m.filter(x=>!x.it.embed&&!x.answered).length+peekUn;const emb=PK?null:m.find(x=>x.it.embed&&!x.answered);
     if(un||emb){const msg=(un?'You have '+un+' unanswered question'+(un===1?'':'s')+'.':'')+(emb?(un?' ':'')+'The '+(emb.it.embed==='B'?'theory':'aural')+' section isn\'t finished.':'')+' Unanswered questions score 0, and you can\'t come back to the test once it is finished. Finish anyway?';
       if(!confirm(msg))return;}}
+  if(PK)applyEmbed(PK.part,PK.r);
   finishTest._ok=false;document.body.classList.remove('testing');const wasOn=examOn;examOn=false;clearInterval(examTick);if(AUDIO)AUDIO.stop();const m=examMarks();const aural=m.filter(x=>!x.it.embed),th=m.find(x=>x.it.embed);
   const ag=Math.round(aural.reduce((a,x)=>a+x.got,0)*2)/2,am=testAMarks(),tg=th&&embedRes.B?embedRes.B.tot:null,tm=th?(embedRes.B?embedRes.B.max:th.it.marks):0;const tot=ag+(tg||0),max=am+tm,pct=Math.round(tot/max*100);
-  if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'A',tot:ag,max:am,wt:writtenList()},'*');}catch(e){}}
+  if(EMBED){try{parent.postMessage({type:'blitz-exam-done',part:'A',tot:ag,max:am,wt:writtenList(),rows:partRows()},'*');}catch(e){}}
   if(wasOn&&!EMBED){logComplete('Test · Year '+testRun.y,pct);if(PROF){PROF.exams=PROF.exams||[];PROF.exams.push({at:Date.now(),tot,max,year:testRun.y,test:true});saveProfiles();}}
   if(window.TaskKit&&TaskKit.run&&TaskKit.run.task.tt){if(TaskKit.setWritten)TaskKit.setWritten(writtenList());showTaskFinish();return;}
   const c=document.getElementById('card');document.getElementById('dots').innerHTML='';
   const rows=testGroups.map((g,gi)=>{const its=aural.filter(x=>x.it.gi===gi);const got=Math.round(its.reduce((a,x)=>a+x.got,0)*2)/2;const un=its.filter(x=>!x.answered).length;return `<tr><td>(${TestKit.letter(gi)})</td><td>${esc(g.title)}${un?' <span style="color:var(--muted);font-size:12px">· '+un+' unanswered</span>':''}</td><td class="r">${got} / ${g.marks}</td></tr>`;}).join('');
   c.innerHTML=`${TestKit.header(testRun.y,testRun.sem)}<div class="tstname">Name:<span>${esc(currentName||'')}</span></div><div class="examtotal">${tot} / ${max} <span style="font-size:18px;color:var(--muted)">(${pct}%)</span></div>
     ${TestKit.sectionHead('AURAL',am)}<table class="examtable"><tr><th></th><th>Question</th><th style="text-align:right">Marks</th></tr>${rows}</table>
-    ${th?`${TestKit.sectionHead('THEORY',tm)}<table class="examtable"><tr><td>Theory section</td><td class="r">${tg===null?'not finished':tg+' / '+tm}</td></tr></table>`:''}
+    ${th?`${TestKit.sectionHead('THEORY',tm)}<table class="examtable">${(embedRes.B&&embedRes.B.rows&&embedRes.B.rows.length)?'<tr><th></th><th>Question</th><th style="text-align:right">Marks</th></tr>'+embedRes.B.rows.map(r=>'<tr><td>('+r.l+')</td><td>'+esc(r.t)+(r.un?' <span style="color:var(--muted);font-size:12px">· '+r.un+' unanswered</span>':'')+'</td><td class="r">'+r.got+' / '+r.m+'</td></tr>').join(''):`<tr><td>Theory section</td><td class="r">${tg===null?'not finished':tg+' / '+tm}</td></tr>`}</table>`:''}
     ${TestKit.totalLine({a:am,ag,t:tm,tg})}<p class="sub">Finished in ${examClock()}${EMBED?'':' · logged to the class record'}. Use Prev / the markers to review any question with its answer.</p>
     <div class="controls">${EMBED?'':'<button class="btn-check" id="examsheet">📝 Answer sheet</button>'}<button class="btn-ghost" id="examreview">Review answers</button><button class="btn-ghost" id="examagain">New test</button></div>`;
   if(pct>=70)burst('win',innerWidth/2,innerHeight/2,true);
@@ -1381,6 +1401,8 @@ function loadRef(){document.documentElement.style.setProperty('--accent',RCOL);r
 function armBtnTimer(secs){playing=true;const b=document.getElementById('play');
   if(b){b.disabled=true;b.classList.add('on');}
   clearTimeout(playTimer);playTimer=setTimeout(()=>{playing=false;const bb=document.getElementById('play');if(bb){bb.disabled=false;bb.classList.remove('on');}},Math.max(400,secs*1000));}
+// one part of a two-part dictation on its own
+function playSolo(w,pos){const q=pos!=null?tq(pos):curQ();if(!q||!q.playPart2)return;audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();q._plays=(q._plays||0)+0.5;const s=bpmSPB(q);let r;try{r=s?AUDIO.withSpb(s,()=>q.playPart2(w)):q.playPart2(w);}catch(e){r=2;}armBtnTimer(r||2);}
 function doPlay(q){let r;try{r=qPlay(q);}catch(e){r=1.2;}
   if(r&&typeof r.then==='function'){r.then(s=>armBtnTimer(s||1.6)).catch(()=>armBtnTimer(1.6));armBtnTimer(1.6);}
   else armBtnTimer(r||1.2);}
@@ -1482,7 +1504,7 @@ function load(){document.body.classList.toggle('testing',TESTING());document.bod
          <button class="pp sub" data-pt="h2">2nd half</button></div>
        <span class="plabel">${(q.dict&&q.dict.bars)||4} bars in ${(q.dict&&q.dict.metre&&q.dict.metre.id)||'4/4'}${(()=>{const s=q.rhythmOnly?(q.scaleName||'').split('·').slice(1).join('·').trim():q.scaleName;return s?' · '+esc(s):'';})()}${q.cue?' · tonic chord and starting note, then a count-in':' · one-bar count-in'}</span>
        </div>`
-    : `<div class="playpanel"><button class="playbtn" id="play">▶ ${UNITS[ui].exam&&q._exam?'Listen to Track '+q._exam.track+(q._exam.excerpt?' (excerpt '+q._exam.excerpt+')':''):'Play'}</button><button class="replaybtn" id="replay">Replay</button><span class="plabel">${UNITS[ui].exam&&q._exam?'':(q.playLabel||'')}</span></div>`;
+    : `<div class="playpanel"><button class="playbtn" id="play">▶ ${UNITS[ui].exam&&q._exam?'Listen to Track '+q._exam.track+(q._exam.excerpt?' (excerpt '+q._exam.excerpt+')':''):(q.twoPart&&q.sepOK?'Both parts':'Play')}</button><button class="replaybtn" id="replay">Replay</button>${q.twoPart&&q.sepOK&&q.playPart2?'<div class="playparts twosolo"><button class="pp sub" data-tp="u">Upper part only</button><button class="pp sub" data-tp="l">Lower part only</button></div>':''}<span class="plabel">${UNITS[ui].exam&&q._exam?'':(q.playLabel||'')}</span></div>`;
   const hasDiff=(q.kind==='pitchdict'||q.kind==='melodydict'||q.kind==='rhythmdict'||q.kind==='discrep');
   const difftog = hasDiff ? `<div class="difftog" id="difftog"><span class="tlab">Difficulty</span><div class="tgrp">${[['easy','Easy'],['med','Medium'],['hard','Hard']].map(d=>`<button data-diff="${d[0]}" class="${dictDiff===d[0]?'on':''}">${d[1]}</button>`).join('')}</div></div>` : '';
   const tempotog = (q.multiPlay&&!q.__bpm) ? `<div class="tempotog" id="tempotog"><span class="tlab">Tempo</span><div class="tgrp">${tempos.map(t=>`<button data-spb="${t[0]}" class="${Math.abs(dictSPB-parseFloat(t[0]))<1e-6?'on':''}">${t[1]}</button>`).join('')}</div></div>` : '';
@@ -1568,7 +1590,7 @@ function load(){document.body.classList.toggle('testing',TESTING());document.bod
   if(audioUnlocked&&!q.teacherPlays&&q.play)setTimeout(()=>{if(mode!=='practise')return;q.multiPlay?playPart('whole'):playCurrent();},sprintOn?120:260);}
 // play back what the student has written (dictation) — before Check, so they can self-correct
 function playMine(){const q=curQ();if(q&&(q.kind==='barorder'||q.kind==='rhythmheads')){playMine2(q);return;}audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();let ev=[];
-  if(q.kind==='pitchdict'){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie};const v=pd[i];if(v==null)return {onset:n.onset,dur:n.dur,rest:true};return {onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie};});
+  if(q.kind==='pitchdict'){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenAt(q,i),tie:n.tie};const v=pd[i];if(v==null)return {onset:n.onset,dur:n.dur,rest:true};return {onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie};});
     const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));ev=soundingOf(notes.map((n,k)=>({onset:n.onset,dur:n.dur,midi:n.rest?null:meta.midi[k],rest:n.rest,tie:n.tie})));}
   else{let on=0;const notes=me.map(n=>{const o=on;on+=n.dur;if(n.gap)return {onset:o,dur:n.dur,rest:true};return {onset:o,dur:n.dur,rest:n.rest,tie:n.tie,d:n.d,acc:n.a};});
     if(!notes.some(n=>!n.rest)){feedback('Enter some notes first.','no');return;}
@@ -1585,13 +1607,15 @@ function bracketScore(q){const hide=new Set(q.brackets.map(b=>b.j));const notes=
 function scoreSpec(q,notes,extra){const M=q.dict.metre||{};const w=document.getElementById('card').clientWidth||800;
   const bars=q.dict.bars; let bps; if(w<620){bps=bars<=2?bars:2;} else if(w<820){bps=bars<=4?bars:(bars%4===0?4:3);} 
   return Object.assign({clef:q.dict.clef||'treble',ks:q.dict.ks||0,bpb:M.bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:q.dict.pickup||0,bars,notes,rhythmOnly:!!q.rhythmOnly,barsPerSystem:bps},extra||{});}
+// the written accidental of given note i, in the context of the whole line (a raised 7th in a given bar keeps its natural/sharp)
+function givenAt(q,i){if(!q._gShown)q._gShown=ENGRAVE.resolveLine(q.dict.notes,q.dict.ks||0,q.dict.pickup||0,q.dict.metre.bpb,'true').shown;return q._gShown[i];}
 function givenRaw(q){const r=ENGRAVE.resolveLine(q.dict.notes,q.dict.ks||0,q.dict.pickup||0,q.dict.metre.bpb,'true');return r.shown[0];}
 
 // ---- pitch dictation ----
 function renderPD(checked){const q=curQ();const g0=givenRaw(q);
   const notes=q.dict.notes.map((n,i)=>{
     if(n.rest)return {onset:n.onset,dur:n.dur,rest:true,color:'#8a8277'};
-    if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie,color:'#8a8277'};
+    if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenAt(q,i),tie:n.tie,color:'#8a8277'};
     const v=pd[i];if(v==null)return {onset:n.onset,dur:n.dur,state:'empty'};
     return {onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,showD:v.d,color:'var(--ink)',clearable:!checked,idx:i};});
   const meta=ENGRAVE.drawScore(scoreSpec(q,notes,{mode:'raw'}));scoreMeta=meta;
@@ -1609,7 +1633,7 @@ function onScorePD(ev){const cl=ev.target.closest('.sclr');if(cl){const k=+cl.da
   const r=nearestNote(ev);if(r.i<0)return;const q=curQ();if(q.dict.notes[r.i].rest||r.i<q.given)return;
   pd[r.i]={d:r.d,a:accMode};feedback('','');renderPD(false);pdDrag={i:r.i};ev.preventDefault();}
 function checkPitchDict(){const q=curQ();let right=0,empty=0;const need=q.dict.notes.filter((n,i)=>i>=q.given&&!n.rest).length;
-  const meta=ENGRAVE.drawScore(scoreSpec(q,q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenRaw(q),tie:n.tie};const v=pd[i];return v?{onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,idx:i}:{onset:n.onset,dur:n.dur,state:'empty',idx:i};}),{mode:'raw'}));
+  const meta=ENGRAVE.drawScore(scoreSpec(q,q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenAt(q,i),tie:n.tie};const v=pd[i];return v?{onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie,idx:i}:{onset:n.onset,dur:n.dur,state:'empty',idx:i};}),{mode:'raw'}));
   meta.order.forEach((n,k)=>{if(n.idx===undefined)return;if(n.state==='empty'){empty++;return;}if(meta.midi[k]===q.dict.notes[n.idx].midi)right++;});
   const ok=(right===need);q._frac=need?right/need:1;renderPD(!HIDEFB());scoreOnce(ok);celebrate(ok);
   if(ok){feedback(pick(WINMSG)+' All '+need+' pitches right.','ok',q.why);results[qid()]='ok';}
@@ -1798,6 +1822,7 @@ function wire(q){setTimeout(lockLabel,0);
   const pbtn=document.getElementById('play');if(pbtn)pbtn.onclick=playCurrent;
   const hm=document.getElementById('hearme');if(hm)hm.onclick=playMine;
   const rbtn=document.getElementById('replay');if(rbtn)rbtn.onclick=playCurrent;
+  document.querySelectorAll('[data-tp]').forEach(b=>b.onclick=()=>playSolo(b.dataset.tp));
   document.querySelectorAll('.pp').forEach(b=>b.onclick=()=>playPart(b.dataset.pt));
   document.querySelectorAll('#tempotog button').forEach(b=>b.onclick=()=>{dictSPB=parseFloat(b.dataset.spb);try{localStorage.setItem('blitzAuralTempo',dictSPB);}catch(e){}
     document.querySelectorAll('#tempotog button').forEach(x=>x.classList.toggle('on',x===b));});

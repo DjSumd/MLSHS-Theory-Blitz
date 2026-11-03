@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103l";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103q";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -299,6 +299,14 @@
     const slotX=[]; // raw x of each note's slot start
     let bi=0; const barX={}; // raw x at each boundary
     const crossBoundary=(to)=>{while(bi<bounds.length&&bounds[bi]<=to+1e-6){barX[bi]=x;x+=barPad;bi++;}};
+    if(spec.alignOnsets&&spec.alignOnsets.length){
+      // shared layout for parts printed one above the other: slots at every onset of every part, so beats and barlines line up
+      const P=[...new Set(spec.alignOnsets.concat(notes.map(n=>n.onset)).map(v=>Math.round(v*1e4)/1e4))].filter(v=>v>=0&&v<totalBeats-1e-6).sort((a,b)=>a-b);
+      // a slot never runs across a barline
+      const cuts=P.concat(bounds).map(v=>Math.round(v*1e4)/1e4);const C=[...new Set(cuts)].sort((a,b)=>a-b);
+      const at={};P.forEach(p=>{const nx=C.find(c=>c>p+1e-6);const d=(nx!==undefined?nx:totalBeats)-p;addGap(p);crossBoundary(p);at[p]=x;const w=w_of(d);pieces.push({t0:p,t1:p+d,x0:x,x1:x+w});x+=w;t=p+d;});
+      notes.forEach((n,i)=>{slotX[i]=at[Math.round(n.onset*1e4)/1e4];});
+    } else
     notes.forEach((n,i)=>{ addGap(n.onset); crossBoundary(n.onset); const w=w_of(n.dur);
       slotX[i]=x; pieces.push({t0:n.onset,t1:n.onset+n.dur,x0:x,x1:x+w}); x+=w; t=n.onset+n.dur; });
     addGap(totalBeats); crossBoundary(totalBeats-1e-9); if(barX[bounds.length-1]===undefined)barX[bounds.length-1]=x;
