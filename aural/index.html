@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css?v=20261103f">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261103g">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -350,20 +350,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js?v=20261103f"></script>
-<script src="audio.js?v=20261103f"></script>
-<script src="samples.js?v=20261103f"></script>
-<script src="engrave.js?v=20261103f"></script>
-<script src="content.js?v=20261103f"></script>
-<script src="refs.js?v=20261103f"></script>
-<script src="embed.js?v=20261103f"></script>
-<script src="qr.js?v=20261103f"></script>
-<script src="task.js?v=20261103f"></script>
-<script src="testkit.js?v=20261103f"></script>
-<script src="blitzui.js?v=20261103f"></script>
-<script src="live.js?v=20261103f"></script>
-<script>/*blitz-check*/(function(){var S="20261103f";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103f",P="blitz-aural-all-",APP="Aural Blitz";
+<script src="glyphs.js?v=20261103g"></script>
+<script src="audio.js?v=20261103g"></script>
+<script src="samples.js?v=20261103g"></script>
+<script src="engrave.js?v=20261103g"></script>
+<script src="content.js?v=20261103g"></script>
+<script src="refs.js?v=20261103g"></script>
+<script src="embed.js?v=20261103g"></script>
+<script src="qr.js?v=20261103g"></script>
+<script src="task.js?v=20261103g"></script>
+<script src="testkit.js?v=20261103g"></script>
+<script src="blitzui.js?v=20261103g"></script>
+<script src="live.js?v=20261103g"></script>
+<script>/*blitz-check*/(function(){var S="20261103g";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103g",P="blitz-aural-all-",APP="Aural Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -784,12 +784,17 @@ function testBar(){const it=curQ()._exam;const n=examPlan.indexOf(it);const sec=
   const first=examPlan.findIndex(x=>x.gi===it.gi&&!x.embed)===n;
   return `${TestKit.header(testRun.y,testRun.sem)}<div class="tstpos">${n+1} of ${examPlan.length} · <span class="tm" id="examclock">${examClock()}</span></div>${sec}`+
     (it.embed?TestKit.sectionHead('THEORY',it.marks):`<div class="tstq"><span>(${it.gl}) <b>${esc(it.gtitle)}:</b> ${it.gtext}</span><span class="mk">(${it.gmarks} mark${it.gmarks===1?'':'s'})</span></div>${it.subn>1?`<div class="tstsub">${esc(it.text)}</div>`:''}`);}
-function testCover(){const y=testRun.y,CT=testRun.ct,a=testAMarks(),t=HAS_THEORY()&&!EMBED?(CT?TestKit.ctMarks(CT,'T'):TEST_THEORY_MARKS[y]):0;
+function testCover(){if(HAS_THEORY()&&!EMBED)setTimeout(fetchOtherCount,0);const y=testRun.y,CT=testRun.ct,a=testAMarks(),t=HAS_THEORY()&&!EMBED?(CT?TestKit.ctMarks(CT,'T'):TEST_THEORY_MARKS[y]):0;
   return `<div class="tstcover">${TestKit.header(y,testRun.sem)}<div class="tstname">Name:<span>${esc(currentName||'')}</span></div>
     <p class="prompt" style="font-weight:700;font-size:17px">${esc(TestKit.title(y))}</p>
-    <table><tr><th>Section</th><th>Questions</th><th>Marks</th></tr><tr><td>Aural section</td><td>${testGroups.length}</td><td>/${a}</td></tr>${t?`<tr><td>Theory section</td><td>${'—'}</td><td>/${t}</td></tr>`:''}<tr><th colspan="2">Total</th><th>/${a+t}</th></tr></table>
+    <table><tr><th>Section</th><th>Questions</th><th>Marks</th></tr><tr><td>Aural section</td><td>${testGroups.length}</td><td>/${a}</td></tr>${t?`<tr><td>Theory section</td><td id="tstothn">${otherCount()==null?'…':otherCount()}</td><td>/${t}</td></tr>`:''}<tr><th colspan="2">Total</th><th>/${a+t}</th></tr></table>
     <ol class="sub" style="padding-left:20px"><li>Answer every question. Press the track button to hear each excerpt.</li><li>Your first answer to each question is the one that counts. ${testRun.ck?'You see whether each answer is right straight after you answer it.':'Marks and correct answers are shown when you finish, not during the test.'}</li><li>Move with Prev, Next or the markers above the page; press <b>Finish test</b> when you are done.</li><li>${CT?'This test was set by your teacher.':'The test follows the Year '+y+' curriculum. A new test is different every time.'}</li></ol>
     ${window.TaskKit&&TaskKit.run?'':`<div class="setchips" style="margin:6px 0"><button class="chip${testRun.ck?' on':''}" id="tstck">Check my answers as I go</button></div>`}<div class="controls"><button class="btn-check" id="examgo">Start the test</button>${CT?'':'<button class="btn-ghost" id="examnew">New test</button>'}<button class="btn-ghost tstteach" id="tstteach">${CT?'Teacher: back to the builder':'Teacher: print or play this test'}</button></div></div>`;}
+let OCOUNT={k:'',n:null};
+function otherCountKey(){return testRun.y+'|'+testRun.seed+'|'+(testRun.ct?TestKit.ctEncode(testRun.ct):'');}
+function otherCount(){if(testRun.ct)return testRun.ct.T.length;return OCOUNT.k===otherCountKey()?OCOUNT.n:null;}
+function fetchOtherCount(){if(testRun.ct||OCOUNT.k===otherCountKey())return;const k=otherCountKey();OCOUNT={k:'pending:'+k,n:null};const Sx=THEORY_TEST_SRC('countB',false);
+  TestKit.request(Sx.src,Sx.doc,'blitz-test-count',25000).then(m=>{OCOUNT={k,n:m.n};const el=document.getElementById('tstothn');if(el)el.textContent=m.n;}).catch(()=>{OCOUNT={k:'',n:null};const el=document.getElementById('tstothn');if(el)el.textContent='—';});}
 function testTeacher(){if(testRun.ct){openCustomBuilder();return;}TaskKit.requireTeacher(()=>{const g=document.getElementById('guide');document.getElementById('guidebody').innerHTML=`<p class="prompt">Print or play this test</p>
   <p class="sub">Test code <b style="font-family:ui-monospace,Consolas,monospace">${testCode()}</b>. The same code always gives the same test, so keep it with your answer key. It is printed on the key, not on the students' paper.</p>
   <div class="setgrp"><div class="setlabel">Semester (for the heading)</div><div class="setchips"><button class="chip${testRun.sem==='One'?' on':''}" data-sem="One">Semester One</button><button class="chip${testRun.sem==='Two'?' on':''}" data-sem="Two">Semester Two</button></div></div>
@@ -1895,9 +1900,10 @@ cfgInit();loadProfile();paintYear();paintScore();ui=2;openUnit();
 try{ if(!localStorage.getItem('blitzAuralYear')){ if(currentName)askYear(); else window.PENDING_YEAR=true; } }catch(e){}
 try{ if(window.AUDIO&&AUDIO.preloadPiano) AUDIO.preloadPiano(); }catch(e){}
 if(EMBED==='partA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR&&EMBED_YEAR!==YEAR){const ok=document.querySelector('#yearbar button[data-y="'+EMBED_YEAR+'"]');if(ok)setYear(EMBED_YEAR);}ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
-else if(EMBED==='testA'||EMBED==='printA'||EMBED==='tracksA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR)YEAR=+EMBED_YEAR;paintYear();testRun={y:YEAR,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two'),ct:TestKit.ctDecode(EMBED_P('ct','')),ck:+EMBED_P('ck',0)?1:0};ctSync();ui=UNITS.indexOf(TEST);
+else if(EMBED==='testA'||EMBED==='printA'||EMBED==='tracksA'||EMBED==='countA'){document.body.classList.add('embed');closeGuide();if(EMBED_YEAR)YEAR=+EMBED_YEAR;paintYear();testRun={y:YEAR,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two'),ct:TestKit.ctDecode(EMBED_P('ct','')),ck:+EMBED_P('ck',0)?1:0};ctSync();ui=UNITS.indexOf(TEST);
   if(EMBED==='testA'){openUnit();startExam();}
   else{buildExamPlan();order=[...Array(examPlan.length).keys()];
+    if(EMBED==='countA'){try{parent.postMessage({type:'blitz-test-count',part:'A',n:testGroups.length,marks:testAMarks()},'*');}catch(e){}}
     if(EMBED==='printA'){try{parent.postMessage({type:'blitz-test-print',part:'A',html:testPaperA(+EMBED_P('key',0)===1),marks:testAMarks()},'*');}catch(e){}}
     else{renderTabs();testTracks(true);}}}
 else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));}

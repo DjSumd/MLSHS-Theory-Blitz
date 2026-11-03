@@ -1,2 +1,2 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["embed.js"]="20261103f";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["embed.js"]="20261103g";
 // companion copy: no nested exam hosting

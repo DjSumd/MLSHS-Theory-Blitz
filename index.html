@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261103f">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261103g">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -318,20 +318,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261103f"></script>
-<script src="aural/samples.js?v=20261103f"></script>
-<script src="glyphs.js?v=20261103f"></script>
-<script src="theory.js?v=20261103f"></script>
-<script src="engrave.js?v=20261103f"></script>
-<script src="gen.js?v=20261103f"></script>
-<script src="refs.js?v=20261103f"></script>
-<script src="embed.js?v=20261103f"></script>
-<script src="qr.js?v=20261103f"></script>
-<script src="task.js?v=20261103f"></script>
-<script src="testkit.js?v=20261103f"></script>
-<script src="blitzui.js?v=20261103f"></script>
-<script>/*blitz-check*/(function(){var S="20261103f";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103f",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261103g"></script>
+<script src="aural/samples.js?v=20261103g"></script>
+<script src="glyphs.js?v=20261103g"></script>
+<script src="theory.js?v=20261103g"></script>
+<script src="engrave.js?v=20261103g"></script>
+<script src="gen.js?v=20261103g"></script>
+<script src="refs.js?v=20261103g"></script>
+<script src="embed.js?v=20261103g"></script>
+<script src="qr.js?v=20261103g"></script>
+<script src="task.js?v=20261103g"></script>
+<script src="testkit.js?v=20261103g"></script>
+<script src="blitzui.js?v=20261103g"></script>
+<script>/*blitz-check*/(function(){var S="20261103g";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103g",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -492,10 +492,15 @@ function testSetq(){SETQ=[];examPlan.forEach((it,pos)=>{SETQ.push(it.embed?{t:'e
 function testBar(q){const it=q._exam;const n=SETQ.indexOf(q);const firstT=examPlan.findIndex(x=>!x.embed)===n;
   return `${TestKit.header(testRun.y,testRun.sem)}<div class="tstpos">${n+1} of ${SETQ.length} · <span class="tm" id="examclock">${examClock()}</span></div>`+
     (it.embed?TestKit.sectionHead('AURAL',it.m):(firstT?TestKit.sectionHead('THEORY',testTMarks()):'')+`<div class="tstq"><span>(${it.gl}) <b>${esc(it.gt)}:</b> ${it.gx}</span><span class="mk">(${it.gm} mark${it.gm===1?'':'s'})</span></div>${it.subn>1?`<div class="tstsub">${TestKit.roman(it.sub)})</div>`:''}`);}
-function testCover(){const y=testRun.y,CT=testRun.ct,t=testTMarks(),a=HAS_AURAL()&&!EMBED&&(!CT||CT.A.length)?(CT?TestKit.ctMarks(CT,'A'):TEST_AURAL_MARKS[y]):0;
+let OCOUNT={k:'',n:null};
+function otherCountKey(){return testRun.y+'|'+testRun.seed+'|'+(testRun.ct?TestKit.ctEncode(testRun.ct):'');}
+function otherCount(){if(testRun.ct)return testRun.ct.A.length;return OCOUNT.k===otherCountKey()?OCOUNT.n:null;}
+function fetchOtherCount(){if(testRun.ct||OCOUNT.k===otherCountKey())return;const k=otherCountKey();OCOUNT={k:'pending:'+k,n:null};const Sx=AURAL_TEST_SRC('countA',false);
+  TestKit.request(Sx.src,Sx.doc,'blitz-test-count',25000).then(m=>{OCOUNT={k,n:m.n};const el=document.getElementById('tstothn');if(el)el.textContent=m.n;}).catch(()=>{OCOUNT={k:'',n:null};const el=document.getElementById('tstothn');if(el)el.textContent='—';});}
+function testCover(){if(HAS_AURAL()&&!EMBED)setTimeout(fetchOtherCount,0);const y=testRun.y,CT=testRun.ct,t=testTMarks(),a=HAS_AURAL()&&!EMBED&&(!CT||CT.A.length)?(CT?TestKit.ctMarks(CT,'A'):TEST_AURAL_MARKS[y]):0;
   return `<div class="tstcover">${TestKit.header(y,testRun.sem)}<div class="tstname">Name:<span>${esc(currentName||'')}</span></div>
     <p class="prompt" style="font-weight:700;font-size:17px">${esc(TestKit.title(y))}</p>
-    <table><tr><th>Section</th><th>Questions</th><th>Marks</th></tr>${a?`<tr><td>Aural section</td><td>—</td><td>/${a}</td></tr>`:''}<tr><td>Theory section</td><td>${testGroups.length}</td><td>/${t}</td></tr><tr><th colspan="2">Total</th><th>/${a+t}</th></tr></table>
+    <table><tr><th>Section</th><th>Questions</th><th>Marks</th></tr>${a?`<tr><td>Aural section</td><td id="tstothn">${otherCount()==null?'…':otherCount()}</td><td>/${a}</td></tr>`:''}<tr><td>Theory section</td><td>${testGroups.length}</td><td>/${t}</td></tr><tr><th colspan="2">Total</th><th>/${a+t}</th></tr></table>
     <ol class="sub" style="padding-left:20px"><li>Answer every question.${a?' The aural section comes first; press the track button to hear each excerpt.':''}</li><li>Your first answer to each question is the one that counts. ${testRun.ck?'You see whether each answer is right straight after you answer it.':'Marks and correct answers are shown when you finish, not during the test.'}</li><li>Move with Prev, Next or the markers above the page; press <b>Finish test</b> when you are done.</li><li>${CT?'This test was set by your teacher.':'The test follows the Year '+y+' curriculum. A new test is different every time.'}</li></ol>
     ${window.TaskKit&&TaskKit.run?'':`<div class="setchips" style="margin:6px 0"><button class="chip${testRun.ck?' on':''}" id="tstck">Check my answers as I go</button></div>`}<div class="controls"><button class="btn-check" id="examgo">Start the test</button>${CT?'':'<button class="btn-ghost" id="examnew">New test</button>'}<button class="btn-ghost tstteach" id="tstteach">${CT?'Teacher: back to the builder':'Teacher: print or play this test'}</button></div></div>`;}
 const AURAL_TEST_SRC=(mode,key)=>{const ctq=testRun.ct?TestKit.ctEncode(testRun.ct):'';const qs='year='+testRun.y+'&seed='+testRun.seed+'&sem='+testRun.sem+(key?'&key=1':'')+(ctq?'&ct='+ctq:'')+(testRun.ck?'&ck=1':'');if(typeof EMBED_DOC!=='undefined'&&EMBED_DOC.partA)return {doc:EMBED_DOC.partA.replace('<head>','<head><script>window.__EMBED="'+mode+'";window.__EMBED_YEAR='+testRun.y+';window.__EMBED_SEED='+testRun.seed+';window.__EMBED_SEM="'+testRun.sem+'";window.__EMBED_KEY='+(key?1:0)+';window.__EMBED_CT="'+ctq+'";window.__EMBED_CK='+(testRun.ck?1:0)+';<\/script>')};return {src:'aural/index.html?embed='+mode+'&'+qs};};
@@ -1136,8 +1141,9 @@ function closeGuide(){document.getElementById('guide').classList.remove('open');
 document.getElementById('gclose').onclick=closeGuide;document.getElementById('gback').onclick=closeGuide;
 loadGensel();loadProfile();paintLevel();paintScore();ui=2;if(!unitOn(ui))ui=firstUnit();openUnit();if(FIRSTRUN&&!EMBED){if(currentName)askYear();else window.PENDING_YEAR=true;}try{if(window.AUDIO&&AUDIO.preloadPiano)AUDIO.preloadPiano();}catch(e){}
 if(EMBED==='partB'){document.body.classList.add('embed');const yr=String(Math.max(11,Math.min(12,EMBED_YEAR||11)));GEN.setLevel(yr);paintLevel();ui=UNITS.findIndex(u=>u.exam);openUnit();startExam();}
-else if(EMBED==='testB'||EMBED==='printB'){document.body.classList.add('embed');closeGuide();const ctE=TestKit.ctDecode(EMBED_P('ct',''));const yr=String(ctE?ctE.y:Math.max(7,Math.min(10,+EMBED_YEAR||7)));GEN.setLevel(yr);paintLevel();testRun={y:+yr,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two'),ct:ctE,ck:+EMBED_P('ck',0)?1:0};ctSync();ui=UNITS.indexOf(TEST);
+else if(EMBED==='testB'||EMBED==='printB'||EMBED==='countB'){document.body.classList.add('embed');closeGuide();const ctE=TestKit.ctDecode(EMBED_P('ct',''));const yr=String(ctE?ctE.y:Math.max(7,Math.min(10,+EMBED_YEAR||7)));GEN.setLevel(yr);paintLevel();testRun={y:+yr,seed:+EMBED_P('seed',0)>>>0,sem:EMBED_P('sem','Two'),ct:ctE,ck:+EMBED_P('ck',0)?1:0};ctSync();ui=UNITS.indexOf(TEST);
   if(EMBED==='testB'){openUnit();startExam();}
+  else if(EMBED==='countB'){buildExamPlan();try{parent.postMessage({type:'blitz-test-count',part:'B',n:testGroups.length,marks:testTMarks()},'*');}catch(e){}}
   else{buildExamPlan();testSetq();try{parent.postMessage({type:'blitz-test-print',part:'B',html:testPaperB(+EMBED_P('key',0)===1),marks:testTMarks()},'*');}catch(e){}}}
 else if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{}));}
 window.BLITZ_BUSY=()=>{try{return !!(examOn||(window.TaskKit&&TaskKit.run))}catch(e){return false}};
