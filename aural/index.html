@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css?v=20261103g">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261103k">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -350,20 +350,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js?v=20261103g"></script>
-<script src="audio.js?v=20261103g"></script>
-<script src="samples.js?v=20261103g"></script>
-<script src="engrave.js?v=20261103g"></script>
-<script src="content.js?v=20261103g"></script>
-<script src="refs.js?v=20261103g"></script>
-<script src="embed.js?v=20261103g"></script>
-<script src="qr.js?v=20261103g"></script>
-<script src="task.js?v=20261103g"></script>
-<script src="testkit.js?v=20261103g"></script>
-<script src="blitzui.js?v=20261103g"></script>
-<script src="live.js?v=20261103g"></script>
-<script>/*blitz-check*/(function(){var S="20261103g";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103g",P="blitz-aural-all-",APP="Aural Blitz";
+<script src="glyphs.js?v=20261103k"></script>
+<script src="audio.js?v=20261103k"></script>
+<script src="samples.js?v=20261103k"></script>
+<script src="engrave.js?v=20261103k"></script>
+<script src="content.js?v=20261103k"></script>
+<script src="refs.js?v=20261103k"></script>
+<script src="embed.js?v=20261103k"></script>
+<script src="qr.js?v=20261103k"></script>
+<script src="task.js?v=20261103k"></script>
+<script src="testkit.js?v=20261103k"></script>
+<script src="blitzui.js?v=20261103k"></script>
+<script src="live.js?v=20261103k"></script>
+<script>/*blitz-check*/(function(){var S="20261103k";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103k",P="blitz-aural-all-",APP="Aural Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -432,8 +432,14 @@ const examDiff=()=>YEAR>=12?'hard':YEAR>=10?'med':'easy';
 const TEST={name:'Test',key:'test',special:true,exam:true,test:true,ask:'Listen.',guide:`<p class="prompt">Aural and Theory Test</p><ul><li>A full test in the school's standard format: an Aural section, then a Theory section, with the marks for each part shown.</li><li>Questions follow your year's curriculum. Every new test is different; your teacher can print the same test, with an answer key, from its test code.</li><li>Press Finish test when you are done: it is marked straight away.</li></ul>`,
   gen(ctx){const it=examPlan[ctx.pos];if(!it)return null;if(it.embed)return {kind:'embed',_exam:it,prompt:it.title,_from:UNITS.indexOf(TEST)};const r=UNITS.findIndex(u=>u.key===it.unit);const u=UNITS[r];
     const cfg=(gk)=>(it.cfg&&gk in it.cfg)?it.cfg[gk]:cfgDef(r,gk);let q=null;
-    for(let t=0;t<6&&!q;t++){try{q=withSeed((testRun.seed*31+ctx.pos*7919+t*104729)>>>0,()=>it.build?it.build(ctx,u,r,cfg):u.gen(Object.assign({},ctx,{diff:it.diff||'easy',mode:it.mode||'choice',year:YEAR,cfg})));}catch(e){q=null;}}
+    const L=runQs[ui]||(runQs[ui]=[]);for(let p=0;p<ctx.pos;p++)if(!L[p])L[p]=TEST.gen(Object.assign({},ctx,{pos:p}));const prev=L.slice(0,ctx.pos).filter(Boolean).map(x=>({sig:qSig(x),grp:x.__grp}));let first=null;
+    for(let t=0;t<12;t++){let c=null;try{c=withSeed((testRun.seed*31+ctx.pos*7919+t*104729)>>>0,()=>it.build?it.build(ctx,u,r,cfg):u.gen(Object.assign({},ctx,{diff:it.diff||'easy',mode:it.mode||'choice',year:YEAR,cfg})));}catch(e){c=null;}if(!c)continue;c.__grp=it.gi;if(!first)first=c;if(!isRepeat(c,prev)){q=c;break;}if(it.share)break;}
+    if(!q)q=first;
     if(!q)return null;q._from=r;q._exam=it;q.prompt=it.gtitle;return q;}};
+// a question's identity: the notes of a dictation, or the answer of a choice question
+function qSig(q){if(!q)return '';if(q.kind==='written'||q.kind==='embed')return '';if(q.dict&&q.dict.notes)return 'm|'+q.dict.notes.map(n=>(n.rest?'r':n.midi)+':'+n.dur).join(',');if(q.kind==='drum')return 'd|'+JSON.stringify(q.pat);
+  if(q.kind==='choice')return 'c|'+q.answer;if(q.kind==='numerals')return 'n|'+[].concat(q.answer).join(',');return '';}
+function isRepeat(q,prev){const s=qSig(q);if(!s)return false;return prev.some(p=>p.sig===s&&(s[0]!=='c'&&s[0]!=='n'||p.grp===q.__grp));}
 function cfgDef(u,gk){const unit=UNITS[u],g=(unit.cfg||[]).find(x=>x.key===gk);if(!g)return undefined;if(g.type==='multi'){const on=g.items.filter(it=>(it.yr||7)<=YEAR&&!(it.junior&&YEAR>=9)).map(it=>it.id);return on.length?on:[g.items[0].id];}return singleDef(g);}
 let testRun={y:0,sem:'',seed:0},testGroups=[];
 const EMBED_P=(k,d)=>{const w=window['__EMBED_'+k.toUpperCase()];if(w!==undefined)return w;try{const v=new URL(location.href).searchParams.get(k);return v===null?d:v;}catch(e){return d;}};
@@ -492,7 +498,7 @@ function scoreAnalysisGroup(y){const T=A_pick(TEMPO_T);const metres=y<=7?['2/4',
   return {title:'Aural Analysis',text:'Listen to the excerpt while you read the score, then answer the questions.',marks:asks.length,score:{X,S},
     items:asks.map((a,k)=>({unit:'ton',build:scoreQ(X,S,a,y),marks:1,text:(k+1)+') '+scoreAskText(a,S),share:1}))};}
 // ---- Year 7 sol-fa dictation: the rhythm is given, students write the sol-fa ----
-function testSolfaDictQ(bars,metres){return function(){const dict=ENGRAVE.buildDictation({diff:'easy',scaleNames:['major pentatonic'],bars:+bars,clef:'treble',metre:A_pick(metres),maxKs:1,rests:false,ties:false,anacrusis:false,triplets:false});
+function testSolfaDictQ(bars,metres){return function(){const dict=ENGRAVE.buildDictation({tonicStart:(testRun.y||YEAR)<=10,diff:'easy',scaleNames:['major pentatonic'],bars:+bars,clef:'treble',metre:A_pick(metres),maxKs:1,rests:false,ties:false,anacrusis:false,triplets:false});
   const M=dict.metre;const sn=dict.notes.filter(n=>!n.rest);const ans=sn.map(n=>ENGRAVE.solfaOf(n.midi,dict.tonicMidi,'major pentatonic'));
   const svg=ENGRAVE.drawScore({clef:'treble',ks:dict.ks||0,bpb:M.bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars:dict.bars,notes:dict.notes.map(n=>({onset:n.onset,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:dict.bars,mode:'raw'}).svg;
   const ev=soundingOf(dict.notes);const tm=dict.tonicMidi;
@@ -545,7 +551,7 @@ const CT_SOLFA=sc=>{const s=ENGRAVE.solfaFor(sc);return s?[...new Set(s)]:[];};
 function ctPd(o,qt){return function(ctx,u,r){const q=u.gen(Object.assign({},ctx,{diff:o.diff||'med',mode:'choice',year:testRun.y,cfg:gk=>({qtype:[qt],scales:o.scales,bars:o.bars,metres:o.metres,clef:o.clef||'treble'})[gk]}));
   if(!q||!q.dict)return q;const d=q.dict;if(o.given==='bar'){const end=(d.pickup||0)+d.metre.bpb;q.given=Math.max(1,d.notes.filter(n=>n.onset<end-1e-6).length);}
   if(o.sf==='no')q.noSolfa=true;return q;};}
-function ctSolfaDictQ(o){return function(){const sc=A_pick(o.scales||['major pentatonic']);const dict=ENGRAVE.buildDictation({diff:o.diff||'easy',scaleNames:[sc],bars:+o.bars||2,clef:'treble',metre:A_pick(o.metres||['4/4']),maxKs:2,rests:false,ties:false,anacrusis:false,triplets:false});
+function ctSolfaDictQ(o){return function(){const sc=A_pick(o.scales||['major pentatonic']);const dict=ENGRAVE.buildDictation({tonicStart:(testRun.y||YEAR)<=10,diff:o.diff||'easy',scaleNames:[sc],bars:+o.bars||2,clef:'treble',metre:A_pick(o.metres||['4/4']),maxKs:2,rests:false,ties:false,anacrusis:false,triplets:false});
   const M=dict.metre;const sn=dict.notes.filter(n=>!n.rest);const ans=sn.map(n=>ENGRAVE.solfaOf(n.midi,dict.tonicMidi,dict.scaleType));
   const svg=ENGRAVE.drawScore({clef:'treble',ks:0,bpb:M.bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars:dict.bars,notes:dict.notes.map(n=>({onset:n.onset,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:Math.min(4,dict.bars),mode:'raw'}).svg;
   const ev=soundingOf(dict.notes);const tm=dict.tonicMidi;const minor=/minor/.test(dict.scaleType);const ci=M.denom===8?{n:M.numer/3,beat:1.5,accents:[0]}:{n:Math.round(M.bpb),beat:1,accents:[0]};
@@ -692,7 +698,7 @@ function twoPartBuild(sc,metre,bars){const steps={'major':MAJ,'natural minor':MI
       if(last){const lu=up[up.length-1];if(lu.t>t+1e-6&&onBeat(lu.t)){plan.push({t,d:lu.t-t});plan.push({t:lu.t,d:(b+1)*bpb-lu.t,final:true});}else plan.push({t,d:bpb,final:true});continue;}
       const pat=b===0?A_pick(pats.filter(p=>p.length<=2)):A_pick(pats);pat.forEach(d=>{plan.push({t,d});t+=d;});}
     const low=[];let prev=null,hardTot=0,parTot=0;
-    plan.forEach((s,k)=>{const first=k===0,penult=k===plan.length-2;const opts=s.final?[tm-12]:first?triad:cand;
+    plan.forEach((s,k)=>{const first=k===0,penult=k===plan.length-2;const opts=(s.final||first)?[tm-12]:cand;
       let best=null,bc=1e9,bh=0;opts.forEach(c=>{const cl=clash(c,s.t,s.d);let cost=cl.soft;
         if(first)cost+=c===tm-12?0:1.5;
         if(prev!=null){const mv=Math.abs(c-prev);cost+=mv===0?2.5:mv<=2?0:mv<=4?0.4:mv<=7?2.5:9;
@@ -724,7 +730,7 @@ function ctGroove(bars,level){const hh='1'.repeat(8*bars);let sn='',bd='';
     sn+=s.join('');bd+=k.join('');}
   return {hh,sn,bd};}
 function ctDrumQ(o,teacher){return function(){const bars=+o.bars||2;const rows=(o.rows&&o.rows.length?o.rows:['hh','sn','bd']);
-  const pat=teacher?Object.assign({hh:'',sn:'',bd:''},o.pat||{}):ctGroove(bars,o.level||'sync');rows.forEach(r=>{pat[r]=(pat[r]||'').padEnd(8*bars,'0').slice(0,8*bars);});
+  const pat=(teacher||o.level==='own')?Object.assign({hh:'',sn:'',bd:''},o.pat||{}):ctGroove(bars,o.level||'sync');rows.forEach(r=>{pat[r]=(pat[r]||'').padEnd(8*bars,'0').slice(0,8*bars);});
   const q={kind:'drum',bars,rows,pat,prompt:'Drum dictation',why:'One mark per beat. Each part: '+rows.map(r=>(TestKit.DRUM_ROWS.find(x=>x[0]===r)||[r,r])[1]+' '+pat[r].replace(/(.{8})/g,'$1 ').trim().replace(/1/g,'●').replace(/0/g,'·')).join(' | ')+'.'};
   if(teacher){q.teacherPlays=(o.section?'The '+o.section+' of ':'')+(o.song||'the song');}
   else{q.play=()=>AUDIO.drums(pat,bars,0.42,true);q.playLabel='A one-bar count-in, then the groove';}
@@ -770,6 +776,7 @@ function ctHost(){return {app:'aural',modal:(h,w)=>TaskKit.modal(h,w),close:()=>
   preview(ct,seed){this.run(ct,seed);openUnit();},
   print(ct,seed,key){this.run(ct,seed);openUnit();testPrint(key);},
   tracks(ct,seed){this.run(ct,seed);openUnit();testTracks(false);},
+  mp3(ct,seed){this.run(ct,seed);openUnit();testTracks(false);setTimeout(()=>{const b=document.getElementById('mp3all');if(b)b.click();},60);},
   push(ct,seed){TaskKit.pushCustomTest(ct,seed);}};}
 function buildTestPlan(){const CT=testRun.ct;const y=CT?CT.y:Math.max(7,Math.min(10,YEAR));if(!testRun.seed)testRun.seed=TestKit.newSeed();testRun.y=y;testRun.sem=testRun.sem||(CT?'':TestKit.semester());ctSync();
   for(const k in embedRes)delete embedRes[k];
@@ -817,12 +824,20 @@ function paperItem(q,it,key){const K=s=>key?`<span class="ans k">${esc(s)}</span
   if(q.kind==='pitchdict'){const kn=keyNotes(q);const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>n.rest?{onset:n.onset,dur:n.dur,rest:true}:i<q.given?{onset:n.onset,dur:n.dur,d:n.d,acc:g0,tie:n.tie}:key?kn[i]:{onset:n.onset,dur:n.dur,state:'empty'});return `<div class="cell wide">${paperScore(q,notes)}<div class="note">Key: ${esc(q.scaleName)}</div>${paperSolfa(q,key)}</div>`;}
   if(q.kind==='numerals'&&q.twoPart){return `<div class="cell wide">${q.scoreSvg}${q.rows.map(r=>`<div class="lbl" style="margin-top:2mm">${esc(r.label)}</div><div class="boxes sf">${q.answer.slice(r.from,r.to).map((a,k)=>GV(q,r.from+k)?`<span class="b g">${esc(a)}</span>`:`<span class="b${key?' k':''}">${key?esc(a):''}</span>`).join('')}</div>`).join('')}</div>`;}
   if(q.kind==='drum')return `<div class="cell wide">${TestKit.drumPaper({bars:q.bars,rows:q.rows,pat:q.pat},key)}</div>`;
-  if(q.kind==='written')return TestKit.writtenPaper(q,key,it.subn>1&&!it.share?'':'');
+  if(q.kind==='written'){const tx=it.text||'';return TestKit.writtenPaper(tx.length>4?Object.assign({},q,{wq:tx}):q,key,tx.length&&tx.length<=4?tx:'');}
+  if(q.kind==='discrep'){const d=q.dict;const sc=notes=>{const r=ENGRAVE.resolveLine(notes,d.ks||0,d.pickup||0,d.metre.bpb,'true');return notes.map((n,i)=>({onset:n.onset,dur:n.dur,rest:n.rest,tie:n.tie,trip:n.trip,d:n.d,acc:r.shown[i],color:n.color}));};
+    const printed=paperScore(q,sc(d.notes));const C=q.changes||{};const list=Object.keys(C).map(Number).sort((a,b)=>a-b);
+    if(!key)return `<div class="cell wide"><div class="note">Key: ${esc(d.scaleName||'')}. Circle each bar that differs from what you hear, write P (pitch) or R (rhythm) above it, then correct the notes.</div>${printed}</div>`;
+    const bpb=d.metre.bpb;const played=sc((q.played||d.notes).map(n=>Object.assign({},n,{color:C[disBarOf(q,n.onset)]?'#b3261e':'#000'})));
+    return `<div class="cell wide"><div class="note">Printed score:</div>${printed}<div class="note" style="margin-top:2mm">As performed (differences in red): ${list.map(b=>'bar '+(b+1)+' '+C[b]).join(', ')}</div>${paperScore(q,played)}</div>`;}
   if(q.kind==='barorder'){const wide=q.nb>4?' style="flex:1 1 22%;max-width:calc(25% - 3mm);min-width:0"':' style="min-width:0"';const C='border:1px solid #000;text-align:center;font-family:Arial,sans-serif;';return `<div class="cell wide"><div class="barset">${q.start.map((b,pos)=>`<div class="bcell"${wide}><b style="display:block">${q.letters[pos]}</b>${boCell(q,b,'#000').replace('<svg ','<svg style="width:100%;height:auto;max-width:100%" ')}</div>`).join('')}</div><table style="border-collapse:collapse;margin-top:3mm"><tr>${q.answer.map((_,i)=>`<td style="${C}font-size:9pt;padding:1mm 2mm">Bar ${i+1}</td>`).join('')}</tr><tr>${q.answer.map((a,i)=>`<td style="${C}height:9mm;width:14mm;font-size:13pt;font-weight:700;${i<q.given?'background:#eee;':''}color:${key&&i>=q.given?'#b3261e':'#000'}">${i<q.given||key?a:''}</td>`).join('')}</tr></table></div>`;}
   if(q.kind==='rhythmheads'){const durs=q.dict.notes.map((n,i)=>key||i<q.given?n.dur:null);return `<div class="cell wide">${paperScore(q,rhNotes(q,key?null:{0:'#000'},durs).map(n=>Object.assign(n,{color:'#000'})))}</div>`;}
   if(q.kind==='numerals'&&q.solfaDict){const d=q.dict,M=d.metre;const svg=ENGRAVE.drawScore({clef:'treble',ks:d.ks||0,bpb:M.bpb,g:M.g,numer:M.numer,denom:M.denom,pickup:0,bars:d.bars,notes:d.notes.map(n=>({onset:n.onset,dur:n.dur,d:dia('B',4),acc:''})),rhythmOnly:true,barsPerSystem:d.bars,mode:'raw'}).svg.replace('<svg ','<svg style="width:'+Math.min(100,d.bars*25)+'%" ');
     return `<div class="cell wide">${svg}<div class="boxes sf">${q.answer.map((a,i)=>i<q.given?`<span class="b g">${a}</span>`:`<span class="b${key?' k':''}">${key?a:''}</span>`).join('')}</div></div>`;}
   if(q.kind==='numerals'&&q.scoreSvg)return `<div class="cell wide">${q.scoreSvg}<div class="boxes" style="margin-top:2mm">${q.answer.map((a,i)=>`<span class="b${i<q.given?' g':key?' k':''}">${i<q.given||key?a:''}</span>`).join('')}</div><div class="note">${q.slotLabels.join(' · ')}</div></div>`;
+  if(q.kind==='numerals'&&!q.twoPart&&!q.solfaDict&&!q.scoreSvg){const F=a=>q.fmt?q.fmt(a):fmtRN(a);const lab=i=>q.slotLabels?q.slotLabels[i]:(i+1)+'.';const long=q.slotLabels&&q.slotLabels.some(l=>l.length>8);
+    const pal=(q.palette||[]).filter(Boolean);const chooseLine=pal.length&&pal.length<=12&&q.slotLabels?`<div class="choose">Choose from: ${pal.map(F).join(' · ')}</div>`:'';
+    return `<div class="cell wide">${q.brackets?bracketScore(q):''}<div class="slotrow">${q.answer.map((a,i)=>`<div class="slot${long?' long':''}"><div class="sl">${esc(lab(i))}</div><span class="b${i<q.given?' g':key?' k':''}">${i<q.given||key?F(a):''}</span></div>`).join('')}</div>${chooseLine}</div>`;}
   if(q.kind==='numerals'){return `<div class="cell wide"><div class="boxes">${q.answer.map((a,i)=>i<q.given?`<span class="b g">${q.fmt?q.fmt(a):fmtRN(a)}</span>`:`<span class="b${key?' k':''}">${key?(q.fmt?q.fmt(a):fmtRN(a)):''}</span>`).join('')}</div></div>`;}
   if(it.unit==='ivl'&&/hoose from/.test(it.gtext)){const id=Object.keys(IVL).find(k=>IVL[k]&&IVL[k].n===q.answer);const lab=testRun.ct&&id?((TestKit.IVS.find(z=>z[0]===id)||[])[1]||q.answer):(id&&IVAB[id])||q.answer;return `<div class="cell"><span class="lbl">${esc(it.text)}</span> ${K(lab)}</div>`;}
   if(it.unit==='tim')return `<div class="cell wide"><div class="qtext">${esc(it.text)} ${K(q.answer)}</div></div>`;
@@ -873,10 +888,47 @@ function testTracks(embedded){const c=document.getElementById('card');document.g
   examPlan.forEach((it,pos)=>{const tk=it.track||('tp'+pos);if(it.embed||it.na||seen.has(tk))return;seen.add(tk);rows.push({it,pos});});
   c.innerHTML=`${TestKit.header(testRun.y,testRun.sem)}<p class="prompt" style="font-weight:700;font-size:16px">Tracks for test ${testCode()}</p><p class="sub">Play each track for the class when they reach that question. Dictations play the tonic and starting note first where the question gives them.</p>
     <div class="tsttracks">${rows.map(({it,pos})=>`<div class="trk"><b>${it.track?'Track '+it.track:'You play'}</b><span>(${it.gl}) ${esc(it.gtitle)}${it.subn>1&&!it.share?' '+esc(it.text):''}</span>${(tq(pos)||{}).teacherPlays?`<i>You play: ${esc(tq(pos).teacherPlays)}</i>`:(tq(pos)||{}).multiPlay?`<button data-p="${pos}" data-w="whole">▶ Play</button><button data-p="${pos}" data-w="h1">1st half</button><button data-p="${pos}" data-w="h2">2nd half</button>`:`<button data-p="${pos}" data-w="">▶ Play</button>`}${(tq(pos)||{}).teacherPlays?'':'<button data-stop="1">■ Stop</button>'}</div>`).join('')}</div>
+    <div class="mp3box"><button class="btn-check" id="mp3all">⬇ Download all tracks as MP3s</button><span class="sub" id="mp3msg">For a paper test: print this version, then play these files yourself. One .zip with a numbered MP3 for each track and a track list.</span></div>
     ${embedded?'':'<div class="controls"><button class="btn-ghost" id="tstback">Back to the test</button></div>'}`;
-  c.querySelectorAll('.tsttracks button').forEach(b=>b.onclick=()=>{if(b.dataset.stop){if(AUDIO)AUDIO.stop();return;}const pos=+b.dataset.p;qi=order.indexOf(pos);if(qi<0){order=[...Array(examPlan.length).keys()];qi=pos;}audioUnlocked=true;const q=tq(pos);
+  c.querySelectorAll('.trk').forEach((r,i)=>{const it=rows[i];if((tq(it.pos)||{}).teacherPlays)return;const d=document.createElement('button');d.className='mp3one';d.textContent='⬇ MP3';d.onclick=()=>exportTracks(rows,[i]);r.appendChild(d);});
+  document.getElementById('mp3all').onclick=()=>exportTracks(rows,null);
+  c.querySelectorAll('.tsttracks button:not(.mp3one)').forEach(b=>b.onclick=()=>{if(b.dataset.stop){if(AUDIO)AUDIO.stop();return;}const pos=+b.dataset.p;qi=order.indexOf(pos);if(qi<0){order=[...Array(examPlan.length).keys()];qi=pos;}audioUnlocked=true;const q=tq(pos);
     if(q.multiPlay)playPart(b.dataset.w||'whole');else playCurrent();});
   const bk=document.getElementById('tstback');if(bk)bk.onclick=()=>examStartCard();}
+// ---- MP3 export of the tracks (paper tests) ----
+function loadLame(){if(window.lamejs)return Promise.resolve(window.lamejs);return new Promise((ok,no)=>{const s=document.createElement('script');s.src='lib/lame.min.js';s.onload=()=>window.lamejs?ok(window.lamejs):no(new Error('encoder'));s.onerror=()=>no(new Error('encoder'));document.head.appendChild(s);});}
+function mp3Encode(L,data,rate){const enc=new L.Mp3Encoder(1,rate,160),pcm=new Int16Array(data.length);for(let i=0;i<data.length;i++){const v=Math.max(-1,Math.min(1,data[i]));pcm[i]=v<0?v*32768:v*32767;}
+  const parts=[];for(let i=0;i<pcm.length;i+=1152){const b=enc.encodeBuffer(pcm.subarray(i,i+1152));if(b.length)parts.push(new Uint8Array(b));}const e=enc.flush();if(e.length)parts.push(new Uint8Array(e));return new Blob(parts,{type:'audio/mpeg'});}
+const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+// a plain (stored, uncompressed) zip: MP3s don't compress anyway
+async function makeZip(files){const enc=new TextEncoder(),chunks=[],cen=[];let off=0;const d=new Date(),dt=((d.getFullYear()-1980)<<9|(d.getMonth()+1)<<5|d.getDate()),tm=(d.getHours()<<11|d.getMinutes()<<5|(d.getSeconds()>>1));
+  for(const f of files){const name=enc.encode(f.name),data=f.data instanceof Uint8Array?f.data:new Uint8Array(await f.data.arrayBuffer()),crc=crc32(data);
+    const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,name.length,true);
+    chunks.push(new Uint8Array(h.buffer),name,data);
+    const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);c.setUint32(42,off,true);
+    cen.push(new Uint8Array(c.buffer),name);off+=30+name.length+data.length;}
+  const csz=cen.reduce((a,x)=>a+x.length,0),e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,csz,true);e.setUint32(16,off,true);
+  return new Blob(chunks.concat(cen,[new Uint8Array(e.buffer)]),{type:'application/zip'});}
+function saveBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u);},4000);}
+function trackFileName(it,n){const t=(it.track?'Track '+String(it.track).padStart(2,'0'):'Item '+n)+' - ('+it.gl+') '+(it.gtitle||'')+(it.subn>1&&!it.share&&it.text?' '+it.text:'');return t.replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim().slice(0,90)+'.mp3';}
+async function recordTrack(pos){const q=tq(pos);if(!q||q.teacherPlays)return null;if(q.needsSamples){const ok=await AUDIO.probeSamples();if(!ok)throw new Error('samples');}
+  const plays=q._plays,keep=qi;try{return await AUDIO.record(()=>{if(q.multiPlay&&q.dict){qi=order.indexOf(pos);if(qi<0){order=[...Array(examPlan.length).keys()];qi=pos;}playPart('whole');return 0;}return q.play();},300);}
+  finally{q._plays=plays;qi=keep;}}
+let mp3Busy=false;
+async function exportTracks(rows,only){if(mp3Busy)return;if(!window.OfflineAudioContext){toast('This browser can\'t make MP3s');return;}mp3Busy=true;const msg=document.getElementById('mp3msg'),all=document.getElementById('mp3all');const say=t=>{if(msg)msg.textContent=t;};if(all)all.disabled=true;
+  try{if(AUDIO)AUDIO.stop();say('Loading the encoder…');const L=await loadLame();try{await AUDIO.preloadPiano();}catch(e){}
+    const vc=String(testCode()).replace(/^version\s*/i,'');const pick=only?only:rows.map((_,i)=>i),files=[],list=['Tracks for version '+vc+(testRun.ct&&testRun.ct.ti?' – '+testRun.ct.ti:''),''];let n=0;
+    for(const i of pick){const {it,pos}=rows[i];const q=tq(pos)||{};n++;if(q.teacherPlays){list.push('('+it.gl+') '+it.gtitle+': you play '+q.teacherPlays);continue;}
+      say('Recording '+(it.track?'track '+it.track:'('+it.gl+')')+' ('+n+' of '+pick.length+')…');const r=await recordTrack(pos);if(!r)continue;await new Promise(ok=>setTimeout(ok,0));
+      const name=trackFileName(it,n),blob=mp3Encode(L,r.data,r.rate);files.push({name,data:blob});list.push(name.replace(/\.mp3$/,'')+'  ('+Math.round(r.secs)+' s)');}
+    if(!files.length){say('Nothing to record: you play every track in this test yourself.');return;}
+    const code=vc.replace(/[^A-Za-z0-9-]/g,'');
+    if(only&&files.length===1)saveBlob(files[0].data,files[0].name);
+    else{files.push({name:'Track list.txt',data:new TextEncoder().encode(list.join('\r\n'))});saveBlob(await makeZip(files),'Aural tracks '+code+'.zip');}
+    const nm=files.filter(f=>/\.mp3$/.test(f.name)).length;say('✓ Downloaded '+nm+' MP3'+(nm===1?'':'s')+' for version '+vc+'. They match the printed test and answer key for this version.');}
+  catch(e){say('Couldn\'t make the MP3s ('+(e&&e.message||e)+'). Open the app online once so the encoder and samples cache, then try again.');}
+  finally{mp3Busy=false;if(all)all.disabled=false;}}
 function finishTest(){if(examOn&&!finishTest._ok){const m=examMarks();const un=m.filter(x=>!x.it.embed&&!x.answered).length;const emb=m.find(x=>x.it.embed&&!x.answered);
     if(un||emb){const msg=(un?'You have '+un+' unanswered question'+(un===1?'':'s')+'.':'')+(emb?(un?' ':'')+'The '+(emb.it.embed==='B'?'theory':'aural')+' section isn\'t finished.':'')+' Unanswered questions score 0, and you can\'t come back to the test once it is finished. Finish anyway?';
       if(!confirm(msg))return;}}
@@ -1004,7 +1056,9 @@ function finishExam(){if(UNITS[ui]&&UNITS[ui].test){finishTest();return;}const w
 const TASKU={name:'Class task',key:'task',special:true,task:true,ask:'Listen.',guide:`<p class="prompt">Class task</p><ul><li>Your teacher set these questions. The first answer you give to each one is the one that counts.</li><li>Your answers are saved on this device as you go: if you close the app, open the task link again to carry on.</li><li>At the end you get a sealed result code to show or hand in.</li></ul>`,
   gen(ctx){const R=window.TaskKit&&TaskKit.run;const it=R&&R.items[ctx.pos];if(!it)return null;const ri=UNITS.findIndex(u=>u.key===it.u);const u=UNITS[ri];if(!u)return null;
     const cfg=(gk)=>(it.cfg&&gk in it.cfg)?it.cfg[gk]:cfgGet(ri,gk);
-    let q=null;for(let t=0;t<4&&!q;t++){try{q=withSeed(it.seed+t*7919,()=>u.gen(Object.assign({},ctx,{diff:it.d||'med',mode:u.canNotate?(it.m||'choice'):undefined,year:R.task.y,cfg})));}catch(e){q=null;}}
+    const L=runQs[ui]||(runQs[ui]=[]);for(let p=0;p<ctx.pos;p++)if(!L[p])L[p]=TASKU.gen(Object.assign({},ctx,{pos:p}));const prev=L.slice(0,ctx.pos).filter(Boolean).map(x=>({sig:qSig(x),grp:x.__grp}));let q=null,first=null;
+    for(let t=0;t<12;t++){let c=null;try{c=withSeed(it.seed+t*7919,()=>u.gen(Object.assign({},ctx,{diff:it.d||'med',mode:u.canNotate?(it.m||'choice'):undefined,year:R.task.y,cfg})));}catch(e){c=null;}if(!c)continue;c.__grp=it.si;if(!first)first=c;if(!isRepeat(c,prev)){q=c;break;}}
+    if(!q)q=first;
     if(!q)return null;q._from=ri;q._task=it;return q;}};
 // ---- live skills: Sing it (microphone) and Tap it (tap the rhythm in time) ----
 const SING={name:'Sing it',key:'sing',live:true,ask:'Sing it.',guide:`<p class="prompt">Sing it</p><ul><li>Press <b>Hear do</b> to hear the key, then <b>Start singing</b>. Sing each sol-fa syllable in turn and hold it until it turns green.</li><li>Sing in any octave that suits your voice. In minor, la is the tonic.</li><li>The microphone stays on your device; nothing is recorded or sent anywhere.</li></ul>`,

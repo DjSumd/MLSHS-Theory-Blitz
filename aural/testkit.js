@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103g";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103k";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -37,24 +37,27 @@
   TK.printCSS=`.wlines div{border-bottom:1px solid #000;height:8.5mm}.wkey{color:#b3261e;font-weight:700;margin:2mm 0}.wyou{border:1px solid #999;padding:2mm 3mm;min-height:10mm;white-space:pre-wrap;margin:1mm 0}
 :root{--ink:#000;--line:#000;--paper:#fff;--paper2:#f4f4f4;--rule:#999;--muted:#555;--shade:#eee;--accent:#000;--ox:#b3261e;--red:#b3261e;--green:#1d6b2d;--brass:#000;--cream:#fff}
     *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#000;background:#fff}
-    @page{size:A4;margin:12mm 14mm 14mm}
+    @page{size:A4;margin:15mm}
     table.pg{width:100%;border-collapse:collapse}table.pg>thead>tr>td{padding:0 0 4mm}table.pg>tbody>tr>td{padding:0}
     .tsthead{display:flex;align-items:center;gap:12px;border-top:1.5px dashed #8eaadb;border-bottom:1.5px dashed #8eaadb;padding:5px 0}
     .tsthead img{height:52px;width:auto}.tsthead .l1,.tsthead .l2{font-family:'Century Schoolbook','Century Schoolbook L',Georgia,serif;font-style:italic;font-weight:700;color:#2f5496;font-size:13pt;line-height:1.35}
     .tstname{margin:6mm 0 4mm;font-size:11pt}.tstname span{display:inline-block;border-bottom:1px solid #000;width:75%;margin-left:4px}
     .tstsec{display:flex;gap:28mm;font-weight:700;text-decoration:underline;margin:7mm 0 3mm;font-size:11.5pt}.tstsec span:last-child{text-decoration:none}
     .tstq{display:flex;justify-content:space-between;gap:10px;margin:0 0 2mm;line-height:1.35}.tstq .mk{font-weight:700;white-space:nowrap}
-    .pq{break-inside:avoid;page-break-inside:avoid;margin:0 0 6mm;padding-left:6mm}.pq .tstq{margin-left:-6mm}
-    .row{display:flex;flex-wrap:wrap;gap:4mm 5mm;align-items:stretch}.sec.brk{break-before:page;page-break-before:always}.cell{flex:1 1 36mm;min-width:34mm;break-inside:avoid;position:relative}.cell:not(.wide)>.ans{position:absolute;left:0;bottom:0;margin:0}.cell:not(.wide):has(>.ans){padding-bottom:9mm}.cell.wide{flex-basis:100%}.cell.wide>.ans{margin-top:2mm}.cell .lbl{font-size:10pt;margin-bottom:1mm;min-height:2.7em}.cell.wide .lbl{min-height:0}.cell svg{max-width:100%;height:auto}.cell:not(.wide) svg{max-width:min(100%,62mm);max-height:30mm;width:auto}.cell.wide svg{max-width:min(100%,150mm);max-height:38mm;width:auto}
+    .pq{break-inside:avoid;page-break-inside:avoid;margin:0 0 7mm;padding-left:6mm}.pq .tstq,.tstsec{break-after:avoid;page-break-after:avoid}.row,.cell,.boxes,.slotrow,.barset,.wlines,svg{break-inside:avoid;page-break-inside:avoid}
+    .slotrow{display:flex;flex-wrap:wrap;gap:3mm 5mm;margin-top:1mm}.slotrow .slot{display:flex;flex-direction:column;gap:1mm}.slotrow .sl{font-size:9pt;color:#444}.slotrow .b{border:1px solid #000;min-width:24mm;height:10mm;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 2mm}.slotrow .slot.long .b{min-width:52mm}.slotrow .b.g{color:#555;background:#eee}.slotrow .b.k{color:#b3261e}.choose{font-size:9.5pt;margin:2mm 0 0;color:#333}.pq .tstq{margin-left:-6mm}
+    .row{display:flex;flex-wrap:wrap;gap:4mm 5mm;align-items:stretch}.sec.brk{break-before:page;page-break-before:always}.cell{flex:1 1 36mm;min-width:34mm;break-inside:avoid;position:relative}.cell:not(.wide)>.ans{position:absolute;left:0;bottom:0;margin:0}.cell:not(.wide):has(>.ans){padding-bottom:9mm}.cell.wide{flex-basis:100%}.cell.half{flex:1 1 calc(50% - 3mm);max-width:calc(50% - 2.5mm)}.cell.half .lbl{min-height:0}.cell.half svg{max-width:100%;max-height:34mm;width:auto}.cell.wide>.ans{margin-top:2mm}.cell .lbl{font-size:10pt;margin-bottom:1mm;min-height:2.7em}.cell.wide .lbl{min-height:0}.cell svg{max-width:100%;height:auto}.cell:not(.wide) svg{max-width:min(100%,62mm);max-height:30mm;width:auto}.cell.wide svg{max-width:min(100%,150mm);max-height:38mm;width:auto}
     .ans{display:inline-block;min-width:30mm;border-bottom:1px solid #000;height:7mm;vertical-align:bottom;margin-left:2mm}.ans.k{border-bottom:0;color:#b3261e;font-weight:700;height:auto}
     .opts{display:flex;flex-wrap:wrap;gap:2mm 9mm;font-style:italic;margin:1mm 0 0 4mm}.opts .o.k{color:#b3261e;font-weight:700;font-style:normal;outline:1.5px solid #b3261e;border-radius:3mm;padding:0 2mm}
     .opts.cols{display:grid;grid-template-columns:repeat(2,minmax(40mm,max-content));gap:1.5mm 16mm}
     .qtext{margin:1mm 0 1.5mm;font-size:10.5pt}.note{font-size:9.5pt;color:#444;font-style:italic}
     .boxes{display:flex;gap:3mm;flex-wrap:wrap}.boxes .b{border:1px solid #000;min-width:16mm;height:10mm;display:flex;align-items:center;justify-content:center;font-weight:700}.boxes .b.k{color:#b3261e}.boxes .b.g{color:#555;background:#eee}.pr{font-size:9.5pt;margin-top:2mm}.pr .ans{min-width:20mm}.barset{display:flex;flex-wrap:wrap;gap:3mm}.barset .bcell{flex:1 1 40mm;max-width:calc(50% - 2mm);border:1px solid #000;padding:1mm 2mm}.barset svg{max-width:100%;height:auto}.boxes.sf{gap:2mm}.boxes.sf .b{min-width:12mm;height:8mm;font-weight:400;font-style:italic}.boxes.sf .b.k{font-weight:700}
-    .tsttot{display:flex;gap:10mm;font-weight:700;margin:10mm 0 0;font-size:11.5pt}
+    .tsttot{display:flex;gap:10mm;font-weight:700;margin:8mm 0 0;font-size:11.5pt;break-before:avoid;page-break-before:avoid;break-inside:avoid}.endnote{break-before:avoid;page-break-before:avoid}
     .keyban{border:2px solid #b3261e;color:#b3261e;font-weight:700;padding:2mm 4mm;margin:0 0 4mm;display:inline-block}
     .tracks{font-size:10pt;margin:2mm 0 0;color:#333}
-    @media screen{body{background:#666}.sheet{background:#fff;max-width:200mm;margin:8mm auto;padding:12mm 14mm;box-shadow:0 3px 18px rgba(0,0,0,.5)}.bar{position:sticky;top:0;background:#222;color:#fff;padding:8px 14px;font-family:Arial;display:flex;gap:10px;align-items:center;z-index:5}.bar button{font-size:14px;padding:6px 14px;cursor:pointer}}
+    .cell.half svg{max-width:100%;max-height:34mm;width:auto}
+    table.pg{table-layout:fixed}.sheet,.sheet td{max-width:100%}.cell{min-width:0}.cell svg{max-width:100%!important}.cell.wide svg{max-width:min(100%,165mm)!important}.cell:not(.wide):not(.half) svg{max-width:min(100%,62mm)!important}.cell.half svg{max-width:100%!important}.barset .bcell svg{max-width:100%!important}
+    @media screen{body{background:#666}.sheet{background:#fff;width:210mm;max-width:100%;margin:8mm auto;padding:15mm;box-shadow:0 3px 18px rgba(0,0,0,.5)}.bar{position:sticky;top:0;background:#222;color:#fff;padding:8px 14px;font-family:Arial;display:flex;gap:10px;align-items:center;z-index:5}.bar button{font-size:14px;padding:6px 14px;cursor:pointer}}
     @media print{.bar{display:none}.sheet{padding:0;margin:0;box-shadow:none}}`;
 
   // ---- answer sheet: the student's answers beside the correct answers, shown in the app (and printable) ----
@@ -85,9 +88,8 @@
     <div class="sheet"><table class="pg"><thead><tr><td>${TK.header(o.y,o.sem)}</td></tr></thead><tbody><tr><td>
     ${o.key?'<div class="keyban">ANSWER KEY · '+(TK.ctTitle?'custom test · ':'test code ')+esc(o.code)+'</div>':''}
     <div class="tstname">Name:<span>${o.key?'':''}</span></div>
-    ${o.sections.map((s,i)=>'<div class="sec'+(i?' brk':'')+'">'+s.html+'</div>').join('')}
-    ${TK.totalLine({a:o.aMarks,t:o.tMarks})}
-    ${o.key?(TK.ctTitle?'<p class="note" style="margin-top:6mm">Custom test · '+esc(o.code)+' · play the aural tracks from Teacher tools → Set a task → Custom test → open this test → Play the tracks.</p>':'<p class="note" style="margin-top:6mm">Test code '+esc(o.code)+' · play the aural tracks from Aural Blitz → Test → Teacher: print or play this test → Play the tracks, using this code.</p>'):''}
+    ${o.sections.map((s,i)=>'<div class="sec'+(i?' brk':'')+'">'+s.html+(i===o.sections.length-1?TK.totalLine({a:o.aMarks,t:o.tMarks}):'')+'</div>').join('')}
+    ${o.key?(TK.ctTitle?'<p class="note endnote" style="margin-top:6mm">Custom test · '+esc(o.code)+' · play the aural tracks from Teacher tools → Set a task → Custom test → open this test → Play the tracks, or ⬇ Audio as MP3s.</p>':'<p class="note endnote" style="margin-top:6mm">Test code '+esc(o.code)+' · play the aural tracks from Aural Blitz → Test → Teacher: print or play this test → Play the tracks, using this code.</p>'):''}
     </td></tr></tbody></table></div></body></html>`;
     w.document.open();w.document.write(doc);w.document.close();};
   // ---- on-screen styles ----
@@ -102,7 +104,7 @@
   .tstname{margin:10px 0 14px;font-size:14px}.tstname span{display:inline-block;border-bottom:1px solid #000;min-width:60%;margin-left:6px;font-weight:700}
   .tstcover .controls{margin-top:14px}.tstcover table{border-collapse:collapse;margin:8px 0 12px;font-size:13.5px}.tstcover td,.tstcover th{border:1px solid #000;padding:6px 14px;text-align:left}
   .tstcover .codebox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.tstcover .codebox input{padding:7px 10px;border:1px solid #000;font-family:ui-monospace,Consolas,monospace;font-size:14px;width:160px;text-transform:uppercase}
-  .tsttracks .trk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid #ccc;padding:8px 0}.tsttracks .trk b{min-width:80px}.tsttracks .trk span{flex:1;min-width:180px}
+  .tsttracks .trk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid #ccc;padding:8px 0}.tsttracks .trk b{min-width:80px}.tsttracks .trk span{flex:1;min-width:180px}.ctpaper{border:1.5px solid var(--line,#ccc);border-radius:14px;padding:12px 14px;margin:12px 0}.ctpaper .controls{margin:8px 0 0;flex-wrap:wrap;gap:6px}.mp3box{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:14px 0 4px;padding:12px;border:1px dashed var(--line,#bbb);border-radius:12px}.mp3box .sub{flex:1;min-width:220px;margin:0}
   .tsttracks button{border:1px solid #000;background:#fff;padding:6px 12px;cursor:pointer;font-family:Arial,sans-serif;font-size:13px}.tsttracks button.on{background:#000;color:#fff}`;
   const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   // =====================================================================================
@@ -133,9 +135,9 @@
   TK.BLOCKS={
    A:[
     {k:'drumT',label:'Drum dictation: you play a song',title:'Drum Dictation',desc:'You play a recording in class; students fill in the hi-hat, snare and bass drum grid. Enter the correct pattern below so it marks itself (1 mark per beat, ½ off for one wrong part).',n:null,m:8,
-      opts:[TX('song','Song and artist','Island in the Sun by Weezer'),TX('section','Section to play','chorus'),O1('bars','Length',[['1','1 bar'],['2','2 bars']],'2'),M('rows','Parts',DRUM_ROWS,['hh','sn','bd']),DR('pat','Correct pattern (tap the quavers that are played)')]},
+      opts:[O1('who','Who plays it',[['you','You play a song recording'],['app','The app plays a drum groove (goes into the MP3s)']],'you'),TX('song','Song and artist','Island in the Sun by Weezer'),TX('section','Section to play','chorus'),O1('bars','Length',[['1','1 bar'],['2','2 bars']],'2'),M('rows','Parts',DRUM_ROWS,['hh','sn','bd']),DR('pat','Correct pattern (tap the quavers that are played)')]},
     {k:'drum',label:'Drum dictation: the app plays a groove',title:'Drum Dictation',desc:'A synthesised 4/4 drum groove; students fill in the grid. Marked 1 mark per beat, ½ off for one wrong part.',n:null,m:8,
-      opts:[O1('bars','Length',[['1','1 bar'],['2','2 bars']],'2'),M('rows','Parts',DRUM_ROWS,['hh','sn','bd']),O1('level','Groove',[['simple','Straight rock (kick on 1 and 3)'],['sync','Syncopated kick (and-beats)'],['fill','With a snare fill in the last beat']],'sync')]},
+      opts:[O1('who','Who plays it',[['app','The app plays a drum groove (goes into the MP3s)'],['you','You play a song recording']],'app'),O1('bars','Length',[['1','1 bar'],['2','2 bars']],'2'),M('rows','Parts',DRUM_ROWS,['hh','sn','bd']),O1('level','Groove',[['simple','Straight rock (kick on 1 and 3)'],['sync','Syncopated kick (and-beats)'],['fill','With a snare fill in the last beat'],['own','My own pattern (tap it in below)']],'sync'),DR('pat','Your pattern (tap the quavers that are played)')]},
     {k:'ivl',label:'Interval recognition',title:'Interval Recognition',desc:'Students name each interval they hear, from the list you choose.',n:5,m:0.5,
       opts:[M('ivls','Intervals to choose from',IVS,['m2','M2','P4','P5','P8']),O1('dir','Played',[['up','Ascending'],['down','Descending'],['both','Ascending and descending'],['harm','Together (harmonic)']],'up')]},
     {k:'ton',label:'Tonality recognition',title:'Tonality Recognition',desc:'A short work; students choose the tonality.',n:3,m:1,
@@ -170,7 +172,7 @@
       opts:[O1('clef','Stave',[['both','Treble and bass'],['treble','Treble'],['bass','Bass']],'both'),M('keys','Keys (leave empty for random)',MAJ15.map(k=>[k,pretty(k)+' major']),[]),O1('names','Name each key as',[['both','Major / relative minor'],['major','Major only']],'both')]},
     {k:'ksid',label:'Name key signatures',title:'Key Signatures',desc:'Students name the key of each key signature.',n:4,m:1,opts:[]},
     {k:'transp',label:'Transposition to a new key',title:'Transposition',desc:'Students write the new key signature and every note. Marked in proportion (key signature plus each note).',n:null,m:10,
-      opts:[O1('from','From',[['','Any major key']].concat(MAJ15.slice(0,12).map(k=>[k,pretty(k)+' major'])),'G'),O1('iv','Into',[['','Any'],['up M2','Up a major 2nd'],['up m3','Up a minor 3rd'],['up P4','Up a perfect 4th'],['up P5','Up a perfect 5th'],['down M2','Down a major 2nd'],['down m3','Down a minor 3rd'],['down P4','Down a perfect 4th'],['down P5','Down a perfect 5th']],'down P4'),
+      opts:[Object.assign(O1('from','From',[['','Any key in the syllabus']].concat(MAJ15.map(k=>[k,pretty(k)+' major'])),''),{byYear:1}),Object.assign(O1('to','Into this key (or leave it to the interval below)',[['','Any key in the syllabus']].concat(MAJ15.map(k=>[k,pretty(k)+' major'])),''),{byYear:1}),O1('iv','Or by this interval',[['','Any interval'],['up M2','Up a major 2nd'],['up m3','Up a minor 3rd'],['up P4','Up a perfect 4th'],['up P5','Up a perfect 5th'],['down M2','Down a major 2nd'],['down m3','Down a minor 3rd'],['down P4','Down a perfect 4th'],['down P5','Down a perfect 5th']],''),
         O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4'),O1('clef','Clef',[['treble','Treble'],['bass','Bass'],['mix','Either']],'treble')]},
     {k:'keymel',label:'Key of a melody',title:'Visual Recognition of Key',desc:'A melody with its key signature; students choose its key from three: the right one, its relative and a near miss.',n:2,m:1,
       opts:[M('types','Keys used',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],['major','harmonic minor']),O1('clef','Clef',[['mix','Treble and bass'],['treble','Treble'],['bass','Bass']],'mix')]},
@@ -214,7 +216,7 @@
   // ---- presets ----
   TK.PRESETS=[{id:'y9mus',label:'Year 9 Musicianship Test',ct:{v:1,ti:'Year 9 Musicianship Test',y:9,
     A:[{k:'drumT',m:8,t:'Drum Dictation',o:{song:'Island in the Sun by Weezer',section:'chorus',bars:'2',rows:['hh','sn','bd'],pat:{hh:'1111111111111111',sn:'0010001000100010',bd:'1000100010001101'}}},
-       {k:'drumT',m:4,t:'Drum Dictation',x:'Listen to what the kick and snare drum are doing in the pre-chorus of Thinking Out Loud by Ed Sheeran. Write what you hear.',o:{song:'Thinking Out Loud by Ed Sheeran',section:'pre-chorus',bars:'1',rows:['sn','bd'],pat:{hh:'',sn:'00100010',bd:'10010100'}}},
+       {k:'drumT',m:4,t:'Drum Dictation',o:{song:'Thinking Out Loud by Ed Sheeran',section:'pre-chorus',bars:'1',rows:['sn','bd'],pat:{hh:'',sn:'00100010',bd:'10010100'}}},
        {k:'ivl',n:5,m:0.5,t:'Interval Recognition',o:{ivls:['m2','M2','P4','P5','P8'],dir:'up'}},
        {k:'ivl',n:5,m:0.5,t:'Interval Recognition',o:{ivls:['m3','M3','m6','M6'],dir:'up'}},
        {k:'ton',n:3,m:1,t:'Tonality Recognition',o:{tons:['Major','Natural minor','Harmonic minor'],play:'harm'}},
@@ -391,11 +393,12 @@
     m.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const t=TK.savedTests().find(x=>x.id===b.dataset.del);if(!t||!confirm('Delete "'+t.ct.ti+'"? This can\'t be undone.'))return;lsSet(LSK,TK.savedTests().filter(x=>x.id!==t.id));home();});}
   function optHtml(sec,bi,b,od){const id=`o_${sec}_${bi}_${od.key}`;const v=TK.opt(Object.assign({sec},b),od.key);
     if(od.type==='multi')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><div class="setchips">${od.ch.map(c=>`<button class="chip${v.includes(c[0])?' on':''}" data-ms="${sec}|${bi}|${od.key}|${esc(c[0])}">${esc(c[1])}</button>`).join('')}</div></div>`;
-    if(od.type==='one')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><select class="setsel" data-os="${sec}|${bi}|${od.key}">${od.ch.map(c=>`<option value="${esc(c[0])}"${v===c[0]?' selected':''}>${esc(c[1])}</option>`).join('')}</select></div>`;
+    if(od.type==='one'){const SYL={7:1,8:2,9:3,10:4,11:5,12:7}[CUR&&CUR.ct?CUR.ct.y:9]||3;const KS={C:0,G:1,D:2,A:3,E:4,B:5,'F#':6,'C#':7,F:1,Bb:2,Eb:3,Ab:4,Db:5,Gb:6,Cb:7};const chs=od.byYear?od.ch.filter(c=>!c[0]||(KS[c[0]]!==undefined&&KS[c[0]]<=SYL)||c[0]===v):od.ch;
+      return `<div class="ctopt"><div class="setlabel">${esc(od.label)}${od.byYear?` <span class="note">(Year ${CUR&&CUR.ct?CUR.ct.y:''} keys: up to ${SYL}♯/♭)</span>`:''}</div><select class="setsel" data-os="${sec}|${bi}|${od.key}">${chs.map(c=>`<option value="${esc(c[0])}"${v===c[0]?' selected':''}>${esc(c[1])}</option>`).join('')}</select></div>`;}
     if(od.type==='area')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><textarea class="tkin" rows="3" maxlength="600" data-oa="${sec}|${bi}|${od.key}" placeholder="${esc(od.ph||'')}">${esc(v||'')}</textarea></div>`;
     if(od.type==='qs'){const L=v||[];const id=i=>`${sec}|${bi}|${od.key}|${i}`;return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div>${L.map((w,i)=>`<div class="ctwq"><div class="ctwqh"><b>${i+1}.</b><span class="ctnum"><span>Marks</span><button data-qm="${id(i)}|-1">−</button><b>${half(w.m)}</b><button data-qm="${id(i)}|1">+</button></span><span class="ctnum"><span>Answer lines</span><button data-ql="${id(i)}|-1">−</button><b>${w.l}</b><button data-ql="${id(i)}|1">+</button></span><button class="ctib" data-qx="${id(i)}" title="Remove this question" aria-label="Remove this question">✕</button></div><textarea class="tkin" rows="2" maxlength="400" data-qq="${id(i)}" placeholder="Type the question students will answer">${esc(w.q||'')}</textarea><input class="tkin" maxlength="300" data-qa="${id(i)}" value="${esc(w.a||'')}" placeholder="Model answer or marking notes (printed on the answer key only)"></div>`).join('')}<button class="btn-ghost ctqadd" data-qadd="${sec}|${bi}|${od.key}">+ Add a question</button></div>`;}
     if(od.type==='text')return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><input class="tkin" maxlength="80" data-ot="${sec}|${bi}|${od.key}" value="${esc(v||'')}" placeholder="${esc(od.ph||'')}"></div>`;
-    if(od.type==='drum'){const rows=TK.opt(Object.assign({sec},b),'rows'),bars=TK.opt(Object.assign({sec},b),'bars');return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><div data-dg="${sec}|${bi}">${TK.drumGridHtml({bars,rows,state:Object.assign({},(b.o&&b.o.pat)||{}),mode:'edit'})}</div></div>`;}
+    if(od.type==='drum'){if(b.k==='drum'&&TK.opt(Object.assign({sec},b),'level')!=='own')return '';const rows=TK.opt(Object.assign({sec},b),'rows'),bars=TK.opt(Object.assign({sec},b),'bars');return `<div class="ctopt"><div class="setlabel">${esc(od.label)}</div><div data-dg="${sec}|${bi}">${TK.drumGridHtml({bars,rows,state:Object.assign({},(b.o&&b.o.pat)||{}),mode:'edit'})}</div></div>`;}
     return '';}
   const OPENADV=new Set();
   function blockHtml(sec,b,bi){const d=TK.blockDef(sec,b.k);const mk=TK.blockMarks(sec,b);const letter=TK.letter(bi);
@@ -414,14 +417,18 @@
       <div class="tkgrid ctg"><div class="setgrp"><div class="setlabel">Title (printed under the school name)</div><input id="ctti" class="tkin" maxlength="80" value="${esc(ct.ti)}"></div>
         <div class="setgrp"><div class="setlabel">Year (sets the level of content)</div><select id="cty" class="setsel">${[7,8,9,10,11,12].map(y=>`<option value="${y}"${y===ct.y?' selected':''}>Year ${y}</option>`).join('')}</select></div></div>
       ${sec('A','AURAL')}${sec('T','THEORY')}
-      <p class="sub ctsaved" id="ctsaved">✓ Saved on this device · ${new Date(t.at||Date.now()).toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}. Changes save as you make them; open it again any time from <b>All custom tests</b>.</p><div class="cttot"><b>TOTAL MARK ${half(a+th)}</b><span>Aural ${half(a)} · Theory ${half(th)}</span><span class="sub" style="margin:0">Version ${TK.code(ct.y<=10?ct.y:10,t.seed,'Two').slice(-5)} <button class="linkbtn" id="ctnewv">New version</button></span></div>
-      <div class="controls ctact"><button class="btn-check" id="ctpush">Push to class…</button><button class="btn-ghost" id="ctprev">Try it as a student</button><button class="btn-ghost" id="ctprint">Print the test</button><button class="btn-ghost" id="ctkey">Print the answer key</button><button class="btn-ghost" id="cttracks">Play the tracks</button></div>
-      <p class="sub">"Print", "Play the tracks" and "Try it" all use this version, so the printed key matches. A push with <i>different questions for each student</i> gives every student their own version of the same blueprint.</p>`,true);
+      <p class="sub ctsaved" id="ctsaved">✓ Saved on this device · ${new Date(t.at||Date.now()).toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}. Changes save as you make them; open it again any time from <b>All custom tests</b>.</p><div class="cttot"><b>TOTAL MARK ${half(a+th)}</b><span>Aural ${half(a)} · Theory ${half(th)}</span><span class="sub" style="margin:0">Version ${TK.code(ct.y<=10?ct.y:10,t.seed,'Two').slice(-5)}</span></div>
+      <div class="ctpaper"><div class="setlabel">Paper test: one version, printed, with its audio</div>
+        <p class="sub">Pick a version, then use the buttons at the bottom: print it and its answer key, and download its audio as MP3s to play yourself. Print, the key, the MP3s, the tracks and "Try this version" all use version <b>${TK.code(ct.y<=10?ct.y:10,t.seed,'Two').slice(-5)}</b>, so the paper, the key and the MP3s match.</p>
+        <div class="controls ctv">${(t.prevSeeds||[]).length?'<button class="btn-ghost" id="ctoldv">‹ Previous version</button>':''}<button class="btn-ghost" id="ctnewv">New version ↻</button></div></div>
+      <div class="controls ctact"><button class="btn-check" id="ctpush">Push to class…</button><button class="btn-ghost" id="ctprev">Try this version</button><button class="btn-ghost" id="ctprint">Print the test</button><button class="btn-ghost" id="ctkey">Print the answer key</button>${BH.mp3?'<button class="btn-ghost" id="ctmp3">⬇ Audio as MP3s</button>':''}<button class="btn-ghost" id="cttracks">Play the tracks</button></div>
+      <p class="sub">A push with <i>different questions for each student</i> gives every student their own version of the same blueprint; otherwise students get the version above.</p>`,true);
     wire();}
   // clean in place, so handlers that hold the test object keep editing the live copy
   function save(){const c=TK.ctClean(CUR.ct);Object.keys(CUR.ct).forEach(k=>delete CUR.ct[k]);Object.assign(CUR.ct,c);CUR.at=Date.now();saveTest(CUR);}
   function markSaved(){const e=document.getElementById('ctsaved');if(e)e.firstChild.textContent='✓ Saved on this device · '+new Date().toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})+'. Changes save as you make them; open it again any time from ';}
   function rerender(){const m=document.getElementById('tkmodal');const st=m?m.scrollTop:0;save();edit();const m2=document.getElementById('tkmodal');if(m2)m2.scrollTop=st;}
+  const DSTASH={};
   function wire(){const m=document.getElementById('tkmodal')||document,ct=CUR.ct;m.querySelectorAll('[data-adv]').forEach(d=>d.ontoggle=()=>{if(d.open)OPENADV.add(d.dataset.adv);else OPENADV.delete(d.dataset.adv);});const P=s=>{const [sec,bi,k,v]=s.split('|');return {sec,bi:+bi,k,v,b:ct[sec][+bi]};};
     m.querySelector('#ctback').onclick=()=>{save();home();};
     m.querySelector('#ctti').onchange=e=>{ct.ti=e.target.value.trim()||'Untitled test';rerender();};
@@ -435,8 +442,12 @@
     m.querySelectorAll('[data-mm]').forEach(x=>x.onclick=()=>{const p=P(x.dataset.mm);const step=p.b.m<1||(p.b.m===1&&+p.k<0)?0.25:0.5;p.b.m=Math.max(0.25,Math.min(30,Math.round((p.b.m+step*(+p.k))*4)/4));rerender();});
     m.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{const [sec,bi,k,v]=x.dataset.ms.split('|');const b=ct[sec][+bi];b.o=b.o||{};const cur=TK.opt(Object.assign({sec},b),k).slice();const i=cur.indexOf(v);if(i>=0)cur.splice(i,1);else cur.push(v);
       const od=TK.blockDef(sec,b.k).opts.find(o=>o.key===k);b.o[k]=od.ch.map(c=>c[0]).filter(c=>cur.includes(c));rerender();});
-    m.querySelectorAll('[data-os]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.os);p.b.o=p.b.o||{};p.b.o[p.k]=x.value;rerender();});
-    m.querySelectorAll('[data-ot]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.ot);p.b.o=p.b.o||{};p.b.o[p.k]=x.value.trim();save();});
+    m.querySelectorAll('[data-os]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.os);p.b.o=p.b.o||{};
+      if(p.k==='who'){delete p.b.o.who;const to=x.value==='you'?'drumT':'drum';if(to!==p.b.k){const key=p.sec+'|'+p.bi;if(p.b.k==='drumT'){DSTASH[key]={song:p.b.o.song,section:p.b.o.section,x:p.b.x};delete p.b.x;if(p.b.o.pat)p.b.o.level='own';}
+        else{const s=DSTASH[key];if(s){if(s.song)p.b.o.song=s.song;if(s.section)p.b.o.section=s.section;if(s.x)p.b.x=s.x;}delete p.b.o.level;}p.b.k=to;}rerender();return;}
+      p.b.o[p.k]=x.value;rerender();});
+    m.querySelectorAll('[data-ot]').forEach(x=>x.onchange=()=>{const p=P(x.dataset.ot);p.b.o=p.b.o||{};const old=TK.opt(Object.assign({sec:p.sec},p.b),p.k);p.b.o[p.k]=x.value.trim();
+      if(p.b.x&&(p.k==='song'||p.k==='section')&&old&&p.b.x.includes(old)){p.b.x=p.b.x.split(old).join(p.b.o[p.k]||(p.k==='song'?'the song':'section'));rerender();return;}save();});
     m.querySelectorAll('[data-oa]').forEach(x=>x.oninput=()=>{const p=P(x.dataset.oa);p.b.o=p.b.o||{};p.b.o[p.k]=x.value;save();markSaved();});
     const QL=s=>{const [sec,bi,k,i,d]=s.split('|');const b=ct[sec][+bi];b.o=b.o||{};if(!Array.isArray(b.o[k]))b.o[k]=JSON.parse(JSON.stringify(TK.opt(Object.assign({sec},b),k)||[]));return {b,L:b.o[k],i:+i,d:+d,k};};
     m.querySelectorAll('[data-qadd]').forEach(x=>x.onclick=()=>{const [sec,bi,k]=x.dataset.qadd.split('|');const q=QL(sec+'|'+bi+'|'+k+'|0|0');q.L.push({q:'',a:'',m:sec==='A'&&q.b.k==='anal'?1:2,l:3});rerender();});
@@ -447,9 +458,12 @@
     m.querySelectorAll('[data-qa]').forEach(x=>x.oninput=()=>{const q=QL(x.dataset.qa);q.L[q.i].a=x.value;save();markSaved();});
     m.querySelectorAll('[data-dg]').forEach(el=>{const p=P(el.dataset.dg+'|x');p.b.o=p.b.o||{};p.b.o.pat=p.b.o.pat||{};const o={bars:TK.opt(Object.assign({sec:p.sec},p.b),'bars'),state:p.b.o.pat};TK.wireDrumGrid(el,o,()=>save());});
     m.querySelectorAll('[data-add]').forEach(x=>x.onclick=()=>{const [sec,k]=x.dataset.add.split('|');const d=TK.blockDef(sec,k);const b={k,m:d.m,o:{}};if(d.n!==null)b.n=d.n;ct[sec].push(b);rerender();const mm=document.getElementById('tkmodal');if(mm){const blks=mm.querySelectorAll('.ctsec')[sec==='A'?0:1].querySelectorAll('.ctblk');const last=blks[blks.length-1];if(last)last.scrollIntoView({block:'center'});}});
-    m.querySelector('#ctnewv').onclick=()=>{CUR.seed=TK.newSeed();rerender();BH.toast('New version: the same blueprint with new questions');};
+    {const ov=m.querySelector('#ctoldv');if(ov)ov.onclick=()=>{CUR.seed=CUR.prevSeeds.pop();rerender();BH.toast('Back to version '+TK.code(10,CUR.seed,'Two').slice(-5));};}
+    {const mp=m.querySelector('#ctmp3');if(mp)mp.onclick=()=>{if(ready()){BH.close();BH.mp3(CUR.ct,CUR.seed);}};}
+    m.querySelector('#ctnewv').onclick=()=>{CUR.prevSeeds=(CUR.prevSeeds||[]).concat(CUR.seed).slice(-10);CUR.seed=TK.newSeed();rerender();BH.toast('New version: the same blueprint with new questions');};
     const ready=()=>{save();const c=CUR.ct;if(!c.A.length&&!c.T.length){BH.toast('Add some questions first');return false;}
-      const bad=c.A.filter(b=>b.k==='drumT').find(b=>!((b.o.pat&&TK.opt(Object.assign({sec:'A'},b),'rows').some(r=>(b.o.pat[r]||'').includes('1')))));if(bad){BH.toast('Enter the correct drum pattern for "'+(bad.t||'Drum Dictation')+'" first');return false;}return true;};
+      const bad=c.A.filter(b=>b.k==='drumT').find(b=>!((b.o.pat&&TK.opt(Object.assign({sec:'A'},b),'rows').some(r=>(b.o.pat[r]||'').includes('1')))));if(bad){BH.toast('Enter the correct drum pattern for "'+(bad.t||'Drum Dictation')+'" first');return false;}
+      const bad2=c.A.filter(b=>b.k==='drum'&&b.o&&b.o.level==='own').find(b=>!((b.o.pat&&TK.opt(Object.assign({sec:'A'},b),'rows').some(r=>(b.o.pat[r]||'').includes('1')))));if(bad2){BH.toast('Tap in your groove for "'+(bad2.t||'Drum Dictation')+'" first');return false;}return true;};
     const flagged=()=>{const n=[...CUR.ct.A,...CUR.ct.T].filter(b=>b.nt).length;return n&&!confirm(n+' item'+(n===1?' is':'s are')+' still marked ⚠ to check. Carry on anyway?');};
     m.querySelector('#ctpush').onclick=()=>{if(ready()&&!flagged())BH.push(CUR.ct,CUR.seed);};
     m.querySelector('#ctprev').onclick=()=>{if(ready()){BH.close();BH.preview(CUR.ct,CUR.seed);}};

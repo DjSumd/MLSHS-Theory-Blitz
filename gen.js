@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261103g";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261103k";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -686,14 +686,21 @@ function degreeNotateQ(){const k=randKey();const clef=clefPick();const d=rand(7)
   const useSig=Math.random()<0.5;
   return {t:'notate',prompt:'Write the '+T.DEG_NAMES[d]+' of '+keyName(k)+'.',sub:clefWord(clef)+'. '+(useSig?'Key signature given.':'No key signature: add any accidental the note needs.')+' Any octave.'+(k.mode==='minor'&&d===6?' (Minor keys: the leading note is raised.)':''),clef,sig:useSig?k.sig:0,items:[slot(0,[p],'w',{anyOctave:true})],
     why:'Degree '+(d+1)+' of '+keyName(k)+' is '+name(sc[d])+'.'+(k.mode==='minor'&&d===6?' In a minor key the leading note is the raised 7th (harmonic minor).':'')+' Sol-fa: '+(k.mode==='minor'?(d===6?'si (the raised so)':SOLFA_MIN[d]+' (la-based minor)'):SOLFA_MAJ[d])+'.'};}
-function transposeKeyQ(depth){const O=SET.ct||{};const fixed=!!(O.from||O.iv)&&!(depth>3);const t=O.from&&fixed?PK(O.from):pick(keyTonics(Math.min(S('keysMax'),4)));const clef=O.clef&&O.clef!=='mix'?O.clef:clefPick();
-  const iv=O.iv&&fixed?((s)=>{const [d,i]=s.split(' ');return [i,d];})(O.iv):pick([['M2','up'],['m3','up'],['P4','up'],['P5','up'],['M2','down'],['m3','down'],['P4','down'],['M3','up'],['m3','down']]);
-  const t2=iv[1]==='up'?T.transposeUp(t,iv[0]):T.transposeDown(t,iv[0]);const sig2=T.sigOf(P(t2.l,t2.a,4),'major');if(sig2===null||Math.abs(sig2)>(fixed?7:S('keysMax')))return transposeKeyQ((depth||0)+1);
+function transposeKeyQ(depth){const O=SET.ct||{};const max=Math.max(1,Math.min(7,S('keysMax')||1));const clef=O.clef&&O.clef!=='mix'?O.clef:clefPick();
+  const sigOfT=t=>T.sigOf(P(t.l,t.a,4),'major');const inSyl=t=>{const s=sigOfT(t);return s!==null&&Math.abs(s)<=max;};const same=(x,y)=>x.l===y.l&&x.a===y.a;
+  const pool=keyTonics(max).filter(inSyl);const USUAL=['M2','m3','M3','P4','P5'];
+  const pairOf=(t,t2)=>{const b4=P(t.l,t.a,4);let tg=P(t2.l,t2.a,4);const semis=((T.midi(tg)-T.midi(b4))%12+12)%12;const up=semis<=6;
+    if(up){if(dia(tg)<=dia(b4))tg=up8(tg);}else{if(dia(tg)>=dia(b4))tg=up8(tg,-1);}const ivo=up?T.interval(b4,tg):T.interval(tg,b4);if(!ivo)return null;return {t,t2,iv:[T.ivShort(ivo),up?'up':'down']};};
+  const want=(O.iv&&!O.to)?((s)=>{const [d,i]=s.split(' ');return [i,d];})(O.iv):null;
+  const build=(strict)=>{const froms=O.from?[PK(O.from)]:pool;const out=[];froms.forEach(t=>{if(want){const t2p=want[1]==='up'?T.transposeUp(P(t.l,t.a,4),want[0]):T.transposeDown(P(t.l,t.a,4),want[0]);const t2={l:t2p.l,a:t2p.a};if(strict&&!inSyl(t2))return;if(sigOfT(t2)===null)return;out.push({t,t2,iv:want});return;}
+      (O.to?[PK(O.to)]:pool).forEach(t2=>{if(same(t,t2))return;const pr=pairOf(t,t2);if(!pr)return;if(!O.to&&!USUAL.includes(pr.iv[0]))return;if(strict&&!inSyl(t2)&&!O.to)return;out.push(pr);});});return out;};
+  let cands=build(true);if(!cands.length)cands=build(false);if(!cands.length){const t=pick(pool.length?pool:keyTonics(1));const t2p=T.transposeUp(P(t.l,t.a,4),'P4');cands=[{t,t2:{l:t2p.l,a:t2p.a},iv:['P4','up']}];}
+  const c=pick(cands);const t=P(c.t.l,c.t.a,4),t2=P(c.t2.l,c.t2.a,4),iv=c.iv;const sig2=T.sigOf(t2,'major');
   const ts=O.metre||'3/4',nb=+O.bars||2;
   const key={tonic:t,mode:'major'};const sig=T.sigOf(t,'major');const mid=MIDD[clef];const steps=T.parseIv(iv[0]).n-1;
   const given=melody(key,clef,ts,nb,iv[1]==='up'?{lo:mid-6,hi:mid+6-steps}:{lo:mid-6+steps,hi:mid+6});
   const items=[];let si=0;given.forEach(it=>{if(it.k==='n'){const tp=iv[1]==='up'?T.transposeUp(it.p[0],iv[0]):T.transposeDown(it.p[0],iv[0]);items.push(slot(si++,[tp],it.dur,{dots:it.dots,beam:it.beam,tie:it.tie}));}else items.push(Object.assign({},it));});
-  return {t:'notate',prompt:'Transpose this melody '+iv[1]+' '+an(T.ivWord(iv[0]))+' into '+name(t2)+' major.',sub:clefWord(clef)+'. Build the new key signature with the ♯/♭ buttons, then place each note the same interval '+iv[1]+'. Rhythm is given.',clef,sig:0,time:METRE(ts),keysigEdit:true,sigTarget:sig2,items,show:show(stave(clef,sig,METRE(ts),given)),
+  return {t:'notate',prompt:'Transpose this melody from '+name(t)+' major '+iv[1]+' '+an(T.ivWord(iv[0]))+' into '+name(t2)+' major.',sub:clefWord(clef)+'. Build the new key signature with the ♯/♭ buttons, then place each note the same interval '+iv[1]+'. Rhythm is given.',clef,sig:0,time:METRE(ts),keysigEdit:true,sigTarget:sig2,items,show:show(stave(clef,sig,METRE(ts),given)),
     why:name(t)+' major '+iv[1]+' '+an(T.ivWord(iv[0]))+' = '+name(t2)+' major ('+T.sigWord(sig2)+'). Every note moves the same interval, so the letter names all shift by '+steps+'.'};}
 function ornamentQ(){const kinds=[['trill','trill: rapid alternation with the note above'],['mordent','mordent: a quick turn to the note below (or above) and back'],['turn','turn: the note above, the note, the note below, the note'],['grace','acciaccatura: a crushed grace note before the main note']];
   const kind=pick(S('ext')?kinds:kinds.slice(0,3));const items=[n([parse('G4')],'q'),{k:'gap',w:kind[0]==='grace'?1.4:0.3},n([parse('A4')],'q',{art:[kind[0]]}),n([parse('B4')],'h'),fin()];

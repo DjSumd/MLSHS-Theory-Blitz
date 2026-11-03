@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103g";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103k";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -198,7 +198,7 @@ var UNITS=[
       const mids=idx.map(x=>60+pool[x]);const arrows=idx.slice(1).map((x,k)=>x>idx[k]?'↑':x<idx[k]?'↓':'→');const ans=arrows.join(' ');
       const allShapes=new Set([ans]);let tries=0;while(allShapes.size<4&&tries++<50){allShapes.add(arrows.map(()=>A_pick(['↑','↓','→'])).join(' '));}
       return {kind:'choice',options:A_shuf([...allShapes]),answer:ans,play:()=>AUDIO.melody(mids,mids.map(()=>0.75),0.6),playLabel:n+' notes — which way does each one move?',why:'The notes move '+arrows.join(', ')+'.'};}
-    const dict=ENGRAVE.buildDictation({diff:ctx.diff,scaleNames:scales,bars,clef,metre,maxKs:maxKsFor(ctx.year),rests:ctx.year>=8,restDurs:ctx.year>=9?[0.5,1,2]:[1,2],ties:ctx.year>=8,syncopation:ctx.year>=9,anacrusis:ctx.year>=8&&bars>1,triplets:ctx.year>=11,vocab:vocabFrom(RHYTHM_VOCAB.filter(x=>x.yr<=ctx.year).map(x=>x.id)).vocab,vocabEasy:false});
+    const dict=ENGRAVE.buildDictation({tonicStart:(ctx.year||YEAR)<=10,diff:ctx.diff,scaleNames:scales,bars,clef,metre,maxKs:maxKsFor(ctx.year),rests:ctx.year>=8,restDurs:ctx.year>=9?[0.5,1,2]:[1,2],ties:ctx.year>=8,syncopation:ctx.year>=9,anacrusis:ctx.year>=8&&bars>1,triplets:ctx.year>=11,vocab:vocabFrom(RHYTHM_VOCAB.filter(x=>x.yr<=ctx.year).map(x=>x.id)).vocab,vocabEasy:false});
     const sf=ENGRAVE.solfaFor(dict.scaleType)?' Sol-fa: '+dict.notes.filter(n=>!n.rest).map(n=>ENGRAVE.solfaOf(n.midi,dict.tonicMidi,dict.scaleType)).join(' ')+'.':'';
     if(qt==='melody')return {kind:'melodydict',dict,scaleName:dict.scaleName,given:1,multiPlay:true,cue:true,prompt:'Notate the melody — rhythm and pitch',why:'Key: '+dict.scaleName+'. '+dict.notes.filter(n=>!n.rest).map(noteName).join(' ')+'.'+sf};
     return {kind:'pitchdict',dict,scaleName:dict.scaleName,given:1,multiPlay:true,cue:true,prompt:'Write the pitches — the rhythm is given',why:'Key: '+dict.scaleName+'. Answer: '+dict.notes.filter(n=>!n.rest).map(noteName).join(' ')+'.'+sf};}},

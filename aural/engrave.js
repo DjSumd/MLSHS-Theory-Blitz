@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103g";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103k";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -218,6 +218,8 @@
     const barOf=on=>Math.floor((on+pickup)/M.bpb+1e-6);
     const R=rh.roles;const nb=bars;
     const chordFor=(b,posInBar,role,isLast)=>{ if(role==='C'){return isLast?TON:(posInBar<M.bpb/2-1e-6?DOM:TON);} if(role==='B')return posInBar<M.bpb/2-1e-6?(Math.random()<0.5?SUB:TON):DOM; return TON; };
+    // the final note to sound is the last attack: when the melody ends on a tie, that is the note tied into the end
+    let LA=ev.length-1;while(LA>0&&(ev[LA].rest||ev[LA-1].tie))LA--;ev.forEach((e,i)=>{if(e.last&&i!==LA)delete e.last;});ev[LA].last=true;
     let onset=0;const meta=ev.map(e=>{const o2=onset;onset+=e.dur;const b=Math.max(0,barOf(o2));const pos=((o2+pickup)%M.bpb+M.bpb)%M.bpb;const role=R[Math.min(b,R.length-1)]||'A';
       return {on:o2,bar:b,pos,role,strong:M.acc.some(a=>eq(a,pos))||eq(pos,0),last:!!e.last};});
     // climax placement: in the B bar (or A' for 4+ bars) — the phrase rises to it and falls to the cadence
@@ -231,7 +233,7 @@
     const motifPitches={}; // bar role 'A' → pitches by sounding position, for A'
     for(let k=0;k<soundIdx.length;k++){const i=soundIdx[k];const m=meta[i];const e=ev[i];
       if(k===0){ // start on a tonic-chord tone, usually the tonic
-        const st=Math.random()<0.6?tonicIdx:nearestOf(TON,tonicIdx,1,4);idx=st<0?tonicIdx:st;chosen[i]=pool[idx];continue;}
+        const st=(opts.tonicStart||Math.random()<0.6)?tonicIdx:nearestOf(TON,tonicIdx,1,4);idx=st<0?tonicIdx:st;chosen[i]=pool[idx];continue;}
       // A': repeat the motif's pitches when the rhythm matches (exact repeat, or a sequence a step away at med/hard)
       if(m.role==="A'"&&motifPitches.A&&motifPitches.A[k-soundIdx.findIndex(j=>meta[j].role==="A'")]!==undefined){const rel=k-soundIdx.findIndex(j=>meta[j].role==="A'");const src=motifPitches.A[rel];
         if(src!==undefined){const shift=motifPitches.shift;const ni=Math.max(minIdx,Math.min(maxIdx,src+shift));idx=ni;chosen[i]=pool[idx];lastLeap=0;continue;}}

@@ -1,12 +1,14 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261103g";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261103k";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.
 (function(){
   let AC=null, bus=null; const timers=[];
-  function ac(){ if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); }
+  // REC: while set, every voice renders into an OfflineAudioContext on a virtual clock (for MP3 export)
+  let REC=null;
+  function ac(){ if(REC) return REC.px; if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); }
     if(AC.state==='suspended') AC.resume(); return AC; }
-  function getBus(){ const a=ac(); if(!bus){ bus=a.createGain(); bus.gain.value=1; bus.connect(a.destination); } return bus; }
+  function getBus(){ if(REC) return REC.bus; const a=ac(); if(!bus){ bus=a.createGain(); bus.gain.value=1; bus.connect(a.destination); } return bus; }
   function arm(){ const a=ac(), b=getBus(); b.gain.cancelScheduledValues(a.currentTime); b.gain.setValueAtTime(1,a.currentTime); return a; }
   const mtof = m => 440*Math.pow(2,(m-69)/12);
 
@@ -107,11 +109,21 @@
   window.AUDIO={
     ready(){ return !!(window.AudioContext||window.webkitAudioContext); },
     // stop everything: fade the current bus out and abandon it, so notes already scheduled on it never resurface
-    stop(){ timers.forEach(t=>clearTimeout(t)); timers.length=0;
+    stop(){ if(REC) return; timers.forEach(t=>clearTimeout(t)); timers.length=0;
       if(bus){ const a=ac(), old=bus; bus=null; try{old.gain.cancelScheduledValues(a.currentTime); old.gain.setTargetAtTime(0,a.currentTime,0.012); setTimeout(()=>{try{old.disconnect();}catch(e){}},400);}catch(e){} } },
     // a delayed play that stop() cancels (for two-phrase questions)
-    later(fn,ms){ const t=setTimeout(()=>{timers.splice(timers.indexOf(t),1);fn();},ms); timers.push(t); return t; },
+    later(fn,ms){ if(REC){ REC.q.push({at:REC.t+ms/1000,fn}); return 0; } const t=setTimeout(()=>{timers.splice(timers.indexOf(t),1);fn();},ms); timers.push(t); return t; },
     probeSamples,
+    // render whatever fn() plays into a mono buffer: fn may return seconds or a promise; AUDIO.later calls run on the virtual clock
+    async record(fn,maxSecs){ const SR=44100, ctx=new OfflineAudioContext(1,Math.ceil((maxSecs||240)*SR),SR);
+      const R={ctx,t:0,q:[],end:0}; R.px=new Proxy(ctx,{get(t,p){ if(p==='currentTime') return R.t; const v=t[p]; return typeof v==='function'?v.bind(t):v; }});
+      R.bus=ctx.createGain(); R.bus.connect(ctx.destination); REC=R;
+      try{ let r=fn(); if(r&&typeof r.then==='function') r=await r; R.end=Math.max(R.end,+r||0);
+        while(R.q.length){ R.q.sort((x,y)=>x.at-y.at); const it=R.q.shift(); R.t=it.at; let s=it.fn(); if(s&&typeof s.then==='function') s=await s; R.end=Math.max(R.end,it.at+(+s||0)); } }
+      finally{ REC=null; }
+      const buf=await ctx.startRendering(); const d=buf.getChannelData(0); let last=d.length-1; while(last>0&&Math.abs(d[last])<2e-4) last--;
+      const n=Math.min(d.length,last+Math.round(SR*0.8)); let peak=0; for(let i=0;i<n;i++){ const v=Math.abs(d[i]); if(v>peak) peak=v; }
+      const g=peak>0.98?0.98/peak:1; const out=new Float32Array(n); for(let i=0;i<n;i++) out[i]=d[i]*g; return {data:out,rate:SR,secs:n/SR}; },
     preloadPiano(){ return loadPiano(); },
     pianoLoaded(){ return pianoReady; },
     // interval: mode 'up' | 'down' | 'harm'
