@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261102e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103a";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -144,8 +144,12 @@
       opts:[M('scales','Scale',AS,['major','natural minor']),M('metres','Time signature',METS,['2/4','3/4','4/4']),O1('bars','Length',BARS,'2'),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
     {k:'sfd',label:'Sol-fa dictation',title:'Melodic Dictation – Sol-fa',desc:'The rhythm is printed; students write only the sol-fa, one box per note.',n:null,m:6,
       opts:[M('scales','Scale',AS,['major pentatonic']),M('metres','Time signature',METS,['2/4','3/4','4/4']),O1('bars','Length',BARS,'2')]},
-    {k:'two',label:'Two-part dictation (sol-fa)',title:'Two-Part Dictation',desc:'Two parts play together; both rhythms are printed and students write the sol-fa of each part. The first bar of the upper part and the first note of the lower part are given.',n:null,m:5,
+    {k:'two',label:'Two-part dictation (sol-fa)',title:'Two-Part Dictation',desc:'Two parts play together (upper in the treble, lower in the bass), moving mostly by step and skip. Both rhythms are printed and students write the sol-fa of each part. The first bar of each part is given.',n:null,m:5,
       opts:[O1('scale','Scale',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],'natural minor'),O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4')]},
+    {k:'bord',label:'Bars in the wrong order',title:'Bars in the Wrong Order',desc:'The bars of a melody are printed out of order. Students listen, then drag the bars back into order (on paper they write the letter of each bar in its place). Marked in proportion to the bars in the right place.',n:null,m:8,
+      opts:[O1('bars','Length',[['4','4 bars'],['8','8 bars']],'8'),M('scales','Scale',AS,['major','natural minor']),M('metres','Time signature',METS.slice(0,4),['3/4','4/4']),O1('given','Given',[['0','Nothing (every bar out of order)'],['1','Bar 1']],'0'),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
+    {k:'rdh',label:'Rhythm on given noteheads',title:'Rhythmic Dictation',desc:'Stemless noteheads and the barlines are printed; students add the rhythm to each notehead. The first note is given.',n:null,m:8,
+      opts:[M('metres','Time signature',METS.slice(0,4),['2/4','3/4','4/4']),O1('bars','Length',BARS,'4'),M('scales','Scale',AS,['major']),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
     {k:'rd',label:'Rhythmic dictation',title:'Rhythmic Dictation',desc:'Students write the rhythm they hear on a single-line stave.',n:null,m:8,
       opts:[M('metres','Time signature',METS,['2/4','3/4','4/4','6/8']),O1('bars','Length',BARS,'4'),O1('source','Played as',[['pitch','One pitch'],['melody','The rhythm of a melody']],'melody')]},
     {k:'prog',label:'Chord progression',title:'Chord Progression',desc:'Students write the Roman numeral of each chord after the first.',n:null,m:3,
@@ -390,7 +394,7 @@
     return NORM(keep.join(' ').replace(/^\d+[.)]\s*/,'')).replace(/:\s*$/,'.').replace(/\bWrite what you hear:\s*/i,'Write what you hear. ').trim().replace(/([^.?!:])$/,'$1.');};
   const isHeading=l=>{const m=l.match(/^(?:\([a-z]\)\s*)?(.*?[A-Za-z].*?)\s*(?:\/\s*(\d+(?:\.\d+)?)|\(\s*(\d+(?:\.\d+)?)\s*marks?\s*\))\s*$/i);if(!m)return null;const t=m[1].replace(/[:–\-\s]+$/,'').trim();
     if(/total|^name\b/i.test(t)||/^\d+[.)]/.test(t)||t.length>90)return null;return {title:t,marks:+(m[2]||m[3])};};
-  const AURAL_K=['drumT','drum','two','pd','md','sfd','rd','ivl','ton','cad','prog','met','tim','anal'];
+  const AURAL_K=['drumT','drum','two','bord','rdh','pd','md','sfd','rd','ivl','ton','cad','prog','met','tim','anal'];
   // rules: first match wins; each returns {k, n?, o, nt?}
   function classify(q,g,sec){const head=g.title,body=q.lines.join(' '),ctx=NORM(head+' | '+body),low=ctx.toLowerCase(),first=NORM(q.lines.slice(0,3).join(' '));
     const scl=scalesIn(head)||[];const S=(a,b)=>a.length?a:b;
@@ -400,6 +404,8 @@
       const bars=Math.max(1,...((body.match(/\bbar\s*(\d)/gi)||[]).map(t=>+t.replace(/\D/g,''))),1);
       if(sm)return {k:'drumT',o:{song:NORM(sm[2]).replace(/\.$/,''),section:sm[1].toLowerCase(),bars:String(Math.min(2,bars)),rows:R},nt:'Tap in the correct drum pattern: it is printed as music, so it can\'t be read from the paper.'};
       return {k:'drum',o:{bars:String(Math.min(2,bars)),rows:R,level:'sync'}};}
+    if(sec!=='T'&&/(wrong|incorrect|jumbled|mixed[- ]up) order|out of order|re-?order|rearrange/i.test(ctx)){const mt=metreIn(ctx);const nb=/\b(eight|8)\b/i.test(ctx)?'8':'4';return {k:'bord',o:{bars:nb,metres:mt?[mt]:undefined,given:/bar (1|one) is given|first bar is given/i.test(ctx)?'1':'0'},nt:'Check the scale and time signature: they are in the printed music.'};}
+    if(sec!=='T'&&/note ?heads?/i.test(ctx)&&/rhythm/i.test(ctx)){const mt=metreIn(ctx);return {k:'rdh',o:{metres:mt?[mt]:undefined,bars:'4'},nt:mt?'':'Check the time signature and length.'};}
     if(/two[- ]part|2[- ]part/i.test(ctx)){const sc=/harmonic/i.test(ctx)?'harmonic minor':/minor/i.test(ctx)?'natural minor':'major';const mt=metreIn(ctx);return {k:'two',o:{scale:sc,metre:mt||'6/8',bars:'4'},nt:mt?'':'Check the time signature and length: they are in the printed music.'};}
     if(sec!=='T'&&/(melodic|pitch)\s+dictation|sol-?fa|solfa|write (the )?melody/i.test(ctx)){const scs=S(scalesIn(ctx),['major']);const mt=metreIn(ctx);const nt=(mt?'':'Check the time signature and length: they are in the printed music. ')+'Check how much is given (first note or first bar).';
       if(/rhythm (is )?(given|printed)|given rhythm|below the (given )?rhythm/i.test(ctx))return /(stave|staff)/i.test(ctx)?{k:'pd',o:{scales:scs,metres:[mt||'6/8'],bars:'4',given:'bar',sf:'yes'},nt}:{k:'sfd',o:{scales:scs,metres:[mt||'4/4'],bars:'2'},nt};

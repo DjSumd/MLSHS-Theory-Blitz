@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261102e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103a";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -346,7 +346,7 @@
     // ---- beam groups ----
     const grpKey=on=>{const b=barOf(on,pickup,bpb),p=posInBar(on,pickup,bpb);let gi=0;for(let k=0;k<g.length;k++)if(p>=g[k]-1e-6)gi=k;return b*100+gi;};
     const groups=[]; let cur=null;
-    notes.forEach((n,i)=>{ if(n.dur<1-1e-6&&!n.rest){const k=grpKey(n.onset); if(cur&&cur.k===k&&sysOf[i]===cur.sys)cur.idx.push(i); else {cur={k,idx:[i],sys:sysOf[i]};groups.push(cur);} } else cur=null; });
+    notes.forEach((n,i)=>{ if(n.dur<1-1e-6&&!n.rest&&!n.headOnly&&!n.noBeam){const k=grpKey(n.onset); if(cur&&cur.k===k&&sysOf[i]===cur.sys)cur.idx.push(i); else {cur={k,idx:[i],sys:sysOf[i]};groups.push(cur);} } else cur=null; });
     const beamed=groups.filter(gp=>gp.idx.length>1), inGroup={}; beamed.forEach((gp,gi)=>gp.idx.forEach(k=>inGroup[k]=gi));
     const groupDir=beamed.map(gp=>{if(spec.rhythmOnly)return 'up';const avg=gp.idx.reduce((s,k)=>s+dd[k],0)/gp.idx.length;return avg<top-4?'up':'down';});
     const headCol=n=>n.state==='empty'?'#b9b3a6':(n.color||'var(--ink)');
@@ -388,14 +388,14 @@
         return; }
       ledgerYs(top,bot,d).forEach(ed=>{const ly=oy+yOf(top,ed);E.push(`<line x1="${(x-rx*1.75).toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(x+rx*1.75).toFixed(1)}" y2="${ly.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);track(ly);});
       const shown=res.shown[i]; if(shown)E.push(accEl(shown,x-rx-SS*0.14,y,col));
-      const open=n.dur>=2-1e-6;
-      if(n.dur>=4-1e-6){E.push(gEl('noteheadWhole',x-NW/2,y,col));}
+      const open=!n.headOnly&&n.dur>=2-1e-6;
+      if(!n.headOnly&&n.dur>=4-1e-6){E.push(gEl('noteheadWhole',x-NW/2,y,col));}
       else E.push(`<ellipse cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" rx="${rx}" ry="${ry}" transform="rotate(-20 ${x.toFixed(2)} ${y.toFixed(2)})" fill="${open?'none':col}" stroke="${col}" stroke-width="${open?SS*0.19:0.8}"/>`);
-      if(isDotted(n.dur))E.push(dotEl(x,y,d,col));
+      if(!n.headOnly&&isDotted(n.dur))E.push(dotEl(x,y,d,col));
       track(y-ry-2);track(y+ry+2);
       if(n.clearable){const cyc=oy+TOPK*SS+4*SS+SS*1.75;
         E.push(`<g class="sclr" data-i="${i}"><circle cx="${x.toFixed(1)}" cy="${cyc.toFixed(1)}" r="${(SS*0.55).toFixed(1)}" fill="var(--paper)" stroke="var(--rule)"/><text x="${x.toFixed(1)}" y="${(cyc+SS*0.22).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);track(cyc+SS*0.9);}
-      if(n.dur>=4-1e-6)return;
+      if(n.headOnly||n.dur>=4-1e-6)return;
       const gi=inGroup[i]; const up=spec.rhythmOnly?true:(gi!==undefined)?groupDir[gi]==='up':(d<top-4); upOf[i]=up;
       const sx=up?x+rx*0.88:x-rx*0.88;
       if(gi===undefined){ const sy2=up?y-stemLen:y+stemLen;

@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261102e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103a";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -146,10 +146,13 @@ var UNITS=[
  {name:'Rhythmic dictation', key:'rd', ask:'Notate the rhythm you hear.',
   guide:`<p class="prompt">Rhythm patterns</p><ul><li>You get a one-bar count-in. Count the beats first, then work out how each beat is split.</li>
    <li>Tap a note value (or Rest), then tap the stave to write it at the cursor. ✕ removes a note. Check when the bars are full.</li>
+   <li><b>Add the rhythm to given noteheads:</b> the noteheads and barlines are printed. Choose a value, tap a notehead, and make every bar add up.</li>
    <li>Year 7 uses semibreves, minims, crotchets, quaver pairs and four semiquavers (plus dotted crotchets and three quavers in 6/8). ⚙ opens up dotted notes, ties, anacrusis, syncopation and more for Years 8–10.</li></ul>`,
-  cfg:[ G('metres','Time signatures',METRE_ITEMS.map(m=>m.id==='6/8'?Y('6/8','6/8',8):m)), SG('bars','Length',[{id:'1',label:'1 bar'},{id:'2',label:'2 bars'},{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],{7:'2',9:'4'}),
+  cfg:[ G('qtype','Question type',[Y('write','Write the rhythm',7),Y('heads','Add the rhythm to given noteheads',7)]), G('metres','Time signatures',METRE_ITEMS.map(m=>m.id==='6/8'?Y('6/8','6/8',8):m)), SG('bars','Length',[{id:'1',label:'1 bar'},{id:'2',label:'2 bars'},{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],{7:'2',9:'4'}),
         G('vocab','Rhythm vocabulary',RHYTHM_VOCAB), SG('source','Dictate',[{id:'pitch',label:'Rhythm only (one pitch)'},{id:'melody',label:'Rhythm of a melody'}],{7:'pitch',9:'melody'}), SG('swing','Feel',[{id:'off',label:'Straight'},{id:'on',label:'Swing (Year 9)'}],'off') ],
   gen(ctx){const bars=parseInt(ctx.cfg('bars'),10)||2,v=ctx.cfg('vocab'),metre=A_pick(ctx.cfg('metres'));
+    if(A_pick(ctx.cfg('qtype')||['write'])==='heads'){const sc=ctx.year<=7?['major','major pentatonic']:ctx.year===8?['major','natural minor','major pentatonic']:['major','natural minor','harmonic minor'];const vo=vocabFrom(v);
+      return rhythmHeadsQ({bars,metre:['6/8','9/8','12/8'].includes(metre)&&ctx.year<8?'4/4':metre,scales:sc,clef:ctx.year>=9&&Math.random()<0.3?'bass':'treble',diff:ctx.diff,maxKs:maxKsFor(ctx.year),vocab:{vocab:vo.vocab,vocabEasy:vo.vocabEasy,syncopation:vo.syncopation}});}
     const compound=['6/8','9/8','12/8'].indexOf(metre)>=0,swing=!compound&&ctx.cfg('swing')==='on';
     const vo=vocabFrom(v); if(swing)vo.triplets=false;
     const ofMel=ctx.cfg('source')==='melody';
@@ -200,6 +203,20 @@ var UNITS=[
     if(qt==='melody')return {kind:'melodydict',dict,scaleName:dict.scaleName,given:1,multiPlay:true,cue:true,prompt:'Notate the melody — rhythm and pitch',why:'Key: '+dict.scaleName+'. '+dict.notes.filter(n=>!n.rest).map(noteName).join(' ')+'.'+sf};
     return {kind:'pitchdict',dict,scaleName:dict.scaleName,given:1,multiPlay:true,cue:true,prompt:'Write the pitches — the rhythm is given',why:'Key: '+dict.scaleName+'. Answer: '+dict.notes.filter(n=>!n.rest).map(noteName).join(' ')+'.'+sf};}},
 
+ {name:'Two-part dictation', key:'two', ask:'Listen to both parts — write the sol-fa.',
+  guide:`<p class="prompt">Two-part dictation</p><ul><li>Two parts play together: an upper part in the treble and a lower part in the bass. Both rhythms are printed, and the first bar of each part is given.</li>
+   <li>Write the sol-fa of every note, part by part. Both parts move mostly by step and skip, so think one note at a time from the last one.</li>
+   <li>Follow the upper part first, then listen again for the lower part — it is usually slower and sits on the strong notes of the chord.</li><li>In minor keys the tonic is <i>la</i>; harmonic minor raises <i>so</i> to <i>si</i>.</li></ul>`,
+  cfg:[ G('scales','Scale',[Y('major','Major',7),Y('natural minor','Natural minor',8),Y('harmonic minor','Harmonic minor',9)]), G('metres','Time signatures',[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',8)]),
+        SG('bars','Length',[{id:'2',label:'2 bars'},{id:'4',label:'4 bars'}],'4') ],
+  gen(ctx){return ctTwoPartQ({scale:A_pick(ctx.cfg('scales')),metre:A_pick(ctx.cfg('metres')),bars:ctx.cfg('bars')})();}},
+ {name:'Bar order', key:'bord', ask:'Listen — put the bars back in order.',
+  guide:`<p class="prompt">Bars in the wrong order</p><ul><li>The bars of a melody are printed out of order. Listen to the melody played correctly, then drag the bars into the right order (or tap two bars to swap them).</li>
+   <li>Find the last bar first: it usually ends on the tonic with a long note. Then look for the opening — often starting on do, mi or so.</li>
+   <li>Follow the shape: does the melody climb or fall at that point? Match rhythms you can hear (a long note, a run of quavers).</li><li>🎧 Play my order plays the bars as you have them, so you can hear what's out of place.</li></ul>`,
+  cfg:[ SG('bars','Length',[{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],'8'), G('scales','Scale',[Y('major','Major',7),Y('major pentatonic','Major pentatonic',7),Y('natural minor','Natural minor',8),Y('harmonic minor','Harmonic minor',9)]),
+        G('metres','Time signatures',[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',8)]), SG('clef','Clef',[{id:'treble',label:'Treble'},{id:'bass',label:'Bass'},{id:'both',label:'Both'}],{7:'treble',9:'both'}) ],
+  gen(ctx){return barOrderQ({bars:ctx.cfg('bars'),scales:ctx.cfg('scales'),metres:ctx.cfg('metres'),clef:ctx.cfg('clef'),diff:ctx.diff,maxKs:maxKsFor(ctx.year)})();}},
  {name:'Discrepancies', key:'dis', ask:'Follow the score — where does the performance differ?',
   guide:`<p class="prompt">Discrepancies</p><ul><li>Read the score while you listen. The performance contains one or more differences in <b>pitch</b> or <b>rhythm</b>.</li>
    <li><b>Step 1 — locate:</b> tap a bar once for a <b>pitch</b> discrepancy, twice for <b>rhythm</b>, a third time to clear it. Then Check.</li>
