@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261103q";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261103w";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -369,7 +369,8 @@ const SOLFA_TYPES={major:SOLFA_MAJ,majpent:[0,1,2,4,5].map(i=>SOLFA_MAJ[i]),natm
 const solfaScale=(type,desc)=>{const s=SOLFA_TYPES[type];if(!s)return null;const a=s.concat([s[0]]);return desc?a.slice().reverse():a;};
 const solfaLine=(type,desc)=>{const s=solfaScale(type,desc);return s?'Sol-fa: '+s.join(' ')+(/min/.test(type)?' (la-based minor: la is the tonic).':'.'):'';};
 const YY=(typeof Y==='function')?Y:((yr,fn)=>fn);
-function solfaTypesOn(){const on=scalesOn().filter(t=>SOLFA_TYPES[t]);return on.length?on:['major'];}
+SOLFA_TYPES.harmminor=['la','ti','do','re','mi','fa','si'];SOLFA_TYPES.melminor=['la','ti','do','re','mi','fi','si'];const SOLFA_Q=['major','majpent','natminor','minpent']; // sol-fa questions keep the four; scale writing uses all
+function solfaTypesOn(){const on=scalesOn().filter(t=>SOLFA_TYPES[t]&&SOLFA_Q.includes(t));return on.length?on:['major'];}
 function solfaQ(){const type=pick(solfaTypesOn());const t=scaleTonic(type);const notes=T.scale(t,type).slice(0,-1);const syl=SOLFA_TYPES[type];const i=rand(notes.length);
   const nm=T.scaleName(t,type);const minorNote=/min/.test(type)?' (la-based minor: la = '+name(t)+')':'';const why=nm+' in sol-fa: '+notes.map((p,k)=>name(p)+' = '+syl[k]).join(', ')+'.';
   if(Math.random()<0.5)return choice('In '+nm+', which note is sung as "'+syl[i]+'"?',optsFrom(name(notes[i]),notes.map(name),4),name(notes[i]),{sub:'Moveable do'+minorNote+'.',why});
@@ -378,14 +379,22 @@ function solfaNotateQ(){const type=pick(solfaTypesOn());const t=scaleTonic(type)
   const useSig=Math.random()<0.5;const sig=useSig?sigForScale(t,type):0;
   return {t:'notate',prompt:'Write "'+syl[i]+'" in '+T.scaleName(t,type)+'.',sub:clefWord(clef)+'. Moveable do'+(/min/.test(type)?' (la-based minor: la = '+name(t)+')':'')+'. '+(useSig?'Key signature given.':'No key signature: add any accidental the note needs.')+' Any octave.',clef,sig,items:[slot(0,[p],'w',{anyOctave:true})],useSig,
     why:'"'+syl[i]+'" in '+T.scaleName(t,type)+' is '+name(notes[i])+'. '+solfaLine(type)};}
-function notateScaleQ(){const type=pick(scalesOn());const t=scaleTonic(type);const clef=clefPick();const desc=Math.random()<0.3&&type!=='chromatic';
-  const useSig=type!=='chromatic'&&Math.random()<0.5;const sig=useSig?sigForScale(t,type):0;
-  let notes=T.scale(t,type,desc);notes=fitScale(notes,clef,desc);
-  const items=notes.map((p,i)=>{const sl=slot(i,[p],'w');if(i===0){sl.p=[p];sl.given=true;}return sl;});
-  if(type==='blues'){const bi=3;const altP=T.bluesAlt(t);const tgt=notes[bi];let best=null;for(let o=tgt.o-1;o<=tgt.o+1;o++){const c=P(altP.l,altP.a,o);if(best===null||Math.abs(dia(c)-dia(tgt))<Math.abs(dia(best)-dia(tgt)))best=c;}items[bi].alt=[[best]];}
-  const desc2=desc?'descending':'ascending';
-  const sub=clefWord(clef)+'. '+(useSig?'Key signature given: add accidentals only where the scale needs them.':'No key signature: write every accidental the scale needs.')+' Tonic given.'+(type==='melminor'&&desc?' Descending melodic minor = natural minor.':'')+(type==='blues'?' Blue note: ♯4 or ♭5 both accepted.':'');
-  return {t:'notate',prompt:'Write '+T.scaleName(t,type)+', '+desc2+'.',sub,clef,sig,items,useSig,solfa:solfaScale(type,desc),why:scaleWhy(type)+' '+solfaLine(type,desc)};}
+// teacher choices (custom tests): scDir asc|desc|both, scVal w|h|q, scSig yes|no, scMark semi|tone — empty = the usual mix
+function notateScaleQ(){const type=pick(scalesOn());const t=scaleTonic(type);const clef=clefPick();const dirS=S('scDir')||'';
+  const both=dirS==='both',desc=dirS==='desc'?true:dirS==='asc'||both?false:(Math.random()<0.3&&type!=='chromatic');
+  const sgS=S('scSig')||'';const useSig=type!=='chromatic'&&(sgS==='yes'?true:sgS==='no'?false:Math.random()<0.5);const sig=useSig?sigForScale(t,type):0;
+  let notes=fitScale(T.scale(t,type,desc),clef,desc);
+  if(both){let d=T.scale(t,type,true);const k=Math.round((dia(notes[notes.length-1])-dia(d[0]))/7);d=d.map(p=>up8(p,k));notes=notes.concat(d.slice(1));}
+  const val=['w','h','q'].includes(S('scVal'))?S('scVal'):'w';
+  const items=notes.map((p,i)=>{const sl=slot(i,[p],val);if(i===0){sl.p=[p];sl.given=true;}return sl;});
+  if(both){const top=Math.floor(notes.length/2);items.splice(top+1,0,{k:'bar'});} // a barline at the turn: accidentals going up don't carry into the way down
+  const mark=S('scMark')==='semi'||S('scMark')==='tone'?S('scMark'):'';const pairs=[];if(mark)for(let i=0;i+1<notes.length;i++){const s=Math.abs(T.midi(notes[i+1])-T.midi(notes[i]));if(s===(mark==='semi'?1:2))pairs.push(i);}
+  if(type==='blues'){const bi=3;const altP=T.bluesAlt(t);const tgt=notes[bi];let best=null;for(let o=tgt.o-1;o<=tgt.o+1;o++){const c=P(altP.l,altP.a,o);if(best===null||Math.abs(dia(c)-dia(tgt))<Math.abs(dia(best)-dia(tgt)))best=c;}items[bi].alt=[[best]];if(both){const d=items.find(x=>x.k==='slot'&&x.slot===notes.length-1-bi);if(d)d.alt=[[best]];}}
+  const desc2=both?'ascending and descending':desc?'descending':'ascending';
+  const sub=clefWord(clef)+'. '+(useSig?'Key signature given: add accidentals only where the scale needs them.':'No key signature: write every accidental the scale needs.')+' Tonic given.'+(val!=='w'?' Use '+(val==='h'?'minims':'crotchets')+'.':'')+(mark?(mark==='semi'?' Mark each semitone with a slur.':' Mark each tone with a bracket.'):'')+(type==='melminor'&&(desc||both)?' Descending melodic minor = natural minor.':'')+(type==='blues'?' Blue note: ♯4 or ♭5 both accepted.':'');
+  const sfDesc=solfaScale(type==='melminor'?'natminor':type,true);const solfa=both?(solfaScale(type,false)&&sfDesc?solfaScale(type,false).concat(sfDesc.slice(1)):null):desc?sfDesc:solfaScale(type,false);
+  const pw=mark?' '+(mark==='semi'?'Semitones':'Tones')+' between notes '+(pairs.length?pairs.map(i=>(i+1)+'–'+(i+2)).join(', '):'(none)')+'.':'';
+  return {t:'notate',prompt:'Write '+T.scaleName(t,type)+', '+desc2+'.',sub,clef,sig,items,useSig,solfa,pairMark:mark||undefined,pairs:mark?pairs:undefined,why:scaleWhy(type)+' '+solfaLine(type,both?false:desc)+pw};}
 function scaleWhy(type){return {major:'Major: T T S T T T S.',natminor:'Natural minor: T S T T S T T (the relative major\'s key signature).',harmminor:'Harmonic minor: natural minor with the 7th raised a semitone.',melminor:'Melodic minor: raise the 6th and 7th ascending; descend as natural minor.',majpent:'Major pentatonic: degrees 1 2 3 5 6 of the major scale.',minpent:'Minor pentatonic: 1 ♭3 4 5 ♭7.',blues:'Blues: minor pentatonic plus the ♯4/♭5 blue note.',chromatic:'Chromatic: every semitone; sharps ascending, flats descending.',dorian:'Dorian: natural minor with a raised 6th (major scale from its 2nd degree).',mixolydian:'Mixolydian: major with a flattened 7th (major scale from its 5th degree).',phrygian:'Phrygian: natural minor with a flattened 2nd.',lydian:'Lydian: major with a raised 4th.',locrian:'Locrian: ♭2 and ♭5.'}[type]||'';}
 function nameScaleQ(){const type=pick(scalesOn());const t=scaleTonic(type);const clef=pick(['treble','bass']);let notes=fitScale(T.scale(t,type),clef);
   const items=notes.map(p=>n([p],'w'));const ans=T.scaleName(t,type);

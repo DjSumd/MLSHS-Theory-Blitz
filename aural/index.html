@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css?v=20261103q">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261103w">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -350,20 +350,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js?v=20261103q"></script>
-<script src="audio.js?v=20261103q"></script>
-<script src="samples.js?v=20261103q"></script>
-<script src="engrave.js?v=20261103q"></script>
-<script src="content.js?v=20261103q"></script>
-<script src="refs.js?v=20261103q"></script>
-<script src="embed.js?v=20261103q"></script>
-<script src="qr.js?v=20261103q"></script>
-<script src="task.js?v=20261103q"></script>
-<script src="testkit.js?v=20261103q"></script>
-<script src="blitzui.js?v=20261103q"></script>
-<script src="live.js?v=20261103q"></script>
-<script>/*blitz-check*/(function(){var S="20261103q";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103q",P="blitz-aural-all-",APP="Aural Blitz";
+<script src="glyphs.js?v=20261103w"></script>
+<script src="audio.js?v=20261103w"></script>
+<script src="samples.js?v=20261103w"></script>
+<script src="engrave.js?v=20261103w"></script>
+<script src="content.js?v=20261103w"></script>
+<script src="refs.js?v=20261103w"></script>
+<script src="embed.js?v=20261103w"></script>
+<script src="qr.js?v=20261103w"></script>
+<script src="task.js?v=20261103w"></script>
+<script src="testkit.js?v=20261103w"></script>
+<script src="blitzui.js?v=20261103w"></script>
+<script src="live.js?v=20261103w"></script>
+<script>/*blitz-check*/(function(){var S="20261103w";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261103w",P="blitz-aural-all-",APP="Aural Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -1587,7 +1587,41 @@ function load(){document.body.classList.toggle('testing',TESTING());document.bod
   else if(q.kind==='drum')renderDrum(false);
   else if(q.kind==='barorder')renderBO(false);
   else if(q.kind==='rhythmheads')renderRH(false);
-  if(audioUnlocked&&!q.teacherPlays&&q.play)setTimeout(()=>{if(mode!=='practise')return;q.multiPlay?playPart('whole'):playCurrent();},sprintOn?120:260);}
+  groupView(q);
+  if(audioUnlocked&&!q.teacherPlays&&q.play&&!q.__gNoAuto)setTimeout(()=>{if(mode!=='practise')return;q.multiPlay?playPart('whole'):playCurrent();},sprintOn?120:260);}
+// ---- one excerpt / score with several questions: one screen. The track and score sit once at the top; every question is answered in place ----
+function grpOf(q){if(!UNITS[ui].test||!q||!q._exam||q.kind==='embed'||sprintOn)return null;const it=q._exam;if(!it.share)return null;
+  const ps=[];examPlan.forEach((x,p)=>{if(!x.embed&&x.share&&x.gi===it.gi)ps.push(p);});if(ps.length<2)return null;
+  if(ps.some(p=>{const z=tq(p);return !z||(z.kind!=='choice'&&z.kind!=='written');}))return null;return ps;}
+function gAt(p,fn){const k=qi;let j=order.indexOf(p);if(j<0)j=p;qi=j;try{return fn(curQ());}finally{qi=k;}}
+function gBlock(p){const q=tq(p),it=q._exam,done=gAt(p,()=>qid() in scored),mk=it.marks;const T0=HIDEFB();
+  const head=`<div class="gqh"><b>${esc(it.text||'')}</b><span class="mk">(${mk} mark${mk===1?'':'s'})</span></div>`;
+  if(q.kind==='choice'){return `<div class="gq" data-gp="${p}">${head}<div class="opts gopts">${q.options.map((o,i)=>{const v=String(o);let cl='';if(done){if(v===q._picked)cl+=' picked';if(!T0){if(v===''+q.answer)cl+=' ok';else if(v===q._picked)cl+=' no';}}
+      return `<button data-gv="${esc(v)}"${done?' disabled':''} class="${cl.trim()}"><span class="k">${i+1}</span><span>${q.fmt?q.fmt(o):esc(o)}</span></button>`;}).join('')}</div>${done&&!T0&&q.why?`<div class="gfb">${q.why}</div>`:''}</div>`;}
+  return `<div class="gq" data-gp="${p}">${head}<textarea class="wqta" rows="${Math.max(2,q.lines||3)}" data-gw="${p}"${done?' disabled':''} placeholder="Write your answer here">${esc(q._text||'')}</textarea>
+    <div class="controls"><button class="btn-check" data-gs="${p}"${done?' disabled':''}>${done?'Answer saved':'Save answer'}</button></div>${done&&!T0&&q.answer?`<div class="gfb">Model answer: ${esc(q.answer)}</div>`:''}</div>`;}
+function groupView(q){const ps=grpOf(q);if(!ps)return;const c=document.getElementById('card');const top=c.querySelector('.tstq');if(!top)return;c.classList.add('grp');
+  const sub=c.querySelector('.tstsub');if(sub)sub.remove();
+  // every part is answered in place, so the screen is built from the blocks; the track and score once, at the top
+  const pp=c.querySelector('.playpanel'),sc=c.querySelector('.scoreWrap');let anchor=top;[pp,sc].forEach(x=>{if(x){anchor.insertAdjacentElement('afterend',x);anchor=x;}});
+  const fb=document.getElementById('fb');let n=anchor.nextSibling;const rm=[];while(n&&n!==fb){rm.push(n);n=n.nextSibling;}rm.forEach(x=>x.remove());if(fb)fb.remove();
+  let last=anchor;ps.forEach(p=>{last.insertAdjacentHTML('afterend',gBlock(p));last=last.nextElementSibling;});
+  if(pp){const pb=pp.querySelector('#play');if(pb&&!pb.onclick)pb.onclick=playCurrent;const rb=pp.querySelector('#replay');if(rb)rb.onclick=playCurrent;}
+  wireGroup();
+  const nx=document.getElementById('next'),pv=document.getElementById('prev'),pos=c.querySelector('.nav .pos');
+  if(pos)pos.textContent=(order.indexOf(ps[0])+1)+'–'+(order.indexOf(ps[ps.length-1])+1)+' / '+order.length;
+  if(nx){nx.onclick=()=>{if(gUnsaved())return;qi=order.indexOf(ps[ps.length-1]);goNext();};nx.textContent=UNITS[ui].exam&&order.indexOf(ps[ps.length-1])>=order.length-1?'Finish ›':'Next ›';}
+  if(pv){pv.onclick=()=>{if(gUnsaved())return;qi=order.indexOf(ps[0]);goPrev();};}
+  // the dots for this excerpt all lead here, so landing on a later part doesn't replay the track
+  ps.forEach(p=>{const z=tq(p);if(z)z.__gNoAuto=true;});}
+function gUnsaved(){const tas=[...document.querySelectorAll('#card [data-gw]')].filter(t=>!t.disabled&&t.value.trim());if(!tas.length)return false;
+  if(!confirm("You haven't saved your written answer"+(tas.length>1?'s':'')+" on this page.\n\nOK: save "+(tas.length>1?'them':'it')+" now.\nCancel: move on without "+(tas.length>1?'them':'it')+" (you can come back)."))return false;
+  tas.forEach(t=>gSave(+t.dataset.gw,true));return false;}
+function gSave(p,quiet){const ta=document.querySelector('#card [data-gw="'+p+'"]');const v=(ta&&ta.value||'').trim();if(!v){if(!quiet)toast('Write your answer first');return;}
+  gAt(p,q=>{if(qid() in scored)return;q._text=v.slice(0,900);q._frac=0;q._pending=true;scoreOnce(false);results[qid()]='pend';});gRefresh(p);renderDots();}
+function gPick(p,v){gAt(p,q=>{if(qid() in scored)return;q._picked=v;const ok=v===''+q.answer;q._frac=ok?1:0;scoreOnce(ok);results[qid()]=ok?'ok':'no';});gRefresh(p);renderDots();}
+function gRefresh(p){const el=document.querySelector('#card .gq[data-gp="'+p+'"]');if(!el)return;el.outerHTML=gBlock(p);wireGroup();}
+function wireGroup(){const c=document.getElementById('card');c.querySelectorAll('.gq [data-gv]').forEach(b=>b.onclick=()=>gPick(+b.closest('.gq').dataset.gp,b.dataset.gv));c.querySelectorAll('[data-gs]').forEach(b=>b.onclick=()=>gSave(+b.dataset.gs));}
 // play back what the student has written (dictation) — before Check, so they can self-correct
 function playMine(){const q=curQ();if(q&&(q.kind==='barorder'||q.kind==='rhythmheads')){playMine2(q);return;}audioUnlocked=true;if(playing&&AUDIO)AUDIO.stop();let ev=[];
   if(q.kind==='pitchdict'){const g0=givenRaw(q);const notes=q.dict.notes.map((n,i)=>{if(n.rest)return {onset:n.onset,dur:n.dur,rest:true};if(i<q.given)return {onset:n.onset,dur:n.dur,d:n.d,acc:givenAt(q,i),tie:n.tie};const v=pd[i];if(v==null)return {onset:n.onset,dur:n.dur,rest:true};return {onset:n.onset,dur:n.dur,d:v.d,acc:v.a,tie:n.tie};});

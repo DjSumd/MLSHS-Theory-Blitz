@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103q";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103w";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -104,7 +104,7 @@
   .tstname{margin:10px 0 14px;font-size:14px}.tstname span{display:inline-block;border-bottom:1px solid #000;min-width:60%;margin-left:6px;font-weight:700}
   .tstcover .controls{margin-top:14px}.tstcover table{border-collapse:collapse;margin:8px 0 12px;font-size:13.5px}.tstcover td,.tstcover th{border:1px solid #000;padding:6px 14px;text-align:left}
   .tstcover .codebox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.tstcover .codebox input{padding:7px 10px;border:1px solid #000;font-family:ui-monospace,Consolas,monospace;font-size:14px;width:160px;text-transform:uppercase}
-  .tsttracks .trk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid #ccc;padding:8px 0}.tsttracks .trk b{min-width:80px}.tsttracks .trk span{flex:1;min-width:180px}.ctpaper{border:1.5px solid var(--line,#ccc);border-radius:14px;padding:12px 14px;margin:12px 0}.ctpaper .controls{margin:8px 0 0;flex-wrap:wrap;gap:6px}.mp3box{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:14px 0 4px;padding:12px;border:1px dashed var(--line,#bbb);border-radius:12px}.mp3box .sub{flex:1;min-width:220px;margin:0}
+  .tsttracks .trk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid #ccc;padding:8px 0}.tsttracks .trk b{min-width:80px}.tsttracks .trk span{flex:1;min-width:180px}.grp .gq{border-top:1px solid var(--rule,#ddd);padding:12px 0 6px;margin-top:6px}.grp .gqh{display:flex;gap:8px;align-items:baseline;font-size:15px;line-height:1.4;margin:0 0 8px}.grp .gqh .mk,.grp .gmk{margin-left:auto;white-space:nowrap;font-weight:700;font-size:13px;padding-left:8px}.grp .gqon .prompt{display:flex;gap:6px;align-items:baseline}.grp .gopts{margin:4px 0}.grp .gfb{font-size:13px;color:var(--muted,#555);margin:4px 0 0;line-height:1.4}.grp .gqst{font-size:13px;color:var(--muted,#555);margin:0 0 4px}.grp .gqon{background:rgba(27,26,24,.025);border-radius:8px;padding:12px 10px 8px;margin-left:-10px;margin-right:-10px}body.hidefb .gfb{display:none!important}body.hidefb .gopts button.ok,body.hidefb .gopts button.no{background:var(--paper,#fff)!important;color:inherit!important;border-color:var(--rule,#999)!important;box-shadow:none!important}.gopts button.picked,body.hidefb .gopts button.picked{background:#1b1a18!important;color:#fff!important;border-color:#1b1a18!important}.gopts button.ok:not(.picked){outline:2px solid var(--green,#2e7d32)}.gopts button.picked.no{background:var(--red,#b3261e)!important;border-color:var(--red,#b3261e)!important}body:not(.hidefb) .gopts button.picked.ok{background:var(--green,#2e7d32)!important;border-color:var(--green,#2e7d32)!important}.ctpaper{border:1.5px solid var(--line,#ccc);border-radius:14px;padding:12px 14px;margin:12px 0}.ctpaper .controls{margin:8px 0 0;flex-wrap:wrap;gap:6px}.mp3box{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:14px 0 4px;padding:12px;border:1px dashed var(--line,#bbb);border-radius:12px}.mp3box .sub{flex:1;min-width:220px;margin:0}
   .tsttracks button{border:1px solid #000;background:#fff;padding:6px 12px;cursor:pointer;font-family:Arial,sans-serif;font-size:13px}.tsttracks button.on{background:#000;color:#fff}`;
   const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   // =====================================================================================
@@ -183,8 +183,13 @@
     {k:'ivname',label:'Name intervals',title:'Intervals',desc:'Students name each interval.',n:4,m:1,opts:[]},
     {k:'ivwrite',label:'Write intervals',title:'Intervals',desc:'Students notate the upper note.',n:4,m:1,opts:[]},
     {k:'notes',label:'Note names',title:'Note Names',desc:'Students name each note.',n:4,m:1,opts:[O1('mode','Students',[['name','Name the note'],['write','Write the note']],'name')]},
-    {k:'scale',label:'Write a scale',title:'Scales',desc:'Students write one octave, with sol-fa under each note.',n:1,m:4,
-      opts:[M('scales','Scales',[['major','Major'],['natminor','Natural minor'],['harmminor','Harmonic minor'],['majpent','Major pentatonic'],['minpent','Minor pentatonic']],['major','harmminor']),O1('sf','Sol-fa',[['yes','Yes'],['no','No']],'yes')]},
+    {k:'scale',label:'Write a scale',title:'Scales',desc:'Students write one octave from the given tonic: choose the direction, note values, key signature, and whether they mark the semitones or tones.',n:1,m:4,
+      opts:[M('scales','Scales',[['major','Major'],['natminor','Natural minor'],['harmminor','Harmonic minor'],['melminor','Melodic minor'],['majpent','Major pentatonic'],['minpent','Minor pentatonic'],['blues','Blues'],['chromatic','Chromatic']],['major','harmminor']),
+        O1('dir','Direction',[['','Ascending or descending (mixed)'],['asc','Ascending'],['desc','Descending'],['both','Ascending and descending']],''),
+        O1('val','Note values',[['w','Semibreves'],['h','Minims'],['q','Crotchets']],'w'),
+        O1('ksig','Key signature',[['','Either (mixed)'],['yes','Use a key signature'],['no','No key signature: write the accidentals']],''),
+        O1('mark','Also mark',[['','Nothing'],['semi','Each semitone with a slur'],['tone','Each tone with a bracket']],''),
+        O1('sf','Sol-fa',[['yes','Yes'],['no','No']],'yes')]},
     {k:'scaleid',label:'Name the scale',title:'Identify the Scale',desc:'Students name the scale.',n:1,m:2,opts:[]},
     {k:'chordid',label:'Name chords',title:'Chords',desc:'Students name each chord.',n:2,m:1,opts:[]},
     {k:'chordw',label:'Notate chords',title:'Notating Chords',desc:'Students write each chord.',n:2,m:1,opts:[]},
@@ -308,7 +313,7 @@
     const vi=TK.blockDef('T','visual');vi.desc='A printed score with questions on what students can see. Choose the parts (or leave them for a random four), and add your own written questions about the score.';
     vi.opts.push(M('parts','Parts (leave empty for a random four)',[['key','Key of the melody'],['time','The missing time signature'],['tempo','Tempo marking'],['dyn','Dynamic marking'],['hp','Hairpin: crescendo or diminuendo'],['art','Articulation marking'],['iv','Interval marked *1'],['semi','Two notes a semitone apart']],[]),
       QS('own','Your own questions about the score (students write their answer)',[]),KEYS,MINK,CLEFS);
-    add('notes',[KEYS]);add('scale',[KEYS]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
+    add('notes',[KEYS]);add('scale',[KEYS,CLEFS]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
   })();
   // ---- tempo (BPM) for every block whose examples have a speed ----
   (function(){const BEAT='Tempo in BPM: crotchet beats (dotted crotchet in 6/8, 9/8, 12/8)';const CH='Tempo in BPM: one chord per beat';

@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103q";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103w";
 // engrave.js — SVG music engraving for ATAR Music Theory Blitz (Bravura glyphs, SMuFL metrics).
 // Durations are in units of 1/48 of a semibreve: w=48 h=24 q=12 e=6 s=3 (dotted ×1.5, triplet ×2/3).
 const E=(()=>{
@@ -140,6 +140,13 @@ function render(spec,opts){opts=opts||{};PAPER=!!spec.paper;const L=prepare(spec
     if(m.br){const j=endOf(i+1,'brEnd'),e=nc[j];const x0=c.x-SS*0.3,x1=e.x+(e.hw||SS)+SS*0.3;const y=TOP-SS*1.9;
       S.push(`<path d="M${R(x0)} ${R(y+SS*0.6)} V${R(y)} H${R(x1)} V${R(y+SS*0.6)}" fill="none" stroke="${ink}" stroke-width="1.3"/><text x="${R((x0+x1)/2)}" y="${R(y-SS*0.35)}" text-anchor="middle" font-size="${R(SS*0.9)}" font-weight="700" fill="${ink}">${m.br}</text>`);}
    });
+   // scale marks between neighbouring notes (c.pm on a slot: 'sl' = slur to the next note, 'br' = bracket to the next note; c.pmCol colours it)
+   {let alt=0;nc.forEach(c=>{if(!c.pm||c.k!=='slot')return;const e=nc.find(z=>z.k==='slot'&&z.slot===c.slot+1);if(!e)return;const col=c.pmCol||ink;
+     const cx=z=>z.x+(z.hw||SS*1.2)/2;const x0=cx(c),x1=cx(e);
+     if(c.pm==='sl'){const below=!(c.stemUp===false||e.stemUp===false);const yA=below?Math.max(ly(c),ly(e))+SS*0.75:Math.min(hy(c),hy(e))-SS*0.75;const d=below?SS*0.9:-SS*0.9;
+       S.push(`<path d="M${R(x0+SS*0.15)} ${R(yA)} Q${R((x0+x1)/2)} ${R(yA+d*1.6)} ${R(x1-SS*0.15)} ${R(yA)}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linecap="round"/>`);}
+     else{const top=Math.min(TOP,hy(c)-SS*0.9,hy(e)-SS*0.9);const y=top-SS*(0.9+(alt++%2)*0.85);
+       S.push(`<path d="M${R(x0-SS*0.35)} ${R(y+SS*0.55)} V${R(y)} H${R(x1+SS*0.35)} V${R(y+SS*0.55)}" fill="none" stroke="${col}" stroke-width="1.4"/>`);}});}
    // bar numbers above the first note of each bar (opts.barNums)
    if(spec.barNums){let b=1,first=true;cols.forEach(c=>{if(c.k==='bar'){b++;first=true;return;}if((c.k==='n'||c.k==='r'||c.k==='slot')&&first){first=false;if(b>1)S.push(`<text x="${R(c.x-SS*0.4)}" y="${R(TOP-SS*0.6)}" font-size="${R(SS*0.75)}" fill="${ink}" font-style="italic">${b}</text>`);}});}
   }
