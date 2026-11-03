@@ -1,3 +1,4 @@
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103zd";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -92,7 +93,9 @@
   const eq=(a,b)=>Math.abs(a-b)<1e-6;
   const grpLens=M=>M.g.map((s,i)=>((M.g[i+1]!==undefined?M.g[i+1]:M.bpb)-s));
   const T3=1/3;
-  const VALL={semis:true,mixedSemis:true,dotted:true,quaverCrotchet:true,sixSemis:true,crotDotQuav:true,whole:true};
+  const VALL={semis:true,mixedSemis:true,dotted:true,quaverCrotchet:true,sixSemis:true,crotDotQuav:true,cmpSemis:true,whole:true};
+  // one dotted-crotchet beat in 6/8 with semiquavers: ti tika tika, tika tika tika, tika ti tika, tika tika ti, timka ti, ti ti tika, tika ti ti, ti tika ti, timka tika
+  const CMP_SEMIS=[[0.5,0.25,0.25,0.25,0.25],[0.25,0.25,0.25,0.25,0.25,0.25],[0.25,0.25,0.5,0.25,0.25],[0.25,0.25,0.25,0.25,0.5],[0.75,0.25,0.5],[0.5,0.5,0.25,0.25],[0.25,0.25,0.5,0.5],[0.5,0.25,0.25,0.5],[0.75,0.25,0.25,0.25]];
   function fills1(diff,o){ // one simple beat
     const w=o.vocab||VALL, v=[[1],[1]];
     if(diff!=='easy'||Math.random()<0.6)v.push([0.5,0.5]);
@@ -102,7 +105,7 @@
   function fills15(diff,o){ // one compound beat (dotted crotchet)
     const w=(o&&o.vocab)||VALL, v=[[1.5],[1,0.5],[0.5,0.5,0.5],[0.5,0.5,0.5]];
     if((diff!=='easy'||(o&&o.vocabEasy))&&w.quaverCrotchet)v.push([0.5,1]);
-    if(diff==='hard'||(o&&o.vocabEasy)){ if(w.mixedSemis)v.push([0.5,0.25,0.25,0.5],[0.25,0.25,0.5,0.5],[1,0.25,0.25]); if(w.sixSemis)v.push([0.25,0.25,0.25,0.25,0.25,0.25]); }
+    if(diff==='hard'||(o&&o.vocabEasy)){ if(w.mixedSemis)v.push([0.5,0.25,0.25,0.5],[0.25,0.25,0.5,0.5],[1,0.25,0.25]); if(w.sixSemis)v.push([0.25,0.25,0.25,0.25,0.25,0.25]); if(w.cmpSemis)for(let k=0;k<3;k++)v.push(CMP_SEMIS[Math.floor(Math.random()*CMP_SEMIS.length)]); }
     return v;}
   function fills2(diff,o){ // two simple beats as one unit
     const w=o.vocab||VALL, v=[[2],[2]]; if(w.dotted)v.push([1.5,0.5]);
@@ -215,6 +218,8 @@
     const barOf=on=>Math.floor((on+pickup)/M.bpb+1e-6);
     const R=rh.roles;const nb=bars;
     const chordFor=(b,posInBar,role,isLast)=>{ if(role==='C'){return isLast?TON:(posInBar<M.bpb/2-1e-6?DOM:TON);} if(role==='B')return posInBar<M.bpb/2-1e-6?(Math.random()<0.5?SUB:TON):DOM; return TON; };
+    // the final note to sound is the last attack: when the melody ends on a tie, that is the note tied into the end
+    let LA=ev.length-1;while(LA>0&&(ev[LA].rest||ev[LA-1].tie))LA--;ev.forEach((e,i)=>{if(e.last&&i!==LA)delete e.last;});ev[LA].last=true;
     let onset=0;const meta=ev.map(e=>{const o2=onset;onset+=e.dur;const b=Math.max(0,barOf(o2));const pos=((o2+pickup)%M.bpb+M.bpb)%M.bpb;const role=R[Math.min(b,R.length-1)]||'A';
       return {on:o2,bar:b,pos,role,strong:M.acc.some(a=>eq(a,pos))||eq(pos,0),last:!!e.last};});
     // climax placement: in the B bar (or A' for 4+ bars) — the phrase rises to it and falls to the cadence
@@ -228,7 +233,7 @@
     const motifPitches={}; // bar role 'A' → pitches by sounding position, for A'
     for(let k=0;k<soundIdx.length;k++){const i=soundIdx[k];const m=meta[i];const e=ev[i];
       if(k===0){ // start on a tonic-chord tone, usually the tonic
-        const st=Math.random()<0.6?tonicIdx:nearestOf(TON,tonicIdx,1,4);idx=st<0?tonicIdx:st;chosen[i]=pool[idx];continue;}
+        const st=(opts.tonicStart||Math.random()<0.6)?tonicIdx:nearestOf(TON,tonicIdx,1,4);idx=st<0?tonicIdx:st;chosen[i]=pool[idx];continue;}
       // A': repeat the motif's pitches when the rhythm matches (exact repeat, or a sequence a step away at med/hard)
       if(m.role==="A'"&&motifPitches.A&&motifPitches.A[k-soundIdx.findIndex(j=>meta[j].role==="A'")]!==undefined){const rel=k-soundIdx.findIndex(j=>meta[j].role==="A'");const src=motifPitches.A[rel];
         if(src!==undefined){const shift=motifPitches.shift;const ni=Math.max(minIdx,Math.min(maxIdx,src+shift));idx=ni;chosen[i]=pool[idx];lastLeap=0;continue;}}
@@ -290,10 +295,18 @@
     // ---- horizontal layout: slots ----
     const cw=w_of(1), barPad=SS*1.0;
     const pieces=[]; let t=0,x=0;
-    const addGap=(to)=>{if(to>t+1e-6){pieces.push({t0:t,t1:to,x0:x,x1:x+(to-t)*cw,gap:true});x+=(to-t)*cw;t=to;}};
+    const addGap=(to)=>{if(to>t+1e-6)crossBoundary(t);while(bi<bounds.length&&bounds[bi]>t+1e-6&&bounds[bi]<to-1e-6){const b=bounds[bi];pieces.push({t0:t,t1:b,x0:x,x1:x+(b-t)*cw,gap:true});x+=(b-t)*cw;t=b;crossBoundary(b);}if(to>t+1e-6){pieces.push({t0:t,t1:to,x0:x,x1:x+(to-t)*cw,gap:true});x+=(to-t)*cw;t=to;}};
     const slotX=[]; // raw x of each note's slot start
     let bi=0; const barX={}; // raw x at each boundary
     const crossBoundary=(to)=>{while(bi<bounds.length&&bounds[bi]<=to+1e-6){barX[bi]=x;x+=barPad;bi++;}};
+    if(spec.alignOnsets&&spec.alignOnsets.length){
+      // shared layout for parts printed one above the other: slots at every onset of every part, so beats and barlines line up
+      const P=[...new Set(spec.alignOnsets.concat(notes.map(n=>n.onset)).map(v=>Math.round(v*1e4)/1e4))].filter(v=>v>=0&&v<totalBeats-1e-6).sort((a,b)=>a-b);
+      // a slot never runs across a barline
+      const cuts=P.concat(bounds).map(v=>Math.round(v*1e4)/1e4);const C=[...new Set(cuts)].sort((a,b)=>a-b);
+      const at={};P.forEach(p=>{const nx=C.find(c=>c>p+1e-6);const d=(nx!==undefined?nx:totalBeats)-p;addGap(p);crossBoundary(p);at[p]=x;const w=w_of(d);pieces.push({t0:p,t1:p+d,x0:x,x1:x+w});x+=w;t=p+d;});
+      notes.forEach((n,i)=>{slotX[i]=at[Math.round(n.onset*1e4)/1e4];});
+    } else
     notes.forEach((n,i)=>{ addGap(n.onset); crossBoundary(n.onset); const w=w_of(n.dur);
       slotX[i]=x; pieces.push({t0:n.onset,t1:n.onset+n.dur,x0:x,x1:x+w}); x+=w; t=n.onset+n.dur; });
     addGap(totalBeats); crossBoundary(totalBeats-1e-9); if(barX[bounds.length-1]===undefined)barX[bounds.length-1]=x;
@@ -318,21 +331,22 @@
     const sysH=(spec.rhythmOnly?9.5:11.5)*SS;
     const E=[]; let minY=1e9,maxY=-1e9; const track=y=>{if(y<minY)minY=y;if(y>maxY)maxY=y;};
     const rx=SS*0.62, ry=SS*0.44, stemLen=SS*3.4, beamT=SS*0.48;
-    const xs=[], sysOf=[], ys=[];
+    const xs=[], sysOf=[], ys=[], upOf=[];
     // ---- per-system furniture ----
     systems.forEach((sy,si)=>{ const oy=si*sysH;
-      for(let k=0;k<5;k++){const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);}
+      (spec.rhythmOnly?[2]:[0,1,2,3,4]).forEach(k=>{const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);});
       track(oy+TOPK*SS-SS*2.6); track(oy+TOPK*SS+4*SS+SS*2.6);
-      E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
+      if(spec.rhythmOnly){const px=SS*0.5+cd.clefW*SS*0.5,py=oy+TOPK*SS+SS;E.push(`<rect x="${(px-SS*0.55).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/><rect x="${(px+SS*0.17).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/>`);}
+      else E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
       let kx=SS*0.5+cd.clefW*SS+SS*0.5; const pos=KS_POS[spec.clef==='bass'?'bass':'treble'][ks>0?'s':'f'];
       for(let k=0;k<Math.abs(ks);k++){E.push(gEl(ks>0?'sharp':'flat',kx,oy+yOf(top,pos[k]),'var(--ink)'));kx+=SS*0.62;}
-      if(si===0){const tsx=kx+(ks?SS*0.3:0)+tsW*0.5;
+      if(si===0&&!spec.noTime){const tsx=kx+(ks?SS*0.3:0)+tsW*0.5;
         E.push(`<text x="${tsx.toFixed(1)}" y="${(oy+TOPK*SS+1.62*SS).toFixed(1)}" text-anchor="middle" font-size="${(SS*2.05).toFixed(1)}" font-weight="700" font-family="Georgia,'Times New Roman',serif" fill="var(--ink)">${numer}</text>`);
         E.push(`<text x="${tsx.toFixed(1)}" y="${(oy+TOPK*SS+3.68*SS).toFixed(1)}" text-anchor="middle" font-size="${(SS*2.05).toFixed(1)}" font-weight="700" font-family="Georgia,'Times New Roman',serif" fill="var(--ink)">${denom}</text>`);}
       // barlines
       for(let s=sy.segA;s<=sy.segB;s++){const bx=sy.mapX(barX[s])+barPad*sy.scale*0.5*(s===sy.segB?0:1); const last=(s===nSeg-1);
         const X=last?sy.endX-SS*0.1:bx;
-        E.push(`<line x1="${X.toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${X.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="${last?3.2:1.4}"/>`);
+        E.push(`<line x1="${X.toFixed(1)}" y1="${(oy+TOPK*SS+(spec.rhythmOnly?SS:0)).toFixed(1)}" x2="${X.toFixed(1)}" y2="${(oy+TOPK*SS+(spec.rhythmOnly?3*SS:4*SS)).toFixed(1)}" stroke="var(--ink)" stroke-width="${last?3.2:1.4}"/>`);
         if(last)E.push(`<line x1="${(X-SS*0.55).toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${(X-SS*0.55).toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.3"/>`);
         if(s===sy.segB&&!last)E.push(`<line x1="${sy.endX.toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.4"/>`);
       }
@@ -344,9 +358,9 @@
     // ---- beam groups ----
     const grpKey=on=>{const b=barOf(on,pickup,bpb),p=posInBar(on,pickup,bpb);let gi=0;for(let k=0;k<g.length;k++)if(p>=g[k]-1e-6)gi=k;return b*100+gi;};
     const groups=[]; let cur=null;
-    notes.forEach((n,i)=>{ if(n.dur<1-1e-6&&!n.rest){const k=grpKey(n.onset); if(cur&&cur.k===k&&sysOf[i]===cur.sys)cur.idx.push(i); else {cur={k,idx:[i],sys:sysOf[i]};groups.push(cur);} } else cur=null; });
+    notes.forEach((n,i)=>{ if(n.dur<1-1e-6&&!n.rest&&!n.headOnly&&!n.noBeam){const k=grpKey(n.onset); if(cur&&cur.k===k&&sysOf[i]===cur.sys)cur.idx.push(i); else {cur={k,idx:[i],sys:sysOf[i]};groups.push(cur);} } else cur=null; });
     const beamed=groups.filter(gp=>gp.idx.length>1), inGroup={}; beamed.forEach((gp,gi)=>gp.idx.forEach(k=>inGroup[k]=gi));
-    const groupDir=beamed.map(gp=>{const avg=gp.idx.reduce((s,k)=>s+dd[k],0)/gp.idx.length;return avg<top-4?'up':'down';});
+    const groupDir=beamed.map(gp=>{if(spec.rhythmOnly)return 'up';const avg=gp.idx.reduce((s,k)=>s+dd[k],0)/gp.idx.length;return avg<top-4?'up':'down';});
     const headCol=n=>n.state==='empty'?'#b9b3a6':(n.color||'var(--ink)');
     const onLine=d=>((top-d)%2===0);
     const dotEl=(x,y,d,col)=>`<circle cx="${(x+rx+SS*0.42).toFixed(1)}" cy="${(onLine(d)?y-SS*0.5:y).toFixed(1)}" r="${(SS*0.17).toFixed(1)}" fill="${col}"/>`;
@@ -372,28 +386,29 @@
     const flagPath=(sx,sy,up,col)=>{ const k=up?1:-1;
       return `<path d="M${sx.toFixed(1)},${sy.toFixed(1)} c0,${(k*SS*1.0).toFixed(1)} ${(SS*1.15).toFixed(1)},${(k*SS*0.95).toFixed(1)} ${(SS*0.95).toFixed(1)},${(k*SS*2.35).toFixed(1)} c${(SS*0.15).toFixed(1)},${(k*-SS*1.0).toFixed(1)} ${(-SS*0.25).toFixed(1)},${(k*-SS*1.55).toFixed(1)} ${(-SS*0.95).toFixed(1)},${(k*-SS*1.75).toFixed(1)} z" fill="${col}"/>`; };
     notes.forEach((n,i)=>{ const si=sysOf[i], oy=si*sysH, x=xs[i], col=headCol(n); ys[i]=oy+yOf(top,dd[i]);
-      if(n.rest){E.push(restEl(n,i,oy)); if(isDotted(n.dur)&&n.dur<1){} return;}
+      if(n.rest){E.push(restEl(n,i,oy)); if(n.clearable){const cyc=oy+TOPK*SS+4*SS+SS*1.75;
+        E.push(`<g class="sclr" data-i="${i}"><circle cx="${x.toFixed(1)}" cy="${cyc.toFixed(1)}" r="${(SS*0.55).toFixed(1)}" fill="var(--paper)" stroke="var(--rule)"/><text x="${x.toFixed(1)}" y="${(cyc+SS*0.22).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);track(cyc+SS*0.9);} return;}
       const empty=(n.state==='empty'), d=dd[i], y=ys[i];
       if(empty){ // placeholder: dashed head on the middle line, but the rhythm (stem/flag/beam) is shown
         E.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx}" ry="${ry}" transform="rotate(-18 ${x.toFixed(1)} ${y.toFixed(1)})" fill="none" stroke="#b9b3a6" stroke-width="1.2" stroke-dasharray="3 2"/>`);
         if(isDotted(n.dur))E.push(dotEl(x,y,d,'#b9b3a6'));
         if(n.dur>=4-1e-6)return;
-        const gi=inGroup[i]; const up=(gi!==undefined)?groupDir[gi]==='up':false; const sx=up?x+rx*0.88:x-rx*0.88;
+        const gi=inGroup[i]; const up=spec.rhythmOnly?true:(gi!==undefined)?groupDir[gi]==='up':false; const sx=up?x+rx*0.88:x-rx*0.88;
         if(gi===undefined){ const sy2=up?y-stemLen:y+stemLen;
           E.push(`<line x1="${sx.toFixed(2)}" y1="${y.toFixed(2)}" x2="${sx.toFixed(2)}" y2="${sy2.toFixed(2)}" stroke="#b9b3a6" stroke-width="1.6"/>`); track(up?sy2-SS*2.4:sy2+SS*2.4);
           if(n.dur<1-1e-6){ const nf=(n.dur<0.5-1e-6&&!n.trip)?2:1; for(let f=0;f<nf;f++)E.push(flagPath(sx,sy2+(up?1:-1)*f*SS*0.8,up,'#b9b3a6')); } }
         return; }
       ledgerYs(top,bot,d).forEach(ed=>{const ly=oy+yOf(top,ed);E.push(`<line x1="${(x-rx*1.75).toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(x+rx*1.75).toFixed(1)}" y2="${ly.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);track(ly);});
       const shown=res.shown[i]; if(shown)E.push(accEl(shown,x-rx-SS*0.14,y,col));
-      const open=n.dur>=2-1e-6;
-      if(n.dur>=4-1e-6){E.push(gEl('noteheadWhole',x-NW/2,y,col));}
+      const open=!n.headOnly&&n.dur>=2-1e-6;
+      if(!n.headOnly&&n.dur>=4-1e-6){E.push(gEl('noteheadWhole',x-NW/2,y,col));}
       else E.push(`<ellipse cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" rx="${rx}" ry="${ry}" transform="rotate(-20 ${x.toFixed(2)} ${y.toFixed(2)})" fill="${open?'none':col}" stroke="${col}" stroke-width="${open?SS*0.19:0.8}"/>`);
-      if(isDotted(n.dur))E.push(dotEl(x,y,d,col));
+      if(!n.headOnly&&isDotted(n.dur))E.push(dotEl(x,y,d,col));
       track(y-ry-2);track(y+ry+2);
       if(n.clearable){const cyc=oy+TOPK*SS+4*SS+SS*1.75;
         E.push(`<g class="sclr" data-i="${i}"><circle cx="${x.toFixed(1)}" cy="${cyc.toFixed(1)}" r="${(SS*0.55).toFixed(1)}" fill="var(--paper)" stroke="var(--rule)"/><text x="${x.toFixed(1)}" y="${(cyc+SS*0.22).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.75).toFixed(1)}" fill="#8a8277">✕</text></g>`);track(cyc+SS*0.9);}
-      if(n.dur>=4-1e-6)return;
-      const gi=inGroup[i]; const up=(gi!==undefined)?groupDir[gi]==='up':(d<top-4);
+      if(n.headOnly||n.dur>=4-1e-6)return;
+      const gi=inGroup[i]; const up=spec.rhythmOnly?true:(gi!==undefined)?groupDir[gi]==='up':(d<top-4); upOf[i]=up;
       const sx=up?x+rx*0.88:x-rx*0.88;
       if(gi===undefined){ const sy2=up?y-stemLen:y+stemLen;
         E.push(`<line x1="${sx.toFixed(2)}" y1="${y.toFixed(2)}" x2="${sx.toFixed(2)}" y2="${sy2.toFixed(2)}" stroke="${col}" stroke-width="1.6"/>`); track(up?sy2-SS*2.4:sy2+SS*2.4);
@@ -436,6 +451,28 @@
     if(spec.cursorBeat!==undefined&&spec.cursorBeat<totalBeats-1e-6){ const si=sysOfBeat(spec.cursorBeat), sy=systems[si], oy=si*sysH; cursorSys=si;
       const cx=sy.mapX(xAt(spec.cursorBeat))+SS*0.95;
       E.push(`<line x1="${cx.toFixed(1)}" y1="${(oy+TOPK*SS-SS*0.9).toFixed(1)}" x2="${cx.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS+SS*0.9).toFixed(1)}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3"/>`); }
+    // ---- analysis marks (tests): spec.marks={dyn:{i:'mf'},hp:[[i,j,'cresc']],art:{i:'stac'|'acc'|'ten'},sl:[[i,j]],br:[[i,j,'*1']],box:{i:'x'},barNums:true,tempo:'Andante'} ----
+    if(spec.marks){const M=spec.marks,R=v=>v.toFixed(1);const stTop=si=>si*sysH+TOPK*SS,stBot=si=>si*sysH+TOPK*SS+4*SS;
+      const upAt=i=>upOf[i]!==undefined?upOf[i]:dd[i]<top-4;
+      Object.entries(M.dyn||{}).forEach(([i,t])=>{i=+i;const si=sysOf[i];const y=Math.max(stBot(si)+SS*2.4,ys[i]+(upAt(i)?SS*1.8:SS*4.6));E.push(`<text x="${R(xs[i])}" y="${R(y)}" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="${R(SS*1.25)}" fill="var(--ink)">${t}</text>`);track(y+SS*0.4);});
+      (M.hp||[]).forEach(([i,j,t])=>{const si=sysOf[i];if(sysOf[j]!==si)j=i;const x0=xs[i]-SS*0.4,x1=Math.max(xs[j]+SS*0.6,x0+SS*3);const y=stBot(si)+SS*2.0,h=SS*0.55;
+        E.push(t==='cresc'?`<path d="M${R(x1)} ${R(y-h)} L${R(x0)} ${R(y)} L${R(x1)} ${R(y+h)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`:`<path d="M${R(x0)} ${R(y-h)} L${R(x1)} ${R(y)} L${R(x0)} ${R(y+h)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`);track(y+h+SS*0.4);});
+      Object.entries(M.art||{}).forEach(([i,a])=>{i=+i;const up=upAt(i);const y=up?ys[i]+SS*1.25:ys[i]-SS*1.25;const x=xs[i];
+        if(a==='stac')E.push(`<circle cx="${R(x)}" cy="${R(y)}" r="${R(SS*0.2)}" fill="var(--ink)"/>`);
+        else if(a==='ten')E.push(`<line x1="${R(x-SS*0.6)}" y1="${R(y)}" x2="${R(x+SS*0.6)}" y2="${R(y)}" stroke="var(--ink)" stroke-width="${R(SS*0.18)}"/>`);
+        else {const yy=up?ys[i]+SS*1.5:ys[i]-SS*1.5;E.push(`<path d="M${R(x-SS*0.6)} ${R(yy-SS*0.35)} L${R(x+SS*0.6)} ${R(yy)} L${R(x-SS*0.6)} ${R(yy+SS*0.35)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`);}
+        track(y-SS*0.6);track(y+SS*0.6);});
+      (M.sl||[]).forEach(([i,j])=>{const si=sysOf[i];if(sysOf[j]!==si)return;const up=upAt(i);const seg=ys.slice(i,j+1);const x0=xs[i],x1=xs[j];
+        if(up){const y=Math.max(...seg)+SS*1.1;E.push(`<path d="M${R(x0)} ${R(y)} Q${R((x0+x1)/2)} ${R(y+SS*1.4)} ${R(x1)} ${R(y)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`);track(y+SS*1.4);}
+        else{const y=Math.min(...seg)-SS*1.1;E.push(`<path d="M${R(x0)} ${R(y)} Q${R((x0+x1)/2)} ${R(y-SS*1.4)} ${R(x1)} ${R(y)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`);track(y-SS*1.4);}});
+      (M.br||[]).forEach(([i,j,t])=>{const si=sysOf[i];const x1=xs[i]-SS*0.9,x2=(sysOf[j]===si?xs[j]:xs[i]+SS*3)+SS*0.9;
+        const hi=Math.min(ys[i],ys[j],stTop(si))-(upAt(i)||upAt(j)?SS*4.2:SS*1.6);const y=Math.min(hi,stTop(si)-SS*1.2);
+        E.push(`<path d="M${R(x1)} ${R(y+SS*0.7)} V${R(y)} H${R(x2)} V${R(y+SS*0.7)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/><text x="${R((x1+x2)/2)}" y="${R(y-SS*0.4)}" text-anchor="middle" font-size="${R(SS*0.95)}" font-weight="700" fill="var(--ink)" font-family="Arial,sans-serif">${t}</text>`);track(y-SS*1.4);});
+      Object.entries(M.box||{}).forEach(([i,t])=>{i=+i;const si=sysOf[i];const y=Math.min(stTop(si)-SS*2.6,ys[i]-(upAt(i)?SS*5.2:SS*2.6));
+        E.push(`<rect x="${R(xs[i]-SS*0.7)}" y="${R(y-SS*1.05)}" width="${R(SS*1.4)}" height="${R(SS*1.4)}" fill="none" stroke="var(--ink)" stroke-width="1.2"/><text x="${R(xs[i])}" y="${R(y)}" text-anchor="middle" font-size="${R(SS*1.0)}" fill="var(--ink)" font-family="Arial,sans-serif">${t}</text>`);track(y-SS*1.3);});
+      if(M.barNums){systems.forEach((sy,si)=>{if(si===0)return;const b=sy.segA+(pickup>1e-6?0:1);E.push(`<text x="${R(SS*0.4)}" y="${R(stTop(si)-SS*1.0)}" font-size="${R(SS*0.85)}" font-style="italic" fill="var(--ink)" font-family="Georgia,serif">${b}</text>`);track(stTop(si)-SS*1.8);});}
+      if(M.tempo){const y=stTop(0)-SS*2.6;E.push(`<text x="${R(SS*0.4)}" y="${R(y)}" font-size="${R(SS*1.05)}" font-weight="700" fill="var(--ink)" font-family="Georgia,serif">${M.tempo}</text>`);track(y-SS*1.2);}
+    }
     const pad=SS*0.5, y0=minY-pad, vh=(maxY-minY)+pad*2;
     const svg=`<svg class="score" id="score" viewBox="0 ${y0.toFixed(1)} ${W.toFixed(1)} ${vh.toFixed(1)}" width="${W.toFixed(0)}" preserveAspectRatio="xMidYMid meet" style="touch-action:none;max-width:${(W*1.5).toFixed(0)}px" xmlns="http://www.w3.org/2000/svg">${E.join('')}</svg>`;
     return {svg,xs,ys,sysOf,W,top,y0,vh,sysH,nSys:systems.length,midi:res.midi,shown:res.shown,cursorSys,order:notes};
@@ -448,7 +485,7 @@
   // exports
   Object.assign(window,{SS,GS,TOPK,dia,clefData,yOf,gEl,ledgerYs,accW,NW,drawWholeNote,midiOf,letterOf,ACCOFF});
   // sol-fa: moveable do, la-based minor. Only the four scales sung in class get syllables.
-  const SOLFA_SET={'major':['do','re','mi','fa','so','la','ti'],'major pentatonic':['do','re','mi','so','la'],'natural minor':['la','ti','do','re','mi','fa','so'],'minor pentatonic':['la','do','re','mi','so']};
+  const SOLFA_SET={'major':['do','re','mi','fa','so','la','ti'],'major pentatonic':['do','re','mi','so','la'],'natural minor':['la','ti','do','re','mi','fa','so'],'harmonic minor':['la','ti','do','re','mi','fa','si'],'minor pentatonic':['la','do','re','mi','so']};
   const CHROM_SOLFA={0:'do',1:'di',2:'re',3:'me',4:'mi',5:'fa',6:'fi',7:'so',8:'si',9:'la',10:'te',11:'ti'};
   function solfaFor(scaleType){return SOLFA_SET[scaleType]||null;}
   function solfaOf(midi,tonicMidi,scaleType){const sc=SCALES.find(s=>s.name===scaleType),syl=SOLFA_SET[scaleType];if(!sc||!syl)return '';const off=((midi-tonicMidi)%12+12)%12;const k=sc.deg.findIndex(d=>d[0]===off);if(k>=0)return syl[k];return CHROM_SOLFA[/minor/.test(scaleType)?(off+9)%12:off]||'';}

@@ -1,0 +1,9 @@
+/* Bundled so the installed app has its typefaces offline and on filtered networks. Latin subsets, SIL OFL. */
+@font-face{font-family:'Nunito';font-style:normal;font-weight:600;font-display:swap;src:url(nunito-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:700;font-display:swap;src:url(nunito-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:800;font-display:swap;src:url(nunito-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:900;font-display:swap;src:url(nunito-latin-900-normal.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:500;font-display:swap;src:url(cormorant-garamond-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:600;font-display:swap;src:url(cormorant-garamond-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:700;font-display:swap;src:url(cormorant-garamond-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:500;font-display:swap;src:url(cormorant-garamond-latin-500-italic.woff2) format('woff2')}

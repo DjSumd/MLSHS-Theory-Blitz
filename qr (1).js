@@ -1,3 +1,4 @@
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["qr.js"]="20261103zd";
 //---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript

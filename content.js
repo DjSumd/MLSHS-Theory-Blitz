@@ -1,3 +1,4 @@
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103zd";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -114,12 +115,12 @@ function chordName(keyLetter,keyMidi,entry){const n=spellFrom(keyLetter,keyMidi,
 function keyDisplay(k){return k[0]+(KEY_ACC[k[1]]==='f'?'♭':'');}
 const maxKsFor=yr=>({7:1,8:2,9:3,10:4,11:5,12:7}[yr]||7);
 // rhythm vocabulary from ticked chips
-function vocabFrom(v){return {vocab:{semis:v.includes('semis'),mixedSemis:v.includes('mixed'),dotted:v.includes('dotted'),quaverCrotchet:v.includes('qc'),sixSemis:v.includes('sixsemis'),crotDotQuav:v.includes('cdq'),whole:true},
+function vocabFrom(v){return {vocab:{semis:v.includes('semis'),mixedSemis:v.includes('mixed'),dotted:v.includes('dotted'),quaverCrotchet:v.includes('qc'),sixSemis:v.includes('sixsemis'),crotDotQuav:v.includes('cdq'),cmpSemis:v.includes('cmpsemi'),whole:true},
   vocabEasy:true,rests:v.some(x=>x.indexOf('rest')===0),restDurs:[v.includes('rest1')?1:null,v.includes('rest1')?2:null,v.includes('rest4')?4:null,v.includes('rest05')?0.5:null].filter(x=>x!=null),
   ties:v.includes('ties'),syncopation:v.includes('synco'),anacrusis:v.includes('anac'),triplets:v.includes('trip')};}
-const RHYTHM_VOCAB=[Y('semis','Four semiquavers',7),Y('rest1','Crotchet & minim rests',7),Y('mixed','Quaver–semiquaver mixes',8),Y('dotted','Dotted notes',8),Y('sixsemis','Six-semiquaver groups (6/8)',8),Y('rest4','Semibreve rest',8),Y('anac','Anacrusis',8),Y('ties','Ties',8),
+const RHYTHM_VOCAB=[Y('semis','Four semiquavers',7),Y('rest1','Crotchet & minim rests',7),Y('mixed','Quaver–semiquaver mixes',8),Y('dotted','Dotted notes',8),Y('sixsemis','Six-semiquaver groups (6/8)',8),Y('cmpsemi','6/8 semiquaver patterns (ti tika tika, timka ti…)',8),Y('rest4','Semibreve rest',8),Y('anac','Anacrusis',8),Y('ties','Ties',8),
   Y('qc','Quaver–crotchet (6/8)',9),Y('synco','Syncopation',9),Y('rest05','Quaver rest',9),Y('trip','Triplets',9),Y('cdq','Crotchet–dotted crotchet–quaver (6/8)',10)];
-const METRE_ITEMS=[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',7),Y('12/8','12/8',9),Y('9/8','9/8',10),Y('5/4','5/4',10),Y('7/8','7/8',10)];
+const METRE_ITEMS=[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',7),Y('9/8','9/8',10),Y('12/8','12/8',9),Y('5/4','5/4',10),Y('7/8','7/8',10)];
 // a scale-based tune that resolves on the tonic, for tonality/texture/form
 const TUNE=(root,steps,len)=>colourMelody(root,steps.concat([12]),steps.includes(3)?[3]:steps.includes(4)?[4]:[],len||10);
 
@@ -145,16 +146,21 @@ var UNITS=[
  {name:'Rhythmic dictation', key:'rd', ask:'Notate the rhythm you hear.',
   guide:`<p class="prompt">Rhythm patterns</p><ul><li>You get a one-bar count-in. Count the beats first, then work out how each beat is split.</li>
    <li>Tap a note value (or Rest), then tap the stave to write it at the cursor. ✕ removes a note. Check when the bars are full.</li>
-   <li>Year 7 uses semibreves, minims, crotchets, quaver pairs and four semiquavers (plus dotted crotchets and three quavers in 6/8). ⚙ opens up dotted notes, ties, anacrusis, syncopation and more for Years 8–10.</li></ul>`,
-  cfg:[ G('metres','Time signatures',METRE_ITEMS.map(m=>m.id==='6/8'?Y('6/8','6/8',8):m)), SG('bars','Length',[{id:'1',label:'1 bar'},{id:'2',label:'2 bars'},{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],{7:'2',9:'4'}),
+   <li><b>Add the rhythm to given noteheads:</b> the noteheads and barlines are printed. Choose a value, tap a notehead, and make every bar add up.</li>
+   <li>Year 7 uses semibreves, minims, crotchets, quaver pairs and four semiquavers (plus dotted crotchets and three quavers in 6/8). From Year 8, 6/8 adds semiquaver beats: ti tika tika, tika tika tika, tika ti tika, tika tika ti, timka ti, ti ti tika, tika ti ti, ti tika ti and timka tika. ⚙ opens up dotted notes, ties, anacrusis, syncopation and more for Years 8–10.</li></ul>`,
+  cfg:[ G('qtype','Question type',[Y('write','Write the rhythm',7),Y('heads','Add the rhythm to given noteheads',7)]), G('metres','Time signatures',METRE_ITEMS.map(m=>m.id==='6/8'?Y('6/8','6/8',8):m)), SG('bars','Length',[{id:'1',label:'1 bar'},{id:'2',label:'2 bars'},{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],{7:'2',9:'4'}),
         G('vocab','Rhythm vocabulary',RHYTHM_VOCAB), SG('source','Dictate',[{id:'pitch',label:'Rhythm only (one pitch)'},{id:'melody',label:'Rhythm of a melody'}],{7:'pitch',9:'melody'}), SG('swing','Feel',[{id:'off',label:'Straight'},{id:'on',label:'Swing (Year 9)'}],'off') ],
   gen(ctx){const bars=parseInt(ctx.cfg('bars'),10)||2,v=ctx.cfg('vocab'),metre=A_pick(ctx.cfg('metres'));
+    if(A_pick(ctx.cfg('qtype')||['write'])==='heads'){const sc=ctx.year<=7?['major','major pentatonic']:ctx.year===8?['major','natural minor','major pentatonic']:['major','natural minor','harmonic minor'];const vo=vocabFrom(v);
+      return rhythmHeadsQ({bars,metre:['6/8','9/8','12/8'].includes(metre)&&ctx.year<8?'4/4':metre,scales:sc,clef:ctx.year>=9&&Math.random()<0.3?'bass':'treble',diff:ctx.diff,maxKs:maxKsFor(ctx.year),vocab:{vocab:vo.vocab,vocabEasy:vo.vocabEasy,syncopation:vo.syncopation}});}
     const compound=['6/8','9/8','12/8'].indexOf(metre)>=0,swing=!compound&&ctx.cfg('swing')==='on';
     const vo=vocabFrom(v); if(swing)vo.triplets=false;
     const ofMel=ctx.cfg('source')==='melody';
-    const dict=ENGRAVE.buildDictation(Object.assign({diff:ctx.diff,bars,metre,maxKs:maxKsFor(ctx.year)},vo));
+    const yrScales=ctx.year<=7?['major','major pentatonic','minor pentatonic']:ctx.year===8?['major','major pentatonic','minor pentatonic','natural minor']:ctx.year===9?['major','major pentatonic','minor pentatonic','natural minor','harmonic minor']:null;
+    const dict=ENGRAVE.buildDictation(Object.assign({diff:ctx.diff,bars,metre,maxKs:maxKsFor(ctx.year)},yrScales?{scaleNames:yrScales}:{},vo));
     const MID=34; dict.notes.forEach(n=>{ if(!ofMel&&!n.rest)n.midi=74; n.d=MID; n.acc=''; n.letter='B'; }); dict.ks=0;
-    return {kind:'rhythmdict',dict,rhythmOnly:true,swing,given:1,multiPlay:true,scaleName:metre+(dict.pickup?' · starts with an upbeat (anacrusis)':'')+(ofMel?' · rhythm of a '+dict.scaleName+' melody':''),
+    const melLabel=ofMel?' · the rhythm of a melody in '+dict.scaleName:'';
+    return {kind:'rhythmdict',dict,rhythmOnly:true,swing,given:1,multiPlay:true,scaleName:metre+(dict.pickup?' · starts with an upbeat (anacrusis)':'')+melLabel,
       prompt:'Notate the rhythm you hear in '+metre+(swing?' (swing)':''),why:(compound?'Compound time — each beat is a dotted crotchet that splits into three quavers.':'Simple time — each beat splits into two quavers.')+' Count the beats first, then the splits.'};}},
 
  {name:'Intervals', key:'ivl', ask:'Listen — which interval?', canNotate:true,
@@ -192,11 +198,25 @@ var UNITS=[
       const mids=idx.map(x=>60+pool[x]);const arrows=idx.slice(1).map((x,k)=>x>idx[k]?'↑':x<idx[k]?'↓':'→');const ans=arrows.join(' ');
       const allShapes=new Set([ans]);let tries=0;while(allShapes.size<4&&tries++<50){allShapes.add(arrows.map(()=>A_pick(['↑','↓','→'])).join(' '));}
       return {kind:'choice',options:A_shuf([...allShapes]),answer:ans,play:()=>AUDIO.melody(mids,mids.map(()=>0.75),0.6),playLabel:n+' notes — which way does each one move?',why:'The notes move '+arrows.join(', ')+'.'};}
-    const dict=ENGRAVE.buildDictation({diff:ctx.diff,scaleNames:scales,bars,clef,metre,maxKs:maxKsFor(ctx.year),rests:ctx.year>=8,restDurs:ctx.year>=9?[0.5,1,2]:[1,2],ties:ctx.year>=8,syncopation:ctx.year>=9,anacrusis:ctx.year>=8&&bars>1,triplets:ctx.year>=11,vocab:vocabFrom(RHYTHM_VOCAB.filter(x=>x.yr<=ctx.year).map(x=>x.id)).vocab,vocabEasy:false});
+    const dict=ENGRAVE.buildDictation({tonicStart:(ctx.year||YEAR)<=10,diff:ctx.diff,scaleNames:scales,bars,clef,metre,maxKs:maxKsFor(ctx.year),rests:ctx.year>=8,restDurs:ctx.year>=9?[0.5,1,2]:[1,2],ties:ctx.year>=8,syncopation:ctx.year>=9,anacrusis:ctx.year>=8&&bars>1,triplets:ctx.year>=11,vocab:vocabFrom(RHYTHM_VOCAB.filter(x=>x.yr<=ctx.year).map(x=>x.id)).vocab,vocabEasy:false});
     const sf=ENGRAVE.solfaFor(dict.scaleType)?' Sol-fa: '+dict.notes.filter(n=>!n.rest).map(n=>ENGRAVE.solfaOf(n.midi,dict.tonicMidi,dict.scaleType)).join(' ')+'.':'';
     if(qt==='melody')return {kind:'melodydict',dict,scaleName:dict.scaleName,given:1,multiPlay:true,cue:true,prompt:'Notate the melody — rhythm and pitch',why:'Key: '+dict.scaleName+'. '+dict.notes.filter(n=>!n.rest).map(noteName).join(' ')+'.'+sf};
     return {kind:'pitchdict',dict,scaleName:dict.scaleName,given:1,multiPlay:true,cue:true,prompt:'Write the pitches — the rhythm is given',why:'Key: '+dict.scaleName+'. Answer: '+dict.notes.filter(n=>!n.rest).map(noteName).join(' ')+'.'+sf};}},
 
+ {name:'Two-part dictation', key:'two', ask:'Listen to both parts — write the sol-fa.',
+  guide:`<p class="prompt">Two-part dictation</p><ul><li>Two parts play together: an upper part in the treble and a lower part in the bass. Both rhythms are printed, and the first bar of each part is given.</li>
+   <li>Write the sol-fa of every note, part by part. Both parts move mostly by step and skip, so think one note at a time from the last one.</li>
+   <li>Follow the upper part first, then listen again for the lower part — it is usually slower and sits on the strong notes of the chord.</li><li>In minor keys the tonic is <i>la</i>; harmonic minor raises <i>so</i> to <i>si</i>.</li></ul>`,
+  cfg:[ G('scales','Scale',[Y('major','Major',7),Y('natural minor','Natural minor',8),Y('harmonic minor','Harmonic minor',9)]), G('metres','Time signatures',[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',8)]),
+        SG('bars','Length',[{id:'2',label:'2 bars'},{id:'4',label:'4 bars'}],'4') ],
+  gen(ctx){return ctTwoPartQ({scale:A_pick(ctx.cfg('scales')),metre:A_pick(ctx.cfg('metres')),bars:ctx.cfg('bars')})();}},
+ {name:'Bar order', key:'bord', ask:'Listen — put the bars back in order.',
+  guide:`<p class="prompt">Bars in the wrong order</p><ul><li>The bars of a melody are printed out of order. Listen to the melody played correctly, then drag the bars into the right order (or tap two bars to swap them).</li>
+   <li>Find the last bar first: it usually ends on the tonic with a long note. Then look for the opening — often starting on do, mi or so.</li>
+   <li>Follow the shape: does the melody climb or fall at that point? Match rhythms you can hear (a long note, a run of quavers).</li><li>🎧 Play my order plays the bars as you have them, so you can hear what's out of place.</li></ul>`,
+  cfg:[ SG('bars','Length',[{id:'4',label:'4 bars'},{id:'8',label:'8 bars'}],'8'), G('scales','Scale',[Y('major','Major',7),Y('major pentatonic','Major pentatonic',7),Y('natural minor','Natural minor',8),Y('harmonic minor','Harmonic minor',9)]),
+        G('metres','Time signatures',[Y('2/4','2/4',7),Y('3/4','3/4',7),Y('4/4','4/4',7),Y('6/8','6/8',8)]), SG('clef','Clef',[{id:'treble',label:'Treble'},{id:'bass',label:'Bass'},{id:'both',label:'Both'}],{7:'treble',9:'both'}) ],
+  gen(ctx){return barOrderQ({bars:ctx.cfg('bars'),scales:ctx.cfg('scales'),metres:ctx.cfg('metres'),clef:ctx.cfg('clef'),diff:ctx.diff,maxKs:maxKsFor(ctx.year)})();}},
  {name:'Discrepancies', key:'dis', ask:'Follow the score — where does the performance differ?',
   guide:`<p class="prompt">Discrepancies</p><ul><li>Read the score while you listen. The performance contains one or more differences in <b>pitch</b> or <b>rhythm</b>.</li>
    <li><b>Step 1 — locate:</b> tap a bar once for a <b>pitch</b> discrepancy, twice for <b>rhythm</b>, a third time to clear it. Then Check.</li>
@@ -251,7 +271,7 @@ var UNITS=[
    <li>Year 9: does the music <b>modulate</b> (change key) to its relative major or minor? ATAR adds the dominant and subdominant — listen for the new leading note. Year 10: <b>consonant</b> or <b>dissonant</b>?</li>
    <li>ATAR: <b>modal</b> (a clear centre but a ♭7 or a raised 6th) and <b>atonal</b> (no centre at all).</li></ul>`,
   cfg:[ G('qtype','Question type',[Y('tone','Major, minor or pentatonic',7),Y('mod','Modulation',9),Y('cd','Consonant or dissonant',10)]),
-        G('tons','Tonalities',[Y('Major','Major',7),Y('Minor','Minor',7),Y('Pentatonic','Pentatonic',7),Y('Modal','Modal',11),Y('Atonal','Atonal',12)]),
+        G('tons','Tonalities',[Y('Major','Major',7),Y('Minor','Minor',7),Y('Natural minor','Natural minor',9),Y('Harmonic minor','Harmonic minor',9),Y('Pentatonic','Pentatonic',7),Y('Modal','Modal',11),Y('Atonal','Atonal',12)]),
         G('dests','Modulation destinations',[Y('Relative','Relative major / minor',9),Y('Dominant','Dominant',11),Y('Subdominant','Subdominant',12),Y('None','No modulation',9)]),
         SG('play','Play as',[{id:'melody',label:'Melody'},{id:'harm',label:'Melody with chords'}],{7:'melody',8:'harm'}) ],
   gen(ctx){const qt=A_pick(ctx.cfg('qtype')),root=A_root(57,64);
@@ -266,8 +286,9 @@ var UNITS=[
       const opts=dests.map(d=>d==='Relative'?rel:d==='None'?'No modulation':d);const vc=voiceProg(seq,root);const mel=chordMelody(vc,2,root,[]);
       return {kind:'choice',options:A_keep(opts),answer:ans,startTonality:isMin?'Minor':'Major',play:()=>ctx.cfg('play')==='harm'?AUDIO.progMelody(vc,mel.mids,mel.durs,0.5,2):AUDIO.progression(vc,1.1),playLabel:(isMin?'Minor':'Major')+' home key established first — where does it go?',why:`${ans}: ${desc}`};}
     const tons=ctx.cfg('tons'),id=A_pick(tons);const modal=A_pick([{n:'dorian',steps:[0,2,3,5,7,9,10],col:[3,9,10]},{n:'mixolydian',steps:[0,2,4,5,7,9,10],col:[4,10]}]);
-    const T={'Major':{steps:MAJ,col:[4,11],set:PROGSET.Major},'Minor':{steps:MINH,col:[3,11],set:PROGSET.Minor},'Pentatonic':{steps:PENT,col:[4,9],set:PROGSET.Major},'Modal':{steps:modal.steps,col:modal.col,fixed:modal.n==='dorian'?[['i',0,'mi'],['IV',5,''],['i',0,'mi'],['VII',10,''],['i',0,'mi']]:[['I',0,''],['bVII',10,''],['IV',5,''],['bVII',10,''],['I',0,'']]},'Atonal':{}};
-    const WHY={'Major':'bright — a major 3rd above the tonic and a leading note pulling home.','Minor':'darker — the 3rd is lowered.','Pentatonic':'five notes only, no semitones — open and folky.','Modal':'a clear centre but a modal colour — '+modal.n+' ('+(modal.n==='dorian'?'minor 3rd with a raised 6th':'major 3rd with a ♭7')+').','Atonal':'no tonal centre — nothing feels like home.'};
+    const NATP=A_pick([[['i',0,'mi'],['VI',8,''],['VII',10,''],['i',0,'mi']],[['i',0,'mi'],['iv',5,'mi'],['v',7,'mi'],['i',0,'mi']],[['i',0,'mi'],['VII',10,''],['VI',8,''],['v',7,'mi'],['i',0,'mi']],[['i',0,'mi'],['iv',5,'mi'],['VII',10,''],['III',3,''],['v',7,'mi'],['i',0,'mi']]]);
+    const T={'Major':{steps:MAJ,col:[4,11],set:PROGSET.Major},'Minor':{steps:MINH,col:[3,11],set:PROGSET.Minor},'Natural minor':{steps:MINN,col:[3,8,10],fixed:NATP},'Harmonic minor':{steps:MINH,col:[3,8,11],set:PROGSET.Minor},'Pentatonic':{steps:PENT,col:[4,9],set:PROGSET.Major},'Modal':{steps:modal.steps,col:modal.col,fixed:modal.n==='dorian'?[['i',0,'mi'],['IV',5,''],['i',0,'mi'],['VII',10,''],['i',0,'mi']]:[['I',0,''],['bVII',10,''],['IV',5,''],['bVII',10,''],['I',0,'']]},'Atonal':{}};
+    const WHY={'Major':'bright — a major 3rd above the tonic and a leading note pulling home.','Minor':'darker — the 3rd is lowered.','Natural minor':'minor with a lowered 7th: no leading note, so the dominant chord is minor and the music sounds modal and gentle.','Harmonic minor':'minor with a raised 7th (si): a leading note pulling home and the exotic augmented 2nd between the 6th and 7th.','Pentatonic':'five notes only, no semitones — open and folky.','Modal':'a clear centre but a modal colour — '+modal.n+' ('+(modal.n==='dorian'?'minor 3rd with a raised 6th':'major 3rd with a ♭7')+').','Atonal':'no tonal centre — nothing feels like home.'};
     let play; if(id==='Atonal'){const mids=[];let m=root+5;for(let i=0;i<11;i++){m+=A_pick([-7,-5,-4,-2,-1,1,2,4,5,7,-10,10]);m=Math.max(52,Math.min(84,m));mids.push(m);}play=()=>AUDIO.melody(mids,mids.map(()=>A_pick([1,0.5,1,1.5])),0.4);}
     else if(ctx.cfg('play')==='harm'){const seq=T[id].fixed||genProgression(T[id].set,5);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,T[id].steps);play=()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.42,2);}
     else {const ex=colourMelody(root,T[id].steps.concat([12]),T[id].col,12);play=()=>AUDIO.melody(ex.mids,ex.durs,0.42);}
@@ -344,14 +365,14 @@ var UNITS=[
  {name:'Texture', key:'tex', ask:'Listen — what texture?',
   guide:`<p class="prompt">Texture</p><ul><li><b>Unison / monophonic</b>: everyone plays the same tune (even in octaves) — one line.</li>
    <li><b>Homophonic</b>: a melody with accompaniment (chords or a bass line) underneath.</li>
-   <li>Year 8: a <b>counter-melody</b> or descant — a second tune that goes along with the first. Year 9: <b>polyphonic</b> — several independent tunes at once.</li></ul>`,
+   <li>Year 8: a <b>counter-melody</b> or descant — a second tune that goes along with the first. Year 9: <b>polyphonic</b> — three or more independent tunes at once, often entering one after another.</li></ul>`,
   cfg:[ G('texs','Textures',[Y('Unison / monophonic','Unison / monophonic',7),Y('Melody and accompaniment (homophonic)','Melody and accompaniment (homophonic)',7),Y('Melody with a counter-melody','Melody with a counter-melody',8),Y('Polyphonic','Polyphonic',9)]) ],
   gen(ctx){const texs=ctx.cfg('texs'),id=A_pick(texs),isMin=Math.random()<0.35,root=A_root(57,64),steps=isMin?MINH:MAJ;let play,sub='';
     if(id==='Unison / monophonic'){const ex=TUNE(root+12,steps,12);const v=A_pick(['solo','oct']);play=v==='solo'?()=>AUDIO.melody(ex.mids,ex.durs,0.4):()=>AUDIO.lines([{mids:ex.mids,durs:ex.durs,offset:0,amp:1},{mids:ex.mids.map(m=>m-12),durs:ex.durs,offset:0,amp:0.8}],0.4);sub=v==='solo'?'one tune on its own.':'one tune doubled in octaves — still a single line.';}
     else if(id==='Melody and accompaniment (homophonic)'){const seq=genProgression(isMin?PROGSET.Minor:PROGSET.Major,6);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,steps);const st=A_pick(['block','broken']);play=()=>AUDIO.progMelody(prog,mel.mids,mel.durs,0.42,2,st);sub='a tune on top with '+(st==='broken'?'broken-chord':'block-chord')+' accompaniment underneath.';}
     else if(id==='Melody with a counter-melody'){const seq=genProgression(isMin?PROGSET.Minor:PROGSET.Major,6);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,steps);const cm=chordMelody(prog,2,root-12,steps);cm.durs=cm.durs.map(d=>d<1?1:d);
       play=()=>AUDIO.lines([{mids:mel.mids,durs:mel.durs,offset:0,amp:1},{mids:cm.mids.map(m=>m),durs:cm.durs,offset:0,amp:0.75}],0.42);sub='the main tune with a second, slower tune (a counter-melody) running underneath it.';}
-    else {const subj=TUNE(root+12,steps,8);const cont=outlineMelody(root+12,steps.concat([12]),7,true);const v1={mids:subj.mids.concat(cont.mids),durs:subj.durs.concat(cont.durs),offset:0,amp:1};const ans={mids:subj.mids.map(m=>m-5).concat(cont.mids.map(m=>m-5)),durs:subj.durs.concat(cont.durs),offset:2,amp:0.9};play=()=>AUDIO.lines([v1,ans],0.4);sub='two independent tunes — the second copies the first a little later (imitation).';}
+    else {const subj=TUNE(root+12,steps,8);const cont=outlineMelody(root+12,steps.concat([12]),7,true);const v1={mids:subj.mids.concat(cont.mids),durs:subj.durs.concat(cont.durs),offset:0,amp:1};const vx=(sh,off,amp)=>({mids:v1.mids.map(m=>m+sh),durs:v1.durs.slice(),offset:off,amp});const nv=Math.random()<0.35?4:3;const vs=[v1,vx(-5,2,0.9),vx(-12,4,0.85)];if(nv===4)vs.push(vx(-17,6,0.8));play=()=>AUDIO.lines(vs,0.4);sub=(nv===4?'four':'three')+' independent tunes — each new voice enters with the same tune a little later (imitation), so they overlap.';}
     return {kind:'choice',options:A_keep(texs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${sub}`};}},
 
  {name:'Form', key:'form', ask:'Listen — what is the form?',
@@ -395,7 +416,7 @@ var UNITS=[
   guide:`<p class="prompt">Tempo</p><ul><li>Tempo terms are Italian words for speed: <b>largo</b> (very slow) · <b>adagio</b> (slow) · <b>moderato</b> (medium) · <b>allegro</b> (fast) · <b>presto</b> (very fast).</li>
    <li>Year 8: <b>rallentando / ritardando</b> = getting slower; <b>accelerando</b> = getting faster. Year 9 adds <b>andante</b> (walking pace) and <b>allegretto</b>. Year 10: <b>rubato</b> (flexible, pushed and pulled) and <b>a tempo</b> (back to the original speed).</li></ul>`,
   cfg:[ G('qtype','Question type',[Y('term','Name the tempo',7),Y('change','Does the tempo change?',8),Y('rub','Strict time or rubato?',10)]),
-        G('terms','Tempo terms',[Y('Largo','Largo (very slow, ~45)',7),Y('Adagio','Adagio (slow, ~65)',7),Y('Moderato','Moderato (medium, ~105)',7),Y('Allegro','Allegro (fast, ~140)',7),Y('Presto','Presto (very fast, ~180)',7),Y('Andante','Andante (walking, ~85)',9),Y('Allegretto','Allegretto (fairly fast, ~120)',9)]) ],
+        G('terms','Tempo terms',[Y('Largo','Largo (very slow, ~45)',7),Y('Adagio','Adagio (slow, ~65)',7),Y('Andante','Andante (walking, ~85)',9),Y('Moderato','Moderato (medium, ~105)',7),Y('Allegretto','Allegretto (fairly fast, ~120)',9),Y('Allegro','Allegro (fast, ~140)',7),Y('Presto','Presto (very fast, ~180)',7)]) ],
   gen(ctx){const qt=A_pick(ctx.cfg('qtype')),root=A_root(57,64);const BPM={Largo:45,Adagio:65,Andante:85,Moderato:105,Allegretto:120,Allegro:140,Presto:180};
     const seq=genProgression(PROGSET.Major.filter(e=>e[4]<=9),4);const prog=voiceProg(seq,root);const mel=chordMelody(prog,2,root,MAJ);
     if(qt==='term'){const terms=ctx.cfg('terms'),t=A_pick(terms);return {kind:'choice',options:A_keep(terms),answer:t,play:()=>AUDIO.progMelody(prog.concat(prog),mel.mids.concat(mel.mids),mel.durs.concat(mel.durs),60/BPM[t],2),playLabel:'A phrase — tap along and judge the speed',why:`${t} — about ${BPM[t]} beats per minute.`};}

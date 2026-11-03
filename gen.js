@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261103w";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261103zd";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -201,6 +201,28 @@ const metresOn=()=>S('metres').length?S('metres'):['4/4'];
 function timeSigQ(){const ts=pick(metresOn());const items=rhythmItems(ts,2);const key={tonic:parse('C4'),mode:'major'};pitchItems(items,key,'treble');E.autoBeam(items,METRE(ts),ts==='7/8'?[2,2,3]:null);
   const pool=['2/4','3/4','4/4','6/8','9/8','12/8','5/4','7/8','3/8','2/2'];const opts=optsFrom(ts,pool,4);
   return choice('Which time signature fits these bars?',opts,ts,{sub:'Add up the values in each bar; check how the quavers are grouped.',show:show(stave('treble',0,null,items)),why:ts+': '+metreWord(ts)+'. Each bar holds '+ts.split('/')[0]+' '+(METRE(ts)[1]===8?'quavers':'crotchets')+(METRE(ts)[1]===8&&METRE(ts)[0]%3===0?', grouped in threes (compound)':'')+'.'});}
+// ---- add the bar lines: a rhythm with its barlines taken out (teacher choices: blBars 2–8, blAnac yes|no|'' = sometimes) ----
+function barlinesQ(){const ts=pick(metresOn().filter(m=>RP[m]));const T2=METRE(ts),[a,b]=T2,BL=E.barLength(T2);const nb=Math.max(2,Math.min(8,+S('blBars')||4));
+  const an=S('blAnac')==='yes'?true:S('blAnac')==='no'?false:Math.random()<0.4;const pats=patsFor(ts);const val=x=>E.durVal(x[0].replace('r_',''),x[1]==='d'?1:0);
+  const mk=x=>x[0].startsWith('r_')?r(x[0].slice(2),{dots:x[1]==='d'?1:0}):n([P('C',0,5)],x[0],{dots:x[1]==='d'?1:0});
+  // an anacrusis: the last beat (or part of it) of a bar; the final bar is shortened to match
+  const beat=b===8&&a%3===0?18:ts==='7/8'?18:b===8?6:12;let pick0=null,last=null;
+  if(an){for(let t=0;t<60&&!pick0;t++){const p=pick(pats).filter(x=>!x[0].startsWith('r_'));let s=0;const tail=[];for(let i=p.length-1;i>=0;i--){s+=val(p[i]);tail.unshift(p[i]);if(s>=beat*0.5)break;}
+      if(s>0&&s<BL&&s<=beat&&tail.every(x=>!x[0].startsWith('r_')))pick0={pat:tail,v:s};}
+    if(pick0){for(let t=0;t<80&&!last;t++){const p=pick(pats);let s=0;const head=[];for(const x of p){if(s>=BL-pick0.v-1e-9)break;head.push(x);s+=val(x);}if(Math.abs(s-(BL-pick0.v))<1e-9&&head.length)last=head;}}
+    if(!pick0||!last){pick0=null;last=null;}}
+  const groups=[];if(pick0)groups.push(pick0.pat);for(let i=0;i<nb;i++)groups.push(pick(pats));if(last){groups.pop();groups.push(last);}
+  // the bar the pickup belongs to doesn't count: nb full bars, plus the pickup and the shortened last bar when there is an anacrusis
+  if(pick0){groups.splice(groups.length-1,0,pick(pats));}
+  const items=[];groups.forEach((g,gi)=>{g.forEach(x=>items.push(mk(x)));items.push(gi===groups.length-1?fin():bar());});
+  E.autoBeam(items,T2,ts==='7/8'?[2,2,3]:null);
+  // the answer: a bar line after note k (k counts notes and rests); then take the bar lines out and leave a gap between every pair of notes
+  const ans=[];let k=-1;items.forEach(it=>{if(it.k==='n'||it.k==='r')k++;else if(it.k==='bar'&&!it.final)ans.push(k);});
+  const notes=items.filter(it=>it.k==='n'||it.k==='r');const out=[];notes.forEach((it,i)=>{out.push(it);if(i<notes.length-1)out.push({k:'gap',w:1.5,bl:i});});out.push(fin());
+  const full=groups.length-(pick0?2:0);const desc=pick0?'an anacrusis, '+full+' full bar'+(full===1?'':'s')+' and a final bar that completes the anacrusis':nb+' bars';
+  return {t:'barl',prompt:'Add the bar lines to this rhythm in '+ts+'.',sub:'It has '+desc+'. The final bar line is given. Tap between two notes to add a bar line; tap it again to take it away.',
+    clef:'perc',sig:0,time:T2,ts,items:out,answer:ans,anac:!!pick0,nNotes:notes.length,
+    why:ts+': each bar holds '+(b===8?a+' quavers':a+' crotchets')+(pick0?'. The anacrusis is '+(pick0.v===beat?'one beat':'part of a beat')+' long, and the last bar is shortened by the same amount.':'.')+' Bar lines after notes '+ans.map(x=>x+1).join(', ')+'.'};}
 function completeBarQ(){const ts=pick(metresOn());const [a,b]=METRE(ts);const total=E.barLength([a,b]);
   const cand=[['q',0],['h',0],['e',0],['q',1],['h',1],['s',0],['e',1],['w',0]].filter(([d,dt])=>E.durVal(d,dt)<total);
   const asRest=Math.random()<0.35;const cand2=asRest&&b!==8?cand.filter(c=>!c[1]):cand;
@@ -218,7 +240,7 @@ function completeBarQ(){const ts=pick(metresOn());const [a,b]=METRE(ts);const to
   const opts=shuffle([mk(miss[0],miss[1])].concat(dis));
   const spec=stave('treble',0,[a,b],items);spec.marker=true;
   return choice('Which single '+(asRest?'rest':'note')+' completes the bar?',opts,ans,{sub:'The bar is in '+ts+'. Choose the one value that fills the gap at the end.',show:show(spec),why:'The bar needs '+ts.split('/')[0]+' '+(b===8?'quavers':'crotchets')+' in total; the gap is worth a '+ans+'.'});}
-function groupingQ(){const ts=pick(metresOn().filter(m=>['2/4','3/4','4/4','6/8','9/8','5/4','7/8'].includes(m))||['4/4']);const [a,b]=METRE(ts);
+function groupingQ(){const ts=pick(metresOn().filter(m=>['2/4','3/4','4/4','6/8','9/8','12/8','5/4','7/8'].includes(m)))||'4/4';const [a,b]=METRE(ts);
   const mk=(groups)=>{const items=[];groups.forEach((gq,gi)=>{for(let i=0;i<gq;i++)items.push(n([parse('B4')],'e',{beam:gq===1?null:(i===0?'start':i===gq-1?'end':'cont')}));});items.push(fin());return items;};
   const total=a*48/b/6;let correct,wrongs;
   if(b===8&&a%3===0){correct=Array(a/3).fill(3);wrongs=[(()=>{const w=[];let t=total;while(t>0){w.push(Math.min(2,t));t-=2;}return w;})(),[total],Array(total).fill(1)];}
@@ -229,6 +251,14 @@ function groupingQ(){const ts=pick(metresOn().filter(m=>['2/4','3/4','4/4','6/8'
   const opts=shuffle([render(correct)].concat(shuffle(wrongs).slice(0,2).map(render)));
   const sub=ts==='7/8'?'7/8 is grouped in quavers as 2 + 2 + 3 or 3 + 2 + 2: the beams show the groups.':ts==='5/4'?'5/4 is simple time with five crotchet beats: beam quavers in pairs so each beat stays visible.':b===8?'Compound time: beam quavers in threes (one dotted-crotchet beat each).':'Simple time: beam quavers in pairs, one crotchet beat each, so the beats stay visible.';
   return choice('Which bar is correctly grouped (beamed) for '+ts+'?',opts,correct.join('+'),{sub,why:sub});}
+function groupingNotateQ(){const ts=pick(metresOn().filter(m=>['2/4','3/4','4/4','6/8','9/8','12/8','5/4','7/8'].includes(m)))||'4/4';const [a,b]=METRE(ts);
+  const per=a*48/b/6;const bars=Math.max(1,Math.min(2,+S('grpBars')||1));
+  const grp=b===8&&a%3===0?[Array(a/3).fill(3)]:ts==='7/8'?[[2,2,3],[3,2,2]]:ts==='5/4'?[[2,2,2,2,2]]:[Array(a).fill(2)];
+  // the gaps that should be joined, for each acceptable grouping (7/8 may be 2+2+3 or 3+2+2)
+  const joinsOf=g=>{const J=[];for(let bi=0;bi<bars;bi++){let s=bi*per;g.forEach(n0=>{for(let i=0;i<n0-1;i++)J.push(s+i);s+=n0;});}return J;};
+  const answers=grp.map(joinsOf);const barAfter=[];for(let bi=1;bi<bars;bi++)barAfter.push(bi*per-1);
+  const sub=ts==='7/8'?'7/8: group the quavers 2 + 2 + 3 or 3 + 2 + 2.':ts==='5/4'?'5/4 is simple time with five crotchet beats: beam the quavers in pairs.':b===8?'Compound time: beam the quavers in threes, one dotted-crotchet beat each.':'Simple time: beam the quavers in pairs, one crotchet beat each.';
+  return {t:'beam',prompt:'Beam these quavers correctly for '+ts+'.',sub:'Tap between two quavers to join them with a beam; tap again to split them. '+sub,clef:'treble',time:[a,b],ts,nNotes:per*bars,barAfter,answer:answers[0],answers,why:sub};}
 function valueQ(){const ts=pick(['4/4','3/4','2/4']);const items=[];let total=0;const picks=[];const k=rand(2)+1;
   const cand=[['h',1,3],['q',1,1.5],['h',0,2],['q',0,1],['e',0,0.5],['w',0,4],['e',1,0.75]];
   for(let i=0;i<=k;i++){const c=pick(cand);picks.push(c);total+=c[2];}
@@ -432,12 +462,14 @@ function scaleFactQ(){const qs=[
 function ivPool(){const qs=S('ivQ').length?S('ivQ'):['M','m','P'];const max=S('ivMax');const nums=(S('ivNums')||[]).length?S('ivNums'):[2,3,4,5,6,7,8];const out=[];
   for(let n=2;n<=max;n++){if(n<=8&&!nums.includes(n))continue;const perf=T.isPerfClass(n);qs.forEach(q=>{if(perf&&(q==='P'||q==='A'||q==='d'))out.push({q,n});if(!perf&&(q==='M'||q==='m'||q==='A'||q==='d'))out.push({q,n});});}
   if(qs.includes('P')&&UPTO()>=11)out.push({q:'P',n:1});return out.filter(iv=>!((iv.n===1||iv.n===8)&&(iv.q==='d'||iv.q==='A'))).filter(iv=>iv.n>8?['M','m','P'].includes(iv.q):(!(iv.q==='A'&&![2,4,5,6].includes(iv.n))&&!(iv.q==='d'&&![3,4,5,7].includes(iv.n))));}
-function ivLower(clef,bias){const t=pick(keyTonics(Math.min(S('keysMax'),5)));const sc=T.scale(t,'major');let p=pick(sc.slice(0,7));if(Math.random()<0.25)p=P(p.l,p.a+pick([1,-1]),p.o);if(Math.abs(p.a)>1)p=P(p.l,0,p.o);return inClef(p,clef,bias===undefined?-3:bias);}
+const IV_SYL=()=>UPTO()<=10; // Years 7–10: the bottom note is the tonic of a major key in the Year's syllabus
+function ivLower(clef,bias){if(IV_SYL()){const t=pick(keyTonics(S('keysMax')));return inClef(P(t.l,t.a,4),clef,bias===undefined?-3:bias);}const t=pick(keyTonics(Math.min(S('keysMax'),5)));const sc=T.scale(t,'major');let p=pick(sc.slice(0,7));if(Math.random()<0.25)p=P(p.l,p.a+pick([1,-1]),p.o);if(Math.abs(p.a)>1)p=P(p.l,0,p.o);return inClef(p,clef,bias===undefined?-3:bias);}
 // an interval question with an optional key signature: the lower note is drawn from the key so the signature does real work
 function notateIntervalQ(){const clef=clefPick();const iv=pick(ivPool());const above=!S('ivBelow')||Math.random()<0.65;const big=iv.n>8;
-  const useSig=Math.random()<0.4;const k=useSig?randKey():null;
+  const useSig=Math.random()<0.4;const syl=IV_SYL();const k=useSig?(syl?(()=>{const t=pick(keyTonics(S('keysMax')));return {tonic:t,mode:'major',sig:T.sigOf(t,'major')};})():randKey()):null;
   let lower,upper;
-  if(above){lower=ivLower(clef,big?-6:-3);if(k){const sc=T.scale(k.tonic,k.mode==='minor'?'harmminor':'major').slice(0,7);lower=inClef(pick(sc),clef,big?-6:-3);}upper=T.transposeUp(lower,iv);}
+  if(syl){lower=k?inClef(P(k.tonic.l,k.tonic.a,4),clef,big?-6:-3):ivLower(clef,big?-6:-3);upper=T.transposeUp(lower,iv);}
+  else if(above){lower=ivLower(clef,big?-6:-3);if(k){const sc=T.scale(k.tonic,k.mode==='minor'?'harmminor':'major').slice(0,7);lower=inClef(pick(sc),clef,big?-6:-3);}upper=T.transposeUp(lower,iv);}
   else{upper=ivLower(clef,big?5:2);if(k){const sc=T.scale(k.tonic,k.mode==='minor'?'harmminor':'major').slice(0,7);upper=inClef(pick(sc),clef,big?5:2);}lower=T.transposeDown(upper,iv);}
   if(Math.abs(lower.a)>2||Math.abs(upper.a)>2)return notateIntervalQ();
   const [lo,hi]=RANGE[clef];if(dia(lower)<lo-2||dia(upper)>hi+2)return notateIntervalQ();
@@ -754,7 +786,7 @@ function notateChordSigQ(){ // a chord written with a key signature present (dia
 const UNITS=[
  {id:'pitch',name:'Pitch & Notation',short:'Pitch',yr:7,gens:[[noteNameQ,3],[spnQ,1,8],[notateNoteQ,5],[notateSeqQ,3],[enharmonicQ,1,9],[accidentalQ,2],[tabQ,1,11],[drumQ,1,11],[drumReadQ,1,11],[chordSymBasicQ,1,11]],
   guide:`<b>Reading &amp; writing pitch</b><ol><li><b>Clefs:</b> treble lines E G B D F, spaces F A C E; bass lines G B D F A, spaces A C E G. Alto clef: middle C on the middle line. Tenor clef: middle C on the 4th line.</li><li><b>SPN:</b> middle C = C4; each octave numbers from C upward.</li><li><b>Accidentals:</b> ♯ up a semitone, ♭ down, ♮ cancels, 𝄪/𝄫 two semitones. An accidental lasts to the end of the bar.</li><li><b>Enharmonics:</b> same sound, different name (C♯ = D♭, E♯ = F, C♭ = B).</li><li><b>TAB:</b> six lines = six strings (top line = high E); numbers = frets. Standard tuning E A D G B E.</li><li><b>Drum kit:</b> percussion clef; kick in the 1st space, snare in the 3rd space, hi-hat/cymbals as × in the top space. Papers give a legend: read it first.</li></ol>`},
- {id:'rhythm',name:'Rhythm & Metre',short:'Rhythm',yr:7,gens:[[timeSigQ,3],[completeBarQ,4],[groupingQ,3],[valueQ,2,8],[restQ,1],[metreTheoryQ,2],[deviceRhythmQ,2,8]],
+ {id:'rhythm',name:'Rhythm & Metre',short:'Rhythm',yr:7,gens:[[timeSigQ,3],[completeBarQ,4],[barlinesQ,3],[groupingQ,3],[groupingNotateQ,2],[valueQ,2,8],[restQ,1],[metreTheoryQ,2],[deviceRhythmQ,2,8]],
   guide:`<b>Values &amp; metre</b><ul><li>Semibreve 4 · minim 2 · crotchet 1 · quaver ½ · semiquaver ¼ (crotchet beats). A dot adds half again. Rests have the same values.</li><li><b>Simple</b> time: beat divides in 2 (2/4, 3/4, 4/4). <b>Compound</b>: beat divides in 3 (6/8, 9/8, 12/8; beat = dotted crotchet; top number ÷ 3 = beats). <b>Irregular</b>: 5/4, 7/8 (grouped e.g. 2+2+3).</li><li><b>Grouping:</b> beam quavers to show the beat: pairs in simple time, threes in compound.</li><li>Triplet = 3 in the time of 2; duplet = 2 in the time of 3. Syncopation = accent off the beat. Anacrusis = upbeat. Swing = long–short quavers.</li></ul>`},
  {id:'expr',name:'Tempo & Expression',short:'Expression',yr:7,gens:[[termQ,6],[artSymbolQ,2],[ornamentQ,2,11]],
   guide:`<b>Tempo, dynamics, articulation, ornaments</b><ul><li><b>Tempo:</b> adagio &lt; andante &lt; moderato &lt; allegro &lt; presto. accel. / rall. (rit.) / a tempo / rubato; double time, half time. M.M. ♩ = 120 means 120 crotchet beats per minute.</li><li><b>Dynamics:</b> pp p mp mf f ff; cresc. &lt; ; dim. / decresc. &gt;.</li><li><b>Articulation:</b> staccato (dot) short; legato / slur smooth; accent &gt;; tenuto – held; sfz sudden accent; fp loud then soft.</li><li><b>Ornaments:</b> trill (tr), mordent, turn, acciaccatura (crushed grace note), glissando/slide, scoop, bend.</li></ul>`},
