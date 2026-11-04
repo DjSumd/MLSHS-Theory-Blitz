@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261104b">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261104r">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -319,20 +319,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261104b"></script>
-<script src="aural/samples.js?v=20261104b"></script>
-<script src="glyphs.js?v=20261104b"></script>
-<script src="theory.js?v=20261104b"></script>
-<script src="engrave.js?v=20261104b"></script>
-<script src="gen.js?v=20261104b"></script>
-<script src="refs.js?v=20261104b"></script>
-<script src="embed.js?v=20261104b"></script>
-<script src="qr.js?v=20261104b"></script>
-<script src="task.js?v=20261104b"></script>
-<script src="testkit.js?v=20261104b"></script>
-<script src="blitzui.js?v=20261104b"></script>
-<script>/*blitz-check*/(function(){var S="20261104b";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261104b",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261104r"></script>
+<script src="aural/samples.js?v=20261104r"></script>
+<script src="glyphs.js?v=20261104r"></script>
+<script src="theory.js?v=20261104r"></script>
+<script src="engrave.js?v=20261104r"></script>
+<script src="gen.js?v=20261104r"></script>
+<script src="refs.js?v=20261104r"></script>
+<script src="embed.js?v=20261104r"></script>
+<script src="qr.js?v=20261104r"></script>
+<script src="task.js?v=20261104r"></script>
+<script src="testkit.js?v=20261104r"></script>
+<script src="blitzui.js?v=20261104r"></script>
+<script>/*blitz-check*/(function(){var S="20261104r";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261104r",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -451,6 +451,8 @@ function ctTheoryGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('T',k);co
     else if(b.k==='notes'){const w=O(b,'mode')==='write';text=w?'Write each note on the stave.':'Name each note.';items=rep(w?'notateNoteQ':'noteNameQ');}
     else if(b.k==='group'){const md=O(b,'mode')||'notate';text=md==='choice'?'Choose the bar that is correctly grouped (beamed) for its time signature.':'Beam the quavers correctly for the time signature.';
       items=Array.from({length:cnt},()=>IT(md==='choice'?'groupingQ':'groupingNotateQ',m,{metres:O(b,'metres'),grpBars:+O(b,'bars')||1}));}
+    else if(b.k==='msolfa'){const ty=O(b,'types');text='Write the sol-fa under each note of each melody'+(ty.includes('major')?' (do is the tonic in major':' (')+(ty.some(x=>x!=='major')?(ty.includes('major')?'; ':'')+'la is the tonic in minor':'')+').';
+      items=Array.from({length:cnt},()=>IT('melodySolfaQ',m,{msTypes:ty,metres:O(b,'metres'),msBars:+O(b,'bars')||2,msClef:O(b,'clef')||''},1));}
     else if(b.k==='barl'){const an=O(b,'anac')||'';text='Add the bar lines to each rhythm. The time signature and the final bar line are given'+(an==='yes'?'; each one starts with an anacrusis':'')+'.';items=Array.from({length:cnt},()=>IT('barlinesQ',m,{metres:O(b,'metres'),blBars:+O(b,'bars')||4,blAnac:an}));}
     else if(b.k==='scale'){const sf=O(b,'sf')==='yes';const dr=O(b,'dir')||'',vl=O(b,'val')||'w',sg=O(b,'ksig')||'',mk=O(b,'mark')||'';
       const dW=dr==='both'?'one octave ascending and descending':dr==='desc'?'one octave descending':dr==='asc'?'one octave ascending':'one octave';
@@ -551,7 +553,7 @@ function paperT(q,it,key){if(q&&q.t==='written')return TestKit.writtenPaper(q,ke
   const items=q.items.map(x=>{if(x.k==='ksig'){const tg=ksTarget(q);return Object.assign({},x,{accs:key?tg.map(a=>Object.assign({},a,{col:'#b3261e'})):[]});}
     if(x.k!=='slot')return Object.assign({},x);const o=Object.assign({},x);if(x.given){o.p=x.p;o.explicit=false;}else if(key){o.p=x.target;o.col='#b3261e';o.explicit=false;}else{o.p=[];}
     if(key&&q.pairMark&&(q.pairs||[]).includes(x.slot)){o.pm=q.pairMark==='semi'?'sl':'br';o.pmCol='#b3261e';}return o;});
-  const svg=E.render({clef:q.clef,sig:q.ksPlace?0:q.keysigEdit?(key?(q.sigTarget||0):0):(q.sig||0),time:q.time||null,items,noBar:!q.time,paper:true,barNums:!!q.barNums}).svg;
+  const svg=q.noPaperStave?'':E.render({clef:q.clef,sig:q.ksPlace?0:q.keysigEdit?(key?(q.sigTarget||0):0):(q.sig||0),time:q.time||null,items,noBar:!q.time,paper:true,barNums:!!q.barNums}).svg;
   const sf=q.sfOnly?`<div class="lbl" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${q.solfa.map(x=>`<span class="b${key?' k':''}">${key?x:''}</span>`).join('')}</div>`:q.solfa&&it.sf?`<div class="lbl" style="margin-top:2mm">Sol-fa</div><div class="boxes sf">${q.solfa.map((x,i)=>i<1?`<span class="b g">${x}</span>`:`<span class="b${key?' k':''}">${key?x:''}</span>`).join('')}</div>`:'';
   return `<div class="cell${items.length>8||sf?' wide':items.length>3||q.time?' half':''}">${lbl}${q._sharedShow?'':showSvg()}${svg}${sf}</div>`;}
 function ansYouT(q,it){if(q&&q.t==='written')return TestKit.writtenYou(q);const r=q&&q._resp;if(!r)return '<div class="na">Not answered</div>';const G=TestKit.GOOD,B=TestKit.BAD;
@@ -1220,7 +1222,7 @@ const GEN_LABELS={noteNameQ:'Name the note',spnQ:'Scientific pitch names (C4)',n
   timeSigQ:'Time signature',completeBarQ:'Complete the bar',groupingQ:'Beaming & grouping',valueQ:'Note values',restQ:'Rests',metreTheoryQ:'Metre facts',deviceRhythmQ:'Rhythmic devices',
   termQ:'Terms',artSymbolQ:'Articulation marks',ornamentQ:'Ornaments',
   keySigIdQ:'Identify a key signature',keySigWriteQ:'Write a key signature',degreeNotateQ:'Write a scale degree',keyFactQ:'Key facts',tonalityQ:'Tonality of a melody',
-  barlinesQ:'Add the bar lines',groupingNotateQ:'Beaming: write it',notateScaleQ:'Write a scale',nameScaleQ:'Name a scale',scaleFactQ:'Scale facts',solfaQ:'Sol-fa: name it',solfaNotateQ:'Sol-fa: write it',
+  barlinesQ:'Add the bar lines',melodySolfaQ:'Sol-fa of a melody',groupingNotateQ:'Beaming: write it',notateScaleQ:'Write a scale',nameScaleQ:'Name a scale',scaleFactQ:'Scale facts',solfaQ:'Sol-fa: name it',solfaNotateQ:'Sol-fa: write it',
   notateIntervalQ:'Write an interval',nameIntervalQ:'Name an interval',ivFactQ:'Interval facts',
   notateChordQ:'Write a chord',notateChordSigQ:'Write a chord (key signature)',nameChordQ:'Name a chord',chordSymbolQ:'Chord symbols',chordSymbolExtQ:'Extended chord symbols',chordFactQ:'Chord facts',guitarChordQ:'Guitar chord diagrams',
   romanQ:'Roman numerals',chordNamesQ:'Chord names in a key',rnToChordQ:'Numeral to chord',seventhRnMinorQ:'7ths in minor keys',writeProgQ:'Write a progression',writeProgFigQ:'Progression with inversions',writeSeventhProgQ:'Write a 7th-chord progression',writeCadenceQ:'Write a cadence',cadenceIdQ:'Identify a cadence',figureQ:'Inversion figures',modulationQ:'Modulation',harmonyFactQ:'Harmony facts',

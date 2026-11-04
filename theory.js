@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["theory.js"]="20261104b";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["theory.js"]="20261104r";
 // theory.js — music-theory core for ATAR Music Theory Blitz. Pure logic, no DOM.
 // Pitch = {l:'C'..'B', a:-2..2 (accidental), o:octave (SPN, middle C = C4)}
 const T=(()=>{

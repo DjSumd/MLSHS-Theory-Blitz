@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261104b";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261104r";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -401,6 +401,19 @@ const solfaLine=(type,desc)=>{const s=solfaScale(type,desc);return s?'Sol-fa: '+
 const YY=(typeof Y==='function')?Y:((yr,fn)=>fn);
 SOLFA_TYPES.harmminor=['la','ti','do','re','mi','fa','si'];SOLFA_TYPES.melminor=['la','ti','do','re','mi','fi','si'];const SOLFA_Q=['major','majpent','natminor','minpent']; // sol-fa questions keep the four; scale writing uses all
 function solfaTypesOn(){const on=scalesOn().filter(t=>SOLFA_TYPES[t]&&SOLFA_Q.includes(t));return on.length?on:['major'];}
+// ---- a melody to name in sol-fa: major (do = the tonic) or minor (la = the tonic), natural or harmonic (si = the raised 7th) ----
+function melodySolfaQ(depth){depth=depth||0;const y=UPTO();const types=(S('msTypes')&&S('msTypes').length?S('msTypes'):['major','natminor'].concat(y>=9?['harmminor']:[]));const type=pick(types);
+  const maj=pick(keyTonics(S('keysMax')));const minor=type!=='major';const key=minor?{tonic:T.relMinor(maj),mode:'minor'}:{tonic:maj,mode:'major'};const sig=T.sigOf(maj,'major');
+  const ms=S('metres')&&S('metres').length?S('metres').filter(m=>RP[m]):[];const ts=pick(ms.length?ms:['2/4','3/4','4/4']);const nb=Math.max(1,Math.min(4,+S('msBars')||2));
+  const clef=S('msClef')==='bass'?'bass':S('msClef')==='treble'?'treble':clefPick();
+  const items=melody(key,clef,ts,nb,{raise7:type==='harmminor'});const ns=items.filter(it=>it.k==='n');if(ns.length<3&&depth<30)return melodySolfaQ(depth+1); // a one- or two-note melody is too thin to name
+  if(type==='harmminor'){const L7=T.transposeUp(key.tonic,'M7');if(ns.length>=2&&!ns.some(it=>it.p[0].l===L7.l&&it.p[0].a===L7.a)){ // make sure the raised 7th is heard: lead the second-last note up to the tonic
+      const it=ns.length>1?ns[ns.length-2]:ns[0];const o=it.p[0].o;let best=null;for(let k=o-1;k<=o+1;k++){const c=P(L7.l,L7.a,k);if(!best||Math.abs(dia(c)-dia(it.p[0]))<Math.abs(dia(best)-dia(it.p[0])))best=c;}it.p=[best];}}
+  const lt=minor?T.transposeUp(key.tonic,'M7'):null;const syl=p=>(lt&&p.l===lt.l&&p.a===lt.a)?'si':stSyl(p,key);const ans=ns.map(it=>syl(it.p[0]));
+  const pal=minor?(type==='harmminor'?['la','ti','do','re','mi','fa','so','si']:SOLFA_MIN):SOLFA_MAJ;const tw=minor?name(key.tonic)+' = la':name(key.tonic)+' = do';
+  const kn=name(key.tonic)+' '+(minor?(type==='harmminor'?'harmonic minor':'natural minor'):'major');
+  return {t:'notate',prompt:'Write the sol-fa under each note of this melody in '+kn+' ('+tw+').',sub:'One box for each note, in order.'+(type==='harmminor'?' The raised 7th is si.':''),clef,sig,time:METRE(ts),items,barNums:nb>2,
+    show:show(stave(clef,sig,METRE(ts),items,{barNums:nb>2})),_sharedShow:true,sfOnly:true,solfa:ans,sfPal:pal,why:kn+': '+ns.map((it,i)=>name(it.p[0])+' = '+ans[i]).join(', ')+'.'};}
 function solfaQ(){const type=pick(solfaTypesOn());const t=scaleTonic(type);const notes=T.scale(t,type).slice(0,-1);const syl=SOLFA_TYPES[type];const i=rand(notes.length);
   const nm=T.scaleName(t,type);const minorNote=/min/.test(type)?' (la-based minor: la = '+name(t)+')':'';const why=nm+' in sol-fa: '+notes.map((p,k)=>name(p)+' = '+syl[k]).join(', ')+'.';
   if(Math.random()<0.5)return choice('In '+nm+', which note is sung as "'+syl[i]+'"?',optsFrom(name(notes[i]),notes.map(name),4),name(notes[i]),{sub:'Moveable do'+minorNote+'.',why});
@@ -792,7 +805,7 @@ const UNITS=[
   guide:`<b>Tempo, dynamics, articulation, ornaments</b><ul><li><b>Tempo:</b> adagio &lt; andante &lt; moderato &lt; allegro &lt; presto. accel. / rall. (rit.) / a tempo / rubato; double time, half time. M.M. ♩ = 120 means 120 crotchet beats per minute.</li><li><b>Dynamics:</b> pp p mp mf f ff; cresc. &lt; ; dim. / decresc. &gt;.</li><li><b>Articulation:</b> staccato (dot) short; legato / slur smooth; accent &gt;; tenuto – held; sfz sudden accent; fp loud then soft.</li><li><b>Ornaments:</b> trill (tr), mordent, turn, acciaccatura (crushed grace note), glissando/slide, scoop, bend.</li></ul>`},
  {id:'keys',name:'Keys & Key Signatures',short:'Keys',yr:7,gens:[[keySigIdQ,2],[keySigWriteQ,5],[degreeNotateQ,4,11],[keyFactQ,2],[tonalityQ,2,8]],
   guide:`<b>Key signatures &amp; tonality</b><ul><li>Sharps: F C G D A E B. Flats: B E A D G C F. Last sharp = leading note (up a semitone = key). Second-last flat = key (F major has one flat).</li><li><b>Relative</b> major/minor share a signature (minor is a minor 3rd below). <b>Parallel (tonic)</b> keys share a tonic (C major / C minor).</li><li><b>Degrees:</b> tonic, supertonic, mediant, subdominant, dominant, submediant, leading note.</li><li><b>Modulation:</b> to the dominant (raised 4th appears), subdominant (flattened 7th), relative minor (its raised 7th appears).</li><li><b>Tonality:</b> major, minor (look for the raised 7th), modal (Mixolydian ♭7, Dorian ♮6).</li></ul>`},
- {id:'scales',name:'Scales & Modes',short:'Scales',yr:7,gens:[[notateScaleQ,7],[nameScaleQ,3],[scaleFactQ,2],[solfaQ,3],[solfaNotateQ,3]],
+ {id:'scales',name:'Scales & Modes',short:'Scales',yr:7,gens:[[notateScaleQ,7],[nameScaleQ,3],[scaleFactQ,2],[solfaQ,3],[solfaNotateQ,3],[melodySolfaQ,3]],
   guide:`<b>Scales &amp; modes</b><ol><li>Write the letters first (one of each), then fix the pattern with accidentals or the key signature.</li><li>Major T T S T T T S · natural minor T S T T S T T · harmonic minor raises the 7th · melodic minor raises 6 and 7 going up, natural minor coming down.</li><li>Major pentatonic 1 2 3 5 6 · minor pentatonic 1 ♭3 4 5 ♭7 · blues adds ♯4/♭5 · chromatic: sharps up, flats down.</li><li><b>Sol-fa</b> (moveable do): major do re mi fa so la ti do · major pentatonic do re mi so la do · natural minor (la-based, la = tonic) la ti do re mi fa so la · minor pentatonic la do re mi so la.</li><li>Modes = major scale from each degree. Mixolydian (5th): ♭7. Dorian (2nd): ♮6. Aeolian (6th) = natural minor.</li></ol>`},
  {id:'intervals',name:'Intervals',short:'Intervals',yr:7,gens:[[notateIntervalQ,7],[nameIntervalQ,4],[ivFactQ,2]],
   guide:`<b>Number, quality, inversion</b><ol><li><b>Number:</b> count letter names from the lower note, counting both (C→E = 3rd).</li><li><b>Quality:</b> count semitones. Perfect: unison 4th 5th 8ve. Major/minor: 2nd 3rd 6th 7th. One wider = augmented, one narrower (than perfect/minor) = diminished. Tritone = 6 semitones (A4 / d5).</li><li><b>Below a note:</b> count down the letters, then check the semitones.</li><li><b>Inversion:</b> numbers add to 9; M↔m, A↔d, P stays P. <b>Compound:</b> 9th = 2nd + octave.</li></ol>`},
@@ -861,7 +874,16 @@ function makeStudy(kind){if(kind==='ivkey'||kind==='ivmel')return makeIvStudy(ki
     st.asks=pool.filter(a=>vis.includes(a)||rest.includes(a));st.noTime=st.asks.includes('time');}
   return st;}
 function stStave(st,extra){return stave(st.clef,st.key.sig,st.noTime?null:METRE(st.ts),st.items.map(it=>Object.assign({},it)),Object.assign({barNums:true},extra||{}));}
+// the tone set: every pitch of the melody once, lowest to highest (sol-fa with Kodály octave marks: l, d r m s l d′)
+function toneSet(st){const seen={};st.items.filter(it=>it.k==='n').forEach(it=>{const p=it.p[0];seen[T.midi(p)+':'+p.l]=p;});return Object.values(seen).sort((a,b)=>T.midi(a)-T.midi(b));}
+function tsSyl(p,st){const k=st.key;const doP=k.mode==='minor'?T.transposeUp(k.tonic,'m3'):k.tonic;const last=st.items.filter(it=>it.k==='n').slice(-1)[0];
+  // the do that frames the melody: the one at or below its final note (the tonic), so the final tonic carries no mark
+  let d0=dia(P(doP.l,doP.a,last.p[0].o));if(k.mode==='minor'){if(d0<dia(last.p[0]))d0+=7;}else if(d0>dia(last.p[0]))d0-=7;const s=stSyl(p,k);const dp=dia(p);return s+(dp<d0?',':dp>=d0+7?'′':'');}
 function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2),st);const k=st.key,I=st.info,b=st.bars;const sh=show(stStave(st));const base={_sharedShow:true};
+  if(part==='tsSf'){const ts=toneSet(st);const ans=ts.map(p=>tsSyl(p,st));const basic=k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ;const pal=[...new Set(basic.concat(ans))].sort((a,b2)=>{const ix=x=>SOLFA_MAJ.indexOf(x.replace(/[,′]/,''));const oc=x=>x.endsWith(',')?-1:x.endsWith('′')?1:0;return oc(a)-oc(b2)||ix(a)-ix(b2);});
+    return Object.assign(base,{t:'notate',prompt:'Write the tone set of this melody in sol-fa: every pitch once, from the lowest to the highest.',sub:'Mark the octaves: a comma for notes below do (l, s,), a dash for notes above the next do (d′ r′).',clef:st.clef,sig:k.sig,time:METRE(st.ts),items:stStave(st).items,show:sh,sfOnly:true,noPaperStave:true,solfa:ans,sfPal:pal,why:'Tone set: '+ans.join(' ')+' ('+ts.map(name).join(' ')+').'});}
+  if(part==='tsN'){const ts=toneSet(st);const items=ts.map((p,i)=>slot(i,[p],'w'));
+    return Object.assign(base,{t:'notate',prompt:'Write the tone set of this melody on the stave: every pitch once, from the lowest to the highest, as semibreves.',sub:clefWord(st.clef)+'. The key signature is given, so add an accidental only where the melody has one.',clef:st.clef,sig:k.sig,items,show:sh,why:'Tone set: '+ts.map(T.spn).join(' ')+'.'});}
   const tonicDo=name(k.tonic)+' = '+(k.mode==='minor'?'la':'do');
   if(part==='solfa'){const ns=b[0].concat(b[1]);const items=stStave(st).items;
     return Object.assign(base,{t:'notate',prompt:'Write the sol-fa under each note in bars 1 and 2 ('+tonicDo+').',sub:'One box for each note, in order.',clef:st.clef,sig:k.sig,time:METRE(st.ts),items,barNums:true,show:sh,sfOnly:true,solfa:ns.map(n=>stSyl(n.p[0],k)),sfPal:k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ,why:'Bars 1–2: '+ns.map(n=>name(n.p[0])+' = '+stSyl(n.p[0],k)).join(', ')+'.'});}
@@ -893,8 +915,8 @@ function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2)
   if(part==='iv'){const ans=T.ivWord(I.iv.iv);const pool=[2,3,4,5,6,7,8].flatMap(nn=>T.isPerfClass(nn)?[T.ivWord({q:'P',n:nn})]:[T.ivWord({q:'M',n:nn}),T.ivWord({q:'m',n:nn})]);
     return Object.assign(base,choice('Name the interval marked *1 in bar '+I.iv.bar+'.',optsFrom(ans,pool,4),ans,{show:sh,why:'*1 = '+ans+'.'}));}
   return choice('?',['a'],'a');}
-function studyItems(st){if(st.kind==='ivkey'||st.kind==='ivmel')return st.asks.map((a,i)=>['ci'+i,1]);if(st.kind==='study')return [['solfa',3,1],['letters',1],['tempo',1],['dyn',1],['transpose',2]];
-  return st.asks.map(a=>[{tempo:'tempoV',dyn:'dynV'}[a]||a,1]);}
+function studyItems(st){if(st.kind==='ivkey'||st.kind==='ivmel')return st.asks.map((a,i)=>['ci'+i,1]);if(st.kind==='study')return [['solfa',3,1],['letters',1],['tempo',1],['dyn',1],['transpose',2],['tsSf',2,1],['tsN',2]];
+  return st.asks.map(a=>[{tempo:'tempoV',dyn:'dynV'}[a]||a,a.startsWith('ts')?2:1,a==='tsSf'?1:0]);}
 // Double sharps and flats are only asked for when the year's settings include them (Year 12, or switched on in Customise):
 // any generated question whose notes need one is made again.
 function hasDbl(q){if(!q)return false;const pts=[];const add=it=>{if(!it)return;if(it.target)pts.push(...it.target);if(it.p)pts.push(...[].concat(it.p));};(q.items||[]).forEach(add);if(q.show&&q.show.spec&&q.show.spec.items)q.show.spec.items.forEach(add);return pts.some(p=>p&&typeof p==='object'&&Math.abs(p.a||0)>=2);}
