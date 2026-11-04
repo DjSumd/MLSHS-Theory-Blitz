@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="../fonts/fonts.css?v=20261103w">
+<link rel="stylesheet" href="../fonts/fonts.css?v=20261104b">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -350,20 +350,20 @@ body.hidefb .dots .d.ok,body.hidefb .dots .d.no,body.hidefb #dots .d.ok,body.hid
 </main>
 <footer>Mount Lawley SHS · Music · Aural training for Years 7–12. Pick your year; ⚙ opens any section up to ATAR Year 12 · Space plays · 1–9 answer · ← → move</footer>
 
-<script src="glyphs.js?v=20261103w"></script>
-<script src="audio.js?v=20261103w"></script>
-<script src="samples.js?v=20261103w"></script>
-<script src="engrave.js?v=20261103w"></script>
-<script src="content.js?v=20261103w"></script>
-<script src="refs.js?v=20261103w"></script>
-<script src="embed.js?v=20261103w"></script>
-<script src="qr.js?v=20261103w"></script>
-<script src="task.js?v=20261103w"></script>
-<script src="testkit.js?v=20261103w"></script>
-<script src="blitzui.js?v=20261103w"></script>
-<script src="live.js?v=20261103w"></script>
-<script>/*blitz-check*/(function(){var S="20261103w";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261103w",P="blitz-aural-all-",APP="Aural Blitz";
+<script src="glyphs.js?v=20261104b"></script>
+<script src="audio.js?v=20261104b"></script>
+<script src="samples.js?v=20261104b"></script>
+<script src="engrave.js?v=20261104b"></script>
+<script src="content.js?v=20261104b"></script>
+<script src="refs.js?v=20261104b"></script>
+<script src="embed.js?v=20261104b"></script>
+<script src="qr.js?v=20261104b"></script>
+<script src="task.js?v=20261104b"></script>
+<script src="testkit.js?v=20261104b"></script>
+<script src="blitzui.js?v=20261104b"></script>
+<script src="live.js?v=20261104b"></script>
+<script>/*blitz-check*/(function(){var S="20261104b";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261104b",P="blitz-aural-all-",APP="Aural Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -1838,11 +1838,12 @@ function checkDis(){const q=curQ();
   else{feedback((ok?'Corrected, but the location step was wrong.':pick(MISSMSG)+' Check the red notes against the performance.'),'no',q.why);results[qid()]='no';}renderDots();}
 function answerDis(){const q=curQ();if(!(qid() in scored))scoreOnce(false);disMarks=Object.assign({},q.changes);disPhase='fix';disRewrite=null;disWork=q.played.map(n=>Object.assign({},n));renderDis(true);feedback('Answer shown.','',q.why);results[qid()]='no';renderDots();}
 
-function hasWork(){const q=curQ();if(!q)return false;if(q.kind==='pitchdict')return pd.some(Boolean);if(q.kind==='melodydict'||q.kind==='rhythmdict')return me.length>1;if(q.kind==='numerals')return rn.some((v,i)=>i>=(q.given||0)&&v);if(q.kind==='barorder')return bo.some((b,i)=>b!==q.start[i]);if(q.kind==='written'){const ta=document.getElementById('wqta');return !!(ta&&ta.value.trim());}if(q.kind==='rhythmheads')return rh.some((x,i)=>i>=q.given&&x);if(q.kind==='notate')return slots.some(x=>x&&!x.given);if(q._sf)return q._sf.got.some((g,i)=>i>=(q._sf.given||0)&&g);return false;}
+function hasWork(){const q=curQ();if(!q)return false;if(q.kind==='pitchdict')return pd.some(Boolean);if(q.kind==='melodydict'||q.kind==='rhythmdict')return me.length>1;if(q.kind==='numerals')return rn.some((v,i)=>i>=(q.given||0)&&!(q.givenMask&&q.givenMask[i])&&v);if(q.kind==='barorder')return bo.some((b,i)=>b!==q.start[i]);if(q.kind==='written'){const ta=document.getElementById('wqta');return !!(ta&&ta.value.trim());}if(q.kind==='rhythmheads')return rh.some((x,i)=>i>=q.given&&x);if(q.kind==='notate')return slots.some(x=>x&&!x.given);if(q._sf)return q._sf.got.some((g,i)=>i>=(q._sf.given||0)&&g);return false;}
 // in a test, moving on from an answer that wasn't locked in asks first (students forget to press the button)
 function lockGuard(){if(!TESTING())return false;const q=curQ();if(!q||q.kind==='embed'||q.t==='embed')return false;if(qid() in scored)return false;let w=false;try{w=hasWork();}catch(e){}if(!w)return false;
   if(!confirm("You haven't locked in your answer to this question.\n\nOK: lock it in now.\nCancel: move on without it (you can come back)."))return false;
-  const ck=document.getElementById('check');if(ck)ck.click();return !(qid() in scored);}
+  const ck=document.getElementById('check');if(ck)ck.click();if(qid() in scored)return false;
+  return !confirm("This answer isn't complete yet, so it couldn't be locked in.\n\nOK: move on without it (you can come back to it).\nCancel: stay and finish it.");}
 function lockLabel(){if(!TESTING())return;const ck=document.getElementById('check');if(ck&&!/Lock in/.test(ck.textContent))ck.textContent='🔒 Lock in my answer';}
 function goPrev(){if(mode!=='practise'||sprintOn)return;if(lockGuard())return;if(qi>0){qi--;load();}else if(ui>0&&!UNITS[ui].task){ui--;openUnit();}}
 function goNext(){if(mode!=='practise'||sprintOn)return;if(lockGuard())return;if(UNITS[ui].task){if(qi<order.length-1){qi++;load();}else if(TaskKit.isDone())showTaskFinish();else{const f=TaskKit.firstOpen();toast('Question '+(f+1)+' still needs an answer');qi=f;load();}return;}if(UNITS[ui].exam&&qi>=order.length-1){finishExam();return;}if(qi<order.length-1){qi++;load();}else if(ui<UNITS.length-1){ui++;openUnit();}}

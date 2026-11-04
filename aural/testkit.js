@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261103w";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261104b";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -34,7 +34,7 @@
     const h=e=>{const m=e.data;if(m&&m.type===want)fin(m);};addEventListener('message',h);
     if(src)f.src=src;else f.srcdoc=srcdoc;document.body.appendChild(f);setTimeout(()=>fin(new Error('timeout')),timeoutMs||20000);});};
   // ---- print document ----
-  TK.printCSS=`.wlines div{border-bottom:1px solid #000;height:8.5mm}.wkey{color:#b3261e;font-weight:700;margin:2mm 0}.wyou{border:1px solid #999;padding:2mm 3mm;min-height:10mm;white-space:pre-wrap;margin:1mm 0}
+  TK.printCSS=`.svopts{display:flex;flex-direction:column;gap:2mm;margin-top:1mm}.svo{display:flex;align-items:center;gap:3mm;break-inside:avoid}.svo .svgw svg{height:21mm;width:auto;max-width:150mm}.svo .o{display:inline-block;width:4.5mm;height:4.5mm;border:1.2px solid #000;border-radius:50%;flex:none}.svo .o.k{background:#b3261e;border-color:#b3261e}.svo:has(.o.k) .svgw{outline:1.5px solid #b3261e;outline-offset:1mm}.svo b{font-size:11pt}.wlines div{border-bottom:1px solid #000;height:8.5mm}.wkey{color:#b3261e;font-weight:700;margin:2mm 0}.wyou{border:1px solid #999;padding:2mm 3mm;min-height:10mm;white-space:pre-wrap;margin:1mm 0}
 :root{--ink:#000;--line:#000;--paper:#fff;--paper2:#f4f4f4;--rule:#999;--muted:#555;--shade:#eee;--accent:#000;--ox:#b3261e;--red:#b3261e;--green:#1d6b2d;--brass:#000;--cream:#fff}
     *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#000;background:#fff}
     @page{size:A4;margin:15mm}
@@ -190,6 +190,14 @@
         O1('ksig','Key signature',[['','Either (mixed)'],['yes','Use a key signature'],['no','No key signature: write the accidentals']],''),
         O1('mark','Also mark',[['','Nothing'],['semi','Each semitone with a slur'],['tone','Each tone with a bracket']],''),
         O1('sf','Sol-fa',[['yes','Yes'],['no','No']],'yes')]},
+    {k:'group',label:'Beaming and grouping',title:'Grouping',desc:'Quavers in a time signature. Students either beam them correctly themselves (tap between two quavers to join or split them) or choose the correctly beamed bar.',n:2,m:1,
+      opts:[O1('mode','Students',[['notate','Beam the quavers themselves'],['choice','Choose the correct bar (multiple choice)']],'notate'),
+        M('metres','Time signatures',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8'],['5/4','5/4'],['7/8','7/8']],['2/4','3/4','4/4','6/8']),
+        O1('bars','Length (when students beam it)',[['1','1 bar'],['2','2 bars']],'1')]},
+    {k:'barl',label:'Add the bar lines',title:'Bar Lines',desc:'A rhythm in a given time signature with its bar lines taken out (the final bar line stays); students tap in the bar lines. Choose the time signatures, the number of bars, and whether it starts with an anacrusis.',n:1,m:2,
+      opts:[M('metres','Time signatures',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8'],['5/4','5/4'],['7/8','7/8']],['2/4','3/4','4/4']),
+        O1('bars','Number of full bars',[['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['8','8']],'4'),
+        O1('anac','Anacrusis',[['','Sometimes'],['yes','Always start with an anacrusis'],['no','No anacrusis']],'')]},
     {k:'scaleid',label:'Name the scale',title:'Identify the Scale',desc:'Students name the scale.',n:1,m:2,opts:[]},
     {k:'chordid',label:'Name chords',title:'Chords',desc:'Students name each chord.',n:2,m:1,opts:[]},
     {k:'chordw',label:'Notate chords',title:'Notating Chords',desc:'Students write each chord.',n:2,m:1,opts:[]},
@@ -278,7 +286,7 @@
     add('T','ksid',[KEYS,MINK,CLEFS]);add('T','keymel',[KEYS]);add('T','ivname',[IVN,IVQ,IVB,CLEFS]);add('T','ivwrite',[IVN,IVQ,IVB,CLEFS]);add('T','notes',[CLEFS]);
     add('T','scale',[CLEFS]);add('T','scaleid',[SCL,CLEFS]);add('T','chordid',[CH,INV,CLEFS,KEYS]);add('T','chordw',[CH,INV,CLEFS,KEYS]);add('T','chordrn',[MINK,KEYS,CLEFS]);
     add('T','rhythm',[MET,RHY]);add('T','values',[RHY]);add('T','harm',[PRG,CAD,MINK,KEYS]);
-    const TQ=[['noteNameQ','Name notes'],['notateNoteQ','Write notes'],['enharmonicQ','Enharmonic equivalents'],['accidentalQ','Accidentals'],['tabQ','Read guitar TAB'],['timeSigQ','Time signatures'],['completeBarQ','Complete the bar'],['groupingQ','Rhythm grouping'],['valueQ','Note values'],['restQ','Rest values'],
+    const TQ=[['noteNameQ','Name notes'],['notateNoteQ','Write notes'],['enharmonicQ','Enharmonic equivalents'],['accidentalQ','Accidentals'],['tabQ','Read guitar TAB'],['timeSigQ','Time signatures'],['barlinesQ','Add the bar lines'],['groupingNotateQ','Beaming: write it'],['completeBarQ','Complete the bar'],['groupingQ','Rhythm grouping'],['valueQ','Note values'],['restQ','Rest values'],
       ['termQ','Musical terms'],['artSymbolQ','Symbols and articulations'],['ornamentQ','Ornaments'],['signRenderQ','Signs in a score'],['deviceRenderQ','Compositional devices in a score'],['formQ','Form'],
       ['keySigIdQ','Name key signatures'],['keySigWriteQ','Write key signatures'],['degreeNotateQ','Write scale degrees'],['notateScaleQ','Write a scale'],['nameScaleQ','Name the scale'],['solfaQ','Sol-fa'],['semitoneQ','Semitones in a scale'],
       ['notateIntervalQ','Write intervals'],['nameIntervalQ','Name intervals'],['notateChordQ','Write chords'],['notateChordSigQ','Write chords in a key'],['nameChordQ','Name chords'],['guitarChordQ','Guitar chord diagrams'],
@@ -313,7 +321,7 @@
     const vi=TK.blockDef('T','visual');vi.desc='A printed score with questions on what students can see. Choose the parts (or leave them for a random four), and add your own written questions about the score.';
     vi.opts.push(M('parts','Parts (leave empty for a random four)',[['key','Key of the melody'],['time','The missing time signature'],['tempo','Tempo marking'],['dyn','Dynamic marking'],['hp','Hairpin: crescendo or diminuendo'],['art','Articulation marking'],['iv','Interval marked *1'],['semi','Two notes a semitone apart']],[]),
       QS('own','Your own questions about the score (students write their answer)',[]),KEYS,MINK,CLEFS);
-    add('notes',[KEYS]);add('scale',[KEYS,CLEFS]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
+    add('notes',[KEYS]);add('scale',[KEYS,CLEFS]);add('barl',[SETM('rhythm','Rhythm vocabulary',[['basic','Whole-beat values, quaver pairs, four semiquavers'],['semis','Quaver + semiquaver mixes'],['dotted','Dotted crotchet / dotted quaver'],['syncop','Syncopation'],['qrest','Quaver rests']])]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
   })();
   // ---- tempo (BPM) for every block whose examples have a speed ----
   (function(){const BEAT='Tempo in BPM: crotchet beats (dotted crotchet in 6/8, 9/8, 12/8)';const CH='Tempo in BPM: one chord per beat';
