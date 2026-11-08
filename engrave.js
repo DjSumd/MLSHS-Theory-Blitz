@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261108d";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261108e";
 // engrave.js — SVG music engraving for ATAR Music Theory Blitz (Bravura glyphs, SMuFL metrics).
 // Durations are in units of 1/48 of a semibreve: w=48 h=24 q=12 e=6 s=3 (dotted ×1.5, triplet ×2/3).
 const E=(()=>{
@@ -156,7 +156,8 @@ function render(spec,opts){opts=opts||{};PAPER=!!spec.paper;const L=prepare(spec
 function drawNoteCol(S,L,c,ink,opts,beams){const {clef}=L;const col=c.col||ink;const dur=c.dur;
   if(c.k==='slot'&&(!c.p.length)&&!PAPER){ // placeholder (+ ghost of the rhythm value when the slot carries one)
     const g0=TOP-SS*0.6,g1=TOP+4*SS+SS*0.6;
-    S.push(line(c.x+c.hw/2,g0,c.x+c.hw/2,g1,1,'#cfd4da'));
+    if(c.cur)S.push(`<rect class="curband" x="${(c.x+c.hw/2-SS*0.9).toFixed(1)}" y="${(g0-SS*0.3).toFixed(1)}" width="${(SS*1.8).toFixed(1)}" height="${(g1-g0+SS*0.6).toFixed(1)}" rx="${(SS*0.4).toFixed(1)}" fill="rgba(28,176,246,.13)"/>`);
+    S.push(line(c.x+c.hw/2,g0,c.x+c.hw/2,g1,c.cur?2:1,c.cur?'#1cb0f6':'#cfd4da'));
     S.push(`<text x="${(c.x+c.hw/2).toFixed(1)}" y="${(L.H-SS*0.35).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.7).toFixed(1)}" font-weight="700" fill="#aab0b8">${c.slotNo!==undefined?c.slotNo:c.slot+1}</text>`);
     if(c.dur&&c.dur!=='w'){const gc='#c3c8cf';const hn2=headName(c.dur);S.push(glyph(hn2,c.x,MID,gc));const sx=c.x+c.hw-0.6;S.push(line(sx,MID,sx,MID-SS*3.2,1.2,gc));
       if(c.dur==='e'||c.dur==='s')S.push(glyph((c.dur==='e'?'flag8th':'flag16th')+'Up',sx-0.6,MID-SS*3.2,gc));if(c.dots)S.push(glyph('dot',c.x+c.hw+SS*0.3,MID-SS*0.5,gc));}

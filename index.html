@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261108d">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261108e">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -330,20 +330,20 @@ body.embtest .tsthead{display:none}
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261108d"></script>
-<script src="aural/samples.js?v=20261108d"></script>
-<script src="glyphs.js?v=20261108d"></script>
-<script src="theory.js?v=20261108d"></script>
-<script src="engrave.js?v=20261108d"></script>
-<script src="gen.js?v=20261108d"></script>
-<script src="refs.js?v=20261108d"></script>
-<script src="embed.js?v=20261108d"></script>
-<script src="qr.js?v=20261108d"></script>
-<script src="task.js?v=20261108d"></script>
-<script src="testkit.js?v=20261108d"></script>
-<script src="blitzui.js?v=20261108d"></script>
-<script>/*blitz-check*/(function(){var S="20261108d";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261108d",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261108e"></script>
+<script src="aural/samples.js?v=20261108e"></script>
+<script src="glyphs.js?v=20261108e"></script>
+<script src="theory.js?v=20261108e"></script>
+<script src="engrave.js?v=20261108e"></script>
+<script src="gen.js?v=20261108e"></script>
+<script src="refs.js?v=20261108e"></script>
+<script src="embed.js?v=20261108e"></script>
+<script src="qr.js?v=20261108e"></script>
+<script src="task.js?v=20261108e"></script>
+<script src="testkit.js?v=20261108e"></script>
+<script src="blitzui.js?v=20261108e"></script>
+<script>/*blitz-check*/(function(){var S="20261108e";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261108e",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -693,7 +693,7 @@ const pick=a=>a[(Math.random()*a.length)|0];
 const LS={get(k,d){try{const v=localStorage.getItem(APP+'_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(APP+'_'+k,JSON.stringify(v));}catch(e){}}};
 // ---------- state ----------
 let mode='practise',ui=0,qi=0,SETQ=[],SETN=LS.get('setn',12);
-let accMode='',eraseMode=false,selected=null,ksBuilt=0,nchecked=false,answered=false;
+let accPick=false,accMode='',eraseMode=false,selected=null,ksBuilt=0,nchecked=false,answered=false;
 const results={},scored={},uStat={},unitDone={};
 let total=0,correct=0,streak=0,level=1,LOG=LS.get('log',[]),BEST=LS.get('best',{}),currentName=LS.get('name','');
 // settings restore
@@ -1041,7 +1041,7 @@ function load(){document.body.classList.toggle('testing',TESTING());document.bod
     showEmbed('E'+EMBKEY,`<div class="qnum">Exam practice · Section One · Part A: Aural</div>${examBar(q)}<p class="sub">Seven aural questions (${q._exam.m} marks). Work through them below. Your answers are kept as you go and marked when you finish the paper.${embedRes.A?' <b>Finished: '+embedRes.A.tot+' / '+embedRes.A.max+'</b>':''}</p>
     `,`<div class="pfoot">End of Part A</div><div class="nav"><button id="prev" disabled>‹ Prev</button><span class="pos">${qi+1} / ${SETQ.length}</span><button id="next">Part B ›</button></div>`,src,src?'':EMBED_DOC.partA.replace('<head>','<head><script>window.__EMBED="partA";window.__EMBED_YEAR='+LEVEL()+';<\/script>'));return;}
   document.documentElement.style.setProperty('--accent',UCOL[ui%UCOL.length]);
-  accMode='';eraseMode=false;selected=null;nchecked=q._checked||false;answered=false;ksBuilt=q._ks||0;renderTabs();renderDots();
+  accMode='';accPick=false;eraseMode=false;selected=null;nchecked=q._checked||false;answered=false;ksBuilt=q._ks||0;renderTabs();renderDots();
   const c=document.getElementById('card');
   const FU=fromUnit(q);const bar=UNITS[ui].exam?examBar(q):sprintOn?`<div class="sprintbar"><span><span class="sp">Sprint</span> ${esc(FU.name)}</span><span class="clock" id="sprintclock">60s</span><span id="sprintscore">${sprintCor} ✓</span></div>`:h2h?h2hBar():'';
   const head=`<div class="qnum">${UNITS[ui].exam?'Exam practice · Section One · Part B':esc(UNITS[ui].name)+(UNITS[ui].special?' · '+esc(FU.name):'')+' · '+(sprintOn?'Question '+(sprintN+1):h2h?esc(h2h.names[h2h.turn])+"'s turn":'Q'+(qi+1)+' of '+SETQ.length)} · Year ${LEVEL()}</div>${bar}<p class="prompt">${q.prompt}</p>${q.sub?`<p class="sub">${q.sub.charAt(0).toUpperCase()+q.sub.slice(1)}</p>`:''}${sprintOn?'':`<button class="howbtn" id="howbtn">💡 How do I work this out?</button><button class="howbtn" id="gearbtn">⚙ Customise</button>`}${q.show&&q.show.spec&&!UNITS[ui].exam?`<button class="hearbtn" id="hearshown">🔊 Hear it</button>`:''}`;
@@ -1049,10 +1049,10 @@ function load(){document.body.classList.toggle('testing',TESTING());document.bod
   let body='';
   if(q.t==='notate'){q.items.forEach(it=>{if(it.k==='slot'){if(it.given){it.p=it.p||[];}else if(!it._p)it._p=[];}});
     const needsKs=!!q.keysigEdit;
-    body=showHtml+`<div class="toolbar"${q.sfOnly?' style="display:none"':''}><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${(GEN.getSet().dbl||(GEN.hasDbl&&GEN.hasDbl(q)))&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove an accidental':'Remove a note'}">⌫ erase</button></div>
+    body=showHtml+`<div class="toolbar"${q.sfOnly?' style="display:none"':''}><span class="lab">${q.ksPlace?'Place':'Accidental'}</span><div class="acc" id="acc">${q.ksPlace?'':'<button data-acc="" title="No accidental">○</button>'}<button data-acc="s">♯</button><button data-acc="f">♭</button>${q.ksPlace?'':'<button data-acc="n">♮</button>'}${(GEN.getSet().dbl||(GEN.hasDbl&&GEN.hasDbl(q)))&&!q.ksPlace?'<button data-acc="x">𝄪</button><button data-acc="ff">𝄫</button>':''}<button class="erase" data-acc="erase" title="${q.ksPlace?'Remove the last accidental':'Remove the last note (or the selected one)'}">⌫ erase</button></div>
       ${needsKs?`<span class="lab">Key signature</span><div class="ksb"><button id="ksflat">♭</button><span class="ksv" id="ksv"></span><button id="kssharp">♯</button></div>`:''}</div>
       <div class="staveWrap" id="sw"${q.sfOnly?' style="display:none"':''}></div>${q.pairMark?'<div class="solfarow pmrow" id="pmrow"></div>':''}${q.solfa&&sfOK(q)?'<div class="solfarow" id="solfarow"></div>':''}
-      <p class="hint"${q.sfOnly?' style="display:none"':''}>${q.solfa&&sfOK(q)?'Then name each degree in sol-fa in the boxes. ':''}${q.ksPlace?'Tap ♯ or ♭, then tap the stave where the next accidental goes: it is added at the next position, on the line or space you tap. ⌫ erase then tap an accidental to remove it. Keys: # b, Backspace removes the last.':q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it); ⌫ erase then tap a note to remove it. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Tap a placed note to select it (change its accidental, or drag it). Keys: # b n 0, Backspace.'}</p>
+      <p class="hint"${q.sfOnly?' style="display:none"':''}>${q.solfa&&sfOK(q)?'Then name each degree in sol-fa in the boxes. ':''}${q.ksPlace?'Tap ♯ or ♭, then tap the stave where the next accidental goes: it is added at the next position, on the line or space you tap. ⌫ erase removes the last one. Keys: # b, Backspace.':q.items.some(i=>i.chord)?'Pick an accidental, then tap in a column to add a note. Tap a note to select it (change its accidental, or drag it). ⌫ erase removes the selected note, or the last note you wrote. The accidental goes back to ○ after each note. Keys: # b n 0, Backspace.':'Pick an accidental, then tap a line or space to place each note. Each note goes in the next space (the blue column), and the accidental goes back to ○ after each note. Tap a placed note to select it (change its accidental, or drag it). ⌫ erase removes the selected note, or the last note you wrote. Keys: # b n 0, Backspace.'}</p>
       <div class="names" id="names"></div>
       <div class="controls"><button class="btn-check" id="check">Check</button>${UNITS[ui].exam||q.ksPlace?'':'<button class="btn-ghost" id="hearme">🎧 Play my answer</button><button class="btn-ghost" id="hearans" title="Available after Check or Show answer">🔊 Hear the answer</button>'}<button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
   } else if(q.t==='beam'){body=`<div class="staveWrap" id="bjw"></div><p class="hint">Tap between two quavers to join them with a beam; tap again to split them. The small marks under the stave show where you can tap.</p>
@@ -1127,8 +1127,8 @@ function wire(q){setTimeout(lockLabel,0);document.getElementById('prev').onclick
   const hm=document.getElementById('hearme');if(hm)hm.onclick=()=>hearMine(q,hm);const ha=document.getElementById('hearans');if(ha){ha.disabled=!(nchecked||q._reveal);ha.onclick=()=>hearAnswer(q,ha);}
   if(q.t==='written'){const ck=document.getElementById('check');if(ck&&!ck.disabled)ck.onclick=checkWrittenT;if(qid() in scored&&q._text)feedback('Answer saved. Your teacher marks this one.','',q.answer&&!HIDEFB()?'Model answer: '+esc(q.answer):'');}
   if(q.t==='notate'){document.querySelectorAll('#acc button').forEach(b=>{b.onclick=()=>{const a=b.dataset.acc;
-      if(a==='erase'){eraseMode=!eraseMode;accMode='';syncAcc();return;}eraseMode=false;accMode=a;
-      if(selected){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];if(p){applyAcc(p,a);nchecked=false;feedback('','');drawStave();}}syncAcc();};});
+      if(a==='erase'){eraseLast(q);return;}eraseMode=false;accMode=a;
+      if(selected&&!q.ksPlace){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];if(p){applyAcc(p,a);nchecked=false;feedback('','');}selected=null;accMode='';accPick=false;drawStave();}else accPick=true;syncAcc();};});
     syncAcc();
     if(q.keysigEdit){document.getElementById('kssharp').onclick=()=>{ksBuilt=Math.min(7,ksBuilt+1);nchecked=false;feedback('','');drawStave();};document.getElementById('ksflat').onclick=()=>{ksBuilt=Math.max(-7,ksBuilt-1);nchecked=false;feedback('','');drawStave();};}
     document.getElementById('check').onclick=checkNotate;document.getElementById('clear').onclick=()=>{q.items.forEach(it=>{if(it.k==='slot'&&!it.given){it._p=[];}});q._reveal=false;q._ksp=[];q._pm=[];if(q._pmS)q._pmS.checked=false;if(q.solfa&&sfOK(q)){sfReset(q);sfInit(q,q.solfa,q.sfPal||[...new Set(q.solfa)],q.sfOnly?0:1);sfRender(q);}ksBuilt=q.keysigEdit?0:ksBuilt;nchecked=false;selected=null;feedback('','');drawStave();const ha=document.getElementById('hearans');if(ha)ha.disabled=true;};
@@ -1142,13 +1142,23 @@ let STV=null;
 const slotItem=(q,i)=>q.items.find(it=>it.k==='slot'&&it.slot===i);
 function curSig(q){return q.keysigEdit?ksBuilt:(q.sig||0);}
 function drawStave(){drawStave0();const q=curQ();if(q&&q._sf&&document.getElementById('solfarow'))sfRender(q);}
+// the next column to fill: notes go in order, so a tap on the stave writes the next note
+function nextSlot(q){if(!q||!q.items||q._reveal)return null;return q.items.find(it=>it.k==='slot'&&!it.given&&!it.chord&&!(it._p&&it._p.length))||null;}
+// ⌫ erase: the selected note if one is selected, otherwise the last note written
+function eraseLast(q){if(q._reveal)return;
+  if(q.ksPlace){if(q._ksp&&q._ksp.length)q._ksp.pop();nchecked=false;feedback('','');drawStave();return;}
+  const slots=q.items.filter(it=>it.k==='slot'&&!it.given&&it._p);
+  if(selected){const s=slotItem(q,selected.i);if(s&&s._p){const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];if(p)s._p.splice(s._p.indexOf(p),1);}selected=null;}
+  else{let done=false;const H=q._hist||[];while(H.length&&!done){const p=H.pop();const s=slots.find(x=>x._p.includes(p));if(s){s._p.splice(s._p.indexOf(p),1);done=true;}}
+    if(!done){const s=slots.slice().reverse().find(x=>x._p.length);if(s)s._p.pop();}}
+  accMode='';syncAcc();nchecked=false;feedback('','');drawStave();}
 function drawStave0(){const q=curQ();const sig=curSig(q);
   const items=q.items.map((it,idx)=>{if(it.k==='ksig'){const t=ksTarget(q);const accs=q._reveal?t.map(a=>Object.assign({},a,{col:'var(--ox)'})):(q._ksp||[]).map((a,i)=>Object.assign({},a,{col:nchecked?(t[i]&&t[i].d===a.d&&t[i].a===a.a?'var(--green)':'var(--red)'):undefined}));return Object.assign({},it,{accs});}
     if(it.k!=='slot')return Object.assign({},it);
     const s=Object.assign({},it);
     if(it.given){s.p=it.p;s.col='#9a9284';s.explicit=false;}
     else if(q._reveal){s.p=it.target;s.col='var(--ox)';s.explicit=false;s.reveal=true;}
-    else{s.p=it._p.map(p=>Object.assign({},p));s.explicit=true;if(nchecked){s.col=it._ok?'var(--green)':'var(--red)';}}
+    else{s.p=it._p.map(p=>Object.assign({},p));s.explicit=true;if(nchecked){s.col=it._ok?'var(--green)':'var(--red)';}else if(it===nextSlot(q))s.cur=true;}
     if(q.pairMark){const want=q.pairs||[],mine=q._pm||[];const ty=q.pairMark==='semi'?'sl':'br';
       if(q._reveal){if(want.includes(it.slot)){s.pm=ty;s.pmCol='var(--ox)';}}
       else if(mine.includes(it.slot)){s.pm=ty;if(nchecked)s.pmCol=want.includes(it.slot)?'var(--green)':'var(--red)';}
@@ -1180,21 +1190,22 @@ function onDown(ev){const q=curQ();if(q._reveal)return;const svg=document.getEle
     const pt=svgPoint(ev,svg);const d=pitchAtY(pt.y,q.clef);const pos=+kh.dataset.pos;const a={d,a:accMode==='s'?1:-1};
     if(pos<q._ksp.length)q._ksp[pos]=a;else q._ksp.push(a);
     nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}
-  const nh=ev.target.closest('.nh');const hit=ev.target.closest('.hit');
+  const nh=ev.target.closest('.nh')||[...document.querySelectorAll('#stave .nh')].find(e=>{const r=e.getBoundingClientRect();return ev.clientX>=r.left-3&&ev.clientX<=r.right+3&&ev.clientY>=r.top-2&&ev.clientY<=r.bottom+2;});const hit=ev.target.closest('.hit');
   if(nh&&!eraseMode){const s0=slotItem(q,+nh.dataset.i);if(s0&&!s0.given&&s0.chord){const pt0=svgPoint(ev,svg);const d0=pitchAtY(pt0.y,q.clef);
-      if(d0!==+nh.dataset.d&&!s0._p.some(p=>T.dia(p)===d0)&&s0._p.length<(s0.max||4)){const p={l:T.LETTERS[((d0%7)+7)%7],a:0,o:Math.floor(d0/7)};applyAcc(p,accMode);s0._p.push(p);drag={i:s0.slot,p};selected=null;nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}}}
+      if(d0!==+nh.dataset.d&&!s0._p.some(p=>T.dia(p)===d0)&&s0._p.length<(s0.max||4)){const p={l:T.LETTERS[((d0%7)+7)%7],a:0,o:Math.floor(d0/7)};applyAcc(p,accPick?accMode:'');s0._p.push(p);(q._hist=q._hist||[]).push(p);accMode='';accPick=false;syncAcc();drag={i:s0.slot,p};selected=null;nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}}}
   if(nh){const i=+nh.dataset.i,ni=+nh.dataset.n;const s=slotItem(q,i);if(!s||s.given)return;
     const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[ni];const realIdx=s._p.indexOf(p);
     if(eraseMode){s._p.splice(realIdx,1);selected=null;nchecked=false;feedback('','');drawStave();return;}
     selected={i,n:ni};drag={i,p};accMode=p.showNat?'n':{'0':'','1':'s','-1':'f','2':'x','-2':'ff'}[p.a];syncAcc();nchecked=false;feedback('','');drawStave();ev.preventDefault();return;}
-  if(!hit)return;const i=+hit.dataset.i;const s=slotItem(q,i);if(!s||s.given)return;
-  if(eraseMode)return;
+  let s=hit?slotItem(q,+hit.dataset.i):null;if(s&&s.given)s=null;
+  if(!s||!s.chord){const nx=nextSlot(q);if(nx)s=nx;else if(!s){if(hit||q.items.some(it=>it.k==='slot'&&!it.given&&!it.chord))toast('Every note is written. Tap a note to change it, or ⌫ erase.');return;}}
+  const i=s.slot;
   const pt=svgPoint(ev,svg);const d=pitchAtY(pt.y,q.clef);
   const max=s.chord?(s.max||4):1;
   if(!s.chord&&s._p.length){const p=s._p[0];p.l=T.LETTERS[((d%7)+7)%7];p.o=Math.floor(d/7);drag={i,p};selected={i,n:0};}
   else{if(s._p.length>=max){toast('That column is full ('+max+' notes). Use ⌫ erase to remove one.');return;}
     if(s._p.some(p=>T.dia(p)===d)){return;}
-    const p={l:T.LETTERS[((d%7)+7)%7],a:0,o:Math.floor(d/7)};applyAcc(p,accMode);s._p.push(p);drag={i,p};selected=null;}
+    const p={l:T.LETTERS[((d%7)+7)%7],a:0,o:Math.floor(d/7)};applyAcc(p,accPick?accMode:'');s._p.push(p);(q._hist=q._hist||[]).push(p);drag={i,p};selected=null;accMode='';accPick=false;syncAcc();}
   nchecked=false;feedback('','');drawStave();ev.preventDefault();}
 addEventListener('pointermove',ev=>{if(!drag)return;const svg=document.getElementById('stave');if(!svg)return;const q=curQ();const pt=svgPoint(ev,svg);const d=pitchAtY(pt.y,q.clef);const p=drag.p;
   if(T.dia(p)!==d){const s=slotItem(q,drag.i);if(s.chord&&s._p.some(x=>x!==p&&T.dia(x)===d))return;p.l=T.LETTERS[((d%7)+7)%7];p.o=Math.floor(d/7);
@@ -1246,7 +1257,7 @@ addEventListener('keydown',e=>{if(document.body.classList.contains('home')||mode
   if(e.key==='ArrowRight'){goNext();e.preventDefault();return;}if(e.key==='ArrowLeft'){goPrev();e.preventDefault();return;}
   if(q.t==='choice'&&/^[1-9]$/.test(e.key)){const b=document.querySelectorAll('#opts button')[+e.key-1];if(b&&!b.disabled)b.click();}
   if(e.key==='Enter'&&q.t!=='choice'){const ch=document.getElementById('check');if(ch){ch.click();e.preventDefault();}}
-  if(q.t==='notate'){const map={'#':'s','s':'s','b':'f','f':'f','n':'n','0':''};if(e.key in map){const b=document.querySelector(`#acc button[data-acc="${map[e.key]}"]`);if(b)b.click();}if((e.key==='Backspace'||e.key==='Delete')&&q.ksPlace){if(q._ksp&&q._ksp.length){q._ksp.pop();nchecked=false;drawStave();}e.preventDefault();return;}if(e.key==='Backspace'||e.key==='Delete'){if(selected){const s=slotItem(q,selected.i);const sorted=s._p.slice().sort((a,b)=>T.dia(a)-T.dia(b));const p=sorted[selected.n];s._p.splice(s._p.indexOf(p),1);selected=null;nchecked=false;drawStave();e.preventDefault();}}}});
+  if(q.t==='notate'){const map={'#':'s','s':'s','b':'f','f':'f','n':'n','0':''};if(e.key in map){const b=document.querySelector(`#acc button[data-acc="${map[e.key]}"]`);if(b)b.click();}if(e.key==='Backspace'||e.key==='Delete'){eraseLast(q);e.preventDefault();return;}}});
 // ---------- header controls ----------
 document.getElementById('mPr').onclick=()=>setMode('practise');document.getElementById('mRe').onclick=()=>setMode('reference');document.getElementById('mRec').onclick=()=>setMode('record');
 (function(){const ni=document.getElementById('nameinput');ni.value=currentName;ni.oninput=()=>{currentName=ni.value.trim();LS.set('name',currentName);loadProfile();paintScore();if(mode==='practise')renderTabs();};})();
