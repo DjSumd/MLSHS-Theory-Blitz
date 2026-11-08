@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261107k";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -27,7 +27,7 @@
   TK.sectionHead=(name,marks)=>`<div class="tstsec"><span>${name} SECTION</span><span>/${marks}</span></div>`;
   // o = {a: aural marks, ag: aural got|null, t: theory marks, tg: theory got|null}
   TK.totalLine=o=>{const f=v=>v===null||v===undefined?'':v;const tot=(o.ag==null||o.tg==null)?(o.ag!=null&&!o.t?o.ag:(o.tg!=null&&!o.a?o.tg:null)):Math.round((o.ag+o.tg)*2)/2;
-    return `<div class="tsttot"><span>TOTAL MARK</span>${o.a?`<span>AURAL</span><span>${f(o.ag)}/${o.a}</span>`:''}${o.t?`<span>THEORY</span><span>${f(o.tg)}/${o.t}</span>`:''}<span>${f(tot)}/${(o.a||0)+(o.t||0)}</span></div>`;};
+    return `<div class="tsttot"><span class="tl">TOTAL MARK</span>${o.a?`<span class="tp"><span>AURAL</span><span>${f(o.ag)}/${o.a}</span></span>`:''}${o.t?`<span class="tp"><span>THEORY</span><span>${f(o.tg)}/${o.t}</span></span>`:''}<span class="tg">${f(tot)}/${(o.a||0)+(o.t||0)}</span></div>`;};
   // ---- the companion app's section as HTML (hidden iframe) ----
   TK.request=function(src,srcdoc,want,timeoutMs){return new Promise((res,rej)=>{const f=document.createElement('iframe');f.style.cssText='position:fixed;left:-3000px;top:0;width:1000px;height:1200px;opacity:0;pointer-events:none';
     let done=false;const fin=v=>{if(done)return;done=true;removeEventListener('message',h);setTimeout(()=>f.remove(),50);v instanceof Error?rej(v):res(v);};
@@ -52,7 +52,7 @@
     .opts.cols{display:grid;grid-template-columns:repeat(2,minmax(40mm,max-content));gap:1.5mm 16mm}
     .qtext{margin:1mm 0 1.5mm;font-size:10.5pt}.note{font-size:9.5pt;color:#444;font-style:italic}
     .boxes{display:flex;gap:3mm;flex-wrap:wrap}.boxes .b{border:1px solid #000;min-width:16mm;height:10mm;display:flex;align-items:center;justify-content:center;font-weight:700}.boxes .b.k{color:#b3261e}.boxes .b.g{color:#555;background:#eee}.pr{font-size:9.5pt;margin-top:2mm}.pr .ans{min-width:20mm}.barset{display:flex;flex-wrap:wrap;gap:3mm}.barset .bcell{flex:1 1 40mm;max-width:calc(50% - 2mm);border:1px solid #000;padding:1mm 2mm}.barset svg{max-width:100%;height:auto}.boxes.sf{gap:2mm}.boxes.sf .b{min-width:12mm;height:8mm;font-weight:400;font-style:italic}.boxes.sf .b.k{font-weight:700}
-    .tsttot{display:flex;gap:10mm;font-weight:700;margin:8mm 0 0;font-size:11.5pt;break-before:avoid;page-break-before:avoid;break-inside:avoid}.endnote{break-before:avoid;page-break-before:avoid}
+    .tsttot{display:flex;gap:10mm;font-weight:700;margin:8mm 0 0;font-size:11.5pt;break-before:avoid;page-break-before:avoid;break-inside:avoid}.tsttot .tp{display:inline-flex;gap:10mm}.endnote{break-before:avoid;page-break-before:avoid}
     .keyban{border:2px solid #b3261e;color:#b3261e;font-weight:700;padding:2mm 4mm;margin:0 0 4mm;display:inline-block}
     .tracks{font-size:10pt;margin:2mm 0 0;color:#333}
     .cell.half svg{max-width:100%;max-height:34mm;width:auto}
@@ -100,7 +100,7 @@
   .tstq{display:flex;justify-content:space-between;gap:12px;margin:4px 0 8px;font-size:14px;line-height:1.45}.tstq .mk{font-weight:700;white-space:nowrap}
   .tstsub{font-weight:700;font-size:14px;margin:2px 0 6px}
   .tstpos{display:flex;justify-content:flex-end;font-size:12px;color:#555;margin:-6px 0 6px}
-  .tsttot{display:flex;gap:28px;flex-wrap:wrap;font-weight:700;margin:16px 0 6px;font-size:15px}
+  .tsttot{display:flex;gap:28px;flex-wrap:wrap;font-weight:700;margin:16px 0 6px;font-size:15px}.tsttot .tp{display:inline-flex;gap:28px}@media (max-width:520px){.tsttot{display:grid;grid-template-columns:1fr auto;gap:4px 12px}.tsttot .tl{grid-row:1;grid-column:1}.tsttot .tg{grid-row:1;grid-column:2}.tsttot .tp{display:contents}}
   .tstname{margin:10px 0 14px;font-size:14px}.tstname span{display:inline-block;border-bottom:1px solid #000;min-width:60%;margin-left:6px;font-weight:700}
   .tstcover .controls{margin-top:14px}.tstcover table{border-collapse:collapse;margin:8px 0 12px;font-size:13.5px}.tstcover td,.tstcover th{border:1px solid #000;padding:6px 14px;text-align:left}
   .tstcover .codebox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.tstcover .codebox input{padding:7px 10px;border:1px solid #000;font-family:ui-monospace,Consolas,monospace;font-size:14px;width:160px;text-transform:uppercase}

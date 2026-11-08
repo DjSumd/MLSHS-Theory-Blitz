@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261107k";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -328,14 +328,14 @@
     systems.forEach((sy,si)=>{ const avail=W-sy.left-rightPad; const full=(systems[0].beat1-systems[0].beat0); const shortLast=(si===systems.length-1&&systems.length>1&&(sy.beat1-sy.beat0)<full*0.6);
       sy.scale=shortLast?Math.max(1,sy.target/sy.nat):avail/sy.nat; sy.mapX=rx=>sy.left+(rx-sy.rawX0)*sy.scale; sy.endX=sy.mapX(sy.rawX1); });
     const sysOfBeat=beat=>{for(let i=0;i<systems.length;i++){if(beat<systems[i].beat1-1e-6||i===systems.length-1)return i;}return systems.length-1;};
-    const sysH=(spec.rhythmOnly?9.5:11.5)*SS;
+    const sysH=(spec.rhythmOnly?9.5:11.5)*SS+(spec.sfBand?SS*3.4:0);
     const E=[]; let minY=1e9,maxY=-1e9; const track=y=>{if(y<minY)minY=y;if(y>maxY)maxY=y;};
     const rx=SS*0.62, ry=SS*0.44, stemLen=SS*3.4, beamT=SS*0.48;
     const xs=[], sysOf=[], ys=[], upOf=[];
     // ---- per-system furniture ----
     systems.forEach((sy,si)=>{ const oy=si*sysH;
       (spec.rhythmOnly?[2]:[0,1,2,3,4]).forEach(k=>{const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);});
-      track(oy+TOPK*SS-SS*2.6); track(oy+TOPK*SS+4*SS+SS*2.6);
+      track(oy+TOPK*SS-SS*2.6); track(oy+TOPK*SS+4*SS+SS*2.6);if(spec.sfBand)track(oy+TOPK*SS+4*SS+SS*5.3);
       if(spec.rhythmOnly){const px=SS*0.5+cd.clefW*SS*0.5,py=oy+TOPK*SS+SS;E.push(`<rect x="${(px-SS*0.55).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/><rect x="${(px+SS*0.17).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/>`);}
       else E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
       let kx=SS*0.5+cd.clefW*SS+SS*0.5; const pos=KS_POS[spec.clef==='bass'?'bass':'treble'][ks>0?'s':'f'];
@@ -475,7 +475,7 @@
     }
     const pad=SS*0.5, y0=minY-pad, vh=(maxY-minY)+pad*2;
     const svg=`<svg class="score" id="score" viewBox="0 ${y0.toFixed(1)} ${W.toFixed(1)} ${vh.toFixed(1)}" width="${W.toFixed(0)}" preserveAspectRatio="xMidYMid meet" style="touch-action:none;max-width:${(W*1.5).toFixed(0)}px" xmlns="http://www.w3.org/2000/svg">${E.join('')}</svg>`;
-    return {svg,xs,ys,sysOf,W,top,y0,vh,sysH,nSys:systems.length,midi:res.midi,shown:res.shown,cursorSys,order:notes};
+    return {svg,xs,ys,sysOf,W,top,y0,vh,sysH,sfBandY:spec.sfBand?systems.map((s,si)=>si*sysH+TOPK*SS+4*SS+SS*2.8):null,sfBandH:SS*2.4,nSys:systems.length,midi:res.midi,shown:res.shown,cursorSys,order:notes};
   }
   // map a pointer event on the score svg to {sys, d, x}
   function hitTest(meta,svg,ev){const r=svg.getBoundingClientRect();const vy=meta.y0+(ev.clientY-r.top)/r.height*meta.vh, vx=(ev.clientX-r.left)/r.width*meta.W;

@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261107k";
 // engrave.js — SVG music engraving for ATAR Music Theory Blitz (Bravura glyphs, SMuFL metrics).
 // Durations are in units of 1/48 of a semibreve: w=48 h=24 q=12 e=6 s=3 (dotted ×1.5, triplet ×2/3).
 const E=(()=>{
@@ -170,7 +170,7 @@ function drawNoteCol(S,L,c,ink,opts,beams){const {clef}=L;const col=c.col||ink;c
   c.p.forEach((p,i)=>{const a=c.accs[i];if(a===null||a===undefined)return;const gn=ACCG[a];const colx=c.x-(c.accCols[i]+1)*(gw('sharp')+SS*0.15)-SS*0.05+(c.shift.some(s=>s<0)?-hw:0);
     S.push(glyph(gn,colx,yOf(clef,T.dia(p)),col));});
   // heads
-  c.p.forEach((p,i)=>{const y=yOf(clef,T.dia(p));const gname=p.x?'noteheadX':hn;S.push(glyph(gname,c.x+c.shift[i]*hw,y,col,c.k==='slot'?` class="nh" data-i="${c.slot}" data-n="${i}" data-d="${T.dia(p)}"`:''));
+  c.p.forEach((p,i)=>{const y=yOf(clef,T.dia(p));const gname=p.x?'noteheadX':hn;S.push(glyph(gname,c.x+c.shift[i]*hw,y,col,c.k==='slot'?` class="nh" data-i="${c.slot}" data-n="${i}" data-d="${T.dia(p)}"`:c.k==='n'?` class="nn" data-n="${i}" data-d="${T.dia(p)}"`:''));
     if(c.dots){const dy=(T.dia(p)-CLEF[clef].topDia)%2===0?-SS*0.5:0;S.push(glyph('dot',c.x+hw+SS*0.3+(c.shift[i]>0?hw:0),y+dy,col));}});
   // stem
   if(dur!=='w'){const lo=yOf(clef,T.dia(c.p[0])),hi=yOf(clef,T.dia(c.p[c.p.length-1]));const sx=c.stemUp?c.x+hw-0.6:c.x+0.6;

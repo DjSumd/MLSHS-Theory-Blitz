@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261107k";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -413,7 +413,7 @@ function melodySolfaQ(depth){depth=depth||0;const y=UPTO();const types=(S('msTyp
   const pal=minor?(type==='harmminor'?['la','ti','do','re','mi','fa','so','si']:SOLFA_MIN):SOLFA_MAJ;const tw=minor?name(key.tonic)+' = la':name(key.tonic)+' = do';
   const kn=name(key.tonic)+' '+(minor?(type==='harmminor'?'harmonic minor':'natural minor'):'major');
   return {t:'notate',prompt:'Write the sol-fa under each note of this melody in '+kn+' ('+tw+').',sub:'One box for each note, in order.'+(type==='harmminor'?' The raised 7th is si.':''),clef,sig,time:METRE(ts),items,barNums:nb>2,
-    show:show(stave(clef,sig,METRE(ts),items,{barNums:nb>2})),_sharedShow:true,sfOnly:true,solfa:ans,sfPal:pal,why:kn+': '+ns.map((it,i)=>name(it.p[0])+' = '+ans[i]).join(', ')+'.'};}
+    show:show(stave(clef,sig,METRE(ts),items,{barNums:nb>2})),_sharedShow:true,sfOnly:true,sfNotes:ns,solfa:ans,sfPal:pal,why:kn+': '+ns.map((it,i)=>name(it.p[0])+' = '+ans[i]).join(', ')+'.'};}
 function solfaQ(){const type=pick(solfaTypesOn());const t=scaleTonic(type);const notes=T.scale(t,type).slice(0,-1);const syl=SOLFA_TYPES[type];const i=rand(notes.length);
   const nm=T.scaleName(t,type);const minorNote=/min/.test(type)?' (la-based minor: la = '+name(t)+')':'';const why=nm+' in sol-fa: '+notes.map((p,k)=>name(p)+' = '+syl[k]).join(', ')+'.';
   if(Math.random()<0.5)return choice('In '+nm+', which note is sung as "'+syl[i]+'"?',optsFrom(name(notes[i]),notes.map(name),4),name(notes[i]),{sub:'Moveable do'+minorNote+'.',why});
@@ -881,12 +881,12 @@ function tsSyl(p,st){const k=st.key;const doP=k.mode==='minor'?T.transposeUp(k.t
   let d0=dia(P(doP.l,doP.a,last.p[0].o));if(k.mode==='minor'){if(d0<dia(last.p[0]))d0+=7;}else if(d0>dia(last.p[0]))d0-=7;const s=stSyl(p,k);const dp=dia(p);return s+(dp<d0?',':dp>=d0+7?'′':'');}
 function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2),st);const k=st.key,I=st.info,b=st.bars;const sh=show(stStave(st));const base={_sharedShow:true};
   if(part==='tsSf'){const ts=toneSet(st);const ans=ts.map(p=>tsSyl(p,st));const basic=k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ;const pal=[...new Set(basic.concat(ans))].sort((a,b2)=>{const ix=x=>SOLFA_MAJ.indexOf(x.replace(/[,′]/,''));const oc=x=>x.endsWith(',')?-1:x.endsWith('′')?1:0;return oc(a)-oc(b2)||ix(a)-ix(b2);});
-    return Object.assign(base,{t:'notate',prompt:'Write the tone set of this melody in sol-fa: every pitch once, from the lowest to the highest.',sub:'Mark the octaves: a comma for notes below do (l, s,), a dash for notes above the next do (d′ r′).',clef:st.clef,sig:k.sig,time:METRE(st.ts),items:stStave(st).items,show:sh,sfOnly:true,noPaperStave:true,solfa:ans,sfPal:pal,why:'Tone set: '+ans.join(' ')+' ('+ts.map(name).join(' ')+').'});}
+    return Object.assign(base,{t:'notate',prompt:'Write the tone set of this melody in sol-fa: every pitch once, from the lowest to the highest.',sub:'Mark the octaves: a comma for notes below do (l, s,), a dash for notes above the next do (d′ r′).',clef:st.clef,sig:k.sig,time:METRE(st.ts),items:stStave(st).items,show:sh,sfOnly:true,noPaperStave:true,sfNotes:ts.map(p=>({k:'n',p:[p],dur:'q'})),solfa:ans,sfPal:pal,why:'Tone set: '+ans.join(' ')+' ('+ts.map(name).join(' ')+').'});}
   if(part==='tsN'){const ts=toneSet(st);const items=ts.map((p,i)=>slot(i,[p],'w'));
     return Object.assign(base,{t:'notate',prompt:'Write the tone set of this melody on the stave: every pitch once, from the lowest to the highest, as semibreves.',sub:clefWord(st.clef)+'. The key signature is given, so add an accidental only where the melody has one.',clef:st.clef,sig:k.sig,items,show:sh,why:'Tone set: '+ts.map(T.spn).join(' ')+'.'});}
   const tonicDo=name(k.tonic)+' = '+(k.mode==='minor'?'la':'do');
   if(part==='solfa'){const ns=b[0].concat(b[1]);const items=stStave(st).items;
-    return Object.assign(base,{t:'notate',prompt:'Write the sol-fa under each note in bars 1 and 2 ('+tonicDo+').',sub:'One box for each note, in order.',clef:st.clef,sig:k.sig,time:METRE(st.ts),items,barNums:true,show:sh,sfOnly:true,solfa:ns.map(n=>stSyl(n.p[0],k)),sfPal:k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ,why:'Bars 1–2: '+ns.map(n=>name(n.p[0])+' = '+stSyl(n.p[0],k)).join(', ')+'.'});}
+    return Object.assign(base,{t:'notate',prompt:'Write the sol-fa under each note in bars 1 and 2 ('+tonicDo+').',sub:'One box for each note, in order.',clef:st.clef,sig:k.sig,time:METRE(st.ts),items,barNums:true,show:sh,sfOnly:true,sfNotes:ns,solfa:ns.map(n=>stSyl(n.p[0],k)),sfPal:k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ,why:'Bars 1–2: '+ns.map(n=>name(n.p[0])+' = '+stSyl(n.p[0],k)).join(', ')+'.'});}
   if(part==='letters'){const ns=b[2];const ans=ns.map(n=>name(n.p[0])).join(' ');const shiftL=(p,d)=>{const i=(T.LETTERS.indexOf(p.l)+d+7)%7;return T.LETTERS[i];};
     const dis=[ns.map(n=>shiftL(n.p[0],1)).join(' '),ns.map(n=>shiftL(n.p[0],-1)).join(' '),ns.map((n,i)=>i===ns.length-1?shiftL(n.p[0],2):name(n.p[0])).join(' '),ns.map(n=>shiftL(n.p[0],2)).join(' ')];
     return Object.assign(base,choice('What are the letter names of the notes in bar 3?',optsFrom(ans,uniq(dis),4),ans,{show:sh,why:'Bar 3: '+ans+'.'}));}

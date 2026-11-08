@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261107k";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -330,7 +330,8 @@ var UNITS=[
     const lab=ctx.cfg('labels'),nameOf=e=>chordName(K[0],K[1],e),show=e=>lab==='names'?nameOf(e):lab==='both'?e[0]+' ('+nameOf(e)+')':e[0];
     const fmtL=l=>{const m=l.match(/^(\\S+)(.*)$/);return m?fmtRN(m[1])+m[2]:l;};
     const seq=genProgression(set,L),labels=seq.map(show);const vc=voiceProg(seq,R);
-    return {kind:'numerals',palette:set.map(show),fmt:fmtL,answer:labels,given:1,play:()=>AUDIO.progression(vc,1.45),playLabel:keyName+' · '+L+' chords · the first chord is given',prompt:'Write each chord in '+keyName,why:seq.map(e=>fmtRN(e[0])+' ('+nameOf(e)+')').join(' – ')+'. Listen to the bass: it moves to the root of each chord.'};}},
+    const byLab={};set.forEach(e=>byLab[show(e)]=e);
+    return {kind:'numerals',palette:set.map(show),fmt:fmtL,answer:labels,given:1,play:()=>AUDIO.progression(vc,1.45),chordMine:ls=>{const es=ls.map(l=>byLab[l]).filter(Boolean);return es.length?AUDIO.progression(voiceProg(es,R),1.45):0;},playLabel:keyName+' · '+L+' chords · the first chord is given',prompt:'Write each chord in '+keyName,why:seq.map(e=>fmtRN(e[0])+' ('+nameOf(e)+')').join(' – ')+'. Listen to the bass: it moves to the root of each chord.'};}},
 
  {name:'Cadences', key:'cad', ask:'Listen — which cadence?',
   guide:`<p class="prompt">Cadences</p><ul><li><b>Perfect</b> V–I (V–i): full stop · <b>Plagal</b> IV–I (iv–i): the "Amen" · <b>Imperfect</b>: ends on V, open · <b>Interrupted</b> V–vi (V–VI): the surprise.</li>

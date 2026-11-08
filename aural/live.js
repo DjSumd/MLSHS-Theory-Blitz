@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["live.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["live.js"]="20261107k";
 // live.js — "Sing it" (microphone pitch check for sol-fa singing) and "Tap it" (tap a rhythm in time) for Aural Blitz.
 (function(){
   const LV={};

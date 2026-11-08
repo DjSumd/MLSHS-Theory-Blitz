@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["blitzui.js"]="20261107k";
 // blitzui.js — the "Blitz" look shared by Aural Blitz and Theory Blitz (identical copy in both apps).
 // 1) a clean, rounded, app-icon home screen (tap an icon to open the exercise) with a bottom tab bar;
 // 2) a much richer avatar builder (face, hair, eyes, brows, mouth, extras, glasses, headwear, clothes, background, instrument).
@@ -545,3 +545,25 @@ body:not(.tasking) #refbtn{display:none}
   const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
   window.BlitzUI=UI;
 })();
+
+// ---- sol-fa boxes lined up under the notes they name ----
+// host: the box around the score (it becomes the positioning frame); items: [{el, sx, sy}] in screen px (sx = the note's centre,
+// sy = the top of the box row; null sx = no note to sit under). o.below: put the row under this svg; o.h: box height in screen px.
+window.SFAlign=function(host,items,o){o=o||{};let L=host.querySelector(':scope>.sfov');const placed=items.filter(it=>it&&it.sx!=null);
+  if(L)[...L.children].forEach(c=>{if(!placed.some(it=>it.el===c))c.remove();});
+  if(!placed.length){if(L)L.remove();if(host._sfPad){host.style.paddingBottom='';host._sfPad=0;}return 0;}
+  if(getComputedStyle(host).position==='static')host.style.position='relative';
+  if(!L){L=document.createElement('div');L.className='sfov';host.appendChild(L);}
+  const r0=host.getBoundingClientRect();const f=host.offsetWidth?r0.width/host.offsetWidth:1;
+  let gap=1e9;const rows={};placed.forEach(it=>{const k=Math.round((it.sy||0)/6);(rows[k]=rows[k]||[]).push(it.sx);});
+  Object.values(rows).forEach(xs=>{xs.sort((a,b)=>a-b);for(let i=1;i<xs.length;i++)gap=Math.min(gap,xs[i]-xs[i-1]);});
+  // boxes too narrow to tap: below a stave, set them in two staggered rows (each box still centred on its note)
+  const two=!!o.below&&gap/f-4<28;const w=Math.max(22,Math.min(46,Math.floor(two?2*gap/f-6:gap/f-4)));const h=Math.round(o.h?Math.max(24,Math.min(36,o.h/f)):(w<30?28:32));
+  const alt=new Map();if(two)Object.values(rows).forEach(xs=>xs.forEach((x,i)=>alt.set(x,i%2)));
+  if(o.below){const need=(two?2*h+4:h)+12;if(host._sfPad!==need){host.style.paddingBottom=need+'px';host._sfPad=need;}}
+  const hr=host.getBoundingClientRect();const bt=o.below?(o.below.getBoundingClientRect().bottom-hr.top)/f+host.scrollTop-host.clientTop+5:0;
+  const fs=w<27?11.5:w<32?13:w<38?15:17;
+  placed.forEach(it=>{const el=it.el;if(el.parentNode!==L)L.appendChild(el);
+    const x=(it.sx-hr.left)/f+host.scrollLeft-host.clientLeft,y=o.below?bt+(alt.get(it.sx)?h+4:0):(it.sy-hr.top)/f+host.scrollTop-host.clientTop;
+    Object.assign(el.style,{left:(x-w/2).toFixed(1)+'px',top:y.toFixed(1)+'px',width:w+'px',height:h+'px',fontSize:fs+'px'});});
+  L.classList.toggle('tight',w<34);return placed.length;};

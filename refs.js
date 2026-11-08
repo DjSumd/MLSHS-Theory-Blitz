@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261104r";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["refs.js"]="20261107k";
 // refs.js — Reference tabs for ATAR Music Theory Blitz (engraved with the same engine as the questions).
 const REFS=(()=>{
 const p=s=>T.parse(s);const n=(ps,dur,x)=>Object.assign({k:'n',p:ps.map(p),dur:dur||'w'},x||{});const r=(d,x)=>Object.assign({k:'r',dur:d},x||{});
