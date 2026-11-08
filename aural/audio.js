@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261107k";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["audio.js"]="20261108d";
 // audio.js — Web Audio playback engine for ATAR Music Aural Blitz.
 // All pitched/rhythmic exercises are synthesised (no files, works offline).
 // Instrument timbre uses bundled CC0 samples loaded lazily from ./samples/.
@@ -11,7 +11,8 @@
   function ac(){ if(REC) return REC.px; if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); }
     if(AC.state==='suspended') AC.resume(); return AC; }
   function getBus(){ if(REC) return REC.bus; const a=ac(); if(!bus){ bus=a.createGain(); bus.gain.value=1; bus.connect(a.destination); } return bus; }
-  function arm(){ const a=ac(), b=getBus(); b.gain.cancelScheduledValues(a.currentTime); b.gain.setValueAtTime(1,a.currentTime); return a; }
+  const LOOPS=[]; function stopLoops(){ LOOPS.splice(0).forEach(s=>{ try{ s.stop(); }catch(e){} }); }
+  function arm(){ if(!REC) stopLoops(); const a=ac(), b=getBus(); b.gain.cancelScheduledValues(a.currentTime); b.gain.setValueAtTime(1,a.currentTime); return a; }
   const mtof = m => 440*Math.pow(2,(m-69)/12);
 
   // ---- synth voice: warm triangle stack with ADSR ----
@@ -111,7 +112,7 @@
   window.AUDIO={
     ready(){ return !!(window.AudioContext||window.webkitAudioContext); },
     // stop everything: fade the current bus out and abandon it, so notes already scheduled on it never resurface
-    stop(){ if(REC) return; timers.forEach(t=>clearTimeout(t)); timers.length=0;
+    stop(){ if(REC) return; stopLoops(); timers.forEach(t=>clearTimeout(t)); timers.length=0;
       if(bus){ const a=ac(), old=bus; bus=null; try{old.gain.cancelScheduledValues(a.currentTime); old.gain.setTargetAtTime(0,a.currentTime,0.012); setTimeout(()=>{try{old.disconnect();}catch(e){}},400);}catch(e){} } },
     // a delayed play that stop() cancels (for two-phrase questions)
     later(fn,ms){ if(SPBO!=null){ const o=SPBO, f0=fn; fn=()=>{ const p=SPBO; SPBO=o; try{ return f0(); } finally{ SPBO=p; } }; } if(REC){ REC.q.push({at:REC.t+ms/1000,fn}); return 0; } const t=setTimeout(()=>{timers.splice(timers.indexOf(t),1);fn();},ms); timers.push(t); return t; },
@@ -129,6 +130,10 @@
       const n=Math.min(d.length,last+Math.round(SR*0.8)); let peak=0; for(let i=0;i<n;i++){ const v=Math.abs(d[i]); if(v>peak) peak=v; }
       const g=peak>0.98?0.98/peak:1; const out=new Float32Array(n); for(let i=0;i<n;i++) out[i]=d[i]*g; return {data:out,rate:SR,secs:n/SR}; },
     preloadPiano(){ return loadPiano(); },
+    // repeat seconds a..b of a rendered track (o = {data,rate} from record) until stop() or another sound starts
+    loopPlay(o,a,b){ const c=arm(); if(!o._ab){ o._ab=c.createBuffer(1,o.data.length,o.rate); o._ab.copyToChannel(o.data,0); }
+      const s=c.createBufferSource(); s.buffer=o._ab; s.loop=true; s.loopStart=a; s.loopEnd=b; s.connect(getBus()); const t0=c.currentTime+0.04; s.start(t0,a); LOOPS.push(s);
+      return {t0,a,b,now:()=>c.currentTime,alive:()=>LOOPS.indexOf(s)>=0}; },
     pianoLoaded(){ return pianoReady; },
     // interval: mode 'up' | 'down' | 'harm'
     interval(rootMidi,semis,mode){ const a=arm(),t=a.currentTime+0.06,s=Math.abs(semis);
