@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261103zd";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["content.js"]="20261109b";
 // content.js — MOUNT LAWLEY SHS · Music Aural Blitz, Years 7–12 (WA Curriculum Years 7–10 and WACE ATAR Units 1–4).
 // Every setting carries a year tag (yr). The student's year sets the defaults; ⚙ opens any item from any year.
 // Kinds: 'choice' | 'notate' | 'pitchdict' | 'melodydict' | 'rhythmdict' | 'numerals' | 'contour'.
@@ -139,7 +139,7 @@ var UNITS=[
      '12/8':{l:'12/8 — four beats in three (compound quadruple)',p:['S','s','s','b','s','s','M','s','s','b','s','s'],spb:0.21,why:'four dotted-crotchet beats in three — a slow blues shuffle.'},
      '5/4':{l:'5/4 — irregular (3+2)',p:['S','s','b','s','b','s','M','s','b','s'],spb:0.30,why:'five beats grouped 3+2 — the accents fall unevenly.'},
      '7/8':{l:'7/8 — irregular (2+2+3)',p:['S','s','M','s','M','s','s'],spb:0.26,why:'seven quavers grouped 2+2+3 — the last group is longer.'}};
-    const ids=ctx.cfg('metres'),id=A_pick(ids),m=MET[id],asMusic=ctx.cfg('style')==='music';
+    const ids=ctx.cfg('metres'),id=A_pick(ids),m=MET[id],asMusic=ctx.cfg('style')!=='pulse';
     return {kind:'choice',options:A_keep(ids.map(x=>MET[x].l)),answer:m.l,
       play:()=>asMusic?AUDIO.metreGroove(m.p,m.spb):AUDIO.groove(m.p,m.spb),playLabel:asMusic?'A groove — find beat 1 and count':'Click pulse — find beat 1 and count',why:`${m.l}: ${m.why}`};}},
 
@@ -152,7 +152,7 @@ var UNITS=[
         G('vocab','Rhythm vocabulary',RHYTHM_VOCAB), SG('source','Dictate',[{id:'pitch',label:'Rhythm only (one pitch)'},{id:'melody',label:'Rhythm of a melody'}],{7:'pitch',9:'melody'}), SG('swing','Feel',[{id:'off',label:'Straight'},{id:'on',label:'Swing (Year 9)'}],'off') ],
   gen(ctx){const bars=parseInt(ctx.cfg('bars'),10)||2,v=ctx.cfg('vocab'),metre=A_pick(ctx.cfg('metres'));
     if(A_pick(ctx.cfg('qtype')||['write'])==='heads'){const sc=ctx.year<=7?['major','major pentatonic']:ctx.year===8?['major','natural minor','major pentatonic']:['major','natural minor','harmonic minor'];const vo=vocabFrom(v);
-      return rhythmHeadsQ({bars,metre:['6/8','9/8','12/8'].includes(metre)&&ctx.year<8?'4/4':metre,scales:sc,clef:ctx.year>=9&&Math.random()<0.3?'bass':'treble',diff:ctx.diff,maxKs:maxKsFor(ctx.year),vocab:{vocab:vo.vocab,vocabEasy:vo.vocabEasy,syncopation:vo.syncopation}});}
+      const hc=ctx.cfg('hclef');return rhythmHeadsQ({noBars:ctx.cfg('barlines')==='add',bars,metre:['6/8','9/8','12/8'].includes(metre)&&ctx.year<8?'4/4':metre,scales:sc,clef:hc==='treble'||hc==='bass'?hc:ctx.year>=9&&Math.random()<0.3?'bass':'treble',diff:ctx.diff,maxKs:maxKsFor(ctx.year),vocab:{vocab:vo.vocab,vocabEasy:vo.vocabEasy,syncopation:vo.syncopation}});}
     const compound=['6/8','9/8','12/8'].indexOf(metre)>=0,swing=!compound&&ctx.cfg('swing')==='on';
     const vo=vocabFrom(v); if(swing)vo.triplets=false;
     const ofMel=ctx.cfg('source')==='melody';
@@ -284,7 +284,8 @@ var UNITS=[
       else if(choice==='Subdominant'){ans='Subdominant';seq=est.concat(isMin?[['i',0,'mi'],['V7/iv',0,'7'],['iv',5,'mi'],['V7/iv',0,'7'],['iv',5,'mi']]:[['I7',0,'7'],['IV',5,''],['V7/IV',0,'7'],['IV',5,'']]);desc='the home 7th is flattened (the tonic becomes a dominant 7th) and the cadence lands a 4th higher — the subdominant.';}
       else {ans='No modulation';seq=est.concat(isMin?[['iv',5,'mi'],['V7',7,'7'],['i',0,'mi'],['iv',5,'mi'],['V7',7,'7'],['i',0,'mi']]:[['ii',2,'mi'],['V7',7,'7'],['I',0,''],['IV',5,''],['V7',7,'7'],['I',0,'']]);desc='it stays in the home key and cadences on the home tonic.';}
       const opts=dests.map(d=>d==='Relative'?rel:d==='None'?'No modulation':d);const vc=voiceProg(seq,root);const mel=chordMelody(vc,2,root,[]);
-      return {kind:'choice',options:A_keep(opts),answer:ans,startTonality:isMin?'Minor':'Major',play:()=>ctx.cfg('play')==='harm'?AUDIO.progMelody(vc,mel.mids,mel.durs,0.5,2):AUDIO.progression(vc,1.1),playLabel:(isMin?'Minor':'Major')+' home key established first — where does it go?',why:`${ans}: ${desc}`};}
+      const hs=isMin?MINH:MAJ,dest=choice==='Relative'?(isMin?{off:3,sc:MAJ}:{off:9,sc:MINH}):choice==='Dominant'?{off:7,sc:hs}:choice==='Subdominant'?{off:5,sc:hs}:{off:0,sc:hs};
+      return {__mod:{vc,seq,root,home:hs,dest},kind:'choice',options:A_keep(opts),answer:ans,startTonality:isMin?'Minor':'Major',play:()=>ctx.cfg('play')==='harm'?AUDIO.progMelody(vc,mel.mids,mel.durs,0.5,2):AUDIO.progression(vc,1.1),playLabel:(isMin?'Minor':'Major')+' home key established first — where does it go?',why:`${ans}: ${desc}`};}
     const tons=ctx.cfg('tons'),id=A_pick(tons);const modal=A_pick([{n:'dorian',steps:[0,2,3,5,7,9,10],col:[3,9,10]},{n:'mixolydian',steps:[0,2,4,5,7,9,10],col:[4,10]}]);
     const NATP=A_pick([[['i',0,'mi'],['VI',8,''],['VII',10,''],['i',0,'mi']],[['i',0,'mi'],['iv',5,'mi'],['v',7,'mi'],['i',0,'mi']],[['i',0,'mi'],['VII',10,''],['VI',8,''],['v',7,'mi'],['i',0,'mi']],[['i',0,'mi'],['iv',5,'mi'],['VII',10,''],['III',3,''],['v',7,'mi'],['i',0,'mi']]]);
     const T={'Major':{steps:MAJ,col:[4,11],set:PROGSET.Major},'Minor':{steps:MINH,col:[3,11],set:PROGSET.Minor},'Natural minor':{steps:MINN,col:[3,8,10],fixed:NATP},'Harmonic minor':{steps:MINH,col:[3,8,11],set:PROGSET.Minor},'Pentatonic':{steps:PENT,col:[4,9],set:PROGSET.Major},'Modal':{steps:modal.steps,col:modal.col,fixed:modal.n==='dorian'?[['i',0,'mi'],['IV',5,''],['i',0,'mi'],['VII',10,''],['i',0,'mi']]:[['I',0,''],['bVII',10,''],['IV',5,''],['bVII',10,''],['I',0,'']]},'Atonal':{}};
@@ -330,7 +331,8 @@ var UNITS=[
     const lab=ctx.cfg('labels'),nameOf=e=>chordName(K[0],K[1],e),show=e=>lab==='names'?nameOf(e):lab==='both'?e[0]+' ('+nameOf(e)+')':e[0];
     const fmtL=l=>{const m=l.match(/^(\\S+)(.*)$/);return m?fmtRN(m[1])+m[2]:l;};
     const seq=genProgression(set,L),labels=seq.map(show);const vc=voiceProg(seq,R);
-    return {kind:'numerals',palette:set.map(show),fmt:fmtL,answer:labels,given:1,play:()=>AUDIO.progression(vc,1.45),playLabel:keyName+' · '+L+' chords · the first chord is given',prompt:'Write each chord in '+keyName,why:seq.map(e=>fmtRN(e[0])+' ('+nameOf(e)+')').join(' – ')+'. Listen to the bass: it moves to the root of each chord.'};}},
+    const byLab={};set.forEach(e=>byLab[show(e)]=e);
+    return {kind:'numerals',palette:set.map(show),fmt:fmtL,answer:labels,given:1,play:()=>AUDIO.progression(vc,1.45),chordMine:ls=>{const es=ls.map(l=>byLab[l]).filter(Boolean);return es.length?AUDIO.progression(voiceProg(es,R),1.45):0;},playLabel:keyName+' · '+L+' chords · the first chord is given',prompt:'Write each chord in '+keyName,why:seq.map(e=>fmtRN(e[0])+' ('+nameOf(e)+')').join(' – ')+'. Listen to the bass: it moves to the root of each chord.'};}},
 
  {name:'Cadences', key:'cad', ask:'Listen — which cadence?',
   guide:`<p class="prompt">Cadences</p><ul><li><b>Perfect</b> V–I (V–i): full stop · <b>Plagal</b> IV–I (iv–i): the "Amen" · <b>Imperfect</b>: ends on V, open · <b>Interrupted</b> V–vi (V–VI): the surprise.</li>
@@ -464,3 +466,82 @@ var UNITS=[
       const mids=base.concat([null],second),durs=md.concat([1],sd);play=()=>AUDIO.melody(mids,durs,0.42);why=desc;}
     return {kind:'choice',options:A_keep(devs),answer:id,play,playLabel:'A short excerpt',why:`${id}: ${why}`};}}
 ];
+// ---- more settings for the dictations (⚙ Customise, Custom Tasks): length 1–8 bars, key, range, tempo, playings ----
+const KEY_ITEMS=[{id:'any',label:'Any key'}].concat(['C','G','D','A','E','B','F','Bb','Eb','Ab','Db'].map(k=>({id:k,label:k.replace('b','♭')+' major'})),
+  ['Am','Em','Bm','F#m','C#m','G#m','Dm','Gm','Cm','Fm'].map(k=>({id:k,label:k.replace('#','♯').replace(/^([A-G])b/,'$1♭').replace(/m$/,' minor')})));
+const BAR_ITEMS=(from,to)=>[...Array(to-from+1).keys()].map(i=>({id:String(from+i),label:(from+i)+' bar'+(from+i===1?'':'s')}));
+const TEMPO_ITEMS=[{id:'usual',label:'Usual'}].concat([50,60,72,84,96,108,120,132].map(b=>({id:String(b),label:b+' BPM'})));
+const PLAY_ITEMS=[{id:'any',label:'As many as you like'}].concat([1,2,3,4,5,6].map(n=>({id:String(n),label:n===1?'Once':n+' times'})));
+(function(){const U=k=>UNITS.find(u=>u.key===k);const setBars=(k,a,b)=>{const g=U(k)&&U(k).cfg.find(x=>x.key==='bars');if(g)g.items=BAR_ITEMS(a,b);};
+  setBars('rd',1,8);setBars('pd',1,8);setBars('two',2,8);setBars('dis',2,8);
+  {const g=U('bord').cfg.find(x=>x.key==='bars');g.items=[4,5,6,7,8].map(n=>({id:String(n),label:n+' bars'}));}
+  const add=(k,item)=>{const u=U(k);if(u&&!u.cfg.some(x=>x.key===item.key))u.cfg.push(item);};
+  ['rd','pd','two','bord','dis'].forEach(k=>add(k,SG('key','Key (melodies)',KEY_ITEMS,'any')));
+  add('rd',SG('barlines','Rhythm on noteheads: barlines',[{id:'given',label:'Printed'},{id:'add',label:'Students add them'}],'given'));
+  add('rd',SG('hclef','Rhythm on noteheads: clef',[{id:'auto',label:'Year default'},{id:'treble',label:'Treble'},{id:'bass',label:'Bass'}],'auto'));
+  add('pd',SG('range','Range',[{id:'usual',label:'Usual'},{id:'narrow',label:'Narrow (within a 6th)'},{id:'wide',label:'Wide (an octave or more)'}],'usual'));
+  ['rd','pd','two','bord','dis','met','prog','cad'].forEach(k=>add(k,SG('tempo','Tempo',TEMPO_ITEMS,'usual')));
+  UNITS.forEach(u=>{if(u.cfg&&!u.special)add(u.key,SG('plays','Playings allowed',PLAY_ITEMS,'any'));});})();
+// ---- metre as music: a tune with an accompaniment whose bass and chord pattern carries the metre ----
+// The bass falls on beat 1 (root, strongest) and the other main beats (5th); light chords fill the remaining beats
+// (oom-pah, oom-pah-pah, the 6/8 jig lilt, 3+2 in 5/4, 2+2+3 in 7/8). No clicks.
+function metreTune(id){const M=ENGRAVE.METRES[id]||ENGRAVE.METRES['4/4'];const bpb=M.bpb,u=M.denom===8?0.5:1;const minor=Math.random()<0.3;const R=A_root(55,61);const sc=minor?MINH:MAJ;
+  const nb=bpb<=2?8:bpb>=6?4:4;
+  const PM=minor?[[['i',0,'mi'],['iv',5,'mi'],['V',7,''],['i',0,'mi']],[['i',0,'mi'],['VI',8,''],['V',7,''],['i',0,'mi']]]:[[['I',0,''],['IV',5,''],['V',7,''],['I',0,'']],[['I',0,''],['vi',9,'mi'],['V',7,''],['I',0,'']],[['I',0,''],['ii',2,'mi'],['V',7,''],['I',0,'']]];
+  let seq=A_pick(PM);if(nb===8)seq=[seq[0],seq[1],seq[0],seq[2]].concat(A_pick(PM));
+  const vc=voiceProg(seq,R);const tonesOf=b=>(TY[seq[b][2]]||[0,4,7]).map(iv=>_pc(R+seq[b][1]+iv));
+  const near=(a,b)=>Math.abs(a-b)<1e-6;const main=[0].concat(M.acc.filter(a=>a>0));
+  const bass={mids:[],durs:[],amp:1.15},bass2={mids:[],durs:[],amp:0.7},ch=[0,1,2].map(()=>({mids:[],durs:[],amp:0.34})),mel={mids:[],durs:[],amp:1.05};
+  for(let b=0;b<nb;b++){const v=vc[b];
+    // bass: held from each main beat to the next
+    main.forEach((p,k)=>{const nx=k+1<main.length?main[k+1]:bpb;let m=v[0];if(k>0){m=v[0]+7;if(m>50)m-=12;}(k===0?bass:bass2).mids.push(m);(k===0?bass2:bass).mids.push(null);bass.durs.push(nx-p);bass2.durs.push(nx-p);});
+    // chords on the other pulses of the bar, short and light
+    for(let p=0;p<bpb-1e-6;p+=u){const isMain=main.some(x=>near(x,p));ch.forEach((c,k)=>{if(isMain){c.mids.push(null);c.durs.push(u);}else{c.mids.push(v[1+k]);c.durs.push(u);}});}}
+  // the tune: rhythm from the metre's own groupings, chord tones on the main beats, steps in between
+  const pool=[];for(let m=R+9;m<=R+24;m++)if(sc.includes(_pc(m-R)))pool.push(m);
+  let cur=pool.findIndex(m=>m===R+12);if(cur<0)cur=0;const peak=Math.floor(nb*0.6);
+  for(let b=0;b<nb;b++){const last=b===nb-1;let ev;
+    if(last){const g1=M.g[1]!==undefined?M.g[1]:bpb;ev=[{dur:g1},{dur:bpb-g1}].filter(e=>e.dur>1e-6);}
+    else{let t=0;do{ev=ENGRAVE.fillBar('easy',id,bpb).map(e=>({dur:e.dur}));t++;}while(t<8&&ev.length>Math.round(bpb/u)+1);}
+    const tones=tonesOf(b);let pos=0;
+    ev.forEach((e,k)=>{const strong=M.g.some(x=>near(x,pos));const fin=last&&k===ev.length-1;let j=cur;
+      if(fin){let best=cur,bd=99;pool.forEach((m,i)=>{if(_pc(m)===_pc(R)&&Math.abs(i-cur)<bd){bd=Math.abs(i-cur);best=i;}});j=best;}
+      else if(strong){let best=cur,bc=1e9;pool.forEach((m,i)=>{if(!tones.includes(_pc(m)))return;const d=Math.abs(i-cur);const rep2=mel.mids.length>=2&&mel.mids[mel.mids.length-1]===mel.mids[mel.mids.length-2];const c=d+(d===0?(rep2?6:2.6):0)+(d>3?3:0)+(b<peak?(i<cur?0.7:0):(i>cur?0.7:0))+Math.random()*0.8;if(c<bc){bc=c;best=i;}});j=best;}
+      else{const up=b<peak?0.68:0.32;j=cur+(Math.random()<up?1:-1);j=Math.max(0,Math.min(pool.length-1,j));}
+      if(fin&&mel.mids.length){const pi=pool.indexOf(mel.mids[mel.mids.length-1]);if(Math.abs(pi-j)>2)mel.mids[mel.mids.length-1]=pool[Math.max(0,Math.min(pool.length-1,j+(pi>j?1:-1)))];}
+      cur=j;mel.mids.push(pool[j]);mel.durs.push(e.dur);pos+=e.dur;});}
+  const spb=M.denom===8?(M.compound?0.27:0.27):(bpb>=5?0.5:0.55);
+  return {parts:[mel,bass,bass2].concat(ch),spb,total:nb*bpb};}
+(function(){const u=UNITS.find(x=>x.key==='met');const st=u.cfg.find(g=>g.key==='style');
+  st.label='Play as';st.items=[{id:'music',label:'A tune with accompaniment'},{id:'groove',label:'Groove (one chord)'},{id:'pulse',label:'Click pulse'}];st.def='music';
+  const g0=u.gen;u.gen=function(ctx){const q=g0.call(this,ctx);const id=Object.keys({'2/4':1,'3/4':1,'4/4':1,'6/8':1,'9/8':1,'12/8':1,'5/4':1,'7/8':1}).find(k=>q.answer.startsWith(k+' '));const sty=ctx.cfg('style')||'music';
+    if(sty==='music'&&id){const T=metreTune(id);q.play=()=>AUDIO.lines(T.parts,T.spb,{total:T.total});q.playLabel='A short tune — find beat 1 and count';}
+    else if(sty==='groove'){q.playLabel='A groove — find beat 1 and count';}
+    return q;};
+  u.guide=u.guide.replace('In ⚙ choose <b>Groove</b> (a band-style pattern) or <b>Click pulse</b>.','Listen to the bass: it plays on beat 1. In ⚙ you can switch to a <b>Groove</b> or a <b>Click pulse</b>.');})();
+// ---- modulation: a singable two-phrase tune over the chords ----
+// Phrase 1 sets up the home key and closes on I; phrase 2 repeats its rhythm, climbs, and lands on the new tonic.
+// Strong beats take chord tones (the new key's leading note on the secondary dominant); the other notes move by step in the local key.
+function modMelody(vc,seq,R,homeSc,dest){const n=vc.length,cb=2;const CELLS=[[1,1],[1.5,0.5],[0.5,0.5,1],[1,0.5,0.5],[1,1],[1.5,0.5]];
+  const ph1=[A_pick(CELLS),A_pick(CELLS),A_pick([[1,1],[1.5,0.5],[0.5,0.5,1]]),[2]];
+  const cells=[];for(let c=0;c<n;c++){if(c<4)cells.push(ph1[c]);else if(c===n-1)cells.push([2]);else cells.push(ph1[(c-4)%3]);}
+  const keyAt=c=>c<=4?{off:0,sc:homeSc}:dest;const inKey=(m,c)=>{const k=keyAt(c);return k.sc.includes(_pc(m-R-k.off));};
+  const lo=R+9,hi=R+24;const tonesOf=c=>vc[c].slice(1).map(_pc).concat([_pc(vc[c][0])]);
+  // contour targets for each chord's first note
+  const tgt=c=>{if(c<4)return R+[14,17,19,14][c];const p=(c-4)/Math.max(1,n-5);return R+16+Math.round(6*Math.sin(Math.PI*Math.min(1,p*1.25)));};
+  const strong=[];let prev=R+12+(homeSc.includes(4)?4:3);
+  for(let c=0;c<n;c++){const tones=tonesOf(c);let best=prev,bc=1e9;const lt=/^V7?\//.test(seq[c][0]);const third=_pc(R+seq[c][1]+((TY[seq[c][2]]||[0,4,7])[1]));
+    const fin=c===n-1;const finPc=_pc(R+dest.off);
+    for(let m=lo;m<=hi;m++){if(fin?_pc(m)!==finPc:!tones.includes(_pc(m)))continue;const d=Math.abs(m-prev);let cost=d*0.55+Math.abs(m-tgt(c))*0.35+(d===0?1.5:0)+(d>7?4:0);if(lt&&_pc(m)===third)cost-=2.2;if(c===3&&_pc(m)!==_pc(R)&&_pc(m)!==_pc(R+(homeSc.includes(4)?4:3)))cost+=1.5;cost+=Math.random()*0.6;if(cost<bc){bc=cost;best=m;}}
+    strong.push(best);prev=best;}
+  const mids=[],durs=[];
+  const stepFrom=(m,dir,c)=>{let x=m+dir;while(!inKey(x,c)&&Math.abs(x-m)<3)x+=dir;return x;};
+  for(let c=0;c<n;c++){const cell=cells[c];let m=strong[c];mids.push(m);durs.push(cell[0]);const nx=c+1<n?strong[c+1]:m;
+    for(let k=1;k<cell.length;k++){const left=cell.length-k;let dir=Math.sign(nx-m);if(dir===0)dir=(k===1?1:-1);
+      let x=stepFrom(m,dir,c);if(Math.abs(nx-x)<1&&left>1)x=stepFrom(m,-dir,c);if(x<lo||x>hi)x=stepFrom(m,-dir,c);m=x;mids.push(m);durs.push(cell[k]);}}
+  // the last approach is by step
+  if(mids.length>1){const f=mids[mids.length-1],p=mids[mids.length-2];if(Math.abs(f-p)>2){let a=f+(p>f?2:-2);while(!inKey(a,n-1))a+=(p>f?-1:1);mids[mids.length-2]=a;}}
+  return {mids,durs};}
+(function(){const u=UNITS.find(x=>x.key==='ton');const g0=u.gen;
+  u.gen=function(ctx){const q=g0.call(this,ctx);if(!q||!q.__mod)return q;const M=q.__mod;const mel=modMelody(M.vc,M.seq,M.root,M.home,M.dest);
+    const harm=ctx.cfg('play')!=='melody';q.play=harm?()=>AUDIO.progMelody(M.vc,mel.mids,mel.durs,0.5,2):()=>AUDIO.melody(mel.mids,mel.durs,0.5);return q;};})();

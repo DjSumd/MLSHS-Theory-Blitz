@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261108e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["gen.js"]="20261109b";
 // gen.js — question generators for ATAR Music Theory Blitz (SCSA ATAR Music Year 11 + Year 12 content).
 // Every generator returns a question object:
 //   choice: {t:'choice', prompt, sub, show:{spec}|{svg}, opts:[{v, svg?}], answer:v, why}
@@ -855,31 +855,35 @@ function semitoneQ(){const y=UPTO();const type=pick(['major','natminor'].concat(
     why:T.scaleName(t,type)+': semitones between '+ans+'. '+(type==='major'?'Major: T T S T T T S.':type==='natminor'?'Natural minor: T S T T S T T.':'Harmonic minor: T S T T S (T+S) S.')});}
 function stSyl(p,key){const k=(T.LETTERS.indexOf(p.l)-T.LETTERS.indexOf(key.tonic.l)+7)%7;return (key.mode==='minor'?SOLFA_MIN:SOLFA_MAJ)[k];}
 function stLower(a,b){return dia(a)<=dia(b)?[a,b]:[b,a];}
-function makeStudy(kind){if(kind==='ivkey'||kind==='ivmel')return makeIvStudy(kind);const y=UPTO();let key;
+function makeStudy(kind,o){o=o||{};if(kind==='ivkey'||kind==='ivmel')return makeIvStudy(kind);const y=UPTO();let key;const nB=kind==='visual'?(+o.bars===4?4:8):4;
   if(kind==='study'){const t=pick(keyTonics(Math.min(S('keysMax')||1,y<=7?1:2)));key={tonic:t,mode:'major',sig:T.sigOf(t,'major')};}else key=testKey();
   const clef=(kind==='study'||y<=8)?'treble':pick(['treble','bass']);const ts=pick(y<=7?['2/4','3/4','4/4']:['2/4','3/4','4/4','6/8']);
   const mid=MIDD[clef];let items=null,bars=null;
-  for(let t=0;t<20;t++){items=melody(key,clef,ts,4,{lo:mid-4,hi:mid+4});bars=[[]];items.forEach(it=>{if(it.k==='bar'||it.k==='fin'){bars.push([]);}else if(it.k==='n')bars[bars.length-1].push(it);});bars=bars.filter(b=>b.length);if(bars.length===4&&bars.every(b=>b.length>=2))break;}
+  for(let t=0;t<30;t++){items=melody(key,clef,ts,nB,{lo:mid-4,hi:mid+(nB>4?5:4)});bars=[[]];items.forEach(it=>{if(it.k==='bar'||it.k==='fin'){bars.push([]);}else if(it.k==='n')bars[bars.length-1].push(it);});bars=bars.filter(b=>b.length);if(bars.length===nB&&bars.every(b=>b.length>=2))break;}
   const st={kind,key,clef,ts,items,bars,info:{}};
   if(kind==='visual'){const I=st.info;const tm=pick(ST_TEMPO.slice(1,5));I.tempo=tm;items.unshift({k:'txt',s:tm[0],bold:true,high:true});
     const d1=pick(ST_DYN.slice(1,5));bars[0][0].mk={dyn:d1[0]};I.dyn={bar:1,mark:d1};
     if(bars[0].length>=3){bars[0][1].mk=Object.assign(bars[0][1].mk||{},{sl:1});bars[0][2].mk=Object.assign(bars[0][2].mk||{},{slEnd:1});}
-    const hb=pick([1,3]);const hp=pick(['cresc','dim']);const hbn=bars[hb];hbn[0].mk=Object.assign(hbn[0].mk||{},{hp});hbn[hbn.length-1].mk=Object.assign(hbn[hbn.length-1].mk||{},{hpEnd:1});I.hp={bar:hb+1,type:hp};
-    const ab=hb===1?2:1;const an=bars[ab][Math.min(1,bars[ab].length-1)];const at=pick(['stac','acc','ten']);an.art=[at];I.art={bar:ab+1,type:at};
-    const okN=y<=8?[2,3,4,5,8]:[2,3,4,5,6,7,8];const bb=hb===1?3:2;const bn=bars[bb];const pairs=[];for(let i=0;i+1<bn.length;i++){const [lo,hi]=stLower(bn[i].p[0],bn[i+1].p[0]);if(dia(lo)===dia(hi))continue;const iv=T.interval(lo,hi);if(iv&&okN.includes(iv.n)&&['M','m','P'].includes(iv.q))pairs.push([i,iv]);}
+    const hb=nB>4?pick([1,3,5,6]):pick([1,3]);const hp=pick(['cresc','dim']);const hbn=bars[hb];hbn[0].mk=Object.assign(hbn[0].mk||{},{hp});hbn[hbn.length-1].mk=Object.assign(hbn[hbn.length-1].mk||{},{hpEnd:1});I.hp={bar:hb+1,type:hp};
+    const ab=nB>4?pick([2,4,6].filter(x=>x!==hb)):(hb===1?2:1);const an=bars[ab][Math.min(1,bars[ab].length-1)];const at=pick(['stac','acc','ten']);an.art=[at];I.art={bar:ab+1,type:at};
+    const okN=y<=8?[2,3,4,5,8]:[2,3,4,5,6,7,8];const bb=nB>4?pick([2,3,4,5,6].filter(x=>x!==hb&&x!==ab)):(hb===1?3:2);const bn=bars[bb];const pairs=[];for(let i=0;i+1<bn.length;i++){const [lo,hi]=stLower(bn[i].p[0],bn[i+1].p[0]);if(dia(lo)===dia(hi))continue;const iv=T.interval(lo,hi);if(iv&&okN.includes(iv.n)&&['M','m','P'].includes(iv.q))pairs.push([i,iv]);}
     if(pairs.length){const [i,iv]=pick(pairs);bn[i].mk=Object.assign(bn[i].mk||{},{br:'*1'});bn[i+1].mk=Object.assign(bn[i+1].mk||{},{brEnd:1});I.iv={bar:bb+1,iv};}
-    for(let bb2=0;bb2<4&&!I.semi;bb2++){const bn2=bars[bb2];if(bn2.length<3)continue;for(let i=0;i+1<bn2.length;i++){if(Math.abs(T.midi(bn2[i].p[0])-T.midi(bn2[i+1].p[0]))===1){I.semi={bar:bb2+1,i,count:bn2.length};break;}}}
+    for(let bb2=0;bb2<nB&&!I.semi;bb2++){const bn2=bars[bb2];if(bn2.length<3)continue;for(let i=0;i+1<bn2.length;i++){if(Math.abs(T.midi(bn2[i].p[0])-T.midi(bn2[i+1].p[0]))===1){I.semi={bar:bb2+1,i,count:bn2.length};break;}}}
     const pool={8:['key','time','tempo','dyn','hp','art','iv','semi'],9:['key','time','tempo','dyn','hp','art','iv','semi'],10:['key','time','tempo','dyn','hp','art','iv','semi']}[Math.max(8,Math.min(10,y))];
     const av=pool.filter(a=>(a!=='iv'||I.iv)&&(a!=='semi'||I.semi));const vis=shuffle(av.filter(a=>['dyn','hp','art','iv','semi'].includes(a))).slice(0,2);const rest=shuffle(av.filter(a=>!vis.includes(a))).slice(0,2);
     st.asks=pool.filter(a=>vis.includes(a)||rest.includes(a));st.noTime=st.asks.includes('time');}
   return st;}
+// a long score is printed on two lines of four bars
+function stShow(st){const sp=stStave(st);const sh=show(sp);if(!st.bars||st.bars.length<=4)return sh;let n=0,cut=-1;sp.items.forEach((it,i)=>{if(cut<0&&it.k==='bar'){n++;if(n===4)cut=i;}});if(cut<0)return sh;
+  const a=Object.assign({},sp,{items:sp.items.slice(0,cut+1)}),b=Object.assign({},sp,{time:null,items:sp.items.slice(cut+1),barStart:5});
+  const two=pap=>'<div class="twoline">'+E.render(Object.assign({},a,pap?{paper:true}:{})).svg+E.render(Object.assign({},b,pap?{paper:true}:{})).svg+'</div>';sh.svg=two(false);sh.svgP=two(true);return sh;}
 function stStave(st,extra){return stave(st.clef,st.key.sig,st.noTime?null:METRE(st.ts),st.items.map(it=>Object.assign({},it)),Object.assign({barNums:true},extra||{}));}
 // the tone set: every pitch of the melody once, lowest to highest (sol-fa with Kodály octave marks: l, d r m s l d′)
 function toneSet(st){const seen={};st.items.filter(it=>it.k==='n').forEach(it=>{const p=it.p[0];seen[T.midi(p)+':'+p.l]=p;});return Object.values(seen).sort((a,b)=>T.midi(a)-T.midi(b));}
 function tsSyl(p,st){const k=st.key;const doP=k.mode==='minor'?T.transposeUp(k.tonic,'m3'):k.tonic;const last=st.items.filter(it=>it.k==='n').slice(-1)[0];
   // the do that frames the melody: the one at or below its final note (the tonic), so the final tonic carries no mark
   let d0=dia(P(doP.l,doP.a,last.p[0].o));if(k.mode==='minor'){if(d0<dia(last.p[0]))d0+=7;}else if(d0>dia(last.p[0]))d0-=7;const s=stSyl(p,k);const dp=dia(p);return s+(dp<d0?',':dp>=d0+7?'′':'');}
-function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2),st);const k=st.key,I=st.info,b=st.bars;const sh=show(stStave(st));const base={_sharedShow:true};
+function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2),st);const k=st.key,I=st.info,b=st.bars;const sh=stShow(st);const base={_sharedShow:true};
   if(part==='tsSf'){const ts=toneSet(st);const ans=ts.map(p=>tsSyl(p,st));const basic=k.mode==='minor'?SOLFA_MIN:SOLFA_MAJ;const pal=[...new Set(basic.concat(ans))].sort((a,b2)=>{const ix=x=>SOLFA_MAJ.indexOf(x.replace(/[,′]/,''));const oc=x=>x.endsWith(',')?-1:x.endsWith('′')?1:0;return oc(a)-oc(b2)||ix(a)-ix(b2);});
     return Object.assign(base,{t:'notate',prompt:'Write the tone set of this melody in sol-fa: every pitch once, from the lowest to the highest.',sub:'Mark the octaves: a comma for notes below do (l, s,), a dash for notes above the next do (d′ r′).',clef:st.clef,sig:k.sig,time:METRE(st.ts),items:stStave(st).items,show:sh,sfOnly:true,noPaperStave:true,sfNotes:ts.map(p=>({k:'n',p:[p],dur:'q'})),solfa:ans,sfPal:pal,why:'Tone set: '+ans.join(' ')+' ('+ts.map(name).join(' ')+').'});}
   if(part==='tsN'){const ts=toneSet(st);const items=ts.map((p,i)=>slot(i,[p],'w'));
@@ -908,7 +912,7 @@ function studyQ(part,st){if(part.startsWith('ci'))return ivStudyQ(+part.slice(2)
   if(part==='time'){const ans=st.ts;return Object.assign(base,choice('The time signature has been left off. Which time signature belongs at the start?',['2/4','3/4','4/4','6/8'],ans,{show:sh,why:'Count the beats in each bar: '+ans+'.'}));}
   if(part==='tempo2'||part==='tempoV'){const t=I.tempo;return Object.assign(base,choice('What does '+t[0]+' at the start mean?',ST_TEMPO.slice(0,5).map(x=>x[1]),t[1],{show:sh,why:t[0]+' = '+t[1]+'.'}));}
   if(part==='dynV'){const d=I.dyn.mark;return Object.assign(base,choice('What does '+d[0]+' in bar 1 tell the player?',ST_DYN.map(x=>x[1]),d[1],{show:sh,why:d[0]+' = '+d[1]+'.'}));}
-  if(part==='hp'){return Object.assign(base,choice('In which bar is the player told to get gradually '+(I.hp.type==='cresc'?'louder':'softer')+'?',['Bar 1','Bar 2','Bar 3','Bar 4'],'Bar '+I.hp.bar,{show:sh,why:(I.hp.type==='cresc'?'The crescendo hairpin (<)':'The diminuendo hairpin (>)')+' is in bar '+I.hp.bar+'.'}));}
+  if(part==='hp'){return Object.assign(base,choice('In which bar is the player told to get gradually '+(I.hp.type==='cresc'?'louder':'softer')+'?',[...Array(st.bars.length).keys()].map(i=>'Bar '+(i+1)),'Bar '+I.hp.bar,{show:sh,why:(I.hp.type==='cresc'?'The crescendo hairpin (<)':'The diminuendo hairpin (>)')+' is in bar '+I.hp.bar+'.'}));}
   if(part==='art'){const a=ST_ART[I.art.type];return Object.assign(base,choice('What does the '+a[0]+' marking in bar '+I.art.bar+' tell the player?',['Play it short and detached','Play it with an accent (stress it)','Hold it for its full length','Pause on it'],a[1],{show:sh,why:a[0][0].toUpperCase()+a[0].slice(1)+': '+a[1].toLowerCase()+'.'}));}
   if(part==='semi'){const S=I.semi;const ord=['1st','2nd','3rd','4th','5th','6th','7th','8th'];const opts=[];for(let i=0;i+1<S.count&&i<6;i++)opts.push(ord[i]+' and '+ord[i+1]);const ans=ord[S.i]+' and '+ord[S.i+1];
     return Object.assign(base,choice('Which two neighbouring notes in bar '+S.bar+' are a semitone apart?',opts.slice(0,Math.max(4,S.i+2)).slice(-6),ans,{show:sh,why:'The '+ans+' notes of bar '+S.bar+' are a semitone apart.'}));}
@@ -976,5 +980,5 @@ function ivStudyQ(i,st){const iv=st.asks[i];const ans=T.ivWord(iv);const qs=[...
 const BYNAME={};UNITS.forEach(u=>u.gens.forEach(([fn])=>BYNAME[fn.name]=fn));BYNAME.chordRnQ=noDbl(chordRnQ);BYNAME.notateRnQ=noDbl(notateRnQ);BYNAME.semitoneQ=semitoneQ;BYNAME.keySigGridQ=keySigGridQ;BYNAME.keySigWriteCtQ=keySigWriteCtQ;BYNAME.keyMelodyQ=keyMelodyQ;
 function defaultWhy(q){if(q.why)return;if(q.t==='match'&&q.pairs)q.why=q.pairs.map(p=>'<b>'+p[0]+'</b> — '+p[1]).join(' · ');}
 function one(name){let q=null;for(let i=0;i<20&&!q;i++)q=BYNAME[name]();const u=UNITS.find(u=>u.gens.some(g=>g[0].name===name))||UNITS.find(u=>u.id==='chords');q.unit=u.id;q.gen=name;defaultWhy(q);return q;}
-return {studyShow:st=>show(stStave(st)),hasDbl,UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one,makeStudy,studyQ,studyItems};
+return {studyShow:st=>stShow(st),hasDbl,UNITS,SCHEMA,DEFAULTS,getSet,setLevel,applySet,makeSet,unitsOn,gensOn,setGensel,RANGE,MIDD,inClef,fitScale,stave,one,makeStudy,studyQ,studyItems};
 })();

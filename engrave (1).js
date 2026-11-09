@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261103zd";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["engrave.js"]="20261109b";
 // engrave.js — notation engine for ATAR Music Aural Blitz.
 // Generates dictations (rhythm + melody, full WACE rhythm vocabulary) and renders them as
 // proper notation: key signatures, bar-accidental rules, dots, flags, beams (with partial beams),
@@ -32,7 +32,7 @@
                         f:[dia('B',2),dia('E',3),dia('A',2),dia('D',3),dia('G',2),dia('C',3),dia('F',2)]}};
   function keyAccMap(ks){const m={};if(ks>0)SHARPS.slice(0,ks).forEach(l=>m[l]='s');if(ks<0)FLATS.slice(0,-ks).forEach(l=>m[l]='f');return m;}
   // major key name -> sharps(+)/flats(-)
-  const MAJ_KS={'C':0,'G':1,'D':2,'A':3,'E':4,'B':5,'F':-1,'Bb':-2,'Eb':-3,'Ab':-4};
+  const MAJ_KS={'C':0,'G':1,'D':2,'A':3,'E':4,'B':5,'F':-1,'Bb':-2,'Eb':-3,'Ab':-4,'Db':-5};
   const KEYNAME=k=>k.replace('b','♭').replace('#','♯');
 
   // ---------- pitch resolution by notation rules ----------
@@ -68,6 +68,11 @@
     {name:'blues',          deg:[[0,0],[3,2],[5,3],[6,3],[7,4],[10,6]],       keys:[['A','C'],['E','G'],['D','F'],['G','Bb'],['C','Eb']]}
   ];
   const Epick=a=>a[(Math.random()*a.length)|0];
+  // extra keys a teacher can ask for by name (not in the random pools)
+  const MORE_MAJ=[['E','E'],['B','B'],['A','Ab'],['D','Db']],MORE_MIN=[['F','A'],['C','E'],['F','Ab'],['G','B']];
+  const MINF=/minor|blues|dorian/;
+  // a key id: tonic + accidental, with 'm' for the minor family (C, Bb, F#m, Cm…)
+  function keyIdOf(sc,k){const km=keyAccMap(MAJ_KS[k[1]]);const a=km[k[0]];return k[0]+(a==='f'?'b':a==='s'?'#':'')+(MINF.test(sc.name)?'m':'');}
   function spellNote(midi,letter){const base=LETPC[letter];let acc=((midi%12)-base+12)%12;if(acc>6)acc-=12;
     const o=Math.round((midi-base-acc)/12)-1;const code=acc===0?'':acc===1?'s':acc===-1?'f':acc===2?'ss':acc===-2?'ff':'';
     return {letter,octave:o,acc:code,d:dia(letter,o),midi};}
@@ -156,7 +161,7 @@
     if(diff==='easy'||Math.random()<0.6)return copy();
     const half=len/2;let acc=0,cut=-1;for(let i=0;i<A.length;i++){acc+=A[i].dur;if(eq(acc,half)){cut=i+1;break;}}
     if(cut<0)return copy();const first=A.slice(0,cut).map(e=>({dur:e.dur,trip:e.trip,rest:e.rest}));const rest=fillBar(diff,M,Object.assign({},o,{noWhole:true}),len-half);return first.concat(rest);}
-  function roles(bars){if(bars<=1)return ['C'];if(bars===2)return ['A','C'];if(bars===3)return ['A','B','C'];const r=[];for(let b=0;b<bars;b+=4){const left=bars-b;if(left>=4)r.push('A','B',"A'",'C');else if(left===3)r.push('A','B','C');else if(left===2)r.push('A','C');else r.push('C');}return r;}
+  function roles(bars){if(bars<=1)return ['C'];if(bars===2)return ['A','C'];if(bars===3)return ['A','B','C'];if(bars===5)return ['A','B',"A'",'B','C'];if(bars===6)return ['A','B','C',"A'",'B','C'];const r=[];for(let b=0;b<bars;b+=4){const left=bars-b;if(left>=4)r.push('A','B',"A'",'C');else if(left===3)r.push('A','B','C');else if(left===2)r.push('A','C');else r.push('C');}return r;}
   function genRhythm(diff,bars,M,o){
     o=o||{}; let pickup=0;
     if(o.anacrusis&&diff!=='easy'&&M.pickups.length&&Math.random()<0.35)pickup=Epick(M.pickups);
@@ -193,7 +198,10 @@
     opts=(typeof opts==='string')?{diff:opts}:(opts||{});
     const diff=opts.diff||'easy', bars=opts.bars||4, clef=opts.clef||'treble';
     let list=SCALES; if(opts.scaleNames&&opts.scaleNames.length){const w=SCALES.filter(s=>opts.scaleNames.indexOf(s.name)>=0);if(w.length)list=w;}
-    const sc=Epick(list); let keys=sc.keys; if(opts.maxKs!=null){const k2=keys.filter(k=>Math.abs(MAJ_KS[k[1]])<=opts.maxKs);if(k2.length)keys=k2;}
+    let sc=Epick(list); let keys=sc.keys; if(opts.maxKs!=null){const k2=keys.filter(k=>Math.abs(MAJ_KS[k[1]])<=opts.maxKs);if(k2.length)keys=k2;}
+    // a teacher-chosen key (or keys): pick a scale from the list that comes in one of them
+    if(opts.keys&&opts.keys.length){const cand=[];list.forEach(s=>{const pool=s.keys.concat(s.name==='mixolydian'||s.name==='dorian'?[]:(MINF.test(s.name)?MORE_MIN:MORE_MAJ));pool.forEach(k=>{if(opts.keys.includes(keyIdOf(s,k)))cand.push([s,k]);});});
+      if(cand.length){const c=Epick(cand);sc=c[0];keys=[c[1]];}}
     const [tl,parent]=Epick(keys), ks=MAJ_KS[parent];
     const lo=clef==='bass'?40:60, hi=clef==='bass'?60:81;             // E2–C4 / C4–A5
     const tm=tonicMidiFor(tl,parent,lo+2,hi-7);
@@ -211,9 +219,9 @@
     const tonicIdxs=pool.map((p,i)=>semiOf(p)===0?i:-1).filter(i=>i>=0);
     const ltSemi=has(11)?11:-1;
     // range plan: tonic sits low-ish; climax a planned number of scale steps up
-    const spanSteps=diff==='easy'?5:diff==='med'?7:9;
+    const spanSteps=opts.span||(diff==='easy'?5:diff==='med'?7:9);
     const minIdx=Math.max(0,tonicIdx-(diff==='easy'?1:2)), maxIdx=Math.min(pool.length-1,minIdx+spanSteps);
-    const climaxIdx=Math.min(maxIdx,tonicIdx+(diff==='easy'?Epick([3,4,5]):diff==='med'?Epick([4,5,6,7]):Epick([5,6,7,8,9])));
+    const climaxIdx=Math.min(maxIdx,tonicIdx+(opts.span?Epick([Math.max(2,opts.span-3),Math.max(2,opts.span-2),Math.max(2,opts.span-1)]):diff==='easy'?Epick([3,4,5]):diff==='med'?Epick([4,5,6,7]):Epick([5,6,7,8,9])));
     // which bar each event is in, its chord, and whether it sits on an accent
     const barOf=on=>Math.floor((on+pickup)/M.bpb+1e-6);
     const R=rh.roles;const nb=bars;
@@ -307,8 +315,8 @@
       const at={};P.forEach(p=>{const nx=C.find(c=>c>p+1e-6);const d=(nx!==undefined?nx:totalBeats)-p;addGap(p);crossBoundary(p);at[p]=x;const w=w_of(d);pieces.push({t0:p,t1:p+d,x0:x,x1:x+w});x+=w;t=p+d;});
       notes.forEach((n,i)=>{slotX[i]=at[Math.round(n.onset*1e4)/1e4];});
     } else
-    notes.forEach((n,i)=>{ addGap(n.onset); crossBoundary(n.onset); const w=w_of(n.dur);
-      slotX[i]=x; pieces.push({t0:n.onset,t1:n.onset+n.dur,x0:x,x1:x+w}); x+=w; t=n.onset+n.dur; });
+    notes.forEach((n,i)=>{ addGap(n.onset); crossBoundary(n.onset); const ld=n.layDur||n.dur; const w=w_of(ld);
+      slotX[i]=x; pieces.push({t0:n.onset,t1:n.onset+ld,x0:x,x1:x+w}); x+=w; t=n.onset+ld; });
     addGap(totalBeats); crossBoundary(totalBeats-1e-9); if(barX[bounds.length-1]===undefined)barX[bounds.length-1]=x;
     const xAt=(beat)=>{ if(beat<=0)return 0; for(const p of pieces){ if(beat<p.t1-1e-6&&beat>=p.t0-1e-6){ return p.gap?p.x0+(beat-p.t0)/(p.t1-p.t0)*(p.x1-p.x0):p.x0; } }
       // at a boundary: return x after the barline pad
@@ -328,14 +336,14 @@
     systems.forEach((sy,si)=>{ const avail=W-sy.left-rightPad; const full=(systems[0].beat1-systems[0].beat0); const shortLast=(si===systems.length-1&&systems.length>1&&(sy.beat1-sy.beat0)<full*0.6);
       sy.scale=shortLast?Math.max(1,sy.target/sy.nat):avail/sy.nat; sy.mapX=rx=>sy.left+(rx-sy.rawX0)*sy.scale; sy.endX=sy.mapX(sy.rawX1); });
     const sysOfBeat=beat=>{for(let i=0;i<systems.length;i++){if(beat<systems[i].beat1-1e-6||i===systems.length-1)return i;}return systems.length-1;};
-    const sysH=(spec.rhythmOnly?9.5:11.5)*SS;
+    const sysH=(spec.rhythmOnly?9.5:11.5)*SS+(spec.sfBand?SS*3.4:0);
     const E=[]; let minY=1e9,maxY=-1e9; const track=y=>{if(y<minY)minY=y;if(y>maxY)maxY=y;};
     const rx=SS*0.62, ry=SS*0.44, stemLen=SS*3.4, beamT=SS*0.48;
     const xs=[], sysOf=[], ys=[], upOf=[];
     // ---- per-system furniture ----
     systems.forEach((sy,si)=>{ const oy=si*sysH;
       (spec.rhythmOnly?[2]:[0,1,2,3,4]).forEach(k=>{const y=oy+TOPK*SS+k*SS;E.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y.toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1.25"/>`);});
-      track(oy+TOPK*SS-SS*2.6); track(oy+TOPK*SS+4*SS+SS*2.6);
+      track(oy+TOPK*SS-SS*2.6); track(oy+TOPK*SS+4*SS+SS*2.6);if(spec.sfBand)track(oy+TOPK*SS+4*SS+SS*5.3);
       if(spec.rhythmOnly){const px=SS*0.5+cd.clefW*SS*0.5,py=oy+TOPK*SS+SS;E.push(`<rect x="${(px-SS*0.55).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/><rect x="${(px+SS*0.17).toFixed(1)}" y="${py.toFixed(1)}" width="${(SS*0.38).toFixed(1)}" height="${(2*SS).toFixed(1)}" fill="var(--ink)"/>`);}
       else E.push(gEl(cd.glyph,SS*0.5,oy+yOf(top,cd.lineDia),'var(--ink)'));
       let kx=SS*0.5+cd.clefW*SS+SS*0.5; const pos=KS_POS[spec.clef==='bass'?'bass':'treble'][ks>0?'s':'f'];
@@ -345,10 +353,10 @@
         E.push(`<text x="${tsx.toFixed(1)}" y="${(oy+TOPK*SS+3.68*SS).toFixed(1)}" text-anchor="middle" font-size="${(SS*2.05).toFixed(1)}" font-weight="700" font-family="Georgia,'Times New Roman',serif" fill="var(--ink)">${denom}</text>`);}
       // barlines
       for(let s=sy.segA;s<=sy.segB;s++){const bx=sy.mapX(barX[s])+barPad*sy.scale*0.5*(s===sy.segB?0:1); const last=(s===nSeg-1);
-        const X=last?sy.endX-SS*0.1:bx;
+        const X=last?sy.endX-SS*0.1:bx; if(spec.hideBars&&!last)continue;
         E.push(`<line x1="${X.toFixed(1)}" y1="${(oy+TOPK*SS+(spec.rhythmOnly?SS:0)).toFixed(1)}" x2="${X.toFixed(1)}" y2="${(oy+TOPK*SS+(spec.rhythmOnly?3*SS:4*SS)).toFixed(1)}" stroke="var(--ink)" stroke-width="${last?3.2:1.4}"/>`);
         if(last)E.push(`<line x1="${(X-SS*0.55).toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${(X-SS*0.55).toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.3"/>`);
-        if(s===sy.segB&&!last)E.push(`<line x1="${sy.endX.toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.4"/>`);
+        if(s===sy.segB&&!last&&!spec.hideBars)E.push(`<line x1="${sy.endX.toFixed(1)}" y1="${(oy+TOPK*SS).toFixed(1)}" x2="${sy.endX.toFixed(1)}" y2="${(oy+TOPK*SS+4*SS).toFixed(1)}" stroke="var(--ink)" stroke-width="1.4"/>`);
       }
     });
     // ---- note positions ----
@@ -475,7 +483,7 @@
     }
     const pad=SS*0.5, y0=minY-pad, vh=(maxY-minY)+pad*2;
     const svg=`<svg class="score" id="score" viewBox="0 ${y0.toFixed(1)} ${W.toFixed(1)} ${vh.toFixed(1)}" width="${W.toFixed(0)}" preserveAspectRatio="xMidYMid meet" style="touch-action:none;max-width:${(W*1.5).toFixed(0)}px" xmlns="http://www.w3.org/2000/svg">${E.join('')}</svg>`;
-    return {svg,xs,ys,sysOf,W,top,y0,vh,sysH,nSys:systems.length,midi:res.midi,shown:res.shown,cursorSys,order:notes};
+    return {svg,xs,ys,sysOf,W,top,y0,vh,sysH,staffTop:TOPK*SS,SS,sysEnd:systems.map(s=>s.endX),sfBandY:spec.sfBand?systems.map((s,si)=>si*sysH+TOPK*SS+4*SS+SS*2.8):null,sfBandH:SS*2.4,nSys:systems.length,midi:res.midi,shown:res.shown,cursorSys,order:notes};
   }
   // map a pointer event on the score svg to {sys, d, x}
   function hitTest(meta,svg,ev){const r=svg.getBoundingClientRect();const vy=meta.y0+(ev.clientY-r.top)/r.height*meta.vh, vx=(ev.clientX-r.left)/r.width*meta.W;
@@ -489,5 +497,5 @@
   const CHROM_SOLFA={0:'do',1:'di',2:'re',3:'me',4:'mi',5:'fa',6:'fi',7:'so',8:'si',9:'la',10:'te',11:'ti'};
   function solfaFor(scaleType){return SOLFA_SET[scaleType]||null;}
   function solfaOf(midi,tonicMidi,scaleType){const sc=SCALES.find(s=>s.name===scaleType),syl=SOLFA_SET[scaleType];if(!sc||!syl)return '';const off=((midi-tonicMidi)%12+12)%12;const k=sc.deg.findIndex(d=>d[0]===off);if(k>=0)return syl[k];return CHROM_SOLFA[/minor/.test(scaleType)?(off+9)%12:off]||'';}
-  window.ENGRAVE={buildDictation,solfaFor,solfaOf,fillBar:(diff,metreId,len)=>fillBar(diff,METRES[metreId]||METRES['4/4'],{syncopation:true,noWhole:true},len),drawScore,hitTest,spellNote,resolveLine,keyAccMap,SCALES,METRES,MAJ_KS,KEYNAME,T3,barOf,posInBar};
+  window.ENGRAVE={keyIdOf,buildDictation,solfaFor,solfaOf,fillBar:(diff,metreId,len)=>fillBar(diff,METRES[metreId]||METRES['4/4'],{syncopation:true,noWhole:true},len),drawScore,hitTest,spellNote,resolveLine,keyAccMap,SCALES,METRES,MAJ_KS,KEYNAME,T3,barOf,posInBar};
 })();

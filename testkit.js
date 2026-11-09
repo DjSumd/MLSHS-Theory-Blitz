@@ -1,4 +1,4 @@
-/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261108e";
+/*blitz-stamp*/(window.BLITZ_FILES=window.BLITZ_FILES||{})["testkit.js"]="20261109b";
 // testkit.js — Years 7–10 Aural and Theory Tests (shared, identical in Aural Blitz and Theory Blitz).
 // The look of every test is standardised: MLSHS crest header, "AURAL SECTION /n" and "THEORY SECTION /n",
 // "(a) Title: instruction (x marks)" groups, and a TOTAL MARK line. Each app builds its own section;
@@ -129,7 +129,7 @@
   // option builders: multi (chips), one (single choice), text, drum (pattern editor)
   const AR=(key,label,def,ph)=>({key,label,type:'area',def,ph}),QS=(key,label,def)=>({key,label,type:'qs',def});
   const M=(key,label,ch,def)=>({key,label,type:'multi',ch,def}),O1=(key,label,ch,def)=>({key,label,type:'one',ch,def}),TX=(key,label,def,ph)=>({key,label,type:'text',def,ph}),DR=(key,label)=>({key,label,type:'drum'});
-  const BARS=[['1','1 bar'],['2','2 bars'],['4','4 bars']],METS=[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8']];
+  const BARS=[1,2,3,4,5,6,7,8].map(n=>[String(n),n+(n===1?' bar':' bars')]),METS=[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8'],['9/8','9/8'],['12/8','12/8']];
   const AS=[['major pentatonic','Major pentatonic'],['major','Major'],['minor pentatonic','Minor pentatonic'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']];
   // n: questions in the block (null = one item whose marks are m); m: marks per question
   TK.BLOCKS={
@@ -149,11 +149,11 @@
     {k:'sfd',label:'Sol-fa dictation',title:'Melodic Dictation – Sol-fa',desc:'The rhythm is printed; students write only the sol-fa, one box per note.',n:null,m:6,
       opts:[M('scales','Scale',AS,['major pentatonic']),M('metres','Time signature',METS,['2/4','3/4','4/4']),O1('bars','Length',BARS,'2')]},
     {k:'two',label:'Two-part dictation (sol-fa)',title:'Two-Part Dictation',desc:'Two parts play together (upper in the treble, lower in the bass), moving mostly by step and skip. Both rhythms are printed and students write the sol-fa of each part. The first bar of each part is given.',n:null,m:5,
-      opts:[O1('scale','Scale',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],'natural minor'),O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4'),Object.assign(M('sep','Playback (tick to allow)',[['solo','Students may also play each part on its own']],['solo']),{empty:true})]},
+      opts:[O1('scale','Scale',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],'natural minor'),O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',BARS.slice(1),'4'),Object.assign(M('sep','Playback (tick to allow)',[['solo','Students may also play each part on its own']],['solo']),{empty:true})]},
     {k:'bord',label:'Bars in the wrong order',title:'Bars in the Wrong Order',desc:'The bars of a melody are printed out of order. Students listen, then drag the bars back into order (on paper they write the letter of each bar in its place). Marked in proportion to the bars in the right place.',n:null,m:8,
-      opts:[O1('bars','Length',[['4','4 bars'],['8','8 bars']],'8'),M('scales','Scale',AS,['major','natural minor']),M('metres','Time signature',METS.slice(0,4),['3/4','4/4']),O1('given','Given',[['0','Nothing (every bar out of order)'],['1','Bar 1']],'0'),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
+      opts:[O1('bars','Length',BARS.slice(3),'8'),M('scales','Scale',AS,['major','natural minor']),M('metres','Time signature',METS.slice(0,4),['3/4','4/4']),O1('given','Given',[['0','Nothing (every bar out of order)'],['1','Bar 1']],'0'),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
     {k:'rdh',label:'Rhythm on given noteheads',title:'Rhythmic Dictation',desc:'Stemless noteheads and the barlines are printed; students add the rhythm to each notehead. The first note is given.',n:null,m:8,
-      opts:[M('metres','Time signature',METS.slice(0,4),['2/4','3/4','4/4']),O1('bars','Length',BARS,'4'),M('scales','Scale',AS,['major']),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]},
+      opts:[M('metres','Time signature',METS.slice(0,4),['2/4','3/4','4/4']),O1('bars','Length',BARS,'4'),M('scales','Scale',AS,['major']),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble'),O1('barlines','Barlines',[['given','Printed'],['add','Not printed: students add them']],'given')]},
     {k:'mrec',label:'Melody recognition',title:'Melody Recognition',desc:'Several melodies are printed (pitch and sol-fa, rhythm and sol-fa, or pitch only); one is played. Students choose the one they hear. The others differ by a note or two.',n:2,m:1,
       opts:[O1('show','Printed as',[['ps','Pitch and sol-fa'],['rs','Rhythm and sol-fa'],['p','Pitch only']],'ps'),O1('count','Melodies to choose from',[['2','2'],['3','3'],['4','4']],'3'),
         M('scales','Scale',[['major pentatonic','Major pentatonic'],['major','Major'],['minor pentatonic','Minor pentatonic'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],['major']),
@@ -179,7 +179,7 @@
     {k:'ksid',label:'Name key signatures',title:'Key Signatures',desc:'Students name the key of each key signature.',n:4,m:1,opts:[]},
     {k:'transp',label:'Transposition to a new key',title:'Transposition',desc:'Students write the new key signature and every note. Marked in proportion (key signature plus each note).',n:null,m:10,
       opts:[Object.assign(O1('from','From',[['','Any key in the syllabus']].concat(MAJ15.map(k=>[k,pretty(k)+' major'])),''),{byYear:1}),Object.assign(O1('to','Into this key (or leave it to the interval below)',[['','Any key in the syllabus']].concat(MAJ15.map(k=>[k,pretty(k)+' major'])),''),{byYear:1}),O1('iv','Or by this interval',[['','Any interval'],['up M2','Up a major 2nd'],['up m3','Up a minor 3rd'],['up P4','Up a perfect 4th'],['up P5','Up a perfect 5th'],['down M2','Down a major 2nd'],['down m3','Down a minor 3rd'],['down P4','Down a perfect 4th'],['down P5','Down a perfect 5th']],''),
-        O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4'),O1('clef','Clef',[['treble','Treble'],['bass','Bass'],['mix','Either']],'treble')]},
+        O1('metre','Time signature',[['2/4','2/4'],['3/4','3/4'],['4/4','4/4'],['6/8','6/8']],'6/8'),O1('bars','Length',BARS.slice(1),'4'),O1('clef','Clef',[['treble','Treble'],['bass','Bass'],['mix','Either']],'treble')]},
     {k:'keymel',label:'Key of a melody',title:'Visual Recognition of Key',desc:'A melody with its key signature; students choose its key from three: the right one, its relative and a near miss.',n:2,m:1,
       opts:[M('types','Keys used',[['major','Major'],['natural minor','Natural minor'],['harmonic minor','Harmonic minor']],['major','harmonic minor']),O1('clef','Clef',[['mix','Treble and bass'],['treble','Treble'],['bass','Bass']],'mix')]},
     {k:'ivkey',label:'Intervals above a tonic',title:'Intervals',desc:'One stave of intervals above the same tonic, in its major key signature, with the first one named as an example.',n:6,m:1,
@@ -277,8 +277,8 @@
       {k:'tmod',label:'Tonality and modulation (exam Q2)',title:'Recognition of Tonality and Modulation',desc:'Students name the opening tonality, then the key it modulates to (or no modulation).',n:null,m:4,opts:[]});
     TK.BLOCKS.A.splice(IDX('rd')+1,0,
       {k:'dis',label:'Discrepancies',title:'Discrepancies',desc:'The printed score differs from the performance; students find each difference (pitch or rhythm), then correct the score.',n:null,m:7,
-        opts:[O1('bars','Length',[['2','2 bars'],['4','4 bars']],'4'),O1('count','Differences',[['1','1'],['2','2'],['3','3']],'3'),DIFF()]});
-    TK.BLOCKS.A.push({k:'sanal',label:'Aural analysis with a printed score',title:'Aural Analysis',desc:'Students listen while they read a printed score, then answer four questions on it (tonality, texture, intervals, chords, dynamics, tempo and so on, by Year).',n:null,m:4,opts:[]});
+        opts:[O1('bars','Length',BARS.slice(1),'4'),O1('count','Differences',[['1','1'],['2','2'],['3','3']],'3'),DIFF(),O1('clef','Clef',[['treble','Treble'],['bass','Bass']],'treble')]});
+    TK.BLOCKS.A.push({k:'sanal',label:'Aural analysis with a printed score',title:'Aural Analysis',desc:'Students listen while they read a printed score, then answer four questions on it (tonality, texture, intervals, chords, dynamics, tempo and so on, by Year).',n:null,m:4,opts:[O1('len','Length of the score',[['8','8 bars'],['4','4 bars']],'8')]});
     // theory: settings that feed the question generators
     const CLEFS=SETM('clefs','Clefs',[['treble','Treble'],['bass','Bass'],['alto','Alto'],['tenor','Tenor']]);
     const KEYS=SETO('keysMax','Key signatures up to',[['1','1♯ / 1♭'],['2','2♯ / 2♭'],['3','3♯ / 3♭'],['4','4♯ / 4♭'],['5','5♯ / 5♭'],['6','6♯ / 6♭'],['7','7♯ / 7♭']],'num');
@@ -329,7 +329,7 @@
     st.opts.push(M('parts','Parts',[['solfa','Sol-fa of bars 1–2'],['letters','Letter names of bar 3'],['tempo','Tempo term'],['dyn','Dynamics marking'],['transpose','Transpose the melody'],['tsSf','Tone set in sol-fa (lowest to highest)'],['tsN','Tone set on the stave (lowest to highest)']],['solfa','letters','tempo','dyn','transpose']),
       QS('own','Your own questions about the melody (students write their answer)',[]),KEYS);
     const vi=TK.blockDef('T','visual');vi.desc='A printed score with questions on what students can see. Choose the parts (or leave them for a random four), and add your own written questions about the score.';
-    vi.opts.push(M('parts','Parts (leave empty for a random four)',[['key','Key of the melody'],['time','The missing time signature'],['tempo','Tempo marking'],['dyn','Dynamic marking'],['hp','Hairpin: crescendo or diminuendo'],['art','Articulation marking'],['iv','Interval marked *1'],['semi','Two notes a semitone apart'],['tsSf','Tone set in sol-fa (lowest to highest)'],['tsN','Tone set on the stave (lowest to highest)']],[]),
+    vi.opts.push(O1('len','Length of the score',[['8','8 bars (two lines)'],['4','4 bars']],'8'),M('parts','Parts (leave empty for a random four)',[['key','Key of the melody'],['time','The missing time signature'],['tempo','Tempo marking'],['dyn','Dynamic marking'],['hp','Hairpin: crescendo or diminuendo'],['art','Articulation marking'],['iv','Interval marked *1'],['semi','Two notes a semitone apart'],['tsSf','Tone set in sol-fa (lowest to highest)'],['tsN','Tone set on the stave (lowest to highest)']],[]),
       QS('own','Your own questions about the score (students write their answer)',[]),KEYS,MINK,CLEFS);
     add('notes',[KEYS]);add('scale',[KEYS,CLEFS]);add('msolfa',[KEYS]);add('barl',[SETM('rhythm','Rhythm vocabulary',[['basic','Whole-beat values, quaver pairs, four semiquavers'],['semis','Quaver + semiquaver mixes'],['dotted','Dotted crotchet / dotted quaver'],['syncop','Syncopation'],['qrest','Quaver rests']])]);add('values',[MET]);add('keymel',[CLEFS]);add('kswrite',[]);
   })();
@@ -341,6 +341,15 @@
       sfd:[BEAT,'Usual ≈ 109'],rd:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],dis:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],prog:[CH,'Usual ≈ 45–55'],mrec:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],rrec:[BEAT,'Usual ≈ 109 (6/8 ≈ 89)'],cad:[CH,'Usual ≈ 40'],tmod:[CH,'Usual ≈ 55'],met:['Tempo in BPM: crotchet beats','Usual ≈ 100–115']};
     Object.keys(L).forEach(k=>{const d=TK.blockDef('A',k);if(d&&!d.opts.some(o=>o.key==='bpm'))d.opts.push({key:'bpm',label:L[k][0]+' (leave empty for the usual speed)',type:'text',def:'',ph:L[k][1]+'. Type e.g. 72',bpm:true});});
     TK.bpmOf=b=>{const v=parseInt(b&&b.o&&b.o.bpm,10);return v>=30&&v<=240?v:0;};})();
+  // ---- key, range and the number of playings ----
+  (function(){const KEYS=[['C','C major'],['G','G major'],['D','D major'],['A','A major'],['E','E major'],['B','B major'],['F','F major'],['Bb','B♭ major'],['Eb','E♭ major'],['Ab','A♭ major'],['Db','D♭ major'],
+      ['Am','A minor'],['Em','E minor'],['Bm','B minor'],['F#m','F♯ minor'],['C#m','C♯ minor'],['G#m','G♯ minor'],['Dm','D minor'],['Gm','G minor'],['Cm','C minor'],['Fm','F minor']];
+    TK.DKEYS=KEYS;
+    const addO=(k,o)=>{const d=TK.blockDef('A',k);if(d&&!d.opts.some(x=>x.key===o.key))d.opts.push(o);};
+    ['pd','md','sfd','rd','rdh','two','bord','dis','mrec'].forEach(k=>addO(k,Object.assign(M('keys','Keys (leave empty for any; a key that does not suit the scales chosen is skipped)',KEYS,[]),{empty:true})));
+    ['pd','md','sfd','mrec'].forEach(k=>addO(k,O1('range','Range of the melody',[['usual','Usual'],['narrow','Narrow (within a 6th)'],['wide','Wide (an octave or more)']],'usual')));
+    TK.BLOCKS.A.forEach(d=>{if(['drumT','wq'].includes(d.k))return;addO(d.k,O1('plays','Playings allowed (on screen)',[['any','As many as students like'],['1','Once'],['2','Twice'],['3','3 times'],['4','4 times'],['5','5 times']],'any'));});
+    TK.ovrOf=b=>{const o=(b&&b.o)||{};const p=parseInt(o.plays,10);return {keys:Array.isArray(o.keys)&&o.keys.length?o.keys.slice():null,span:o.range==='narrow'?4:o.range==='wide'?9:0,plays:p>0?p:0};};})();
   // ---- the Year tests and the exam as editable starting points ----
   (function(){const A=(k,o,extra)=>Object.assign({k,o:o||{}},extra||{});const SC7=['major pentatonic','major'],SC8=['major','natural minor','major pentatonic','minor pentatonic'],M3=['2/4','3/4','4/4'],M4=['2/4','3/4','4/4','6/8'];
     const anal=(n)=>[A('anal',{asks:['tonality','texture','metre']},{n:n||3,m:1,t:'Aural Analysis'}),A('tim',{qtype:'Instrument'},{n:1,m:1,t:'Instruments'})];

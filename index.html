@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="fonts/fonts.css?v=20261108e">
+<link rel="stylesheet" href="fonts/fonts.css?v=20261109b">
 <style>
   :root{--bg:#1b1a18;--ink:#1b1a18;--paper:#f6f1e7;--paper2:#efe8da;--line:#262421;--muted:#7a7267;--rule:#d8d0c1;--shade:#ebe4d6;
     --ox:#8c2b22;--brass:#b2862f;--green:#3d6b45;--red:#a3322a;--accent:#8c2b22;--cream:#efe9dc;--serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
@@ -67,6 +67,7 @@
   .guide.open{display:block}
   .guide b{color:#222} .guide ol,.guide ul{margin:6px 0 0;padding-left:20px} .guide li{margin:5px 0}
   .guide .gclose{position:absolute;top:10px;right:12px;border:0;background:var(--shade);border-radius:999px;width:30px;height:30px;font-size:15px;cursor:pointer}
+  .twoline{display:flex;flex-direction:column;align-items:stretch;width:100%;gap:2px}.twoline svg{width:100%;height:auto}
   .showbox{display:flex;justify-content:center;background:#fff;border:1px solid var(--rule);border-radius:6px;padding:6px 8px;margin:2px 0 10px;overflow-x:auto}
   .showbox svg{height:118px;width:auto;max-width:100%} .showbox.tall svg{height:150px} .showbox.long svg{height:auto;width:100%;max-height:220px}
   .legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:-4px 0 10px;font-size:12px;color:#4d463c}
@@ -330,20 +331,20 @@ body.embtest .tsthead{display:none}
 <footer>Mount Lawley SHS · Music · theory for Years 7–10 (WA curriculum) and Years 11–12 (SCSA ATAR). Keys: 1–9 answer · ← → move · Enter check · # b n 0 accidentals</footer>
 
 <script>window.SAMPLE_BASE='aural/samples/';</script>
-<script src="aural/audio.js?v=20261108e"></script>
-<script src="aural/samples.js?v=20261108e"></script>
-<script src="glyphs.js?v=20261108e"></script>
-<script src="theory.js?v=20261108e"></script>
-<script src="engrave.js?v=20261108e"></script>
-<script src="gen.js?v=20261108e"></script>
-<script src="refs.js?v=20261108e"></script>
-<script src="embed.js?v=20261108e"></script>
-<script src="qr.js?v=20261108e"></script>
-<script src="task.js?v=20261108e"></script>
-<script src="testkit.js?v=20261108e"></script>
-<script src="blitzui.js?v=20261108e"></script>
-<script>/*blitz-check*/(function(){var S="20261108e";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
-<script>/*blitz-update*/(function(){var S="20261108e",P="blitz-theory-all-",APP="Theory Blitz";
+<script src="aural/audio.js?v=20261109b"></script>
+<script src="aural/samples.js?v=20261109b"></script>
+<script src="glyphs.js?v=20261109b"></script>
+<script src="theory.js?v=20261109b"></script>
+<script src="engrave.js?v=20261109b"></script>
+<script src="gen.js?v=20261109b"></script>
+<script src="refs.js?v=20261109b"></script>
+<script src="embed.js?v=20261109b"></script>
+<script src="qr.js?v=20261109b"></script>
+<script src="task.js?v=20261109b"></script>
+<script src="testkit.js?v=20261109b"></script>
+<script src="blitzui.js?v=20261109b"></script>
+<script>/*blitz-check*/(function(){var S="20261109b";var F=window.BLITZ_FILES||{};var bad=[].slice.call(document.querySelectorAll("script[src]")).map(function(s){return s.getAttribute("src")}).filter(function(n){return !/^https?:/.test(n)&&F[n.split("/").pop().split("?")[0]]!==S});if(!bad.length)return;var last=0;try{last=+sessionStorage.getItem("blitzHeal")||0}catch(e){}if(Date.now()-last<60000){console.warn("Blitz: mixed file versions",bad);return;}try{sessionStorage.setItem("blitzHeal",String(Date.now()))}catch(e){}var go=function(){location.reload()};var clr=window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k.indexOf("blitz-aural-all-")===0||k.indexOf("blitz-theory-all-")===0}).map(function(k){return caches.delete(k)}))}):Promise.resolve();clr.then(function(){return navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration().then(function(r){if(r)return r.update()}):0}).catch(function(){}).then(go,go);})();</script>
+<script>/*blitz-update*/(function(){var S="20261109b",P="blitz-theory-all-",APP="Theory Blitz";
 if(window.top!==window||/[?&]embed=/.test(location.search)||window.__EMBED||!/^https?:/.test(location.protocol))return;
 var t0=Date.now(),pending=null,bar=null;
 try{var u0=new URL(location.href);if(u0.searchParams.has('u')){u0.searchParams.delete('u');history.replaceState(history.state,'',u0.toString());}}catch(e){}
@@ -482,7 +483,7 @@ function ctTheoryGroups(ct,y){const out=[];const D=k=>TestKit.blockDef('T',k);co
     else if(b.k==='wq'){const qs=O(b,'qs')||[];text='Answer each question in the space provided.';items=qs.map(w=>Object.assign(IT('written',w.m),{wq:w}));}
     else if(b.k==='tq'){const gn=O(b,'gen');const lab=((TestKit.TQ||[]).find(x=>x[0]===gn)||[gn,'Answer each question'])[1];text=lab+': answer each question.';items=rep(gn);}
     else if(b.k==='study'){text='Study the melody below and answer the questions.';grp={make:'study',ov:HAS?SO:null,mTot:m,marks:m,parts:O(b,'parts'),own:O(b,'own')||[]};}
-    else if(b.k==='visual'){text='Look at the score below and answer the questions.';grp={make:'visual',ov:HAS?SO:null,mTot:m,marks:m,parts:O(b,'parts'),own:O(b,'own')||[]};}
+    else if(b.k==='visual'){text='Look at the score below and answer the questions.';grp={make:'visual',len:O(b,'len'),ov:HAS?SO:null,mTot:m,marks:m,parts:O(b,'parts'),own:O(b,'own')||[]};}
     const tx=b.x?esc(b.x):text;
     if(grp)out.push(Object.assign({title,text:tx,items:[]},grp));else if(items.length)out.push({title,text:tx,items,marks:Math.round(items.reduce((a,x)=>a+x.m,0)*4)/4});});
   return out;}
@@ -501,7 +502,7 @@ function buildTestPlan(){const CT=testRun.ct;const y=CT?CT.y:Math.max(7,Math.min
   for(const k in embedRes)delete embedRes[k];testGroups=withSeed((testRun.seed*3+1)>>>0,()=>CT?ctTheoryGroups(CT,y):testTheoryGroups(y));examPlan=[];
   testGroups.forEach((g,gi)=>{if(!g.make)return;const want=(g.parts||[]).slice();
     // Score analysis with chosen parts: remake until the score has what those parts need (an interval bracket, a semitone)
-    for(let t=0;t<25;t++){g.st=withTestLevel(()=>{if(g.ov)GEN.applySet(g.ov);return withSeed((testRun.seed*977+gi*31+t*7919)>>>0,()=>GEN.makeStudy(g.make));});if(g.make!=='visual'||!want.length)break;const I=g.st.info;if(want.every(a=>(a!=='iv'||I.iv)&&(a!=='semi'||I.semi)))break;}
+    for(let t=0;t<25;t++){g.st=withTestLevel(()=>{if(g.ov)GEN.applySet(g.ov);return withSeed((testRun.seed*977+gi*31+t*7919)>>>0,()=>GEN.makeStudy(g.make,{bars:g.len}));});if(g.make!=='visual'||!want.length)break;const I=g.st.info;if(want.every(a=>(a!=='iv'||I.iv)&&(a!=='semi'||I.semi)))break;}
     if(g.make==='visual'&&want.length){const I=g.st.info;g.st.asks=want.filter(a=>(a!=='iv'||I.iv)&&(a!=='semi'||I.semi));if(!g.st.asks.length)g.st.asks=['key'];g.st.noTime=g.st.asks.includes('time');}
     g.items=GEN.studyItems(g.st).filter(([part])=>g.make!=='study'||!want.length||want.includes(part)).map(([part,m,sf])=>({g:'study:'+part,m:g.mEach||m,sf}));if(g.mEach)g.marks=g.items.reduce((a,x)=>a+x.m,0);if(g.mTot){const tot=g.items.reduce((a,x)=>a+x.m,0);if(tot>0){g.items.forEach(x=>x.m=Math.round(x.m*g.mTot/tot*2)/2);const d=Math.round((g.mTot-g.items.reduce((a,x)=>a+x.m,0))*2)/2;if(d&&g.items.length){const big=g.items.reduce((b,x)=>x.m>b.m?x:b,g.items[0]);big.m=Math.max(0.5,big.m+d);}}g.marks=g.items.reduce((a,x)=>a+x.m,0);}
     (g.own||[]).forEach(w=>g.items.push({g:'written',m:w.m,wq:w,stShow:1}));if(g.own&&g.own.length)g.marks=g.items.reduce((a,x)=>a+x.m,0);});
@@ -551,7 +552,7 @@ function ctGridPaper(q,mode,sel){const G=q.grid;const at={};G.blanks.forEach((b,
     const i=at[k];if(mode==='key')return `<td class="k">${esc(v)}</td>`;if(mode==='you'){const y=sel[i];return `<td><span class="yv ${y===v?'ok':'no'}">${esc(y||'–')}</span></td>`;}return '<td></td>';}).join('')}</tr>`).join('')}</table>`;}
 // paper versions of the theory questions
 function paperT(q,it,key){if(q&&q.t==='written')return TestKit.writtenPaper(q,key,it.subn>1?TestKit.roman(it.sub)+')':'');const K=v=>key?`<span class="ans k">${esc(v)}</span>`:'<span class="ans"></span>';const lbl=`<div class="lbl">${it.subn>1?TestKit.roman(it.sub)+') ':''}${q.prompt}</div>`;
-  const showSvg=()=>q.show?(q.show.svg||E.render(Object.assign({},q.show.spec,{paper:true})).svg):'';
+  const showSvg=()=>q.show?(q.show.svgP||q.show.svg||E.render(Object.assign({},q.show.spec,{paper:true})).svg):'';
   if(q.t==='choice'&&q._sharedShow&&q.paperLine)return `<div class="cell">${lbl}${K(String(q.answer))}</div>`;
   if(q.t==='choice'&&q.show&&q.paperOpts){const ans=String(q.answer);return `<div class="cell wide">${lbl}${showSvg()}<div class="opts">${q.opts.map(o=>`<span class="o${key&&String(o.v)===ans?' k':''}">${esc(o.v)}</span>`).join('')}</div></div>`;}
   if(q.t==='choice'&&q._sharedShow){const ans=String(q.answer);return `<div class="cell wide">${lbl}<div class="opts">${q.opts.map(o=>`<span class="o${key&&String(o.v)===ans?' k':''}">${esc(o.v)}</span>`).join('')}</div></div>`;}
@@ -589,7 +590,7 @@ function ansYouT(q,it){if(q&&q.t==='written')return TestKit.writtenYou(q);const 
 function answerSheetBody(){const m=examMarks();let html='';const row=(it,pos,label)=>{const q=SETQ[pos];if(!q)return '';let key='';try{key=paperT(q,it,true);}catch(e){key='<div class="note">'+esc(String(q.answer||''))+'</div>';}
     return TestKit.ansRow(label,(m[pos]&&m[pos].got)||0,it.m||1,ansYouT(q,it),key);};
   if(UNITS[ui].test){html+=TestKit.sectionHead('THEORY',testTMarks());testGroups.forEach((g,gi)=>{const list=examPlan.map((it,pos)=>[it,pos]).filter(([it])=>!it.embed&&it.gi===gi);if(!list.length)return;
-      const sq=SETQ[list[0][1]];const shared=g.st&&(['visual','ivkey','ivmel'].includes(g.st.kind)||(g.st.kind==='study'&&!g.items.some(x=>x.g==='study:solfa')))&&sq&&sq.show?`<div class="cell wide">${E.render(Object.assign({},sq.show.spec,{paper:true})).svg}</div>`:'';
+      const sq=SETQ[list[0][1]];const shared=g.st&&(['visual','ivkey','ivmel'].includes(g.st.kind)||(g.st.kind==='study'&&!g.items.some(x=>x.g==='study:solfa')))&&sq&&sq.show?`<div class="cell wide">${(sq.show.svgP||E.render(Object.assign({},sq.show.spec,{paper:true})).svg)}</div>`:'';
       html+=`<div class="pq">${TestKit.groupHead({title:g.title,text:g.text,marks:g.marks},gi)}${shared}${list.map(([it,pos])=>row(it,pos,it.subn>1?TestKit.roman(it.sub)+')':'Question')).join('')}</div>`;});}
   else{html+=`<div class="tstsec"><span>${EMBED?'Part B: Theory':'Section One · Part B: Theory'}</span></div>`;examPlan.forEach((it,pos)=>{if(it.embed)return;html+=row(it,pos,'Question '+(pos+1));});}
   return html;}
@@ -601,7 +602,7 @@ function openAnswerSheet(){let body='';const own=()=>{try{return answerSheetBody
   TestKit.answerSheet({title:(UNITS[ui].test?TestKit.title(testRun.y):'Exam practice')+' · answer sheet',y:UNITS[ui].test?testRun.y:0,sem:testRun.sem,name:currentName,body,summary:`<p style="font-size:13pt;font-weight:700;margin:0 0 3mm">Total: ${Math.round(tot*2)/2} / ${max}</p>`});}
 function testPaperB(key){let html=TestKit.sectionHead('THEORY',testTMarks());if(!SETQ.length||SETQ.forId!=='test')testSetq();
   testGroups.forEach((g,gi)=>{const list=examPlan.map((it,pos)=>[it,pos]).filter(([it])=>!it.embed&&it.gi===gi);
-    const sq=list.length&&SETQ[list[0][1]];const shared=g.st&&(['visual','ivkey','ivmel'].includes(g.st.kind)||(g.st.kind==='study'&&!g.items.some(x=>x.g==='study:solfa')))&&sq&&sq.show?`<div class="cell wide">${E.render(Object.assign({},sq.show.spec,{paper:true})).svg}</div>`:'';
+    const sq=list.length&&SETQ[list[0][1]];const shared=g.st&&(['visual','ivkey','ivmel'].includes(g.st.kind)||(g.st.kind==='study'&&!g.items.some(x=>x.g==='study:solfa')))&&sq&&sq.show?`<div class="cell wide">${(sq.show.svgP||E.render(Object.assign({},sq.show.spec,{paper:true})).svg)}</div>`:'';
     html+=`<div class="pq">${TestKit.groupHead({title:g.title,text:g.text,marks:g.marks},gi)}<div class="row">${shared}${list.map(([it,pos])=>paperT(SETQ[pos],it,key)).join('')}</div></div>`;});return html;}
 async function testPrint(key){closeGuide();const title=TestKit.title(testRun.y)+(key?' — answer key':'');const w=TestKit.openPrint(title);if(!w){toast('Allow pop-ups for this site to print');return;}
   const secs=[];let a=0;
